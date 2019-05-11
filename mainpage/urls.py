@@ -22,6 +22,5 @@ app_name = 'mainpage'
 urlpatterns = [
     path('experience/', views.ExperienceListView.as_view(), name='experience'),
     path('education/', views.EducationListView.as_view(), name='education'),
-    path('projects/', views.ExperienceListView.as_view(), name='projects'),
     path('skills/', views.ExperienceListView.as_view(), name='skills'),
 ] 

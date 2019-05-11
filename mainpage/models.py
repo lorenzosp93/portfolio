@@ -43,7 +43,7 @@ class Project(models.Model):
     name = models.CharField(max_length = 100, primary_key = True)
     descript = models.TextField()
     attachment = models.FileField(upload_to = 'projects/')
-    
+
     def __str__(self):
         return self.name
 

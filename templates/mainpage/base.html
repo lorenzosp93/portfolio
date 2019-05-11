@@ -2,12 +2,13 @@
 <html lang="en">
 
 <head>
-
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {% block title_block %}
     <title>Lorenzo Spinelli's portfolio website</title>
-
+    {% endblock %}
     <!-- Bootstrap CSS-->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     
@@ -24,7 +25,7 @@
 
 <body>
 
-
+    {% block header_block %}
     <header class="header">
         <div class="row flex-nowrap justify-content-between align-items-center">
             <div class="col-1">
@@ -42,7 +43,9 @@
             </div>
         </div>
     </header>
+    {% endblock %}
 
+    {% block navbar_block %}
     <nav class="navbar navbar-expand-sm sticky-top navbar-light">
         <div class="container">
             
@@ -61,7 +64,6 @@
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                     <a class="dropdown-item" href="{% url 'resume:experience' %}">Experience</a>
                     <a class="dropdown-item" href="{% url 'resume:education' %}">Education</a>
-                    <a class="dropdown-item" href="{% url 'resume:projects' %}">Projects</a>
                     <a class="dropdown-item" href="{% url 'resume:skills' %}">Skills</a>
                     </div
                 </li>
@@ -70,8 +72,8 @@
                 </li>
             </ul>
         </div>
-
     </nav>
+    {% endblock %}
 
     <div class="container">
         {% block body_block %}
