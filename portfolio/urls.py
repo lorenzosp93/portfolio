@@ -21,7 +21,7 @@ from django.conf import settings
 
 urlpatterns = [
     path('', views.about.as_view(), name='about'),
-    path('resume/', include('mainpage.urls')),
+    path('resume/', include('mainpage.urls', namespace='resume')),
     path('contact/', views.contact.as_view(), name='contact'),   
     path('admin/', admin.site.urls),
 ] 

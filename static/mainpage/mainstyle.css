@@ -2,3 +2,8 @@ body{
     font-family: Arial;
 }
 
+#scrolled{
+    position: relative;
+    overflow-y: scroll;
+    height: 60vh;
+}

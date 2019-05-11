@@ -1,0 +1,69 @@
+{% extends "mainpage/base.html" %}
+{% block body_block %}
+
+<style>
+
+#scrolled{
+    position: relative;
+    overflow-y: scroll;
+    height: 60vh;
+}
+</style>
+
+
+<h4 class="my-3">
+    Experience
+</h4>
+
+<div class="row">
+
+<nav class="col-sm-5 col-lg-4" id="myScrollspy">
+    <ul class="nav nav-pills flex-column bg-white">
+        {% for exp in experiences %}
+        <li class="nav-item">
+            <a class="nav-link active" href="#list-item-{{ forloop.counter }}">
+                {{ exp.start_date }}
+            </a>
+        </li>
+        {% endfor %}
+
+    </ul>
+</nav>
+
+
+<div class='col-sm-7 col-8' id='scrolled' data-spy="scroll" data-target="#myScrollspy" data-offset="1">
+    {% for exp in experiences %}
+    <div class="card" id="list-item-{{ forloop.counter}}">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-2 col-4 mx-auto">
+                    <img src="{{ exp.company.logo.url }}" alt="" class='img-fluid'>
+                </div>
+
+                <div class="col-sm-10 col-8">
+                    <h5 class="card-title">{{ exp.role }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">
+                            {{ exp.company }} - {{ exp.department }}
+                    </h6>
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        {{ exp.location }}, {{ exp.start_date }} - {% if exp.current %}Present{% else %}{{ exp.end_date}}{% endif %}
+                    </h6>
+                </div>
+                
+            </div>
+            <p class="card-text">Description: <br>
+                {{ exp.descript|truncatewords:"50" }}<br>
+            </p>
+            <p class="card-text">Key achievements <br>
+                {{ exp.key_achievements|truncatewords:"30" }}
+            </p>
+        </div>
+    </div>
+    {% endfor %}
+    
+</div>
+
+
+    
+    
+{% endblock %}

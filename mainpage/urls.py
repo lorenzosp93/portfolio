@@ -17,9 +17,11 @@ from django.contrib import admin
 from django.urls import path, include
 from . import views
 
+app_name = 'mainpage'
+
 urlpatterns = [
     path('experience/', views.ExperienceListView.as_view(), name='experience'),
-    path('education/', views.ExperienceListView.as_view(), name='education'),
+    path('education/', views.EducationListView.as_view(), name='education'),
     path('projects/', views.ExperienceListView.as_view(), name='projects'),
     path('skills/', views.ExperienceListView.as_view(), name='skills'),
 ] 

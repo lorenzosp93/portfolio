@@ -15,8 +15,11 @@ class contact(TemplateView):
 class ExperienceListView(ListView):
     context_object_name = 'experiences'
     model = models.Experience
-    template_name = 'mainpage/resume.html'
+    template_name = 'mainpage/resume/experience.html'
 
-
+class EducationListView(ListView):
+    context_object_name = 'educations'
+    model = models.Education
+    template_name = 'mainpage/resume/education.html'
 
 
