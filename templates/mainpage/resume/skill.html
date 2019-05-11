@@ -1,0 +1,32 @@
+{% extends 'mainpage/base.html' %}
+
+{% block body_block %}
+<h3 class="my-3">
+    Skills
+</h3>
+
+<div class="row">
+    {% for category in skillcategory %}
+        <div class="col-lg-3 col-sm-6"> 
+            <h4>
+                {{ category.name }}
+            </h4>    
+            {% for skill in category.skill_set.all %}
+                    <p>
+                    {% for star in i|rjust:4 %}
+                        {% if forloop.counter <= skill.level %}
+                            <i class="fa fa-star"></i>
+                        {% else %}
+                            <i class="fa fa-star-o" ></i>
+                        {% endif %}
+                    {% endfor %}
+
+                    {{ skill.name }}
+                    </p>
+            {% endfor %}
+        </div>
+    {% endfor %}
+
+</div>
+
+{% endblock %}

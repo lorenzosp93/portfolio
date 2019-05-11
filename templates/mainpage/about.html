@@ -2,4 +2,32 @@
 {% extends "mainpage/base.html" %}
 {% block body_block %}
 
+<h1 class="my-3">
+    About me
+</h1>
+
+<h3>
+    Why do I have a portfolio website
+</h3>
+<ol>
+    <li>
+        Why not?
+    </li>
+    <li>
+        To showcase my coding <a href="{% url 'resume:skills' %}">skills</a>. This website was developed with the Django framework, built upon Python.
+    </li>
+    <li>
+        My ego.
+    </li>
+    <li>
+        To overcome the restrictions of Linkedin profiles.
+    </li>
+</ol>
+<h3>
+    Who I am
+</h3>
+<p>
+    Hi, I'm Lorenzo. Energy engineer by formal training, jack of all trades by attitude and development. 
+</p>
+
 {% endblock %}

@@ -26,7 +26,7 @@
 
     <div class='col-sm-7 col-lg-9' id='scrolled' data-spy="scroll" data-target="#myScrollspy" data-offset="1">
         {% for exp in educations %}
-        <div class="card" id="list-item-{{ forloop.counter}}">
+        <div class="card my-3" id="list-item-{{ forloop.counter}}">
             <div class="card-body">
                 <div class="row">
                     <div class="col-sm-3 col-lg-2 mx-auto">
@@ -44,8 +44,8 @@
                     </div>
                     
                 </div>
-                <p class="card-text">
-                    {{ exp.descript|truncatewords:"30"|linebreaks }}<br>
+                <p class="card-text my-2">
+                    {{ exp.descript|truncatewords:"25"|linebreaks }}<br>
                 </p>
             </div>
         </div>

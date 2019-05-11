@@ -23,4 +23,8 @@ class EducationListView(ListView):
     model = models.Education
     template_name = 'mainpage/resume/education.html'
 
+class SkillCategoryListView(ListView):
+    context_object_name = 'skillcategory'
+    model = models.SkillCategory
+    template_name = 'mainpage/resume/skill.html'
 

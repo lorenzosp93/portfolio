@@ -24,7 +24,7 @@
 
     <div class='col-sm-7 col-lg-9' id='scrolled' data-spy="scroll" data-target="#myScrollspy" data-offset="1">
         {% for exp in experiences %}
-        <div class="card" id="list-item-{{ forloop.counter}}">
+        <div class="card my-3" id="list-item-{{ forloop.counter}}">
             <div class="card-body">
                 <div class="row">
                     <div class="col-sm-3 col-lg-2 mx-auto">
@@ -42,12 +42,14 @@
                     </div>
                     
                 </div>
-                <p class="card-text">Description: <br>
-                    {{ exp.descript|truncatewords:"30"|linebreaks }}<br>
+                <p class="card-text my-2"><strong>Description:</strong><br>
+                    {{ exp.descript|truncatewords:"25"|linebreaks }}<br>
                 </p>
-                <p class="card-text">Key achievements <br>
+                {% if exp.key_achievements%}
+                <p class="card-text"><strong>Key achievements:</strong><br>
                     {{ exp.key_achievements|truncatewords:"20"|linebreaks }}
                 </p>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
