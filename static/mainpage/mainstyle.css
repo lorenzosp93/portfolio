@@ -2,6 +2,15 @@ body{
     font-family: Arial;
 }
 
+.ontop{
+    z-index: 2;
+    position: relative !important;
+}
+
+.row{
+    z-index: 1;
+}
+
 .active{
     background-color: rgb(235, 235, 235) !important;
     color: black !important;

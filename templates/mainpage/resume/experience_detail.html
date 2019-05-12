@@ -1,0 +1,51 @@
+{% extends "mainpage/base.html" %}
+{% block body_block %}
+
+<div class="row my-4">
+    <div class="col-sm-2 col-lg-1 mx-auto">
+        <img src="{{ experience.company.logo.url }}" alt="" class='img-fluid'>
+    </div>
+
+    <div class="col-sm-10 col-lg-11">
+        <h5 class="">{{ experience.role }}</h5>
+        <h6 class="mb-2 text-muted">
+                {{ experience.company }} - {{ experience.department }}
+        </h6>
+        <h6 class="mb-2 text-muted">
+            {{ experience.location }}, {{ experience.start_date }} - {% if experience.current %}Present{% else %}{{ experience.end_date}}{% endif %}
+        </h6>
+    </div>
+    
+</div>
+
+<p class="my-2"><strong>Description:</strong><br>
+    {{ experience.descript|linebreaks }}<br>
+</p>
+{% if experience.key_achievements%}
+<p class=""><strong>Key achievements:</strong><br>
+    {{ experience.key_achievements|linebreaks }}
+</p>
+{% endif %}
+
+{% if experience.attachments %}
+    <h4>
+        Attachments:
+    </h4>
+    <div class="row">
+
+    {% for attach in experience.attachments.all %}
+        <div class="col-lg-6 col-sm-4 my-2">
+        <h6 class="font-weight-bold">{{ attach.name }}</h6>
+        <p>
+            {{ attach.descript }}
+        </p>
+        </div>
+        <div class="col-lg-6 col-sm-8 my-2">
+        <embed class="embed-responsive" src= "{{ attach.attachment.url }}">
+        </div>
+    {% endfor %}
+
+    </div>
+{% endif %}
+
+{% endblock %}

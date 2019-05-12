@@ -39,13 +39,16 @@ class Experience(CV_Entry):
     key_achievements = models.TextField(blank=True)
 
 class Attachment(models.Model):
-    during = models.ForeignKey(Experience, on_delete = models.CASCADE)
+    during = models.ForeignKey(Experience, related_name="attachments", on_delete = models.CASCADE)
     name = models.CharField(max_length = 100, primary_key = True)
     descript = models.TextField(blank=True)
     attachment = models.FileField(upload_to = 'attachments/')
 
+    def __str__(self):
+        return self.name
+
 class Project(models.Model):
-    during = models.ForeignKey(Education, on_delete = models.CASCADE)
+    during = models.ForeignKey(Education, related_name="projects", on_delete = models.CASCADE)
     name = models.CharField(max_length = 100, primary_key = True)
     descript = models.TextField(blank=True)
     attachment = models.FileField(upload_to = 'projects/')
