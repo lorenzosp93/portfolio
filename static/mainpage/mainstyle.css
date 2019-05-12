@@ -2,6 +2,15 @@ body{
     font-family: Arial;
 }
 
+.active{
+    background-color: rgb(235, 235, 235) !important;
+    color: black !important;
+}
+
+a{
+    color: gray !important;
+}
+
 #scrolled{
     position: relative;
     overflow-y: scroll;

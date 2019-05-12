@@ -2,13 +2,13 @@
 {% block body_block %}
 
 
-<h4 class="my-3">
+<h4 class="my-3 bg-white">
     Experience
 </h4>
 
-<div class="row">
+<div class="row sticky-top">
 
-    <nav class="col-sm-5 col-lg-3" id="myScrollspy">
+    <nav class="col-sm-5 col-lg-3 my-1" id="myScrollspy">
         <ul class="nav nav-pills flex-column bg-white">
             {% for exp in experiences %}
             <li class="nav-item">
@@ -22,7 +22,7 @@
     </nav>
 
 
-    <div class='col-sm-7 col-lg-9' id='scrolled' data-spy="scroll" data-target="#myScrollspy" data-offset="1">
+    <div class='col-sm-7 col-lg-9 my-1' id='scrolled' data-spy="scroll" data-target="#myScrollspy" data-offset="1">
         {% for exp in experiences %}
         <div class="card my-3" id="list-item-{{ forloop.counter}}">
             <div class="card-body">

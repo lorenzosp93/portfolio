@@ -7,21 +7,21 @@
 
 <div class="row">
     {% for category in skillcategory %}
-        <div class="col-lg-3 col-sm-6"> 
-            <h4>
+        <div class="col-lg-3 col-sm-6 card mx-2 py-2"> 
+            <h5>
                 {{ category.name }}
-            </h4>    
+            </h5>    
             {% for skill in category.skill_set.all %}
                     <p>
                     {% for star in i|rjust:4 %}
                         {% if forloop.counter <= skill.level %}
-                            <i class="fa fa-star"></i>
+                            <i class="fas fa-star"></i>
                         {% else %}
-                            <i class="fa fa-star-o" ></i>
+                            <i class="far fa-star" ></i>
                         {% endif %}
                     {% endfor %}
 
-                    {{ skill.name }}
+                    <a href="{{ skill.url }}">{{ skill.name }}</a> 
                     </p>
             {% endfor %}
         </div>

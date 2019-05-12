@@ -47,26 +47,26 @@
     {% endblock %}
 
     {% block navbar_block %}
-    <nav class="navbar navbar-expand-sm sticky-top navbar-light">
+    <nav class="navbar navbar-expand-sm navbar-light">
         <div class="container">
             
-            <li class="navbar-brand mx-3 align-items-start" href="{% url 'about' %}">
+            <li class="navbar-brand align-items-start" href="{% url 'about' %}">
                 {% load static %}
                 <img src="{% static 'mainpage/CV-image3.jpg' %}" alt="" height='40px' class='rounded mr-4'>
-                About
+                Home
             </li>
 
-            <ul class="nav navbar-nav ">
+            <ul class="nav navbar-nav">
 
                 <li class="nav-item dropdown mx-2">
-                    <a class="nav-linkdropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Resume</a>
-
+                    <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Resume
+                    </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                     <a class="dropdown-item" href="{% url 'resume:experience' %}">Experience</a>
                     <a class="dropdown-item" href="{% url 'resume:education' %}">Education</a>
                     <a class="dropdown-item" href="{% url 'resume:skills' %}">Skills</a>
-                    </div
+                    </div>
                 </li>
                 <li class="nav-item mx-2">
                     <a class="nav-link" href="{% url 'contact' %}">Contact</a>
