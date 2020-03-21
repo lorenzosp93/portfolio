@@ -15,7 +15,7 @@
             {% for edu in educations %}
             <li class="nav-item">
                 <a class="nav-link active" href="#list-item-{{ forloop.counter }}">
-                    {{ edu.role }}
+                    {{ edu.name }}
                 </a>
             </li>
             {% endfor %}
@@ -35,15 +35,15 @@
 
                     <div class="col-xs-8 col-sm-7 col-lg-10">
                         <h5 class="card-title">
-                            <a href="{% url 'resume:education-detail' edu.pk %}">
-                                {{ edu.role }}
+                            <a href="{% url 'resume:education-detail' edu.name %}">
+                                {{ edu.name }}
                             </a>
                         </h5>
                         <h6 class="card-subtitle mb-2 text-muted">
                                 {{ edu.company }}
                         </h6>
                         <h6 class="card-subtitle mb-2 text-muted">
-                            {{ edu.location }}, {{ edu.start_date }} - {% if edu.current %}Present{% else %}{{ edu.end_date}}{% endif %}
+                            {{ edu.location }}, {{ edu.start_date }} - {{ edu.end_date_display }}
                         </h6>
                     </div>
                     

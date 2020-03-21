@@ -13,7 +13,7 @@
             {% for exp in experiences %}
             <li class="nav-item">
                 <a class="nav-link active" href="#list-item-{{ forloop.counter }}">
-                    {{ exp.role }}
+                    {{ exp.name }}
                 </a>
             </li>
             {% endfor %}
@@ -33,15 +33,15 @@
 
                     <div class="col-xs-8 col-sm-9 col-lg-10">
                         <h5 class="card-title">
-                            <a href="{% url 'resume:experience-detail' exp.pk %}">
-                                {{ exp.role }}
+                            <a href="{% url 'resume:experience-detail' exp.name %}">
+                                {{ exp.name }}
                             </a>
                         </h5>
                         <h6 class="card-subtitle mb-2 text-muted">
                                 {{ exp.company }} - {{ exp.department }}
                         </h6>
                         <h6 class="card-subtitle mb-2 text-muted">
-                            {{ exp.location }}, {{ exp.start_date }} - {% if exp.current %}Present{% else %}{{ exp.end_date}}{% endif %}
+                            {{ exp.location }}, {{ exp.start_date }} - {{ exp.end_date_display }}
                         </h6>
                     </div>
                     

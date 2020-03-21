@@ -1,0 +1,17 @@
+{
+    "python.pythonPath": "c:\\Users\\loren\\OneDrive\\Desktop\\Projects\\Django_project\\portfolio\\env\\Scripts\\python.exe",
+    "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        "./mainpage",
+        "-p",
+        "test*.py"
+    ],
+    "python.testing.pytestEnabled": false,
+    "python.testing.nosetestsEnabled": false,
+    "python.testing.unittestEnabled": false,
+    "python.testing.promptToConfigure": false,
+    "python.linting.pylintArgs": [
+     "--load-plugins=pylint_django"
+    ]
+}
