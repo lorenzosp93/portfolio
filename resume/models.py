@@ -1,56 +1,64 @@
+"Define models for the resume app"
 from django.db import models
 from portfolio.models import (
-    TimeStampable, 
-    Localizable, 
-    Describable, 
+    Datable,
+    Localizable,
+    Describable,
     Attachable,
     Named
 )
 
 class Company(Named):
+    "Model for Company, to be referenced by Education and Experience instances"
     logo = models.ImageField(upload_to='logos/', blank=True)
 
     class Meta:
         verbose_name_plural = 'Companies'
 
-class CV_Entry(Named, TimeStampable, Localizable, Describable):
+class CVEntry(Named, Datable, Localizable, Describable):
+    "Abstract model for CV entries"
     company = models.ForeignKey(
-        Company, 
+        Company,
         on_delete=models.CASCADE,
     )
 
     class Meta:
         abstract = True
 
-class Education(CV_Entry):
-    pass
+class Education(CVEntry):
+    "Model for Education entries"
 
-class Experience(CV_Entry):
+class Experience(CVEntry):
+    "Model for Experience entries"
     department = models.CharField(max_length=100, blank=True)
     key_achievements = models.TextField(blank=True)
 
 class Attachment(Named, Describable, Attachable):
+    "Model to define attachments to Experiences"
     during = models.ForeignKey(
-        Experience, 
-        related_name="attachments", 
+        Experience,
+        related_name="attachments",
         on_delete=models.CASCADE,
     )
 
 class Project(Named, Describable, Attachable):
+    "Model to define projects during Education"
     during = models.ForeignKey(
-        Education, 
-        related_name="projects", 
+        Education,
+        related_name="projects",
         on_delete=models.CASCADE,
     )
 
 class SkillCategory(Named, Describable):
+    "Model to capture categories for skills"
     class Meta:
         verbose_name_plural = 'SkillCategories'
 
 class Skill(Named):
+    "Model for individual skills instances"
     category = models.ForeignKey(
-        SkillCategory, 
-        on_delete=models.CASCADE, 
+        SkillCategory,
+        on_delete=models.CASCADE,
     )
     url = models.URLField()
     level = models.IntegerField(choices=(
