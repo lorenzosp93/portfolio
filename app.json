@@ -1,0 +1,22 @@
+{
+    "name": "lorenzosp-portfolio",
+    "description": "Lorenzo Spinelli's portfolio website",
+    "repository": "https://github.com/lorenzosp93/portfolio_web",
+    "keywords": ["python", "django", "portfolio", "blog"],
+    "env": {
+      "DJANGO_SECRET_KEY": {
+        "description": "A randomly generated secret to secure Django installation",
+        "generator": "secret"
+      },
+      "DJANGO_DEBUG": {
+        "description": "Turn off Django's debugging interface for increased security",
+        "value": "False"
+      }
+    },
+    "addons": [
+      "heroku-postgresql"
+    ],
+    "scripts": {
+      "postdeploy": "python manage.py migrate --noinput"
+    }
+  }
