@@ -21,10 +21,11 @@ header{
 
 a{
     color: gray !important;
+}
+.jumbotron{
     mix-blend-mode: difference;
 }
-
-p{
+.carousel-caption{
     mix-blend-mode: difference;
 }
 #scrolled{
