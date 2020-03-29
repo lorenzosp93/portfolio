@@ -32,4 +32,9 @@ urlpatterns = [
         views.SkillCategoryListView.as_view(),
         name='skills'
     ),
+    path(
+        'project/<slug:slug>/',
+        views.ProjectDetailView.as_view(),
+        name='project-detail'
+    )
 ]

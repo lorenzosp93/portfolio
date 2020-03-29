@@ -1,0 +1,34 @@
+{% extends "mainpage/base.html" %}
+{% block body_block %}
+
+
+<div class="jumbotron" style="background-image: url({{ post.picture.url }});>
+
+    <h3 class="display-4">{{ post.created_by }}</h3>
+    <p class="lead">{{ post.name }}</p>
+    <hr class="my-4">
+    <p>
+        {{ post.location }} - {{ post.created_date }} 
+        {% if post.modified_date != post.created_date %}
+            - Last edit by {{ post.modified_by }}, on {{ post.modified_date }}
+        {% endif %} 
+    </p>
+    
+</div>
+
+<p>
+    {{ post.content|linebreaks }}
+</p>
+
+{% if post.attachment.all %}
+<h5>
+    Attachments:
+</h5>
+    {% for attachment in post.attachment.all %}
+        <div>
+            <embed class="embed-responsive embed-responsive-4by3" src="{{ attachment.file.url }}">
+        </div>
+    {% endfor %}
+{% endif %}
+
+{% endblock %}

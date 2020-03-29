@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 
 class Named(models.Model):
     "Abstract model to define names and slug behavior"
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30, unique=True)
     slug = models.SlugField(max_length=50, editable=False)
 
     def save(self, **kwargs): # pylint: disable=W0221
@@ -69,11 +69,11 @@ class Datable(models.Model):
                 raise ValidationError(
                     f"End date: {self.end_date} cannot be before start date: {self.start_date}"
                 )
-            elif self.end_date > timezone.now():
+            elif self.end_date > timezone.now().date():
                 raise ValidationError(
                     f"End date: {self.end_date} cannot be in the future"
                 )
-        elif self.start_date > timezone.now():
+        elif self.start_date > timezone.now().date():
             raise ValidationError(
                 f"Start date: {self.start_date} cannot be in the future"
             )
@@ -107,16 +107,17 @@ class Attachment(Named):
     "Concrete model to define attachments"
     file = models.FileField(
         upload_to='attachments/',
-        verbose_name="File"
+        verbose_name="File",
     )
 
 class Attachable(models.Model):
     "Abstract model to allow attachments"
     attachment = models.ManyToManyField(
         Attachment,
-        verbose_name="Attachment",
+        verbose_name="attachment",
         related_name="%(app_label)s_%(class)s_related",
         related_query_name="%(app_label)s_%(class)ss",
+        blank=True,
     )
 
     class Meta:
@@ -139,4 +140,14 @@ class Authorable(models.Model):
         on_delete=models.CASCADE,
         related_name="%(app_label)s_%(class)s_related_modifier",
         related_query_name="%(app_label)s_%(class)s_modified",
+        editable=False,
     )
+
+class Pictured(models.Model):
+    picture = models.ImageField(
+        verbose_name='Header picture',
+        upload_to="pictures/"
+    )
+
+    class Meta:
+        abstract = True

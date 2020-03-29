@@ -19,30 +19,53 @@
 </div>
 
 <p class="my-2"><strong>Description:</strong><br>
-    {{ education.descript|linebreaks }}<br>
+    {{ education.description|linebreaks }}<br>
 </p>
 
 
-{% if education.projects %}
-    <h4>
+{% if education.project %}
+    <h5 class="b">
         Projects:
-    </h4>
-    <div class="row">
+    </h5>
 
-    {% for project in education.projects.all %}
-        <div class="col-lg-6 col-sm-4 my-2">
-        <h6 class="font-weight-bold">{{ project.name }}</h6>
-        <p>
-            {{ project.descript }}
-        </p>
+    <div id="project-carousel" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+        {% for proj in education.project.all %}
+            <li data-target="#project-carousel" data-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}"></li>
+        {% endfor %}
+        </ol>
+
+        <div class="carousel-inner">
+        {% for proj in education.project.all %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <img class="d-block w-100" src="{{ proj.picture.url }}" alt="{{ proj.name }} picture">
+                <div class="carousel-caption d-none d-md-block">
+                    <a href="{% url 'resume:project-detail' proj.slug %}"><h5>{{ proj.name }}</h5></a>
+                    <p>{{ proj.description }}</p>
+                </div>
+            </div>
+        {% endfor %}
         </div>
-        
-        <div class="col-lg-6 col-sm-8 my-2">
-        <embed class="embed-responsive" src= "{{ project.attachment.url }}">
+        <a class="carousel-control-prev" href="#project-carousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#project-carousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+{% endif %}
+
+{% if education.attachment.all %}
+<h5>
+    Attachments:
+</h5>
+    {% for attachment in education.attachment.all %}
+        <div>
+            <embed class="embed-responsive embed-responsive-4by3" src="{{ attachment.file.url }}">
         </div>
     {% endfor %}
-
-    </div>
 {% endif %}
 
 {% endblock %}

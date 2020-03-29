@@ -6,7 +6,8 @@ from .base_models import (
     Localizable,
     Attachable,
     Described,
-    Named
+    Named,
+    Pictured,
 )
 
 class Company(Named):
@@ -16,19 +17,25 @@ class Company(Named):
     class Meta:
         verbose_name_plural = 'Companies'
 
-class Project(Named, Described, Attachable, TimeStampable):
-    "Model to define projects during Education"
+class Project(Named, Described, Attachable, TimeStampable, Pictured):
+    "Model to define projects"
 
 class CVEntry(Named, Datable, TimeStampable,
               Localizable, Described, Attachable):
     "Abstract model for CV entries"
 
-    company = models.ManyToManyField(
+    company = models.ForeignKey(
         Company,
+        related_name='%(class)s_related',
+        related_query_name='%(class)ss',
+        on_delete=models.CASCADE,
     )
 
     project = models.ManyToManyField(
         Project,
+        related_name='%(class)s_related',
+        related_query_name='%(class)ss',
+        blank=True,
     )
 
     class Meta:
@@ -41,7 +48,6 @@ class Experience(CVEntry):
     "Model for Experience entries"
     department = models.CharField(max_length=100, blank=True)
     key_achievements = models.TextField(blank=True)
-
 
 class SkillCategory(Named, Described):
     "Model to capture categories for skills"

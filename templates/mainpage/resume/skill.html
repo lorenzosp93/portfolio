@@ -6,15 +6,18 @@
 </h3>
 
 <div class="row">
-    {% for category in skillcategory %}
+    {% for category in skillcategories %}
         <div class="col-lg-3 col-sm-6 card mx-2 py-2"> 
             <h5>
                 {{ category.name }}
-            </h5>    
+            </h5>
+            <p>
+                {{ category.description }}
+            </p>
             {% for skill in category.skill_set.all %}
                     <p>
-                    {% for star in i|rjust:4 %}
-                        {% if forloop.counter <= skill.level %}
+                    {% for star in i|rjust:5 %}
+                        {% if forloop.counter0 <= skill.level %}
                             <i class="fas fa-star"></i>
                         {% else %}
                             <i class="far fa-star" ></i>

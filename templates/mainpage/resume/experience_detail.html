@@ -19,7 +19,7 @@
 </div>
 
 <p class="my-2"><strong>Description:</strong><br>
-    {{ experience.descript|linebreaks }}<br>
+    {{ experience.description|linebreaks }}<br>
 </p>
 {% if experience.key_achievements%}
 <p class=""><strong>Key achievements:</strong><br>
@@ -27,25 +27,49 @@
 </p>
 {% endif %}
 
-{% if experience.attachments %}
-    <h4>
-        Attachments:
-    </h4>
-    <div class="row">
+{% if experience.project.all %}
+    <h5>
+        Projects:
+    </h5>
 
-    {% for attach in experience.attachments.all %}
-        <div class="col-lg-6 col-sm-4 my-2">
-        <h6 class="font-weight-bold">{{ attach.name }}</h6>
-        <p>
-            {{ attach.descript }}
-        </p>
+    <div id="project-carousel" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+        {% for proj in experience.project.all %}
+            <li data-target="#project-carousel" data-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}"></li>
+        {% endfor %}
+        </ol>
+
+        <div class="carousel-inner">
+        {% for proj in experience.project.all %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}" href="{% url 'resume:project-detail' proj.slug %}">
+                <img class="d-block w-100" src="{{ proj.picture.url }}" alt="{{ proj.name }} picture">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>{{ proj.name }}</h5>
+                    <p>{{ proj.description }}</p>
+                </div>
+            </div>
+        {% endfor %}
         </div>
-        <div class="col-lg-6 col-sm-8 my-2">
-        <embed class="embed-responsive" src= "{{ attach.attachment.url }}">
+        <a class="carousel-control-prev" href="#project-carousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#project-carousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+{% endif %}
+
+{% if experience.attachment.all %}
+<h5>
+    Attachments:
+</h5>
+    {% for attachment in experience.attachment.all %}
+        <div>
+            <embed class="embed-responsive embed-responsive-4by3" src="{{ attachment.file.url }}">
         </div>
     {% endfor %}
-
-    </div>
 {% endif %}
 
 {% endblock %}

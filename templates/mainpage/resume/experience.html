@@ -33,7 +33,7 @@
 
                     <div class="col-xs-8 col-sm-9 col-lg-10">
                         <h5 class="card-title">
-                            <a href="{% url 'resume:experience-detail' exp.name %}">
+                            <a href="{% url 'resume:experience-detail' exp.slug %}">
                                 {{ exp.name }}
                             </a>
                         </h5>
@@ -47,7 +47,7 @@
                     
                 </div>
                 <p class="card-text my-2"><strong>Description:</strong><br>
-                    {{ exp.descript|truncatewords:"25"|linebreaks }}<br>
+                    {{ exp.description|truncatewords:"25"|linebreaks }}<br>
                 </p>
                 {% if exp.key_achievements%}
                 <p class="card-text"><strong>Key achievements:</strong><br>

@@ -18,7 +18,6 @@ class ExperienceDetailView(DetailView):
     "Detail view for Experience objects"
     model = models.Experience
     template_name = 'mainpage/resume/experience_detail.html'
-    slug_field = 'role'
 
 class EducationListView(ListView):
     "List view for Education objects"
@@ -30,10 +29,14 @@ class EducationDetailView(DetailView):
     "Detail view for Eductaion objects"
     model = models.Education
     template_name = 'mainpage/resume/education_detail.html'
-    slug_field = 'role'
 
 class SkillCategoryListView(ListView):
     "List view for skills within skill category"
-    context_object_name = 'skillcategory'
+    context_object_name = 'skillcategories'
     model = models.SkillCategory
     template_name = 'mainpage/resume/skill.html'
+
+class ProjectDetailView(DetailView):
+    "Detail view for Project objects"
+    model = models.Project
+    template_name = 'mainpage/resume/project_detail.html'

@@ -4,14 +4,14 @@ from resume.base_models import (
     TimeStampable,
     Localizable,
     Attachable,
-    Described,
     Named,
     Authorable,
+    Pictured,
 )
 
 # Create your models here.
 class Post(
-        TimeStampable, Named, Described,
+        TimeStampable, Named, Pictured,
         Localizable, Attachable, Authorable
     ):
     "Define posts model"

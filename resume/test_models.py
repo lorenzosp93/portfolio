@@ -14,7 +14,7 @@ class TestModels(TestCase):
         )
         self.exp = models.Experience.objects.create(
             name='Test Experience 4!',
-            start_date=timezone.datetime(2019, 1, 1),
+            start_date=timezone.datetime(2019, 1, 1).date(),
             company=self.company,
             current=True,
         )
@@ -28,21 +28,21 @@ class TestModels(TestCase):
         with self.assertRaises(ValidationError):
             models.Experience.objects.create(
                 name='Test Experience 1',
-                start_date=timezone.datetime(2020, 2, 1),
-                end_date=timezone.datetime(2020, 1, 1),
+                start_date=timezone.datetime(2020, 2, 1).date(),
+                end_date=timezone.datetime(2020, 1, 1).date(),
                 company=self.company
             )
         with self.assertRaises(ValidationError):
             models.Experience.objects.create(
                 name='Test Experience 2',
-                start_date=timezone.datetime(2020, 2, 1),
-                end_date=timezone.now()+timezone.timedelta(1),
+                start_date=timezone.datetime(2020, 2, 1).date(),
+                end_date=timezone.now().date()+timezone.timedelta(1),
                 company=self.company
             )
         with self.assertRaises(ValidationError):
             models.Experience.objects.create(
                 name='Test Experience 3',
-                start_date=timezone.now()+timezone.timedelta(1),
+                start_date=timezone.now().date()+timezone.timedelta(1),
                 company=self.company
             )
 
@@ -50,12 +50,12 @@ class TestModels(TestCase):
         "Test the modified_date functionality on save"
         exp = models.Experience.objects.create(
             name='Test Experience',
-            start_date=timezone.datetime(2020, 1, 1),
+            start_date=timezone.datetime(2020, 1, 1).date(),
             company=self.company,
-            modified_date=timezone.now()-timezone.timedelta(1),
+            modified_date=timezone.now().date()-timezone.timedelta(1),
         )
         exp.save()
-        self.assertEqual(exp.modified_date.date(), timezone.now().date())
+        self.assertEqual(exp.modified_date, timezone.now().date())
 
     def test_end_date_display(self):
         "Test the property to display the end date correctly"
