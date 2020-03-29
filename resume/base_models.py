@@ -144,6 +144,7 @@ class Authorable(models.Model):
     )
 
 class Pictured(models.Model):
+    "Abstract class to capture a picture"
     picture = models.ImageField(
         verbose_name='Header picture',
         upload_to="pictures/"
