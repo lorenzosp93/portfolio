@@ -10,10 +10,9 @@ from .base_models import (
     Pictured,
 )
 
-class Company(Named):
+class Company(Named, Pictured):
     "Model for Company, to be referenced by Education and Experience instances"
-    logo = models.ImageField(upload_to='logos/', blank=True)
-
+    
     class Meta:
         verbose_name_plural = 'Companies'
 

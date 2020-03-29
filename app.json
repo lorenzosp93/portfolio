@@ -15,5 +15,8 @@
     },
     "addons": [
       "heroku-postgresql"
-    ]
+    ],
+    "scripts": {
+      "postdeploy": "python manage.py migrate --noinput"
+    }
   }
