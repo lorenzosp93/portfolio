@@ -143,7 +143,7 @@ class Authorable(models.Model):
         editable=False,
     )
 
-class Pictured(models.Model):
+class HasPicture(models.Model):
     "Abstract class to capture a picture"
     picture = models.ImageField(
         verbose_name='Header picture',
@@ -152,3 +152,10 @@ class Pictured(models.Model):
 
     class Meta:
         abstract = True
+
+class HasContent(models.Model):
+    "Abstract class to define content"
+    content = models.TextField()
+
+    class Meta:
+        abstract=True

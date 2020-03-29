@@ -7,16 +7,20 @@ from .base_models import (
     Attachable,
     Described,
     Named,
-    Pictured,
+    HasPicture,
+    HasContent,
 )
 
-class Company(Named, Pictured):
+class Company(Named, HasPicture):
     "Model for Company, to be referenced by Education and Experience instances"
 
     class Meta:
         verbose_name_plural = 'Companies'
 
-class Project(Named, Described, Attachable, TimeStampable, Pictured):
+class Project(
+        Named, Described, Attachable, 
+        TimeStampable, HasPicture, HasContent,
+    ):
     "Model to define projects"
 
 class CVEntry(Named, Datable, TimeStampable,

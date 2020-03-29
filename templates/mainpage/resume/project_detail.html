@@ -14,7 +14,7 @@
     Attachments:
 </h5>
     {% for attachment in project.attachment.all %}
-        <div>
+        <div class="row">
             <embed class="embed-responsive embed-responsive-4by3" src="{{ attachment.file.url }}">
         </div>
     {% endfor %}

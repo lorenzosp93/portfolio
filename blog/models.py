@@ -6,16 +6,16 @@ from resume.base_models import (
     Attachable,
     Named,
     Authorable,
-    Pictured,
+    HasPicture,
+    HasContent,
 )
 
 # Create your models here.
 class Post(
-        TimeStampable, Named, Pictured,
+        TimeStampable, Named, HasPicture, HasContent,
         Localizable, Attachable, Authorable
     ):
     "Define posts model"
-    content = models.TextField()
 
     class Meta:
         ordering = ['-created_date']
