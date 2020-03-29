@@ -12,7 +12,7 @@ from .base_models import (
 
 class Company(Named, Pictured):
     "Model for Company, to be referenced by Education and Experience instances"
-    
+
     class Meta:
         verbose_name_plural = 'Companies'
 
