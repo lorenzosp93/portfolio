@@ -1,6 +1,6 @@
 "Define models for the resume app"
 from django.db import models
-from portfolio.models import (
+from .base_models import (
     TimeStampable,
     Datable,
     Localizable,

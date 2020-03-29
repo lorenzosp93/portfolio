@@ -1,5 +1,6 @@
+"Define modules for the blog app"
 from django.db import models
-from portfolio.models import (
+from resume.base_models import (
     TimeStampable,
     Localizable,
     Attachable,
