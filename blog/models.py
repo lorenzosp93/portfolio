@@ -8,12 +8,11 @@ from portfolio.models import (
     Authorable,
 )
 
-
 # Create your models here.
 class Post(
-    TimeStampable, Named, Described,
-    Localizable, Attachable, Authorable
-):
+        TimeStampable, Named, Described,
+        Localizable, Attachable, Authorable
+    ):
     "Define posts model"
     content = models.TextField()
 
