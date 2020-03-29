@@ -41,10 +41,10 @@
 
         <div class="carousel-inner">
         {% for proj in experience.project.all %}
-            <div class="carousel-item {% if forloop.first %}active{% endif %}" href="{% url 'resume:project-detail' proj.slug %}">
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
                 <img class="d-block w-100" src="{{ proj.picture.url }}" alt="{{ proj.name }} picture">
                 <div class="carousel-caption d-none d-md-block">
-                    <h5>{{ proj.name }}</h5>
+                    <a href="{% url 'resume:project-detail' proj.slug %}"><h5>{{ proj.name }}</h5></a>
                     <p>{{ proj.description }}</p>
                 </div>
             </div>
