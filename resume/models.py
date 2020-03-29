@@ -1,10 +1,11 @@
 "Define models for the resume app"
 from django.db import models
 from portfolio.models import (
+    TimeStampable,
     Datable,
     Localizable,
-    Describable,
     Attachable,
+    Described,
     Named
 )
 
@@ -15,11 +16,19 @@ class Company(Named):
     class Meta:
         verbose_name_plural = 'Companies'
 
-class CVEntry(Named, Datable, Localizable, Describable):
+class Project(Named, Described, Attachable, TimeStampable):
+    "Model to define projects during Education"
+
+class CVEntry(Named, Datable, TimeStampable,
+              Localizable, Described, Attachable):
     "Abstract model for CV entries"
-    company = models.ForeignKey(
+
+    company = models.ManyToManyField(
         Company,
-        on_delete=models.CASCADE,
+    )
+
+    project = models.ManyToManyField(
+        Project,
     )
 
     class Meta:
@@ -33,28 +42,11 @@ class Experience(CVEntry):
     department = models.CharField(max_length=100, blank=True)
     key_achievements = models.TextField(blank=True)
 
-class Attachment(Named, Describable, Attachable):
-    "Model to define attachments to Experiences"
-    during = models.ForeignKey(
-        Experience,
-        related_name="attachments",
-        on_delete=models.CASCADE,
-    )
 
-class Project(Named, Describable, Attachable):
-    "Model to define projects during Education"
-    during = models.ForeignKey(
-        Education,
-        related_name="projects",
-        on_delete=models.CASCADE,
-    )
-
-class SkillCategory(Named, Describable):
+class SkillCategory(Named, Described):
     "Model to capture categories for skills"
-    class Meta:
-        verbose_name_plural = 'SkillCategories'
 
-class Skill(Named):
+class Skill(Named, TimeStampable):
     "Model for individual skills instances"
     category = models.ForeignKey(
         SkillCategory,

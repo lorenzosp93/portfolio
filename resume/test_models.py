@@ -46,6 +46,17 @@ class TestModels(TestCase):
                 company=self.company
             )
 
+    def test_timestamps(self):
+        "Test the modified_date functionality on save"
+        exp = models.Experience.objects.create(
+            name='Test Experience',
+            start_date=timezone.datetime(2020, 1, 1),
+            company=self.company,
+            modified_date=timezone.now()-timezone.timedelta(1),
+        )
+        exp.save()
+        self.assertEqual(exp.modified_date.date(), timezone.now().date())
+
     def test_end_date_display(self):
         "Test the property to display the end date correctly"
         exp = self.exp

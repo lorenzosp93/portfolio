@@ -3,23 +3,64 @@ from django.db import models
 from django.utils.text import slugify
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
 
+class Named(models.Model):
+    "Abstract model to define names and slug behavior"
+    name = models.CharField(max_length=30)
+    slug = models.SlugField(max_length=50, editable=False)
+
+    def save(self, **kwargs): # pylint: disable=W0221
+        "Override save method to create slug from name"
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(**kwargs)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        abstract = True
+
+class TimeStampable(models.Model):
+    "Abstract model to define timestamps for the entries"
+    created_date = models.DateField(
+        verbose_name="Created date",
+        auto_now_add=True,
+        editable=False,
+    )
+    modified_date = models.DateField(
+        verbose_name="Last modified date",
+        auto_now=True,
+        editable=False,
+    )
+
+    class Meta:
+        abstract = True
 
 class Datable(models.Model):
     "Abstract model to define dates for the entries"
-    start_date = models.DateField()
-    end_date = models.DateField(blank=True, null=True)
-    current = models.BooleanField(default=False)
+    start_date = models.DateField(
+        verbose_name="Start date"
+    )
+    end_date = models.DateField(
+        verbose_name="End date",
+        blank=True,
+        null=True,
+    )
+    current = models.BooleanField(
+        verbose_name="Is current",
+        default=False,
+    )
 
     @property
     def end_date_display(self):
         "Display end date"
         if self.current:
             return "Present"
-        elif self.end_date:
+        if self.end_date:
             return self.end_date
-        else:
-            return "No end date"
+        return "No end date"
 
     def save(self, **kwargs): # pylint: disable=W0221
         "Override save method to validate end date"
@@ -44,42 +85,58 @@ class Datable(models.Model):
 
 class Localizable(models.Model):
     "Abstract model to define locations"
-    location = models.CharField(max_length=50)
-
-    class Meta:
-        abstract = True
-
-class Describable(models.Model):
-    "Abstract model to define descriptions"
-    descript = models.TextField(blank=True)
-
-    class Meta:
-        abstract = True
-
-class Attachable(models.Model):
-    "Abstract model to define attachments"
-    attachment = models.FileField(
-        upload_to='attachments/',
-        blank=True,
-        null=True
+    location = models.CharField(
+        max_length=50,
     )
 
     class Meta:
         abstract = True
 
-class Named(models.Model):
-    "Abstract model to define names and slug behavior"
-    name = models.CharField(max_length=30)
-    slug = models.SlugField(max_length=50, editable=False)
-
-    def save(self, **kwargs): # pylint: disable=W0221
-        "Override save method to create slug from name"
-        if not self.slug:
-            self.slug = slugify(self.name)
-        super().save(**kwargs)
-
-    def __str__(self):
-        return self.name
+class Described(models.Model):
+    "Abstract model to define descriptions"
+    description = models.TextField(
+        blank=True,
+        null=True,
+    )
 
     class Meta:
         abstract = True
+
+
+class Attachment(Named):
+    "Concrete model to define attachments"
+    file = models.FileField(
+        upload_to='attachments/',
+        verbose_name="File"
+    )
+
+class Attachable(models.Model):
+    "Abstract model to allow attachments"
+    attachment = models.ManyToManyField(
+        Attachment,
+        verbose_name="Attachment",
+        related_name="%(app_label)s_%(class)s_related",
+        related_query_name="%(app_label)s_%(class)ss",
+    )
+
+    class Meta:
+        abstract = True
+
+class Authorable(models.Model):
+    "Abstract model to describe the author"
+    active = models.BooleanField(default=True)
+    created_by = models.ForeignKey(
+        User,
+        verbose_name="Created by",
+        on_delete=models.CASCADE,
+        related_name="%(app_label)s_%(class)s_related_creator",
+        related_query_name="%(app_label)s_%(class)s_created",
+        editable=False,
+    )
+    modified_by = models.ForeignKey(
+        User,
+        verbose_name="Last modified by",
+        on_delete=models.CASCADE,
+        related_name="%(app_label)s_%(class)s_related_modifier",
+        related_query_name="%(app_label)s_%(class)s_modified",
+    )
