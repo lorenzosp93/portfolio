@@ -13,9 +13,12 @@ from resume.base_models import (
 # Create your models here.
 class Post(
         TimeStampable, Named, HasPicture, HasContent,
-        Localizable, Attachable, Authorable
+        Localizable, Attachable, Authorable,
     ):
     "Define posts model"
 
-    class Meta:
-        ordering = ['-created_date']
+
+class Comment(
+        TimeStampable, Named, HasContent, Authorable,
+    ):
+    "Define comment model"

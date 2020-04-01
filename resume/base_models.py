@@ -37,6 +37,7 @@ class TimeStampable(models.Model):
 
     class Meta:
         abstract = True
+        ordering = ['-created_date']
 
 class Datable(models.Model):
     "Abstract model to define dates for the entries"
@@ -158,4 +159,4 @@ class HasContent(models.Model):
     content = models.TextField()
 
     class Meta:
-        abstract=True
+        abstract = True

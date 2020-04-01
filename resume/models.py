@@ -18,7 +18,7 @@ class Company(Named, HasPicture):
         verbose_name_plural = 'Companies'
 
 class Project(
-        Named, Described, Attachable, 
+        Named, Described, Attachable,
         TimeStampable, HasPicture, HasContent,
     ):
     "Model to define projects"

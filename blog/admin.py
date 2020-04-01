@@ -1,8 +1,9 @@
 "Define blog models within admin interface"
 from django.contrib import admin
-from .models import Post
+from .models import Post, Comment
 
 class AuditAdmin(admin.ModelAdmin):
+    "Model to audit the created_by and modified_by users"
     def save_model(self, request, instance, form, change):
         user = request.user 
         if not instance:
@@ -14,3 +15,4 @@ class AuditAdmin(admin.ModelAdmin):
 
 # Register your models here.
 admin.site.register(Post, AuditAdmin)
+admin.site.register(Comment, AuditAdmin)

@@ -73,3 +73,4 @@ class TestModels(TestCase):
     def test_name_to_str(self):
         "Test the __str__ method of Named models"
         self.assertEqual(str(self.exp), 'Test Experience 4!')
+
