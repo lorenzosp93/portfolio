@@ -20,16 +20,17 @@ SECRET_KEY = os.environ.get(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1', #local debugging
-    'cryptic-sierra-96434.herokuapp.com', # staging
-    'lorenzosp-porfolio.herokuapp.com', # production
-    '.lorenzosp.com' # redirect
-]
-
 if DEBUG:
-    ALLOWED_HOSTS += '*'
+    ALLOWED_HOSTS = ['*']
+else:
+    ALLOWED_HOSTS = [
+        'localhost',
+        '127.0.0.1', #local debugging
+        'lorenzosp-portfolio-stage.herokuapp.com', # staging
+        'lorenzosp-porfolio.herokuapp.com', # production
+        '.lorenzosp.com' # redirect
+    ]
+
 
 # Application definition
 
@@ -94,8 +95,7 @@ DATABASES = {
 
 # Heroku: Update database configuration from $DATABASE_URL.
 import dj_database_url
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
+DATABASES['default'].update(dj_database_url.config(conn_max_age=500))
 
 
 # Password validation
