@@ -43,6 +43,7 @@ class CVEntry(Named, Datable, TimeStampable,
 
     class Meta:
         abstract = True
+        ordering = ['-start_date']
 
 class Education(CVEntry):
     "Model for Education entries"

@@ -22,7 +22,7 @@ header{
 a{
     color: gray !important;
 }
-.jumbotron{
+.jumbotron p{
     mix-blend-mode: difference;
 }
 .carousel-caption{
