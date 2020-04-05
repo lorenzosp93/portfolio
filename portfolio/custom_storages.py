@@ -4,9 +4,9 @@ from storages.backends.s3boto3 import S3Boto3Storage
 
 class StaticStorage(S3Boto3Storage):
     "Define a Static storage class to save static files in the /static/ directory"
-    location = settings.STATICFILES_LOCATION
+    location = settings.STATIC_LOCATION
 
 class MediaStorage(S3Boto3Storage):
     "Define a Media storage class to save media files in the /media/ directory"
-    location = settings.MEDIAFILES_LOCATION
+    location = settings.MEDIA_LOCATION
     file_overwrite = False
