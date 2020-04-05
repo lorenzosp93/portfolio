@@ -5,7 +5,7 @@ from .models import Post, Comment
 class AuditAdmin(admin.ModelAdmin):
     "Model to audit the created_by and modified_by users"
     def save_model(self, request, instance, form, change):
-        user = request.user 
+        user = request.user
         if not instance:
             instance = form.save(commit=False)
         if not change or not instance.created_by:
