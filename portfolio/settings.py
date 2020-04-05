@@ -153,13 +153,15 @@ if USE_S3:
     STATICFILES_LOCATION = 'static'
     STATICFILES_STORAGE = 'custom_storages.StaticStorage'
     # Media user-uploaded files
+    MEDIA_URL = STATIC_URL
     MEDIAFILES_LOCATION = 'media'
     DEFAULT_FILE_STORAGE = 'custom_storages.MediaStorage'
 
 else:
     STATIC_URL = '/static/'
     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 
 
-MEDIA_URL = '/static/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
+
