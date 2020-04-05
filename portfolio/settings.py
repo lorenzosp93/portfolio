@@ -31,7 +31,6 @@ else:
         '.lorenzosp.com' # redirect
     ]
 
-
 # Application definition
 
 INSTALLED_APPS = [

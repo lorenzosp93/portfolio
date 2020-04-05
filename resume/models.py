@@ -54,6 +54,8 @@ class Experience(CVEntry):
 
 class SkillCategory(Named, Described):
     "Model to capture categories for skills"
+    class Meta:
+        verbose_name_plural = 'Skill Categories'
 
 class Skill(Named, TimeStampable):
     "Model for individual skills instances"
@@ -61,7 +63,7 @@ class Skill(Named, TimeStampable):
         SkillCategory,
         on_delete=models.CASCADE,
     )
-    url = models.URLField()
+    url = models.URLField(blank=True, null=True,)
     level = models.IntegerField(choices=(
         (1, 'basic'),
         (2, 'advanced'),
