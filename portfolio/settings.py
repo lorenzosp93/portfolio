@@ -21,12 +21,15 @@ SECRET_KEY = os.environ.get(
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
 ALLOWED_HOSTS = [
+    'localhost',
     '127.0.0.1', #local debugging
     'cryptic-sierra-96434.herokuapp.com', # staging
     'lorenzosp-porfolio.herokuapp.com', # production
     '.lorenzosp.com' # redirect
 ]
 
+if DEBUG:
+    ALLOWED_HOSTS += '*'
 
 # Application definition
 
