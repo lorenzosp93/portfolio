@@ -41,6 +41,11 @@ INSTALLED_APPS = [
     'blog',
     'portfolio',
     'storages',
+    'health_check',                             # required
+    'health_check.db',                          # stock Django health checkers
+    'health_check.cache',
+    'health_check.storage',
+    'health_check.contrib.s3boto_storage',      # requires boto and S3BotoStorage backend
 ]
 
 MIDDLEWARE = [

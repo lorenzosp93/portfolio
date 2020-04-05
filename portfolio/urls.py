@@ -25,6 +25,7 @@ urlpatterns = [
     path('', views.About.as_view(), name='about'),
     path('contact/', views.Contact.as_view(), name='contact'),
     path('admin/', admin.site.urls),
+    path('health/', include('health_check.urls'))
 ]
 
 if settings.DEBUG:
