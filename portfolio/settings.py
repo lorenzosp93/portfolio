@@ -23,7 +23,8 @@ DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 ALLOWED_HOSTS = [
     '127.0.0.1', #local debugging
     'cryptic-sierra-96434.herokuapp.com', # staging
-    'lorenzosp-porfolio.herokuapp.com' # production
+    'lorenzosp-porfolio.herokuapp.com', # production
+    '.lorenzosp.com' # redirect
 ]
 
 
