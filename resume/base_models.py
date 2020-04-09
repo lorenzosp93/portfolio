@@ -24,12 +24,12 @@ class Named(models.Model):
 
 class TimeStampable(models.Model):
     "Abstract model to define timestamps for the entries"
-    created_date = models.DateField(
+    created_at = models.DateTimeField(
         verbose_name="Created date",
         auto_now_add=True,
         editable=False,
     )
-    modified_date = models.DateField(
+    modified_at = models.DateTimeField(
         verbose_name="Last modified date",
         auto_now=True,
         editable=False,
@@ -37,7 +37,7 @@ class TimeStampable(models.Model):
 
     class Meta:
         abstract = True
-        ordering = ['-created_date']
+        ordering = ['-created_at']
 
 class Datable(models.Model):
     "Abstract model to define dates for the entries"
