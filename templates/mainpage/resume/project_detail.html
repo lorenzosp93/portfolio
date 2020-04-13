@@ -4,10 +4,14 @@
 
 <div class="jumbotron" style="background-image: url({{ project.picture.url }});>
 
-    <h3 class="display-4">{{ project.name }}</h3>
-    <p class="lead">{{ project.description }}</p>
+    <h3 class="display-4 bg-col-vis blend">{{ project.name }}</h3>
+    <p class="lead bg-col-vis blend">{{ project.description }}</p>
     
 </div>
+
+<p>
+{{ project.content|safe|linebreaks }}
+</p>
 
 {% if project.attachment.all %}
 <h5>
