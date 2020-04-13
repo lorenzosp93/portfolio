@@ -2,22 +2,23 @@
 {% block body_block %}
 
 
-<div class="jumbotron" style="background-image: url({{ post.picture.url }});>
+<div class="jumbotron" style="background-image: url({{ post.picture.url }});">
 
-    <h3 class="display-4">{{ post.created_by }}</h3>
-    <p class="lead">{{ post.name }}</p>
+    <h3 class="display-6 bg-col-vis">{{ post.created_by }}</h3>
+    <p class="lead bg-col-vis">{{ post.name }}</p>
     <hr class="my-4">
-    <p>
-        {{ post.location }} - {{ post.created_date }} 
-        {% if post.modified_date != post.created_date %}
-            - Last edit by {{ post.modified_by }}, on {{ post.modified_date }}
+    <p class="bg-col-vis">
+        {{ post.location }} - {{ post.created_at.date }} <br>
+        {% if post.modified_at.date != post.created_at.date %}
+            - Last edit by {{ post.modified_by }}, on {{ post.modified_at.date }}
         {% endif %} 
     </p>
     
 </div>
 
 <p>
-    {{ post.content|linebreaks }}
+    {% load static %}
+    {{ post.content|safe|linebreaks }}
 </p>
 
 {% if post.attachment.all %}

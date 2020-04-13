@@ -19,18 +19,18 @@
 </div>
 
 <p class="my-2"><strong>Description:</strong><br>
-    {{ experience.description|linebreaks }}<br>
+    {{ experience.description|safe|linebreaks }}<br>
 </p>
 {% if experience.key_achievements%}
 <p class=""><strong>Key achievements:</strong><br>
-    {{ experience.key_achievements|linebreaks }}
+    {{ experience.key_achievements|safe|linebreaks }}
 </p>
 {% endif %}
 
 {% if experience.project.all %}
-    <h5>
-        Projects:
-    </h5>
+    <p>
+        <strong>Projects:</strong>
+    </p>
 
     <div id="project-carousel" class="carousel slide" data-ride="carousel">
         <ol class="carousel-indicators">
@@ -44,8 +44,8 @@
             <div class="carousel-item {% if forloop.first %}active{% endif %}">
                 <img class="d-block w-100" src="{{ proj.picture.url }}" alt="{{ proj.name }} picture">
                 <div class="carousel-caption d-none d-md-block">
-                    <a href="{% url 'resume:project-detail' proj.slug %}"><h5>{{ proj.name }}</h5></a>
-                    <p>{{ proj.description }}</p>
+                    <a href="{% url 'resume:project-detail' proj.slug %}"><h5 class="blend">{{ proj.name }}</h5></a>
+                    <p class="blend">{{ proj.description }}</p>
                 </div>
             </div>
         {% endfor %}
@@ -62,9 +62,9 @@
 {% endif %}
 
 {% if experience.attachment.all %}
-<h5>
-    Attachments:
-</h5>
+    <p>
+        <strong>Attachments:</strong>
+    </p>
     {% for attachment in experience.attachment.all %}
         <div>
             <embed class="embed-responsive embed-responsive-4by3" src="{{ attachment.file.url }}">

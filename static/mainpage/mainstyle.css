@@ -20,14 +20,13 @@ header{
 }
 
 a{
-    color: gray !important;
+    color: gray;
 }
-.jumbotron p{
-    mix-blend-mode: difference;
+
+.blend {
+    mix-blend-mode: exclusion;
 }
-.carousel-caption{
-    mix-blend-mode: difference;
-}
+
 #scrolled{
     position: relative;
     overflow-y: scroll;
