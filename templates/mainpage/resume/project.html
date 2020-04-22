@@ -2,26 +2,25 @@
 {% block body_block %}
 
 
-<div class="jumbotron">
+<img class="img-fluid" src="{{project.picture.url}}">
 
+<div class="jumbotron">
     <h4 class="display-4 bg-col-vis ">{{ project.name }}</h4>
     <p class="lead bg-col-vis ">{{ project.description }}</p>
-    
 </div>
-
 <p>
-{{ project.content|safe|linebreaks }}
+    {{ project.content|safe|linebreaks }}
 </p>
 
 {% if project.attachment.all %}
 <h5>
     Attachments:
 </h5>
-    {% for attachment in project.attachment.all %}
-        <div class="row my-3">
-            <embed class="embed-responsive embed-responsive-4by3" src="{{ attachment.file.url }}">
-        </div>
-    {% endfor %}
+{% for attachment in project.attachment.all %}
+<div class="row my-3">
+    <embed class="embed-responsive embed-responsive-4by3" src="{{ attachment.file.url }}">
+</div>
+{% endfor %}
 {% endif %}
 
 {% endblock %}
