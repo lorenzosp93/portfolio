@@ -1,6 +1,10 @@
 "Define views for resume app"
 from django.views.generic import ListView, DetailView, TemplateView
-from . import models
+from .models import (
+    Experience, Education, Project,
+    Skill, SkillCategory, 
+)
+
 
 # Create your views here.
 class Resume(TemplateView):
@@ -9,34 +13,42 @@ class Resume(TemplateView):
 
 class ExperienceListView(ListView):
     "List view for Experience objects"
-    context_object_name = 'experiences'
-    model = models.Experience
+    context_object_name = 'entries'
+    model = Experience
     section_name = "Experience"
-    template_name = 'mainpage/resume/experience.html'
+    template_name = 'mainpage/resume/cv_entries.html'
 
 class ExperienceDetailView(DetailView):
     "Detail view for Experience objects"
-    model = models.Experience
-    template_name = 'mainpage/resume/experience_detail.html'
+    model = Experience
+    template_name = 'mainpage/resume/cv_entry.html'
+    context_object_name = 'entry'
 
 class EducationListView(ListView):
     "List view for Education objects"
-    context_object_name = 'educations'
-    model = models.Education
-    template_name = 'mainpage/resume/education.html'
+    context_object_name = 'entries'
+    model = Education
+    template_name = 'mainpage/resume/cv_entries.html'
 
 class EducationDetailView(DetailView):
     "Detail view for Eductaion objects"
-    model = models.Education
-    template_name = 'mainpage/resume/education_detail.html'
+    model = Education
+    template_name = 'mainpage/resume/cv_entry.html'
+    context_object_name = 'entry'
 
 class SkillCategoryListView(ListView):
     "List view for skills within skill category"
     context_object_name = 'skillcategories'
-    model = models.SkillCategory
+    model = SkillCategory
     template_name = 'mainpage/resume/skill.html'
+
+class ProjectListView(ListView):
+    "List view for Project objects"
+    model = Project
+    template_name = 'mainpage/resume/projects.html'
+    context_object_name = 'projects'
 
 class ProjectDetailView(DetailView):
     "Detail view for Project objects"
-    model = models.Project
-    template_name = 'mainpage/resume/project_detail.html'
+    model = Project
+    template_name = 'mainpage/resume/project.html'

@@ -2,39 +2,55 @@
 Define URL patterns for the resume app
 """
 from django.urls import path
-from . import views
+from .views import (
+    ExperienceListView, ExperienceDetailView,
+    EducationListView, EducationDetailView,
+    SkillCategoryListView,
+    ProjectListView, ProjectDetailView,
+)
 
 app_name = 'resume'
 
 urlpatterns = [
     path(
         'experience/',
-        views.ExperienceListView.as_view(),
+        
+        ExperienceListView.as_view(),
         name='experience',
     ),
     path(
         'experience/<slug:slug>/',
-        views.ExperienceDetailView.as_view(),
+        
+        ExperienceDetailView.as_view(),
         name='experience-detail',
     ),
     path(
         'education/',
-        views.EducationListView.as_view(),
+        
+        EducationListView.as_view(),
         name='education'
     ),
     path(
         'education/<slug:slug>/',
-        views.EducationDetailView.as_view(),
+        
+        EducationDetailView.as_view(),
         name='education-detail'
     ),
     path(
         'skills/',
-        views.SkillCategoryListView.as_view(),
+        
+        SkillCategoryListView.as_view(),
         name='skills'
     ),
     path(
         'project/<slug:slug>/',
-        views.ProjectDetailView.as_view(),
+        
+        ProjectDetailView.as_view(),
         name='project-detail'
+    ),
+    path(
+        'project/',
+        ProjectListView.as_view(),
+        name='projects'
     )
 ]
