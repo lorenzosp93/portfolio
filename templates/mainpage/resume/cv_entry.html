@@ -9,13 +9,13 @@
     <div class="col-sm-10 col-lg-11">
         <h5 class="">{{ entry.name }}</h5>
         <h6 class="mb-2 text-muted">
-                {{ entry.company }} - {{ entry.department }}
+            {{ entry.company }} - {{ entry.department }}
         </h6>
         <h6 class="mb-2 text-muted">
             {{ entry.location }}, {{ entry.start_date }} - {{ entry.end_date_display }}
         </h6>
     </div>
-    
+
 </div>
 
 <p class="my-2"><strong>Description:</strong><br>
@@ -28,48 +28,51 @@
 {% endif %}
 
 {% if entry.project.all %}
-    <p>
-        <strong>Projects:</strong>
-    </p>
+<p>
+    <strong>Projects:</strong>
+</p>
 
-    <div id="project-carousel" class="carousel slide" data-ride="carousel">
-        <ol class="carousel-indicators">
+<div id="project-carousel" class="carousel slide" data-ride="carousel">
+    <ol class="carousel-indicators">
         {% for proj in entry.project.all %}
-            <li data-target="#project-carousel" data-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}"></li>
+        <li data-target="#project-carousel" data-slide-to="{{ forloop.counter0 }}"
+            class="{% if forloop.first %}active{% endif %}"></li>
         {% endfor %}
-        </ol>
+    </ol>
 
-        <div class="carousel-inner">
+    <div class="carousel-inner">
         {% for proj in entry.project.all %}
-            <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                <img class="d-block w-100" src="{{ proj.picture.url }}" alt="{{ proj.name }} picture">
-                <div class="carousel-caption d-none d-md-block">
-                    <a href="{{ proj.url }}"><h5 class="blend">{{ proj.name }}</h5></a>
-                    <p class="blend">{{ proj.description }}</p>
-                </div>
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+            <img class="d-block w-100" src="{{ proj.picture.url }}" alt="{{ proj.name }} picture">
+            <div class="carousel-caption d-none d-md-block">
+                <a href="{{ proj.url }}">
+                    <h5 class="blend">{{ proj.name }}</h5>
+                </a>
+                <p class="blend">{{ proj.description }}</p>
             </div>
-        {% endfor %}
         </div>
-        <a class="carousel-control-prev" href="#project-carousel" role="button" data-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#project-carousel" role="button" data-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
-        </a>
+        {% endfor %}
     </div>
+    <a class="carousel-control-prev" href="#project-carousel" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#project-carousel" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+    </a>
+</div>
 {% endif %}
 
 {% if entry.attachment.all %}
-    <p>
-        <strong>Attachments:</strong>
-    </p>
-    {% for attachment in entry.attachment.all %}
-        <div>
-            <embed class="embed-responsive embed-responsive-4by3" src="{{ attachment.file.url }}">
-        </div>
-    {% endfor %}
+<p>
+    <strong>Attachments:</strong>
+</p>
+{% for attachment in entry.attachment.all %}
+<div>
+    <embed class="embed-responsive embed-responsive-4by3" src="{{ attachment.file.url }}">
+</div>
+{% endfor %}
 {% endif %}
 
 {% endblock %}
