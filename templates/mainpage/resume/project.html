@@ -2,10 +2,10 @@
 {% block body_block %}
 
 
-<div class="jumbotron" style="background-image: url({{ project.picture.url }});>
+<div class="jumbotron">
 
-    <h3 class="display-4 bg-col-vis blend">{{ project.name }}</h3>
-    <p class="lead bg-col-vis blend">{{ project.description }}</p>
+    <h4 class="display-4 bg-col-vis ">{{ project.name }}</h4>
+    <p class="lead bg-col-vis ">{{ project.description }}</p>
     
 </div>
 
@@ -18,7 +18,7 @@
     Attachments:
 </h5>
     {% for attachment in project.attachment.all %}
-        <div class="row">
+        <div class="row my-3">
             <embed class="embed-responsive embed-responsive-4by3" src="{{ attachment.file.url }}">
         </div>
     {% endfor %}

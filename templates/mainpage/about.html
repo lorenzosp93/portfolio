@@ -1,29 +1,30 @@
 {% extends "mainpage/base.html" %}
 {% block body_block %}
 
-<h1 class="my-3">
+<h2 class="my-3">
     About me
-</h1>
+</h2>
 
-<h3>
+<h4>
+    Who I am
+</h4>
+<p>
+    I'm Lorenzo, energy engineer by formal training, jack of all trades by attitude and development. Currently working in technical program management and aiming to grow into product management. 
+</p>
+
+<h4>
     Why do I have a portfolio website
-</h3>
+</h4>
 <ol>
     <li>
         Why not?
     </li>
     <li>
-        To showcase my coding <a href="{% url 'resume:skills' %}">skills</a>. This website was developed with the Django framework, built upon Python.
+        To showcase my coding <a href="{% url 'resume:skills' %}">skills</a>. This website was developed using the Python Django framework, and it runs on a Continuous Integration pipeline based on <a href="https://jenkins.io/">Jenkins</a>, <a href="https://www.docker.com/">Docker</a> and <a href="https://kubernetes.io/">Kubernetes</a>, pulling the source code from <a href="https://github.com/">Github</a>.
     </li>
     <li>
-        To overcome the restrictions of Linkedin profiles.
+        To extend and supplement my <a href="https://www.linkedin.com/in/lorenzosp/">Linkedin profile</a>.
     </li>
 </ol>
-<h3>
-    Who I am
-</h3>
-<p>
-    Hi, I'm Lorenzo. Energy engineer by formal training, jack of all trades by attitude and development. 
-</p>
 
 {% endblock %}

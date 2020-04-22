@@ -1,5 +1,6 @@
 "Define models for the resume app"
 from django.db import models
+from django.shortcuts import reverse
 from .base_models import (
     TimeStampable,
     Datable,
@@ -10,6 +11,7 @@ from .base_models import (
     HasPicture,
     HasContent,
 )
+
 
 class Company(Named, HasPicture):
     "Model for Company, to be referenced by Education and Experience instances"
@@ -22,6 +24,10 @@ class Project(
         TimeStampable, HasPicture, HasContent,
     ):
     "Model to define projects"
+
+    def get_absolute_url(self):
+        return reverse("resume:project-detail", kwargs={"slug": self.slug})
+    
 
 class CVEntry(Named, Datable, TimeStampable,
               Localizable, Described, Attachable):
@@ -47,16 +53,28 @@ class CVEntry(Named, Datable, TimeStampable,
 
 class Education(CVEntry):
     "Model for Education entries"
+    class Meta:
+        verbose_name = "Educations"
+    
+    def get_absolute_url(self):
+        return reverse("resume:education-detail", kwargs={"slug": self.slug})
+    
 
 class Experience(CVEntry):
     "Model for Experience entries"
     department = models.CharField(max_length=100, blank=True)
     key_achievements = models.TextField(blank=True)
+    class Meta:
+        verbose_name = "Experiences"
+
+    def get_absolute_url(self):
+        return reverse("resume:experience-detail", kwargs={"slug": self.slug})
 
 class SkillCategory(Named, Described):
     "Model to capture categories for skills"
     class Meta:
         verbose_name_plural = 'Skill Categories'
+    
 
 class Skill(Named, TimeStampable):
     "Model for individual skills instances"
