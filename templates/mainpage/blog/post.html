@@ -2,7 +2,7 @@
 {% block body_block %}
 
 
-<div class="jumbotron" style="background-image: url({{ post.picture.url }});">
+<div class="jumbotron">
 
     <h3 class="display-6 bg-col-vis">{{ post.created_by }}</h3>
     <p class="lead bg-col-vis">{{ post.name }}</p>
@@ -13,6 +13,7 @@
             - Last edit by {{ post.modified_by }}, on {{ post.modified_at.date }}
         {% endif %} 
     </p>
+    <image src="{{post.picture.url}}"
     
 </div>
 

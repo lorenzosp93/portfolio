@@ -43,7 +43,7 @@
                     
                 </div>
                 <p class="card-text my-2">
-                    {{ project.content|truncatewords:"45"|linebreaks }}<br>
+                    {{ project.content|truncatewords:"45"|safe|linebreaks }}<br>
                 </p>
             </div>
         </div>
