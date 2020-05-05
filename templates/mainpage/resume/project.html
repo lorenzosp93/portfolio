@@ -18,7 +18,10 @@
 </h5>
 {% for attachment in project.attachment.all %}
 <div class="row my-3">
-    <embed class="embed-responsive embed-responsive-4by3" src="{{ attachment.file.url }}">
+    <p>{{ attachment.name }}</p>
+    <div class="embed-responsive embed-responsive-1by1">
+        <embed class="embed-responsive-item" src="{{ attachment.file.url }}">
+    </div>
 </div>
 {% endfor %}
 {% endif %}

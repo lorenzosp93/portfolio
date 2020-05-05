@@ -37,13 +37,13 @@
                                 {{ project.company }}
                         </h6>
                         <h6 class="card-subtitle mb-2 text-muted">
-                            {{ project.description|truncatewords:"10" }}<br>
+                            {{ project.description|truncatewords:"20" }}<br>
                         </h6>
                     </div>
                     
                 </div>
                 <p class="card-text my-2">
-                    {{ project.content|truncatewords:"25"|linebreaks }}<br>
+                    {{ project.content|truncatewords:"45"|safe|linebreaks }}<br>
                 </p>
             </div>
         </div>
