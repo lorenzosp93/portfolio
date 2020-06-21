@@ -15,10 +15,10 @@
 {% if project.attachment.all %}
 <h5>
     Attachments:
-</h>
+</h5>
 {% for attachment in project.attachment.all %}
 <div class="row my-3">
-    <p>{{ attachment.name }}</p>
+    <h6>{{ attachment.name }}</h6>
     <div class="embed-responsive embed-responsive-1by1">
         <embed class="embed-responsive-item" src="{{ attachment.file.url }}">
     </div>
