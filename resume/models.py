@@ -49,12 +49,13 @@ class CVEntry(Named, Datable, TimeStampable,
 
     class Meta:
         abstract = True
-        ordering = ['-start_date']
 
 class Education(CVEntry):
     "Model for Education entries"
     class Meta:
-        verbose_name = "Educations"
+        verbose_name = "Education"
+        ordering = ['-start_date']
+
     
     def get_absolute_url(self):
         return reverse("resume:education-detail", kwargs={"slug": self.slug})
@@ -65,7 +66,8 @@ class Experience(CVEntry):
     department = models.CharField(max_length=100, blank=True)
     key_achievements = models.TextField(blank=True)
     class Meta:
-        verbose_name = "Experiences"
+        verbose_name = "Experience"
+        ordering = ['-start_date']
 
     def get_absolute_url(self):
         return reverse("resume:experience-detail", kwargs={"slug": self.slug})
