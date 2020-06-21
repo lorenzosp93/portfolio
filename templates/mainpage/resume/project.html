@@ -2,7 +2,7 @@
 {% block body_block %}
 
 
-<img class="img-fluid" src="{{project.picture.url}}">
+<img class="img-fluid" width=100% src="{{project.picture.url}}">
 
 <div class="jumbotron">
     <h4 class="display-4 bg-col-vis ">{{ project.name }}</h4>
@@ -15,7 +15,7 @@
 {% if project.attachment.all %}
 <h5>
     Attachments:
-</h5>
+</h>
 {% for attachment in project.attachment.all %}
 <div class="row my-3">
     <p>{{ attachment.name }}</p>
