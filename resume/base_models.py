@@ -66,19 +66,28 @@ class Datable(models.Model):
     def save(self, **kwargs): # pylint: disable=W0221
         "Override save method to validate end date"
         if self.end_date:
-            if self.end_date <= self.start_date:
-                raise ValidationError(
-                    f"End date: {self.end_date} cannot be before start date: {self.start_date}"
-                )
-            elif self.end_date > timezone.now().date():
-                raise ValidationError(
-                    f"End date: {self.end_date} cannot be in the future"
-                )
-        elif self.start_date > timezone.now().date():
-            raise ValidationError(
-                f"Start date: {self.start_date} cannot be in the future"
-            )
+            self.end_date_validation()
+        self.start_date_validation()
         super().save(**kwargs)
+
+    def end_date_validation(self):
+        if self.end_date <= self.start_date:
+            raise ValidationError(
+                "End date: %(end)s cannot be before start date: %(start)s",
+                params={"end": self.end_date, "start": self.start_date},
+            )
+        elif self.end_date > timezone.now().date():
+            raise ValidationError(
+                "End date: %(end)s cannot be in the future",
+                params={"end": self.end_date},
+            )
+
+    def start_date_validation(self):
+        if self.start_date > timezone.now().date():
+            raise ValidationError(
+                "Start date: %(start)s cannot be in the future",
+                params={"start": self.start_date},
+            )
 
     class Meta:
         abstract = True

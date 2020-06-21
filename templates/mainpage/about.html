@@ -8,9 +8,18 @@
 <h4>
     Who I am
 </h4>
-<p>
-    I'm Lorenzo, energy engineer by formal training, jack of all trades by attitude and development. Currently working in technical program management and aiming to grow into product management. 
-</p>
+<div class="row my-3">
+    <div class="col-lg-4 col-sm-6">
+        {% load static %}
+        <img src="{% static "mainpage/profilepic.png" %}" width=100% class="border">
+    </div>
+    <div class="col-lg-8 col-sm-6">
+        <p>
+            I'm Lorenzo, energy engineer by formal training, jack of all trades by attitude and development. Currently
+            working in technical program management and aiming to grow into product management.
+        </p>
+    </div>
+</div>
 
 <h4>
     Why do I have a portfolio website
@@ -20,7 +29,11 @@
         Why not?
     </li>
     <li>
-        To showcase my coding <a href="{% url 'resume:skills' %}">skills</a>. This website was developed using the Python Django framework, and it runs on a Continuous Integration pipeline based on <a href="https://jenkins.io/">Jenkins</a>, <a href="https://www.docker.com/">Docker</a> and <a href="https://kubernetes.io/">Kubernetes</a>, pulling the source code from <a href="https://github.com/">Github</a>.
+        To showcase my coding <a href="{% url 'resume:skills' %}">skills</a>. This website was developed using the
+        Python Django framework, and it runs on a Continuous Integration pipeline based on <a
+            href="https://jenkins.io/">Jenkins</a>, <a href="https://www.docker.com/">Docker</a> and <a
+            href="https://kubernetes.io/">Kubernetes</a>, pulling the source code from <a
+            href="https://github.com/">Github</a>.
     </li>
     <li>
         To extend and supplement my <a href="https://www.linkedin.com/in/lorenzosp/">Linkedin profile</a>.
