@@ -4,10 +4,10 @@
 
 <div class="jumbotron">
 
-    <p class="blockquote bg-col-vis">{{ post.name }}</p>
+    <h1 class="blockquote bg-col-vis">{{ post.name }}</h1>
     <h3 class="blockquote-footer bg-col-vis">{{ post.created_by }}</h3>
     <hr class="my-4">
-    <p class="bg-col-vis">
+    <p class="blockquote-footer bg-col-vis">
         {{ post.location }} - {{ post.created_at.date }} <br>
         {% if post.modified_at.date != post.created_at.date %}
             - Last edit by {{ post.modified_by }}, on {{ post.modified_at.date }}
@@ -17,7 +17,7 @@
     
 </div>
 
-<p>
+<p class="content">
     {% load static %}
     {{ post.content|safe|linebreaks }}
 </p>
