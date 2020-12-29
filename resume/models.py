@@ -28,6 +28,9 @@ class Project(
     def get_absolute_url(self):
         return reverse("resume:project-detail", kwargs={"slug": self.slug})
     
+    class Meta:
+        ordering = [-"created_date"]
+    
 
 class CVEntry(Named, Datable, TimeStampable,
               Localizable, Described, Attachable):
