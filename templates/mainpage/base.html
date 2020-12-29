@@ -36,7 +36,7 @@
                     <h2>
                         Lorenzo <b>Spinelli</b> 
                     </h2> 
-                    <p>Energy engineer | Technical Program Manager at Tesla</p>
+                    <p>Energy Engineer | Product Manager @ Tesla</p>
                 </div>
             </div>
         </div>
@@ -72,6 +72,8 @@
                     <a class="dropdown-item" href="{% url 'resume:education' %}">Education</a>
                     <a class="dropdown-item" href="{% url 'resume:projects' %}">Projects</a>
                     <a class="dropdown-item" href="{% url 'resume:skills' %}">Skills</a>
+                    {% load static %}
+                    <a class="dropdown-item" href="{% static 'mainpage/main.pdf' %}">Download PDF</a>
                     </div>
                 </li>
                 <li class="nav-item mx-2">

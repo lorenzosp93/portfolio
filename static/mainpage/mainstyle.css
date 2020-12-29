@@ -1,8 +1,16 @@
 body{
-    font-family: Helvetica;
+    font-family: Helvetica, sans-serif;
 }
 header{
-    font-family: Helvetica;
+    font-family: Helvetica, sans-serif;
+}
+
+p.content:first-letter{
+    font-family: "Source Sans Pro", Helvetica, sans-serif;
+    float: left;
+    font-size: 3rem;
+    line-height: 0.65;
+    margin: 0.1em 0.1em 0.2em 0;
 }
 
 .ontop{
