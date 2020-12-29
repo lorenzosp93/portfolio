@@ -29,7 +29,7 @@ class Project(
         return reverse("resume:project-detail", kwargs={"slug": self.slug})
     
     class Meta:
-        ordering = ["-created_date"]
+        ordering = ["-created_at"]
     
 
 class CVEntry(Named, Datable, TimeStampable,
