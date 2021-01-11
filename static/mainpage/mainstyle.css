@@ -5,7 +5,7 @@ header{
     font-family: Helvetica, sans-serif;
 }
 
-div.content.p:first-of-type::first-letter{
+.content p:first-of-type::first-letter{
     font-family: "Source Sans Pro", Helvetica, sans-serif;
     float: left;
     font-size: 3rem;
