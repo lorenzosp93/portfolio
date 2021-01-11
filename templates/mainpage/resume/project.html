@@ -8,9 +8,9 @@
     <h4 class="display-4 bg-col-vis ">{{ project.name }}</h4>
     <p class="lead bg-col-vis ">{{ project.description }}</p>
 </div>
-<p class="content">
+<div class="content">
     {{ project.content|safe|linebreaks }}
-</p>
+</div>
 
 {% if project.attachment.all %}
 <h5>
