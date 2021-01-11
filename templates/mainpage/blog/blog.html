@@ -28,7 +28,7 @@
                 </h3>
                 <div class="mb-1 text-muted">{{ p.created_at.date }} - {{ p.created_by }}</div>
                 <p class="card-text mb-auto">{{ p.content|truncatewords:"55"|safe|linebreaks }}...</p>
-                <a href="#">Read more...</a>
+                <a href={% url 'blog:post' p.slug %}"> Read more...</a>
             </div>
         </div>
     </div>
