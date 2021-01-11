@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "c:\\Users\\loren\\OneDrive\\Desktop\\Projects\\Django_project\\portfolio\\env\\Scripts\\python.exe",
+    "python.pythonPath": "C:\\Python39\\python.exe",
     "python.testing.unittestArgs": [
         "-v",
         "-s",

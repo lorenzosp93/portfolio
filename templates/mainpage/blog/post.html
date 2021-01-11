@@ -17,10 +17,10 @@
     
 </div>
 
-<p class="content">
+<div class="content">
     {% load static %}
     {{ post.content|safe|linebreaks }}
-</p>
+</div>
 
 {% if post.attachment.all %}
 <h5>
