@@ -7,8 +7,8 @@ from django.contrib.auth.models import User
 
 class Named(models.Model):
     "Abstract model to define names and slug behavior"
-    name = models.CharField(max_length=30, unique=True)
-    slug = models.SlugField(max_length=50, editable=False)
+    name = models.CharField(max_length=90, unique=True)
+    slug = models.SlugField(max_length=100, editable=False)
 
     def save(self, **kwargs): # pylint: disable=W0221
         "Override save method to create slug from name"
