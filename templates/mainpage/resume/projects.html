@@ -12,7 +12,7 @@
         <ul class="nav nav-pills flex-column bg-white">
             {% for project in projects %}
             <li class="nav-item">
-                <a class="nav-link active" href="#list-item-{{ forloop.counter }}">
+                <a class="nav-link" href="#list-item-{{ forloop.counter }}">
                     {{ project.name }}
                 </a>
             </li>
@@ -22,7 +22,7 @@
     </nav>
 
 
-    <div class='col-sm-7 col-lg-9 my-1' id='scrolled' data-bs-spy="scroll" data-bs-target="#myScrollspy" data-bs-offset="1">
+    <div class='col-sm-7 col-lg-9 my-1' id='scrolled' data-bs-spy="scroll" data-bs-target="#myScrollspy">
         {% for project in projects %}
         <div class="card my-3" id="list-item-{{ forloop.counter}}">
             <div class="card-body">

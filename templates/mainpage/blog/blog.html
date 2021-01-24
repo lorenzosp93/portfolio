@@ -38,7 +38,7 @@
 </div>
 
 <div class="row sticky-top">
-    <div class='col-sm-8 col-lg-10 my-1' id='scrolled' data-bs-spy="scroll" data-bs-target="#myScrollspy" data-bs-offset="1">
+    <div class='col-sm-8 col-lg-10 my-1' id='scrolled' data-bs-spy="scroll" data-bs-target="#myScrollspy">
         {% for p in posts|slice:"3:" %}
         {% if p.active %}
         <div class="card my-3" id="list-item-{{ forloop.counter}}">
@@ -72,7 +72,7 @@
             {% for p in posts %}
             {% if p.active %}
             <li class="nav-item">
-                <a class="nav-link active" href="#list-item-{{ forloop.counter }}">
+                <a class="nav-link" href="#list-item-{{ forloop.counter }}">
                     {{ p.name }}
                 </a>
             </li>
