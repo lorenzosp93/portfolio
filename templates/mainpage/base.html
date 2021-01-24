@@ -12,15 +12,16 @@
     {% load static %}
     <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
     <!-- Bootstrap CSS-->
-   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    
     <!-- Fontawesome -->
     <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css' integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ' crossorigin='anonymous'>
+    
     <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
 
+
+    
     {% load static %}
     <link rel="stylesheet" href="{% static 'mainpage/mainstyle.css' %}">
 
@@ -45,41 +46,40 @@
 
     {% block navbar_block %}
     <nav class="navbar navbar-expand-sm sticky-top bg-white navbar-light">
-        <div class="container">
+        <div class="container-fluid">
             
-            <li class="navbar-brand align-items-start">
-                <div class="row">
-                    <div class="col-xs-4">
-                        {% load static %}
-                        <img src="{% static 'mainpage/profilepic.png' %}" alt="" height='50px' class='rounded-circle mr-4'>
-                    </div>
-                    <div class="col-xs-8">
-                        <a class="nav-link" href="{% url 'about' %}">About</a>
-                    </div>
-                </div>
-            </li>
+            <a class="navbar-brand align-items-start" href="{% url 'about' %}">
+                {% load static %}
+                <img class="d-inline-block align-center rounded-circle mr-4 mx-3" src="{% static 'mainpage/profilepic.png' %}" alt="My picture" height='50px'>About
+            </a>
 
-            <ul class="nav navbar-nav">
-                <li class="nav-item mx-2">
-                    <a class="nav-link" href="{% url 'blog:blog' %}">Blog</a>
-                </li>
-                <li class="nav-item dropdown mx-2 ontop">
-                    <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Resume
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" href="{% url 'resume:experience' %}">Experience</a>
-                    <a class="dropdown-item" href="{% url 'resume:education' %}">Education</a>
-                    <a class="dropdown-item" href="{% url 'resume:projects' %}">Projects</a>
-                    <a class="dropdown-item" href="{% url 'resume:skills' %}">Skills</a>
-                    {% load static %}
-                    <a class="dropdown-item" href="{% static 'mainpage/main.pdf' %}">Download PDF</a>
-                    </div>
-                </li>
-                <li class="nav-item mx-2">
-                    <a class="nav-link" href="{% url 'contact' %}">Contact</a>
-                </li>
-            </ul>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+                <ul class="nav navbar-nav">
+                    <li class="nav-item mx-2">
+                        <a class="nav-link" href="{% url 'blog:blog' %}">Blog</a>
+                    </li>
+                    <li class="nav-item dropdown mx-2 ontop">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Resume</a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{% url 'resume:experience' %}">Experience</a>
+                        <a class="dropdown-item" href="{% url 'resume:education' %}">Education</a>
+                        <a class="dropdown-item" href="{% url 'resume:projects' %}">Projects</a>
+                        <a class="dropdown-item" href="{% url 'resume:skills' %}">Skills</a>
+                        <div class="dropdown-divider"></div> 
+                        {% load static %}
+                        <a class="dropdown-item" href="{% static 'mainpage/main.pdf' %}">Download PDF</a>
+                        </div>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+                    </li>
+                </ul>
+            </div>
+
         </div>
     </nav>
     {% endblock %}
