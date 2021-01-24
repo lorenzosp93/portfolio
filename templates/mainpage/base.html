@@ -46,19 +46,11 @@
 
     {% block navbar_block %}
     <nav class="navbar navbar-expand-sm sticky-top bg-white navbar-light">
-        <div class="container">
-            
-            <div class="navbar-brand align-items-start">
-                <div class="row">
-                    <div class="col-xs-4">
-                        {% load static %}
-                        <img src="{% static 'mainpage/profilepic.png' %}" alt="" height='50px' class='rounded-circle mr-4'>
-                    </div>
-                    <div class="col-xs-8">
-                        <a class="nav-link" href="{% url 'about' %}">About</a>
-                    </div>
-                </div>
-            </div>
+        <div class="container-fluid">
+            <a class="navbar-brand align-items-start" href="{% url 'about' %}">
+                {% load static %}
+                <img class="d-inline-block align-center" src="{% static 'mainpage/profilepic.png' %}" alt="My picture" height='50px' class='rounded-circle mr-4'>About
+            </a>
 
             <ul class="nav navbar-nav">
                 <li class="nav-item mx-2">
