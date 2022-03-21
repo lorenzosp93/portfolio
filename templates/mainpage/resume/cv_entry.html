@@ -46,9 +46,9 @@
             <img class="d-block w-100" src="{{ proj.picture.url }}" alt="{{ proj.name }} picture">
             <div class="carousel-caption d-none d-md-block">
                 <a href="{{ proj.get_absolute_url }}">
-                    <h5 class="blend">{{ proj.name }}</h5>
+                    <h5 >{{ proj.name }}</h5>
                 </a>
-                <p class="blend">{{ proj.description }}</p>
+                <p >{{ proj.description }}</p>
             </div>
         </div>
         {% endfor %}

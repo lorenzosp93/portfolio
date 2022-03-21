@@ -1,5 +1,7 @@
 "Define models for the resume app"
 from django.db import models
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import reverse
 from .base_models import (
     TimeStampable,
@@ -42,7 +44,6 @@ class CVEntry(Named, Datable, TimeStampable,
         related_query_name='%(class)ss',
         on_delete=models.CASCADE,
     )
-
     project = models.ManyToManyField(
         Project,
         related_name='%(class)s_related',
@@ -52,6 +53,14 @@ class CVEntry(Named, Datable, TimeStampable,
 
     class Meta:
         abstract = True
+
+class Keyword(models.Model):
+    "Model for keywords"
+
+    name = models.SlugField()
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)   
+    object_id = models.UUIDField(primary_key=True)
+    entry = GenericForeignKey()
 
 class Education(CVEntry):
     "Model for Education entries"
@@ -68,6 +77,7 @@ class Experience(CVEntry):
     "Model for Experience entries"
     department = models.CharField(max_length=100, blank=True)
     key_achievements = models.TextField(blank=True)
+
     class Meta:
         verbose_name = "Experience"
         ordering = ['-start_date']
@@ -83,6 +93,7 @@ class SkillCategory(Named, Described):
 
 class Skill(Named, TimeStampable):
     "Model for individual skills instances"
+
     category = models.ForeignKey(
         SkillCategory,
         on_delete=models.CASCADE,
