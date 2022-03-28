@@ -28,7 +28,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-4 col-sm-3 col-md-2 col-lg-1 mx-auto">
-                        <img src="{{ entry.company.picture.url }}"  alt="{{ entry.company }} Logo" class='img-fluid'>
+                        <img src="{{ entry.entity.picture.url }}"  alt="{{ entry.entity }} Logo" class='img-fluid'>
                     </div>
 
                     <div class="col-8 col-sm-9 col-md-10 col-lg-11">
@@ -38,7 +38,7 @@
                             </a>
                         </h5>
                         <h6 class="card-subtitle mb-2 text-muted">
-                                {{ entry.company }}
+                                {{ entry.entity }}
                         </h6>
                         <h6 class="card-subtitle mb-2 text-muted">
                             {{ entry.location }}, {{ entry.start_date }} - {{ entry.end_date_display }}

@@ -1,9 +1,21 @@
 "Define abstract models to be used in all apps"
+import uuid
 from django.db import models
 from django.utils.text import slugify
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
+
+class Serializable(models.Model):
+    "Abstract model to define an uuid based id field"
+    id = models.UUIDField(
+        primary_key=True,
+        editable=False,
+        default=uuid.uuid4
+    )
+
+    class Meta:
+        abstract = True
 
 class Named(models.Model):
     "Abstract model to define names and slug behavior"

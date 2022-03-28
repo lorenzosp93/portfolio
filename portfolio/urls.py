@@ -25,7 +25,8 @@ urlpatterns = [
     path('', views.About.as_view(), name='about'),
     path('contact/', views.Contact.as_view(), name='contact'),
     path('admin/', admin.site.urls),
-    path('health/', include('health_check.urls'))
+    path('health/', include('health_check.urls')),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
 
 if settings.DEBUG:

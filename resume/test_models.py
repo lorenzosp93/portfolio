@@ -10,19 +10,19 @@ class TestResumeModels(TestCase):
     "Class to test the models module"
     def setUp(self):
         "Provide values to all tests"
-        self.company = models.Company.objects.create(
-            name='Test Company'
+        self.entity = models.Entity.objects.create(
+            name='Test Entity'
         )
         self.exp = models.Experience.objects.create(
             name='Test Experience 4!',
             start_date=timezone.datetime(2019, 1, 1).date(),
-            company=self.company,
+            entity=self.entity,
             current=True,
         )
         self.edu = models.Education.objects.create(
             name='Test Education 1!',
             start_date=timezone.datetime(2018, 1, 1).date(),
-            company=self.company,
+            entity=self.entity,
             current=True,
         )
 
@@ -41,20 +41,20 @@ class TestResumeModels(TestCase):
                 name='Test Experience 1',
                 start_date=timezone.datetime(2020, 2, 1).date(),
                 end_date=timezone.datetime(2020, 1, 1).date(),
-                company=self.company
+                entity=self.entity
             )
         with self.assertRaises(ValidationError):
             models.Experience.objects.create(
                 name='Test Experience 2',
                 start_date=timezone.datetime(2020, 2, 1).date(),
                 end_date=timezone.now().date()+timezone.timedelta(1),
-                company=self.company
+                entity=self.entity
             )
         with self.assertRaises(ValidationError):
             models.Experience.objects.create(
                 name='Test Experience 3',
                 start_date=timezone.now().date()+timezone.timedelta(1),
-                company=self.company
+                entity=self.entity
             )
 
     def test_experience_timestamps(self):
@@ -62,7 +62,7 @@ class TestResumeModels(TestCase):
         exp = models.Experience.objects.create(
             name='Test Experience',
             start_date=timezone.datetime(2020, 1, 1).date(),
-            company=self.company,
+            entity=self.entity,
             modified_at=timezone.now()-timezone.timedelta(1),
         )
         sleep(0.01) # sleep 10 milliseconds

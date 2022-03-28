@@ -1,9 +1,10 @@
 "Define models for the resume app"
 from django.db import models
-from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import reverse
 from .base_models import (
+    Serializable,
     TimeStampable,
     Datable,
     Localizable,
@@ -15,17 +16,22 @@ from .base_models import (
 )
 
 
-class Company(Named, HasPicture):
-    "Model for Company, to be referenced by Education and Experience instances"
+class Entity(Serializable, Named, HasPicture):
+    "Model for Entity, to be referenced by Education and Experience instances"
 
     class Meta:
-        verbose_name_plural = 'Companies'
+        verbose_name_plural = 'Entities'
 
 class Project(
+        Serializable,
         Named, Described, Attachable,
         TimeStampable, HasPicture, HasContent,
     ):
     "Model to define projects"
+
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True)   
+    object_id = models.UUIDField()
+    entry = GenericForeignKey()
 
     def get_absolute_url(self):
         return reverse("resume:project-detail", kwargs={"slug": self.slug})
@@ -33,37 +39,26 @@ class Project(
     class Meta:
         ordering = ["-created_at"]
     
+class Keyword(Named):
+    "Model for keywords"
 
-class CVEntry(Named, Datable, TimeStampable,
-              Localizable, Described, Attachable):
-    "Abstract model for CV entries"
+class Education(Serializable, Named, Datable, TimeStampable, 
+    Localizable, Described, Attachable):
+    "Model for Education entries"
 
-    company = models.ForeignKey(
-        Company,
+    entity = models.ForeignKey(
+        Entity,
         related_name='%(class)s_related',
         related_query_name='%(class)ss',
         on_delete=models.CASCADE,
     )
-    project = models.ManyToManyField(
-        Project,
-        related_name='%(class)s_related',
-        related_query_name='%(class)ss',
-        blank=True,
+    projects = GenericRelation(
+        Project
+    )
+    keywords = models.ManyToManyField(
+        Keyword
     )
 
-    class Meta:
-        abstract = True
-
-class Keyword(models.Model):
-    "Model for keywords"
-
-    name = models.SlugField()
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)   
-    object_id = models.UUIDField(primary_key=True)
-    entry = GenericForeignKey()
-
-class Education(CVEntry):
-    "Model for Education entries"
     class Meta:
         verbose_name = "Education"
         ordering = ['-start_date']
@@ -73,7 +68,7 @@ class Education(CVEntry):
         return reverse("resume:education-detail", kwargs={"slug": self.slug})
     
 
-class Experience(CVEntry):
+class Experience(Education):
     "Model for Experience entries"
     department = models.CharField(max_length=100, blank=True)
     key_achievements = models.TextField(blank=True)
@@ -91,7 +86,7 @@ class SkillCategory(Named, Described):
         verbose_name_plural = 'Skill Categories'
     
 
-class Skill(Named, TimeStampable):
+class Skill(Serializable, Named, TimeStampable):
     "Model for individual skills instances"
 
     category = models.ForeignKey(
