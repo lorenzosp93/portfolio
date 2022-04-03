@@ -2,6 +2,9 @@ from rest_framework.serializers import (
     HyperlinkedModelSerializer, 
     ModelSerializer
 )
+from shared.serializers import (
+    AttachmentSerializer
+)
 from .models import (
     Education,
     Experience,
@@ -17,13 +20,14 @@ class SkillSerializer(ModelSerializer):
         fields = ['name', 'description', 'category', 'url', 'level']
 
 class ProjectSerializer(HyperlinkedModelSerializer):
+    attachments = AttachmentSerializer(many=True)
     class Meta:
         model = Project
         fields = [
-            'id',
+            'uuid',
             'name',
             'description',
-            'attachment',
+            'attachments',
             'picture',
         ]
 
@@ -38,7 +42,7 @@ class EntitySerializer(HyperlinkedModelSerializer):
     class Meta:
         model = Entity
         fields = [
-            'id',
+            'uuid',
             'name',
             'picture',
         ]
@@ -47,10 +51,11 @@ class EducationSerializer(HyperlinkedModelSerializer):
     entity = EntitySerializer()
     projects = ProjectSerializer(many=True)
     keywords = KeywordSerializer(many=True)
+    attachments = AttachmentSerializer(many=True)
     class Meta:
         model = Education
         fields = [
-            'id',
+            'uuid',
             'name',
             'start_date',
             'end_date',
@@ -59,17 +64,19 @@ class EducationSerializer(HyperlinkedModelSerializer):
             'entity',
             'projects',
             'keywords',
-            'attachment'
+            'attachments',
+            'current'
         ]
 
 class ExperienceSerializer(HyperlinkedModelSerializer):
     entity = EntitySerializer()
     projects = ProjectSerializer(many=True)
     keywords = KeywordSerializer(many=True)
+    attachments = AttachmentSerializer(many=True)
     class Meta:
         model = Experience
         fields = [
-            'id',
+            'uuid',
             'name',
             'start_date',
             'end_date',
@@ -80,5 +87,17 @@ class ExperienceSerializer(HyperlinkedModelSerializer):
             'entity',
             'projects',
             'keywords',
-            'attachment'
+            'attachments',
+            'current'
         ]
+
+class EntityEntriesSerializer(ModelSerializer):
+    experiences = ExperienceSerializer(
+        read_only=True, many=True, required=False
+    )
+    educations = EducationSerializer(
+        read_only=True, many=True, required=False
+    )
+    class Meta:
+        model = Entity
+        fields = ['uuid', 'name', 'picture', 'experiences', 'educations']

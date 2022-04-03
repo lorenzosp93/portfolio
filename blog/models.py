@@ -1,5 +1,5 @@
 "Define modules for the blog app"
-from resume.base_models import (
+from shared.models import (
     TimeStampable,
     Localizable,
     Attachable,

@@ -18,7 +18,9 @@ from .viewsets import (
     SkillViewSet,
     ProjectViewSet,
     EntityViewSet,
-    KeywordViewSet
+    KeywordViewSet,
+    EntityEducationViewSet,
+    EntityExperienceViewSet,
 )
 
 app_name = 'resume'
@@ -29,6 +31,8 @@ router.register(r'education', EducationViewSet)
 router.register(r'skills', SkillViewSet)
 router.register(r'projects', ProjectViewSet)
 router.register(r'entity', EntityViewSet)
+router.register(r'entity-entries/education', EntityEducationViewSet, 'entity-education')
+router.register(r'entity-entries/experience', EntityExperienceViewSet, 'entity-experience')
 router.register(r'keyword', KeywordViewSet)
 
 urlpatterns = [

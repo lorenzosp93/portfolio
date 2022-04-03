@@ -17,13 +17,19 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
+from rest_framework.routers import DefaultRouter
 from . import views
+from shared import viewsets
+
+router = DefaultRouter()
+router.register(r'settings', viewsets.SettingsViewSet, '')
 
 urlpatterns = [
     path('resume/', include('resume.urls', namespace='resume')),
+    path('site/', include(router.urls)),
     path('blog/', include('blog.urls', namespace='blog')),
-    path('', views.About.as_view(), name='about'),
-    path('contact/', views.Contact.as_view(), name='contact'),
+    # path('', views.About.as_view(), name='about'),
+    # path('contact/', views.Contact.as_view(), name='contact'),
     path('admin/', admin.site.urls),
     path('health/', include('health_check.urls')),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))

@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import reverse
-from .base_models import (
+from shared.models import (
     Serializable,
     TimeStampable,
     Datable,
@@ -15,9 +15,17 @@ from .base_models import (
     HasContent,
 )
 
+ENTITY_TYPES = [
+    (0, 'Company'),
+    (1, 'Institution')
+]
 
 class Entity(Serializable, Named, HasPicture):
     "Model for Entity, to be referenced by Education and Experience instances"
+
+    type = models.IntegerField(
+        choices=ENTITY_TYPES,
+    )
 
     class Meta:
         verbose_name_plural = 'Entities'
@@ -48,15 +56,17 @@ class Education(Serializable, Named, Datable, TimeStampable,
 
     entity = models.ForeignKey(
         Entity,
-        related_name='%(class)s_related',
-        related_query_name='%(class)ss',
+        related_name='educations',
+        related_query_name='education_related',
         on_delete=models.CASCADE,
+        limit_choices_to={'type': 1}
     )
     projects = GenericRelation(
         Project
     )
     keywords = models.ManyToManyField(
-        Keyword
+        Keyword,
+        blank=True
     )
 
     class Meta:
@@ -68,8 +78,24 @@ class Education(Serializable, Named, Datable, TimeStampable,
         return reverse("resume:education-detail", kwargs={"slug": self.slug})
     
 
-class Experience(Education):
+class Experience(Serializable, Named, Datable, TimeStampable, 
+    Localizable, Described, Attachable):
     "Model for Experience entries"
+
+    entity = models.ForeignKey(
+        Entity,
+        related_name='experiences',
+        related_query_name='experience_related',
+        on_delete=models.CASCADE,
+        limit_choices_to={'type': 0}
+    )
+    projects = GenericRelation(
+        Project
+    )
+    keywords = models.ManyToManyField(
+        Keyword,
+        blank=True
+    )
     department = models.CharField(max_length=100, blank=True)
     key_achievements = models.TextField(blank=True)
 
