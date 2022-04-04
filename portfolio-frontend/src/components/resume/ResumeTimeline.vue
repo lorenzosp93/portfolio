@@ -1,21 +1,21 @@
 <template>
-  <div class="border-2 rounded border-grey-600  bg-white dark:bg-gray-900">
-    <div class="h-96 m-5 animate-pulse" v-if="isLoading">
+  <div class="border-2 m-auto rounded border-grey-600  bg-white dark:bg-gray-900">
+    <div class="h-96  m-auto w-full animate-pulse" v-if="isLoading">
       <p>Loading...</p>
     </div>
-    <div v-else-if="entries.length > 0">
-      <ol class="relative border-l-2 border-grey-200 m-5">
+    <div class="m-auto w-full " v-else-if="entries.length > 0">
+      <ol class="relative border-l-2 border-grey-200 ml-5">
         <timeline-group
           v-for="group in entries"
           :key="group.uuid" :kind="kind" :groupKey="group.uuid" :group="group"
         />
       </ol>
     </div>
-    <div class="h-96 m-5 animate-ping" v-else-if="error || !isActive">
+    <div class="h-96 w-32 m-auto" v-else-if="error || !isActive">
       <p>{{error}}</p>
       <a kind="button" @click.prevent="loadEntries(kind)">Try again!</a>
     </div>
-    <div v-else>
+    <div class="m-auto h-96 w-full" v-else>
       <p>No {{kind}}s found!</p>
     </div>
   </div>
@@ -70,6 +70,7 @@ export default {
           this.isLoading = false;
           this.error = "Something went wrong when loading the data...";
           console.log(error);
+          setTimeout(this.loadEntries(kind), 5000);
         }
       )
     },

@@ -1,11 +1,11 @@
 <template>
-<div class="container min-h-screen m-5 text-center">
-  <h2 class="my-5 dark:text-white">Resume</h2>
-  <div class="container flex overflow-x-scroll snap-x snap-mandatory scrolling-touch scroll-pl-8 items-start">
-    <div class="flex-none w-11/12 mx-8 snap-always snap-center">
+<div class="container relative snap-start snap-always w-screen m-auto">
+  <h2 class="my-5 text-center dark:text-white">Resume</h2>
+  <div class="container relative w-full flex gap-6 overflow-x-scroll no-scrollbar snap-x snap-mandatory scrolling-touch scroll-px-5 items-start">
+    <div class="shrink-0 flex-none mr-5 w-full snap-always snap-center">
       <resume-timeline :observer="observer" :isActive="isExperienceActive" :kind="'experience'" id="experience" />
     </div>
-    <div class="flex-none w-11/12 mx-8 snap-always snap-center">
+    <div class="shrink-0 flex-none mr-3 w-full snap-always snap-center">
       <resume-timeline :observer="observer" :isActive="isEducationActive" :kind="'education'" id="education" />
     </div>
   </div>
@@ -28,15 +28,30 @@ export default {
   ],
   computed: {
     isExperienceActive () {
-      return this.elementsInView.includes('experience');
+      return this.isActive('experience')
     },
     isEducationActive () {
-      return this.elementsInView.includes('education');
+      return this.isActive('education')
     },
   },
   methods: {
+    isActive (kind) {
+      return this.elementsInView.filter(e => kind == e.target.id && e.isIntersecting)?.length > 0 ?? false
+    },
   },
   mounted() {
+    this.$lax.addElements(
+      '#the-resume',
+      {
+        scrollY: {
+          opacity: [
+            [0, 100],
+            [0, 1],
+          ]
+        }
+      }
+
+    )
   }
 }
 </script>
