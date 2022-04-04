@@ -110,7 +110,7 @@ export default {
             [1, coordinates.scaleY],
           ]
         }
-      }
+      },
     )
     },
     calculateCoordinatesAnimation (originTag, destinationTag) {
@@ -124,6 +124,9 @@ export default {
         scaleY: destinationBox.height / originBox.height,
       }
     },
+    resizeEventHandler () {
+      this.setupAnimation();
+    }
   },
   created () {
     this.$lax.init();
@@ -136,12 +139,14 @@ export default {
   },
   beforeUnmount () {
     this.observer.disconnect();
+    window.removeEventListener("resize");
   },
   mounted () {
     this.$lax.addDriver('scrollY', function () {
       return window.scrollY
     }, {})
     this.loadSettings();
+    window.addEventListener("resize", this.resizeEventHandler);
   },
 }
 </script>

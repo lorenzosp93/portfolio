@@ -45,7 +45,7 @@ export default {
       {
         scrollY: {
           opacity: [
-            [0, 100],
+            [0, 'elInY'],
             [0, 1],
           ]
         }
