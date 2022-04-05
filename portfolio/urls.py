@@ -28,8 +28,6 @@ urlpatterns = [
     path('resume/', include('resume.urls', namespace='resume')),
     path('site/', include(router.urls)),
     path('blog/', include('blog.urls', namespace='blog')),
-    # path('', views.About.as_view(), name='about'),
-    # path('contact/', views.Contact.as_view(), name='contact'),
     path('admin/', admin.site.urls),
     path('health/', include('health_check.urls')),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))

@@ -1,0 +1,25 @@
+repositories:
+    - name: bitnami
+      url: https://charts.bitnami.com/bitnami
+
+releases:
+    - name: portfolio
+      namespace: portfolio
+      chart: ./charts/portfolio
+      values:
+        - ./values/portfolio.yaml
+    - name: postgres
+      namespace: portfolio
+      chart: ./charts/postgres
+      values:
+        - ./values/postgres.yaml
+    - name: ingress-controller
+      namespace: portfolio
+      chart: bitnami/nginx-ingress-controller
+      values:
+        - ./values/ingress-controller.yaml
+    - name: nodejs
+      namespace: portfolio
+      chart: bitnami/node
+      values:
+        - .values/nodejs.yaml

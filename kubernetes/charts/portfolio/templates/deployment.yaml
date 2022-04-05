@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "portfolio.fullname" . }}
+  labels:
+    app: {{ include "portfolio.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: {{ include "portfolio.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "portfolio.fullname" . }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - image: "{{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.tag | default "latest" }}"
+          name: {{ include "portfolio.fullname" . }}
+          envFrom:
+            - secretRef:
+                name: portfolio
+            - configMapRef:
+                name: portfolio
+          ports:
+            - containerPort: 8000
+              name: gunicorn
+          resources:
+            limits:
+              memory: 265Mi
+              cpu: 500m

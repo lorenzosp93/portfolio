@@ -11,7 +11,8 @@ class TestResumeModels(TestCase):
     def setUp(self):
         "Provide values to all tests"
         self.entity = models.Entity.objects.create(
-            name='Test Entity'
+            name='Test Entity',
+            type=0,
         )
         self.exp = models.Experience.objects.create(
             name='Test Experience 4!',

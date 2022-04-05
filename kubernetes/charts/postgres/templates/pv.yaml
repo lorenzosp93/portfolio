@@ -1,0 +1,15 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: {{ include "postgres.fullname" . }}
+  labels:
+    type: local
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+spec:
+  storageClassName: manual
+  capacity:
+    storage: {{ .Values.persistentVolume.storage }}
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /data/postgres-pv
