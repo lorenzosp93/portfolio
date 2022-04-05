@@ -13,7 +13,7 @@ global:
   ## imagePullSecrets:
   ##   - myRegistryKeySecretName
   ##
-  imagePullSecrets: []
+  imagePullSecrets: ['regcred']
   storageClass: ""
 
 ## @section Common parameters
@@ -41,7 +41,7 @@ commonAnnotations: {}
 installCommand: ['/bin/bash', '-ec', 'npm install']
 ## @param command Override default container command (useful when using custom images)
 ##
-command: ['/bin/bash', '-ec', 'npm start']
+command: ['/bin/bash', '-ec', 'npm run serve']
 ## @param args Override default container args (useful when using custom images)
 ##
 args: []
@@ -127,8 +127,8 @@ externaldb:
 ##
 image:
   registry: docker.io
-  repository: bitnami/node
-  tag: 16.14.2-debian-10-r20
+  repository: lorenzosp93/portfolio-frontend
+  tag: master
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
   ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
