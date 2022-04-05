@@ -1,10 +1,13 @@
 <template>
-  <div class="border-2 m-auto rounded border-grey-600  bg-white dark:bg-gray-900">
+  <div class="border-2 m-auto rounded-lg border-gray-700  bg-white dark:bg-gray-900">
     <div class="h-96  m-auto w-full animate-pulse" v-if="isLoading">
       <p>Loading...</p>
     </div>
-    <div class="m-auto w-full " v-else-if="entries.length > 0">
-      <ol class="relative border-l-2 border-grey-200 ml-5">
+    <div class="p-auto w-full " v-else-if="entries.length > 0">
+      <div class="absolute -right-2 top-1/2">
+        <div class="block w-10 h-1 rounded-lg  cursor-pointer bg-gray-300 rotate-90"/>
+      </div>
+      <ol class="relative border-l-2 border-gray-200 dark:border-gray-600 ml-5">
         <timeline-group
           v-for="group in entries"
           :key="group.uuid" :kind="kind" :groupKey="group.uuid" :group="group"
@@ -18,6 +21,7 @@
     <div class="m-auto h-96 w-full" v-else>
       <p>No {{kind}}s found!</p>
     </div>
+    
   </div>
 </template>
 
@@ -41,6 +45,8 @@ export default {
     'isActive',
     'observer'
   ],
+  inject: [
+  ],
   watch: {
     isActive (value) {
       if (value) {
@@ -50,7 +56,7 @@ export default {
     }
   },
   methods: {
-    loadEntries(kind) {
+    loadEntries (kind) {
       this.error = null;
       this.isLoading = true;
       const url = 'http://localhost:8000/resume/entity-entries/' + kind + '/';
@@ -74,6 +80,8 @@ export default {
         }
       )
     },
+  },
+  created () {
   },
   mounted() {
     this.observer.observe(this.$el);

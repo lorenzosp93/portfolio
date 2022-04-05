@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "core-js": "^3.8.3",
+    "hammerjs": "^2.0.8",
     "lax.js": "^2.0.3",
     "tw-elements": "^1.0.0-alpha12",
     "vue": "^3.2.13"
@@ -22,7 +23,9 @@
     "autoprefixer": "^10.4.4",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
+    "node-sass": "^7.0.1",
     "postcss": "^8.4.12",
+    "sass-loader": "^12.6.0",
     "tailwindcss": "^3.0.23"
   },
   "eslintConfig": {

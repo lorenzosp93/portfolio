@@ -1,9 +1,13 @@
 <template>
   <div class="snap-y snap-mandatory bg-gray-100 dark:bg-gray-700 absolute overscroll-none">
-    <the-hero v-if="!error && settings" :about="settings[0].about_text" :isLoading="isLoading" :error="error" :observer="observer" :elementsInView="elementsInView" id='the-hero' @imageLoaded="setupAnimation"/>
-    <the-navbar id='the-navbar' :elementsInView="elementsInView" @imageLoaded="setupAnimation">
-    </the-navbar>
+    <the-hero v-if="!error && settings" :about="settings[0].about_text" :isLoading="isLoading" :error="error" :observer="observer" id='the-hero' @imageLoaded="setupAnimation"/>
+
+    <the-navbar id='the-navbar' :elementsInView="elementsInView" @imageLoaded="setupAnimation" />
+
     <the-resume :observer="observer" :elementsInView="elementsInView" id="the-resume" />
+
+    <the-blog :observer="observer" :isVisible="isBlogVisible" :elementsInView="elementsInView" id="the-blog"/>
+
   </div>
 </template>
 
@@ -11,13 +15,15 @@
 import TheNavbar from './components/UI/TheNavbar.vue'
 import TheHero from './components/UI/TheHero.vue'
 import TheResume from './components/resume/TheResume.vue'
+import TheBlog from './components/blog/TheBlog.vue'
 
 export default {
   name: 'App',
   components: {
     TheNavbar,
     TheHero,
-    TheResume
+    TheResume,
+    TheBlog
   },
   data () {
     return{
@@ -26,11 +32,19 @@ export default {
       error: null,
       observer: null,
       elementsInView: [],
+      truncationAmount: 250,
     }
   },
   computed: {
+    isBlogVisible () {
+      return this.elementsInView?.filter(elem => elem.target.id == 'the-blog' && elem.isIntersecting)?.length > 0
+    },
   },
   methods: {
+    calculateTruncationAmount () {
+      let w = window.innerWidth;
+      return w > 1024 ? 350 : w > 640 ? 300 : 200
+    },
     loadSettings () {
       this.error = null;
       this.isLoading = true;
@@ -125,11 +139,15 @@ export default {
       }
     },
     resizeEventHandler () {
+      this.truncationAmount = this.calculateTruncationAmount();
       this.setupAnimation();
     }
   },
   created () {
     this.$lax.init();
+    this.$lax.addDriver('scrollY', function () {
+      return window.scrollY
+    }, {})
     this.observer = new IntersectionObserver(
       this.onElementObserved,
       {
@@ -139,14 +157,19 @@ export default {
   },
   beforeUnmount () {
     this.observer.disconnect();
-    window.removeEventListener("resize");
+    window.removeEventListener("resize", this.resizeEventHandler);
   },
   mounted () {
-    this.$lax.addDriver('scrollY', function () {
-      return window.scrollY
-    }, {})
     this.loadSettings();
+    this.truncationAmount = this.calculateTruncationAmount();
     window.addEventListener("resize", this.resizeEventHandler);
+  },
+  provide () {
+    return {
+      'truncationAmount': this.truncationAmount,
+      'observer': this.observer,
+      'elementsInView': this.elementsInView,
+    }
   },
 }
 </script>

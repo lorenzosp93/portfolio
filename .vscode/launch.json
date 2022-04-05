@@ -13,7 +13,7 @@
             "breakOnLoad": true,
             "sourceMapPathOverrides": {
                 "webpack:///src/*": "${webRoot}/*"
-              },
+            }
         },
         {
             "name": "Python: Django",
@@ -25,6 +25,32 @@
                 "--noreload"
             ],
             "django": true
+        },
+        {
+            "name": "Docker: Python - Django",
+            "type": "docker",
+            "request": "launch",
+            "preLaunchTask": "docker-run: debug",
+            "python": {
+                "pathMappings": [
+                    {
+                        "localRoot": "${workspaceFolder}",
+                        "remoteRoot": "/app"
+                    }
+                ],
+                "projectType": "django"
+            }
+        },
+        {
+            "name": "Docker Node.js Launch",
+            "type": "docker",
+            "request": "launch",
+            "preLaunchTask": "docker-run: debug",
+            "platform": "node",
+            "node": {
+                "package": "${workspaceFolder}/portfolio-frontend/package.json",
+                "localRoot": "${workspaceFolder}/portfolio-frontend"
+            }
         }
     ]
 }

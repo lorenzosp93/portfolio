@@ -1,18 +1,18 @@
 <template>
-  <div class="flex flex-wrap m-5 snap-start snap-always justify-self-center text-black dark:text-white">
+  <div class="flex lg:h-screen flex-wrap m-5 snap-start snap-always justify-self-center text-black dark:text-white">
     
     <div class="flex-initial w-1/2 lg:w-1/3 m-auto" >
-      <img class='m-auto ring-4 ring-white z-50 relative rounded-full' id="heroPicture" src="@/assets/hero.jpeg" :class="{'invisible': !isVisible}" alt="High res picture" @load="this.$emit('imageLoaded')">
+      <img class='m-auto ring-4 ring-white z-20 relative rounded-full' id="heroPicture" src="@/assets/hero.jpeg" :class="{'invisible': !isVisible}" alt="High res picture" @load="this.$emit('imageLoaded')">
       <h1 class="text-2xl m-5 font-bold text-center">Hi, I'm Lorenzo</h1>
     </div>
     <div></div>
-    <div class="w-2/3 flex-initial lg:w-1/3 mt-5 m-auto">
-      <h3 class="text-xl">About</h3>
+    <div class="flex-initial w-2/3 lg:w-1/2 mt-auto m-auto">
       <div class="font-serif first-letter:text-2xl justify-between m-3 indent-5">
-        <p v-if="!isLoading">{{ about }}</p>
-        <p v-else>
-          Loading...
-        </p>
+        <p v-if="about" v-html="about"/>
+        <div class="h-96" v-else-if="isLoading">
+          <p>Loading...</p>
+        </div>
+        <div v-else class="h-96" />
       </div>
     </div>
   </div>
@@ -29,8 +29,13 @@ export default {
     isLoading: Boolean,
     error: String,
     observer: Object,
-    elementsInView: Array,
   },
+  emits: [
+    'imageLoaded'
+  ],
+  inject: [
+    'elementsInView',
+  ],
   computed: {
     isVisible () {
       const e = this.elementsInView.filter(elem => elem.target.id == 'the-hero');
