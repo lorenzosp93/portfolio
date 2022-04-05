@@ -122,7 +122,6 @@ jobs:
         uses: actions/setup-node@v1
       - run: npm install
       - run: npm build --if-present
-      - run: npm coverage
       
   build-frontend:
     runs-on: ubuntu-latest
