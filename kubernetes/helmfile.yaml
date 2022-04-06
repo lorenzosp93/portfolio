@@ -22,4 +22,4 @@ releases:
       namespace: portfolio
       chart: bitnami/node
       values:
-        - .values/nodejs.yaml
+        - ./values/nodejs.yaml
