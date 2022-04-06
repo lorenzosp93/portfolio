@@ -2,7 +2,7 @@
 <Teleport to="body">
   <div v-on="handlers" class="bottom-sheet" :class="{opened: opened, closed: opened === false, moving:moving}" style="{'pointer-events': 'all'}" ref="bottomSheet">
     <div class="backdrop-blur-sm bottom-sheet__backdrop" />
-    <div class="bg-white dark:bg-gray-800 bottom-sheet__card fx-default" :class="{stripe: stripe}" :style="[{ bottom: cardP+'px', maxWidth: '640px', maxHeight: maxHeight+'%'},{'height': 'auto'},{'pointer-events': 'all'}, {'padding-bottom': extraPadding+'px'}]" id='detail-card' ref="card">
+    <div class="bg-white dark:bg-gray-800 bottom-sheet__card fx-default" :class="{stripe: stripe}" :style="[{ bottom: cardP+'px', maxWidth: '640px', maxHeight: maxHeight+'%'},{'height': 'auto'},{'pointer-events': 'all'}, {'padding-bottom': paddingBottom+'px'}]" id='detail-card' ref="card">
       <div class="bottom-sheet__pan" ref="pan">
         <div class="bottom-sheet__bar bg-gray-300 dark:bg-white" />
       </div>
@@ -56,12 +56,12 @@ export default {
         mousedown: vm.clickOnBottomSheet,
         touchstart: vm.clickOnBottomSheet
       },
-      extraPadding: 0,
+      paddingBottom: 12,
     }
   },
   computed: {
     maxHeight () {
-      return 95 + (this.extraPadding ? 5 : 0)
+      return 95 + (this.paddingBottom > 12 ? 5 : 0)
     },
   },
   methods: {
@@ -134,7 +134,7 @@ export default {
           this.cardP = delta;
         } else if (- delta > -150) {
           this.cardP = 0;
-          this.extraPadding = delta;
+          this.paddingBottom = 12 + delta;
         }
       }
       if (event.isFinal) {
@@ -144,7 +144,7 @@ export default {
           this.close()
         } else {
           this.cardP = 0;
-          this.extraPadding = 0;
+          this.paddingBottom = 12;
         }
       }
     },
