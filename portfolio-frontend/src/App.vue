@@ -48,7 +48,7 @@ export default {
     loadSettings () {
       this.error = null;
       this.isLoading = true;
-      const url = process.env.VUE_APP_BACKEND_URL ?? 'portfolio' + '/site/settings/';
+      const url = 'portfolio' + '/site/settings/';
       fetch(url).then(
         response => {
           if (response.ok) {

@@ -85,6 +85,7 @@ jobs:
 
   build-backend:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
     needs: test-backend
     steps:
     - name: Checkout
@@ -126,6 +127,7 @@ jobs:
       
   build-frontend:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
     needs: test-frontend
     steps:
       - name: Checkout
