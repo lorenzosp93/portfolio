@@ -54,7 +54,10 @@ hostAliases: []
 ##  - name: BEARER_AUTH
 ##    value: true
 ##
-extraEnvVars: []
+extraEnvVars: 
+  - name: VUE_APP_BACKEND_URL
+    value: portfolio
+
 ## @param extraEnvVarsCM Name of existing ConfigMap containing extra environment variables
 ##
 extraEnvVarsCM: ""

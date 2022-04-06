@@ -45,7 +45,7 @@ export default {
     loadPosts () {
       this.error = null;
       this.isLoading = true;
-      const url = 'http://localhost:8000/blog/post/';
+      const url = process.env.VUE_APP_BACKEND_URL + '/blog/post/';
       fetch(url).then(
         response => {
           if (response.ok) {
