@@ -2,6 +2,7 @@ from rest_framework.serializers import (
     HyperlinkedModelSerializer, 
     ModelSerializer
 )
+from django.contrib.auth.models import User
 from shared.serializers import (
     AttachmentSerializer
 )
@@ -9,9 +10,14 @@ from .models import (
     Post,
     Comment
 )
+class SimpleUserSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'first_name', 'last_name']
 
-class PostSerializer(ModelSerializer):
+class PostSerializer(HyperlinkedModelSerializer):
     attachments = AttachmentSerializer(many=True)
+    created_by = SimpleUserSerializer()
     class Meta:
         model = Post
         fields = [
@@ -25,7 +31,7 @@ class PostSerializer(ModelSerializer):
             'created_by',
         ]
 
-class CommentSerializer(ModelSerializer):
+class CommentSerializer(HyperlinkedModelSerializer):
     class Meta:
         model = Comment
         fields = [

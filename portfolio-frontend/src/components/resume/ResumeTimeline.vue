@@ -3,7 +3,7 @@
     <div class="h-96  m-auto w-full animate-pulse" v-if="isLoading">
       <p>Loading...</p>
     </div>
-    <div class="p-auto w-full " v-else-if="entries.length > 0">
+    <div class="relative p-auto w-full " v-else-if="entries.length > 0">
       <div class="absolute -right-2 top-1/2">
         <div class="block w-10 h-1 rounded-lg  cursor-pointer bg-gray-300 rotate-90"/>
       </div>
