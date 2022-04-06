@@ -18,8 +18,8 @@ releases:
       chart: bitnami/nginx-ingress-controller
       values:
         - ./values/ingress-controller.yaml
-    - name: nodejs
+    - name: frontend
       namespace: portfolio
       chart: bitnami/node
       values:
-        - ./values/nodejs.yaml
+        - ./values/frontend.yaml

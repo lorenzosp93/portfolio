@@ -34,3 +34,13 @@ spec:
             limits:
               memory: 265Mi
               cpu: 500m
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.livenessProbe.path }}
+              port: {{ .Values.service.port }}
+              httpHeaders:
+              - name: Accept
+                value: application/json
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: 10
+

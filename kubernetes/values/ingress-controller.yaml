@@ -62,7 +62,7 @@ image:
 ## @param containerPorts [object] Controller container ports to open
 ##
 containerPorts:
-  http: 8080
+  http: 80
   https: 443
   metrics: 10254
 ## @param hostAliases Deployment pod host aliases
@@ -106,7 +106,7 @@ watchIngressWithoutClass: false
 ingressClassResource:
   name: nginx
   enabled: true
-  default: false
+  default: true
   controllerClass: "k8s.io/ingress-nginx"
   parameters: {}
 ## Allows customization of the external service
