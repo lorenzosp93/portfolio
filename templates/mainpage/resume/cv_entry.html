@@ -3,13 +3,13 @@
 
 <div class="row my-4">
     <div class="col-sm-2 col-lg-1 mx-auto">
-        <img src="{{ entry.company.picture.url }}" alt="" class='img-fluid'>
+        <img src="{{ entry.entity.picture.url }}" alt="" class='img-fluid'>
     </div>
 
     <div class="col-sm-10 col-lg-11">
         <h5 class="">{{ entry.name }}</h5>
         <h6 class="mb-2 text-muted">
-            {{ entry.company }} - {{ entry.department }}
+            {{ entry.entity }} - {{ entry.department }}
         </h6>
         <h6 class="mb-2 text-muted">
             {{ entry.location }}, {{ entry.start_date }} - {{ entry.end_date_display }}
@@ -46,9 +46,9 @@
             <img class="d-block w-100" src="{{ proj.picture.url }}" alt="{{ proj.name }} picture">
             <div class="carousel-caption d-none d-md-block">
                 <a href="{{ proj.get_absolute_url }}">
-                    <h5 class="blend">{{ proj.name }}</h5>
+                    <h5 >{{ proj.name }}</h5>
                 </a>
-                <p class="blend">{{ proj.description }}</p>
+                <p >{{ proj.description }}</p>
             </div>
         </div>
         {% endfor %}

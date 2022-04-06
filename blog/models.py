@@ -1,5 +1,6 @@
 "Define modules for the blog app"
-from resume.base_models import (
+from shared.models import (
+    Serializable,
     TimeStampable,
     Localizable,
     Attachable,
@@ -12,12 +13,12 @@ from resume.base_models import (
 # Create your models here.
 class Post(
         TimeStampable, Named, HasPicture, HasContent,
-        Localizable, Attachable, Authorable,
+        Localizable, Attachable, Authorable, Serializable,
     ):
     "Define posts model"
 
 
 class Comment(
-        TimeStampable, Named, HasContent, Authorable,
+        TimeStampable, Named, HasContent, Authorable, Serializable,
     ):
     "Define comment model"

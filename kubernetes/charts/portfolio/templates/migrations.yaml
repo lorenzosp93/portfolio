@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "portfolio.fullname" . }}
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+spec:
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: portfolio
+          image: "{{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.tag | default "latest"}}"
+          command:
+            - python
+            - manage.py
+            - migrate
+          envFrom:
+            - secretRef:
+                name: portfolio
+            - configMapRef:
+                name: portfolio
+      restartPolicy: Never
