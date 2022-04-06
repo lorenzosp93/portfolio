@@ -38,10 +38,10 @@ commonAnnotations: {}
 
 ## @param installCommand Override default container install command (useful when using custom images or repositories)
 ##
-installCommand: ['/bin/bash', '-ec', 'npm install']
+installCommand: []
 ## @param command Override default container command (useful when using custom images)
 ##
-command: ['/bin/bash', '-ec', 'npm run serve']
+command: []
 ## @param args Override default container args (useful when using custom images)
 ##
 args: []
@@ -147,7 +147,7 @@ image:
 replicaCount: 1
 ## @param applicationPort Specify the port where your application will be running
 ##
-applicationPort: 3000
+applicationPort: 8080
 ## @param podAffinityPreset Pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
 ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
 ##
