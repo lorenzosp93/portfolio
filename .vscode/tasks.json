@@ -18,6 +18,11 @@
 				"dockerfile": "${workspaceFolder}/Dockerfile",
 				"context": "${workspaceFolder}",
 				"pull": true
+			},
+			"problemMatcher": [],
+			"group": {
+				"kind": "build",
+				"isDefault": true
 			}
 		},
 		{
