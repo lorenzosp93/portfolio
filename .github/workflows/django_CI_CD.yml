@@ -168,6 +168,6 @@ jobs:
           cd ./kubernetes
           mkdir ~/.kube && echo "$KUBECONFIG_FILE" > ~/.kube/config
           helmfile repo add && helmfile repo sync
-          helmfile apply
+          helmfile sync
         env:
           KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'

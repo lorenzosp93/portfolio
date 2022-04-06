@@ -59,7 +59,7 @@ export default {
     loadEntries (kind) {
       this.error = null;
       this.isLoading = true;
-      const url = 'portfolio' + '/resume/entity-entries/' + kind + '/';
+      const url = '/api/resume/entity-entries/' + kind + '/';
       fetch(url).then(
         response => {
           if (response.ok) {

@@ -48,7 +48,7 @@ export default {
     loadSettings () {
       this.error = null;
       this.isLoading = true;
-      const url = 'portfolio' + '/site/settings/';
+      const url = '/api/site/settings/';
       fetch(url).then(
         response => {
           if (response.ok) {

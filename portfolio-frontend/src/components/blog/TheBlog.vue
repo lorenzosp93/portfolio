@@ -45,7 +45,7 @@ export default {
     loadPosts () {
       this.error = null;
       this.isLoading = true;
-      const url = 'portfolio' + '/blog/post/';
+      const url = '/api/blog/post/';
       fetch(url).then(
         response => {
           if (response.ok) {
