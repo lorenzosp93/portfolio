@@ -162,99 +162,75 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="scss" scoped>
+<style scoped>
+.bottom-sheet * {
+  box-sizing: border-box;
+}
 .bottom-sheet {
   z-index: 100;
   transition: all 0.3s ease;
   position: relative;
-  * {
-    box-sizing: border-box;
-  }
-  &__content {
-    overflow-y: scroll;
-  }
-  &__backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 100;
-    opacity: 0;
-    visibility: hidden;
-  }
-  &__card {
-    width: 100%;
-    position: fixed;
-    border-radius: 14px 14px 0 0;
-    left: 50%;
-    z-index: 100;
-    margin: 0 auto;
-    &.square {
-      border-radius: 0;
-    }
-    &.stripe {
-      padding-bottom: 20px;
-    }
-    &.fx-default {
-      transform: translate(-50%, 0);
-      transition: bottom 0.3s ease;
-    }
-    &.fx-fadein-scale {
-      transform: translate(-50%, 0) scale(0.7);
-      opacity: 0;
-      transition: all 0.3s;
-    }
-    &.fx-slide-from-right {
-      transform: translate(100%, 0);
-      opacity: 0;
-      transition: all 0.3s cubic-bezier(0.25, 0.5, 0.5, 0.9);
-    }
-    &.fx-slide-from-left {
-      transform: translate(-100%, 0);
-      opacity: 0;
-      transition: all 0.3s cubic-bezier(0.25, 0.5, 0.5, 0.9);
-    }
-  }
-  &__pan {
-    padding-bottom: 20px;
-    padding-top: 15px;
-    height: 38px;
-  }
-  &__bar {
-    display: block;
-    width: 40px;
-    height: 3px;
-    border-radius: 14px;
-    margin: 0 auto;
-    cursor: pointer;
-  }
-  &.closed {
-    opacity: 0;
-    visibility: hidden;
-    // .bottom-sheet__backdrop {
-      // animation: hide 0.3s ease;
-    // }
-  }
-  &.moving {
-    .bottom-sheet__card {
-      transition: none;
-    }
-  }
-  &.opened {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    .bottom-sheet__backdrop {
-      // animation: show 0.3s ease;
-      opacity: 1;
-      visibility: visible;
-    } 
-  }
 }
+.bottom-sheet__content {
+  overflow-y: scroll;
+}
+.bottom-sheet__backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+}
+.bottom-sheet__card {
+  width: 100%;
+  position: fixed;
+  border-radius: 14px 14px 0 0;
+  left: 50%;
+  z-index: 100;
+  margin: 0 auto;
+}
+.bottom-sheet__card.stripe {
+  padding-bottom: 20px;
+}
+.bottom-sheet__card.fx-default {
+  transform: translate(-50%,0);
+  transition: bottom 0.3s ease;
+}
+.bottom-sheet__pan {
+  padding-bottom: 20px;
+  padding-top: 15px;
+  height: 38px;
+}
+.bottom-sheet__bar {
+  display: block;
+  width: 40px;
+  height: 3px;
+  border-radius: 14px;
+  margin: 0 auto;
+  cursor: pointer;
+}
+.closed {
+  opacity: 0;
+  visibility: hidden;
+}
+.moving .bottom-sheet__card{
+  transition: none; 
+}
+.opened {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.opened .bottom-sheet__backdrop {
+  opacity: 1;
+  visibility: visible;
+}
+
 @keyframes show {
   0% {
     opacity: 0;
@@ -275,4 +251,53 @@ export default {
     visibility: hidden;
   }
 }
+
+
 </style>
+<!--
+<style scoped>
+* {
+  @apply box-border
+}
+.bottom-sheet {
+  @apply: z-[100] duration-300 ease-in relative
+}
+.bottom-sheet__backdrop {
+  @apply fixed left-0 top-0 z-[100] opacity-0 hidden
+}
+.bottom-sheet__card {
+  @apply w-full fixed rounded-t-2xl inset-x-0 bottom-0 z-[100] mx-auto my-0
+}
+.bottom-sheet__card.stripe {
+  @apply pb-5
+}
+.bottom-sheet__card.fx-default {
+  @apply -translate-y-1/2 duration-300 ease-in 
+}
+.bottom-sheet__content {
+  @apply overflow-y-scroll
+}
+.bottom-sheet__pan {
+  @apply pb-5 pt-4 h-9  
+}
+.bottom-sheet__bar {
+  @apply block w-10 h-0.5 rounded-2xl my-0 mx-auto cursor-pointer
+}
+.closed {
+  @apply opacity-0 hidden 
+}
+.closed .bottom-sheet__backdrop {
+  @apply transition-opacity duration-300 ease-in opacity-0 hidden
+}
+.moving .bottom-sheet__card {
+  @apply transition-none
+}
+.opened {
+  @apply fixed top-0 left-0 w-full h-full
+}
+.opened .bottom-sheet__backdrop {
+  @apply transition-opacity duration-300 ease-in opacity-100 visible
+}
+
+</style>
+-->
