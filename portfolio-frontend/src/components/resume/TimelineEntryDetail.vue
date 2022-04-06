@@ -17,9 +17,9 @@
       </div>
     </template>
     <template v-slot:inner-content>
-      <h3 class="text-xl font-semibold mb-3">Description:</h3>
+      <h3 v-if="description" class="text-xl font-semibold mb-3">Description:</h3>
       <p v-html="description" />
-      <h3 class="text-xl font-semibold my-3" >Key Achievements:</h3>
+      <h3 v-if="key_achievements" class="text-xl font-semibold my-3" >Key Achievements:</h3>
       <p v-html="key_achievements" />
     </template>
   </detail-card>

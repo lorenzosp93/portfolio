@@ -1,5 +1,5 @@
 <template>
-  <div class="snap-center m-5 container w-3/5 lg:w-1/3 flex-none rounded-2xl border-1 border-gray-200 shadow-md dark:bg-gray-600 bg-white">
+  <div @click="toggleDetails" class="snap-center m-5 container w-3/5 lg:w-1/3 flex-none rounded-2xl border-1 border-gray-200 shadow-md dark:bg-gray-600 bg-white">
     <img class="object-cover aspect-video w-full overflow-hidden rounded-t-2xl pb-1 border-b-2 border-gray-300" :src="picture" :alt="'Picture for ' + name">
     <div class="flex flex-wrap p-3 w-full text-lg text-black dark:text-white">
       <p class="text-xs w-full text-gray-400">
@@ -7,9 +7,6 @@
       </p>
       <h2 class="font-semibold w-full text-gray-900 dark:text-white">{{ name }}</h2>
       <p v-html:="truncatedContent" class="text-sm my-3 w-full" />
-      <a @click.prevent="toggleDetails" class="ml-auto mb-1 text-sm text-gray-400 sm:mb-0">
-        Read more
-      </a>
     </div>
     <blog-entry-detail @card-closed="toggleDetails" v-if="detailsVisible" :name="name" :created_at="created_at" :created_by="created_by" :location="location" :picture="picture" :content="content" :attachments="attachments"/>
   </div>

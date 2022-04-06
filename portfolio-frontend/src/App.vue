@@ -32,7 +32,7 @@ export default {
       error: null,
       observer: null,
       elementsInView: [],
-      truncationAmount: 250,
+      truncationAmount: 150,
     }
   },
   computed: {
@@ -43,7 +43,7 @@ export default {
   methods: {
     calculateTruncationAmount () {
       let w = window.innerWidth;
-      return w > 1024 ? 350 : w > 640 ? 300 : 200
+      return w > 1024 ? 350 : w > 640 ? 200 : 100
     },
     loadSettings () {
       this.error = null;

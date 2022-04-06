@@ -1,5 +1,5 @@
 <template>
-  <li class="mx-3 my-5 z-2">
+  <li @click="toggleDetails" class="mx-3 my-5 z-2">
     <div v-if="!isFirst" class="absolute w-4 h-4 bg-gray-200 rounded-full mt-5 -left-2 border border-white dark:border-gray-900 dark:bg-gray-700"></div>
     <div class="timeline-entry p-3 bg-white rounded-lg  shadow-md dark:bg-gray-700 dark:border-gray-600">
       <div class="justify-between items-center mb-3 sm:flex">
@@ -14,13 +14,6 @@
         </div>
       </div>
       <div class="p-2 flex text-sm font-normal text-gray-500 bg-gray-50 rounded-lg border border-gray-200 dark:bg-gray-900 dark:border-gray-500 dark:text-gray-300" v-html="truncatedDescription" />
-      <div class="mt-3">
-        <a @click="toggleDetails">
-          <div class="p-2 text-center rounded-lg shadow-sm dark:bg-gray-800 bg-white text-sm">
-            More details
-          </div>
-        </a>
-      </div>
     </div>
     <timeline-entry-detail v-bind="$props" @card-closed="toggleDetails" v-if="detailsVisible" />
   </li>
