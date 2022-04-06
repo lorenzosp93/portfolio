@@ -25,12 +25,12 @@ router = DefaultRouter()
 router.register(r'settings', viewsets.SettingsViewSet, '')
 
 urlpatterns = [
-    path('resume/', include('resume.urls', namespace='resume')),
-    path('site/', include(router.urls)),
-    path('blog/', include('blog.urls', namespace='blog')),
-    path('admin/', admin.site.urls),
-    path('health/', include('health_check.urls')),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    path('api/resume/', include('resume.urls', namespace='resume')),
+    path('api/site/', include(router.urls)),
+    path('api/blog/', include('blog.urls', namespace='blog')),
+    path('api/admin/', admin.site.urls),
+    path('api/health/', include('health_check.urls')),
+    path('api/api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
 
 if settings.DEBUG:

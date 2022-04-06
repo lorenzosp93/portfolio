@@ -34,6 +34,7 @@ spec:
             limits:
               memory: 265Mi
               cpu: 500m
+          {{- if .Values.livenessProbe.enabled }}
           livenessProbe:
             httpGet:
               path: {{ .Values.livenessProbe.path }}
@@ -43,4 +44,5 @@ spec:
                 value: application/json
             initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
             periodSeconds: 10
+            {{- end }}
 
