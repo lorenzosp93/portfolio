@@ -5,7 +5,7 @@
         Thoughts from the blog.
       </h2>
       <p class="w-full mb-auto text-center text-gray-600 dark:text-gray-300">
-        Some sub-tytle for the blog section. Lorem Ipsum dolor ...
+        Who needs MySpace when you can create your own blog, right?
       </p>
     </div>
     <div class="p-auto container relative w-screen flex overflow-x-scroll no-scrollbar snap-x snap-mandatory scrolling-touch m-auto">

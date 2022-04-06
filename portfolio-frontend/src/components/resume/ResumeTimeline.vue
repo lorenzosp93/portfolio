@@ -1,5 +1,5 @@
 <template>
-  <div class="border-2 m-auto rounded-lg border-gray-700 max-w-screen-lg bg-white dark:bg-gray-900">
+  <div class="border-2 m-auto rounded-lg  max-w-screen-lg shadow-md bg-white dark:bg-gray-900">
     <div class="h-96  m-auto w-full animate-pulse" v-if="isLoading">
       <p>Loading...</p>
     </div>

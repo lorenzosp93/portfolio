@@ -5,7 +5,7 @@
       Here are a few things I've done.
     </h2>
     <p class="text-center w-full text-gray-600 dark:text-gray-300">
-      Some sub-tytle for the blog section. Lorem Ipsum dolor ...
+      Because I definitely needed a website to host my CV. Swipe horizontally to change section!
     </p>
   </div>
   <div class="container relative w-screen flex gap-6 overflow-x-scroll no-scrollbar snap-x snap-mandatory scrolling-touch">
