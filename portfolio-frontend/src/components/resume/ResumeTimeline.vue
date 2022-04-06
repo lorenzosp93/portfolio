@@ -59,7 +59,7 @@ export default {
     loadEntries (kind) {
       this.error = null;
       this.isLoading = true;
-      const url = process.env.VUE_APP_BACKEND_URL + '/resume/entity-entries/' + kind + '/';
+      const url = process.env.VUE_APP_BACKEND_URL ?? 'portfolio' + '/resume/entity-entries/' + kind + '/';
       fetch(url).then(
         response => {
           if (response.ok) {
