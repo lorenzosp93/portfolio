@@ -68,7 +68,7 @@ mongodb:
   ## @param mongodb.enabled Whether to install or not the MongoDB&reg; chart
   ## To use an external database set this to false and configure the externaldb parameters
   ##
-  enabled: true
+  enabled: false
   ## MongoDB&reg; Authentication parameters
   ##
   auth:
@@ -372,7 +372,7 @@ git:
 ## @param getAppFromExternalRepository Enable to download app from external git repository
 ## Disable it if your docker image already includes your application at /app
 ##
-getAppFromExternalRepository: true
+getAppFromExternalRepository: false
 ## @param repository Git repository http/https url
 ##
 repository: https://github.com/bitnami/sample-mean.git
