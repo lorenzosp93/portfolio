@@ -1,5 +1,5 @@
 <template>
-  <li @click="toggleDetails" class="mx-3 my-5 z-2" :class="{'pointer-events-none': detailsVisible}">
+  <li @click="toggleDetails" class="mx-3 my-5 z-2" :disabled="detailsVisible">
     <div v-if="!isFirst" class="absolute w-4 h-4 bg-gray-200 rounded-full mt-5 -left-2 border border-white dark:border-gray-900 dark:bg-gray-700"></div>
     <div class="timeline-entry p-3 bg-white rounded-lg  shadow-md dark:bg-gray-700 dark:border-gray-600">
       <div class="justify-between items-center mb-3 sm:flex">
