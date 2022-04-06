@@ -62,7 +62,7 @@ image:
 ## @param containerPorts [object] Controller container ports to open
 ##
 containerPorts:
-  http: 80
+  http: 8080
   https: 443
   metrics: 10254
 ## @param hostAliases Deployment pod host aliases
