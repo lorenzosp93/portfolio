@@ -22,8 +22,8 @@
       <h3 v-if="key_achievements" class="text-xl font-semibold my-3" >Key Achievements:</h3>
       <p v-html="key_achievements" />
       <h3 v-if="keywords.length > 0" class="text-lg font-semibold my-3">Keywords:</h3>
-      <div class="flex overflow-x-auto mb-3">
-        <div class="rounded-md shadow-md mx-3 p-3 bg-gray-100 dark:bg-gray-700" v-for="keyword in keywords" :key="keyword.name">
+      <div class="flex overflow-x-auto pb-3 no-scrollbar">
+        <div class="rounded-lg shadow-md mx-3 p-3 bg-gray-100 dark:bg-gray-700 whitespace-nowrap" v-for="keyword in keywords" :key="keyword.name">
           {{ keyword.name }}
         </div>
       </div>
