@@ -1,5 +1,5 @@
 <template>
-<div class="container relative snap-start snap-always w-screen mx-auto">
+<div class="container relative snap-start snap-always lg:min-h-screen w-screen mx-auto">
   <div class="class container flex flex-wrap mx-auto my-10">
     <h2 class="text-center text-xl w-full font-bold mx-auto  text-gray-600 dark:text-white">
       Here are a few things I've done.
@@ -49,18 +49,6 @@ export default {
     },
   },
   mounted() {
-    this.$lax.addElements(
-      '#the-resume',
-      {
-        scrollY: {
-          opacity: [
-            [0, 'elCenterY'],
-            [0, 1],
-          ]
-        }
-      }
-
-    )
   }
 }
 </script>

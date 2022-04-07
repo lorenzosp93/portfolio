@@ -1,12 +1,12 @@
 <template>
   <div class="snap-y snap-mandatory bg-gray-100 dark:bg-gray-700 absolute overscroll-none">
-    <the-hero v-if="!error && settings" :about="settings[0].about_text" :isLoading="isLoading" :error="error" :observer="observer" id='the-hero' @imageLoaded="setupAnimation"/>
+    <the-hero :observer="observer" :elementsInView="elementsInView" id='the-hero' @imageLoaded="setupAnimation"/>
 
     <the-navbar id='the-navbar' :elementsInView="elementsInView" @imageLoaded="setupAnimation" />
 
     <the-resume :observer="observer" :elementsInView="elementsInView" id="the-resume" />
 
-    <the-blog :observer="observer" :isVisible="isBlogVisible" :elementsInView="elementsInView" id="the-blog"/>
+    <the-blog :observer="observer" :isVisible="isBlogVisible" id="the-blog"/>
 
   </div>
 </template>
@@ -27,12 +27,32 @@ export default {
   },
   data () {
     return{
-      settings: null,
-      isLoading: false,
-      error: null,
       observer: null,
       elementsInView: [],
       truncationAmount: 150,
+      loadData: (url, self) => {
+        self.isLoading = true;
+        fetch(url).then(
+          response => {
+            if (response.ok) {
+              return response.json();
+            }
+          }
+        ).then(
+          data => {
+            if (data) {
+              self.isLoading = false;
+              self.data = data;
+            }
+          }
+        ).catch(
+          error => {
+            self.isLoading = false;
+            self.error = "Something went wrong when loading the site settings...";
+            console.log(error);
+          }
+        )
+      }
     }
   },
   computed: {
@@ -44,30 +64,6 @@ export default {
     calculateTruncationAmount () {
       let w = window.innerWidth;
       return w > 1024 ? 350 : w > 640 ? 200 : 100
-    },
-    loadSettings () {
-      this.error = null;
-      this.isLoading = true;
-      const url = '/api/site/settings/';
-      fetch(url).then(
-        response => {
-          if (response.ok) {
-            return response.json();
-          }
-          console.log(response)
-        }
-      ).then(
-        data => {
-          this.settings = data;
-          this.isLoading = false;
-        }
-      ).catch(
-        error => {
-          this.isLoading = false;
-          this.error = "Something went wrong when loading the site settings...";
-          console.log(error);
-        }
-      )
     },
     onElementObserved (entries) {
       entries.every(
@@ -160,15 +156,13 @@ export default {
     window.removeEventListener("resize", this.resizeEventHandler);
   },
   mounted () {
-    this.loadSettings();
     this.truncationAmount = this.calculateTruncationAmount();
     window.addEventListener("resize", this.resizeEventHandler);
   },
   provide () {
     return {
       'truncationAmount': this.truncationAmount,
-      'observer': this.observer,
-      'elementsInView': this.elementsInView,
+      'loadData': this.loadData,
     }
   },
 }
