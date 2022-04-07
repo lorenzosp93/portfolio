@@ -45,7 +45,7 @@ export default {
   ],
   computed: {
     created_by__fullname () {
-      return this.created_by?.firstname + this.created_by?.lastname
+      return this.created_by?.firstname ?? '' + this.created_by?.lastname ?? ''
     },
     created_at_date () {
       let date = new Date(this.created_at)
