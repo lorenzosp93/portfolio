@@ -10,10 +10,10 @@
   </div>
   <div class="container relative w-screen flex gap-6 overflow-x-scroll no-scrollbar snap-x snap-mandatory scrolling-touch">
     <div class="flex-none  w-full snap-always snap-center">
-      <resume-timeline :observer="observer" :isActive="isExperienceActive" :kind="'experience'" id="experience" />
+      <resume-timeline :ix="'first'" :observer="observer" :isActive="isExperienceActive" :kind="'experience'" id="experience" />
     </div>
     <div class="flex-none  w-full snap-always snap-center">
-      <resume-timeline :observer="observer" :isActive="isEducationActive" :kind="'education'" id="education" />
+      <resume-timeline :ix="'last'" :observer="observer" :isActive="isEducationActive" :kind="'education'" id="education" />
     </div>
   </div>
 </div>

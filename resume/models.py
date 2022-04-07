@@ -37,8 +37,8 @@ class Project(
     ):
     "Model to define projects"
 
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True)   
-    object_id = models.UUIDField()
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True)   
+    object_id = models.UUIDField(null=True, blank=True)
     entry = GenericForeignKey()
 
     def get_absolute_url(self):

@@ -5,7 +5,7 @@
         Thoughts from the blog.
       </h2>
       <p class="w-full mb-auto text-center text-gray-600 dark:text-gray-300">
-        Who needs MySpace when you can create your own blog, right?
+        Who needs MySpace when you can create your own blog and write whatever comes to mind on it, right?
       </p>
     </div>
     <div class="p-auto container relative w-screen flex overflow-x-scroll no-scrollbar snap-x snap-mandatory scrolling-touch m-auto">
