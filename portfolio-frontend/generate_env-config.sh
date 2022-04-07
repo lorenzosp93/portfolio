@@ -1,0 +1,3 @@
+cat <<EOF
+window.VUE_APP_BACKEND="${VUE_APP_BACKEND}";
+EOF

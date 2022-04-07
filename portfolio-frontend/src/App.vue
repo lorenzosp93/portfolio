@@ -1,5 +1,5 @@
 <template>
-  <div class="snap-y snap-mandatory bg-gray-100 dark:bg-gray-700 absolute overscroll-none">
+  <div class="snap-y snap-mandatory bg-gray-100 dark:bg-gray-700 absolute">
     <the-hero :observer="observer" :elementsInView="elementsInView" id='the-hero' @imageLoaded="setupAnimation"/>
 
     <the-navbar id='the-navbar' :elementsInView="elementsInView" @imageLoaded="setupAnimation" />
@@ -32,7 +32,7 @@ export default {
       truncationAmount: 150,
       loadData: (url, self) => {
         self.isLoading = true;
-        fetch(url).then(
+        fetch(window.VUE_APP_BACKEND + url).then(
           response => {
             if (response.ok) {
               return response.json();
@@ -52,7 +52,7 @@ export default {
             console.log(error);
           }
         )
-      }
+      },
     }
   },
   computed: {
