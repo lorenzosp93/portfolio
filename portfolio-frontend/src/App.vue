@@ -32,7 +32,7 @@ export default {
       truncationAmount: 150,
       loadData: (url, self) => {
         self.isLoading = true;
-        let backendUrl = process.env.VUE_APP_BACKEND_URL ?? 'http://localhost:8000';
+        let backendUrl = process.env.VUE_APP_BACKEND_URL;
         fetch(backendUrl + url).then(
           response => {
             if (response.ok) {

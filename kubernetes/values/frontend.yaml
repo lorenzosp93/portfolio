@@ -87,7 +87,7 @@ args: []
 ##
 extraEnvVars:
   - name: VUE_APP_BACKEND_URL
-    value: http://portfolio
+    value: ""
 ## @param extraEnvVarsCM ConfigMap with extra environment variables
 ##
 extraEnvVarsCM: ""
@@ -228,8 +228,8 @@ resources:
 ## @param livenessProbe.successThreshold Success threshold for livenessProbe
 ##
 livenessProbe:
-  enabled: false
-  initialDelaySeconds: 60
+  enabled: true
+  initialDelaySeconds: 30
   timeoutSeconds: 5
   periodSeconds: 10
   failureThreshold: 6
@@ -244,8 +244,8 @@ livenessProbe:
 ## @param readinessProbe.successThreshold Success threshold for readinessProbe
 ##
 readinessProbe:
-  enabled: false
-  initialDelaySeconds: 60
+  enabled: true
+  initialDelaySeconds: 10
   timeoutSeconds: 3
   periodSeconds: 5
   failureThreshold: 3
