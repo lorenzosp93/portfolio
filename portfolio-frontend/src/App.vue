@@ -1,8 +1,8 @@
 <template>
   <div class="snap-y snap-mandatory bg-gray-100 dark:bg-gray-700 absolute">
-    <the-hero :observer="observer" :elementsInView="elementsInView" id='the-hero' @imageLoaded="setupAnimation"/>
+    <the-hero :observer="observer" :elementsInView="elementsInView" id='the-hero' @hero-loaded="setupAnimation" />
 
-    <the-navbar id='the-navbar' :elementsInView="elementsInView" @imageLoaded="setupAnimation" />
+    <the-navbar id='the-navbar' :elementsInView="elementsInView" @image-loaded="setupAnimation" />
 
     <the-resume :observer="observer" :elementsInView="elementsInView" id="the-resume" />
 
@@ -84,10 +84,9 @@ export default {
     },
     setupAnimation () {
       const coordinates = this.calculateCoordinatesAnimation('heroPicture', 'heroLogo')
-      if (!coordinates?.scaleX || !coordinates?.scaleY) {
-        return
+      if (coordinates?.scaleX && coordinates?.scaleY) {
+          this.addAnimation(coordinates)
       }
-      this.addAnimation(coordinates)
     },
     addAnimation (coordinates) {
       this.$lax.addElements(
