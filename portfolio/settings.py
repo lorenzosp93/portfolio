@@ -32,6 +32,7 @@ else:
 
 if HOST:
     ALLOWED_HOSTS += HOST
+    CSRF_TRUSTED_ORIGINS = 'https://*' + HOST
 
 # Application definition
 
