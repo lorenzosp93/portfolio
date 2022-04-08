@@ -20,16 +20,18 @@ SECRET_KEY = os.environ.get(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
+HOST = os.environ.get('DJANGO_HOST', None)
+
 if DEBUG:
     ALLOWED_HOSTS = ['*']
 else:
     ALLOWED_HOSTS = [
         'localhost',
         '127.0.0.1', #local debugging
-        'lorenzosp-portfolio-stage.herokuapp.com', # staging
-        'lorenzosp-porfolio.herokuapp.com', # production
-        '.lorenzosp.com' # redirect
     ]
+
+if HOST:
+    ALLOWED_HOSTS += HOST
 
 # Application definition
 

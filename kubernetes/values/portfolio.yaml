@@ -92,6 +92,7 @@ affinity: {}
 configMap:
   djangoAppStage: 'stage'
   debug: 'True'
+  djangoHost: '.lorenzosp.com'
 
 database:
   host: 'postgres'

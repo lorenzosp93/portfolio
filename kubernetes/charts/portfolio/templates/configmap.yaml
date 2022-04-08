@@ -14,3 +14,4 @@ data:
   DATABASE_HOST: {{ .Values.database.host }}
   DATABASE_PORT: {{ .Values.database.port | quote }}
   DB_ENGINE: {{ .Values.database.engine }}
+  DJANGO_HOST: {{ .Values.configMap.djangoHost }}
