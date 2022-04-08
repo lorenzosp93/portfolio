@@ -73,7 +73,7 @@ resources: {}
 
 livenessProbe:
   enabled: false
-  path: /ht
+  path: /api/ht
   initialDelaySeconds: 60
 
 autoscaling:

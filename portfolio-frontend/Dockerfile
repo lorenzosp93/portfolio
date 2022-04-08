@@ -7,14 +7,13 @@ COPY . .
 RUN npm run build
 
 # production stage
-FROM node:17.8.0-alpine as production-stage
-COPY --from=build-stage /app/dist ./dist
-COPY docker_entrypoint.sh generate_env-config.sh ./
-RUN npm install -g serve
-RUN chmod +x docker_entrypoint.sh generate_env-config.sh
+FROM nginx:stable-alpine as production-stage
+WORKDIR /usr/share/nginx/html
+RUN rm -rf ./*
+COPY --from=build-stage /app/dist .
 
-EXPOSE 8080
-CMD ["/bin/sh", "docker_entrypoint.sh"]
+COPY ./entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-EXPOSE 8080
-ENTRYPOINT [ "docker-entrypoint.sh" ]
+EXPOSE 80
+ENTRYPOINT [ "/entrypoint.sh" ]

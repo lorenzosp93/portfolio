@@ -1,1 +1,0 @@
-window.VUE_APP_BACKEND='http://localhost:8000';
