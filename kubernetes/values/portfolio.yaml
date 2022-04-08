@@ -72,8 +72,8 @@ resources: {}
   #   memory: 128Mi
 
 livenessProbe:
-  enabled: false
-  path: /api/ht
+  enabled: true
+  path: /api/health
   initialDelaySeconds: 60
 
 autoscaling:
