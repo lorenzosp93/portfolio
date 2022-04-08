@@ -31,7 +31,7 @@ else:
     ]
 
 if HOST:
-    ALLOWED_HOSTS += HOST
+    ALLOWED_HOSTS.append(HOST)
     CSRF_TRUSTED_ORIGINS = 'https://*' + HOST
 
 # Application definition
@@ -63,7 +63,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
