@@ -134,10 +134,6 @@ export default {
         scaleY: destinationBox.height / originBox.height,
       }
     },
-    resizeEventHandler () {
-      this.truncationAmount = this.calculateTruncationAmount();
-      this.setupAnimation();
-    }
   },
   created () {
     this.$lax.init();
@@ -153,11 +149,9 @@ export default {
   },
   beforeUnmount () {
     this.observer.disconnect();
-    window.removeEventListener("resize", this.resizeEventHandler);
   },
   mounted () {
     this.truncationAmount = this.calculateTruncationAmount();
-    window.addEventListener("resize", this.resizeEventHandler);
   },
   provide () {
     return {
