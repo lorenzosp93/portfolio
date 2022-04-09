@@ -61,7 +61,7 @@ export default {
   },
   computed: {
     maxHeight () {
-      return 95 + (this.paddingBottom > 12 ? 5 : 0)
+      return 90 + (this.paddingBottom > 12 ? 5 : 0)
     },
   },
   methods: {

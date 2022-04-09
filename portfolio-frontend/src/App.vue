@@ -29,7 +29,7 @@ export default {
     return{
       observer: null,
       elementsInView: [],
-      truncationAmount: 150,
+      innerWidth: null,
       loadData: (url, self) => {
         self.isLoading = true;
         let backendUrl = process.env.VUE_APP_BACKEND_URL;
@@ -60,12 +60,12 @@ export default {
     isBlogVisible () {
       return this.elementsInView?.filter(elem => elem.target.id == 'the-blog' && elem.isIntersecting)?.length > 0
     },
+    truncationAmount () {
+      let w = this.innerWidth;
+      return w > 1024 ? 350 : w > 640 ? 200 : 100
+    }
   },
   methods: {
-    calculateTruncationAmount () {
-      let w = window.innerWidth;
-      return w > 1024 ? 350 : w > 640 ? 200 : 100
-    },
     onElementObserved (entries) {
       entries.every(
         entry => {
@@ -134,6 +134,12 @@ export default {
         scaleY: destinationBox.height / originBox.height,
       }
     },
+    resizeEventHandler (event) {
+      if (this.innerWidth != event.target.innerWidth) {
+        this.innerWidth = event.target.innerWidth;
+        this.setupAnimation();
+      }
+    }
   },
   created () {
     this.$lax.init();
@@ -149,9 +155,11 @@ export default {
   },
   beforeUnmount () {
     this.observer.disconnect();
+    window.removeEventListener("resize", this.resizeEventHandler);
   },
   mounted () {
-    this.truncationAmount = this.calculateTruncationAmount();
+    this.innerWidth = window.innerWidth;
+    window.addEventListener("resize", this.resizeEventHandler);
   },
   provide () {
     return {
