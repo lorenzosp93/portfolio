@@ -18,7 +18,7 @@
     </div>
     <div></div>
     <div class="flex-initial w-2/3 md:w-1/2 mt-auto m-auto">
-      <div class="font-serif first-letter:text-2xl justify-between m-3 indent-5">
+      <div class="font-serif first-letter:text-2xl justify-between m-2 indent-3">
         <h1 class="text-lg my-3">Welcome to my website!</h1>
         <p> I'm an energy engineer by formal training, jack of all trades by attitude and development. I work on Product at Tesla, aiming to always learn and grow into the role to acquire the skills and knowledge required to run a business and eventually move into VC.</p>
         <h3 class="text-xl my-3">Why a porfolio website?</h3>
@@ -27,7 +27,7 @@
             <li>This has been great fun to build!
             </li>
             <li>To get my hands dirty with the technologies in web development, including: 
-              <ul class="list-disc ml-5 list-inside">
+              <ul class="list-disc ml-3 list-inside">
                 <li> a Django REST API to serve the website content,</li>
                 <li> a Vue.js front-end, enhanced with plenty of cool animations and touch-effects,</li>
                 <li> a state-of-the-art Continuous Integration / Continuous Development pipeline, based on Docker containers running in Kubernetes, and taking advantage of load balancing, autoscaling, and more!</li>

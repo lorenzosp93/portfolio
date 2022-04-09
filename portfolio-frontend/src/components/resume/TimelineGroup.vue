@@ -1,6 +1,6 @@
 <template>
   <div class="m-6 justify-start bg-gray-50 rounded-lg shadow-md  dark:bg-gray-600 dark:border-gray-500 dark:text-gray-300 z-1">
-    <span class="flex absolute mt-5 -left-4 justify-center items-center w-8 h-8 bg-white rounded-full ring-1  ring-white dark:ring-gray-900 dark:bg-gray-900">
+    <span class="flex absolute mt-5 -left-4 justify-center items-center w-8 h-8 bg-white rounded-full ring-4 ring-white dark:ring-gray-900 dark:bg-gray-900">
       <img class="object-contain rounded-full shadow-lg" :src="entityPicture" :alt="entityName + 'logo'"/>
     </span>
     <h3 class="flex items-center mx-5 pt-5 align-text-bottom text-lg font-semibold text-gray-900 dark:text-white">{{ entityName }}</h3>

@@ -1,6 +1,8 @@
 <template>
   <li @click="openDetails" class="mx-3 my-5 z-2">
-      <div v-if="!isFirst" class="absolute w-4 h-4 bg-gray-200 rounded-full mt-5 -left-2 border border-white dark:border-gray-900 dark:bg-gray-700"></div>
+      <span v-if="!isFirst" class="absolute ring-2 ring-white dark:ring-gray-900 mt-5 -left-2  dark:bg-gray-700">
+        <div class="w-4 h-4 rounded-full bg-gray-200 dark:bg-gray-900 shadow-sm"></div>
+      </span>
       <div class="timeline-entry p-3 bg-white rounded-lg  shadow-md dark:bg-gray-700 dark:border-gray-600">
         <div class="justify-between items-center mb-3 sm:flex">
           <time class="mb-1 text-sm font-normal text-gray-400 sm:order-last sm:mb-0">
@@ -13,7 +15,7 @@
             {{ department ? department + ', ' : '' }}{{ location }}
           </div>
         </div>
-        <div class="p-2 flex text-sm font-normal text-gray-500 bg-gray-50 rounded-lg border border-gray-200 dark:bg-gray-900 dark:border-gray-500 dark:text-gray-300" v-html="truncatedDescription" />
+        <div class="p-2 flex text-sm font-normal text-ellipsis text-gray-500 bg-gray-50 rounded-lg border border-gray-200 dark:bg-gray-900 dark:border-gray-500 dark:text-gray-300" v-html="truncatedDescription" />
       </div>
     <timeline-entry-detail v-bind="$props" @card-closed="closeDetails" v-if="detailsVisible" />
   </li>
@@ -92,9 +94,9 @@ export default {
           translateX: [
             ['elInY', 'elCenterY'],
             {
-              500: [30, 0],
-              900: [50, 0],
-              1400: [70, 0],
+              500: [20, 0],
+              900: [25, 0],
+              1400: [50, 0],
             },
             {
               inertia: 10,

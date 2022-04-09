@@ -62,7 +62,7 @@ export default {
     },
     truncationAmount () {
       let w = this.innerWidth;
-      return w > 1024 ? 350 : w > 640 ? 200 : 100
+      return w > 1024 ? 350 : w > 640 ? 200 : 75
     }
   },
   methods: {
@@ -111,10 +111,6 @@ export default {
             {
               inertia: 10,
             }
-          ],
-          translateZ: [
-            [0, coordinates.deltaY],
-            [100, 50]
           ],
           scaleX: [
             [0, coordinates.deltaY],

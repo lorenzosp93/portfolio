@@ -13,19 +13,24 @@
       <resume-timeline :ix="'first'" :observer="observer" :isActive="isExperienceActive" :kind="'experience'" id="experience" />
     </div>
     <div class="flex-none  w-full snap-always snap-center">
-      <resume-timeline :ix="'last'" :observer="observer" :isActive="isEducationActive" :kind="'education'" id="education" />
+      <resume-timeline :ix="''" :observer="observer" :isActive="isEducationActive" :kind="'education'" id="education" />
+    </div>
+    <div class="flex-none  w-full snap-always snap-center">
+      <resume-projects :ix="'last'" :observer="observer" id="projects" :isActive="isProjectsActive"/>
     </div>
   </div>
 </div>
 </template>
 
 <script>
+import ResumeProjects from './ResumeProjects.vue';
 import ResumeTimeline from './ResumeTimeline.vue';
 
 export default {
-  components: { ResumeTimeline },
+  components: { ResumeTimeline, ResumeProjects },
   name: 'TheResume',
-  data () {
+  
+    ResumeProjectsdata () {
     return {
     }
   },
@@ -42,6 +47,9 @@ export default {
     isEducationActive () {
       return this.isActive('education')
     },
+    isProjectsActive () {
+      return this.isActive('projects')
+    }
   },
   methods: {
     isActive (kind) {

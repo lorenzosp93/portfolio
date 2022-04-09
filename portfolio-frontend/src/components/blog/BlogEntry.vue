@@ -6,7 +6,7 @@
         {{ location }}
       </p>
       <h2 class="font-semibold w-full text-gray-900 dark:text-white">{{ name }}</h2>
-      <p v-html:="truncatedContent" class="text-sm my-3 w-full" />
+      <p v-html:="truncatedContent" class="text-sm my-3 w-full text-ellipsis" />
     </div>
     <blog-entry-detail @card-closed="toggleDetails" v-if="detailsVisible" :name="name" :created_at="created_at" :created_by="created_by" :location="location" :picture="picture" :content="content" :attachments="attachments"/>
   </div>

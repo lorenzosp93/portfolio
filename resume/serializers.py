@@ -27,6 +27,7 @@ class ProjectSerializer(HyperlinkedModelSerializer):
             'uuid',
             'name',
             'description',
+            'content',
             'attachments',
             'picture',
         ]
