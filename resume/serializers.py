@@ -1,6 +1,7 @@
 from rest_framework.serializers import (
     HyperlinkedModelSerializer, 
-    ModelSerializer
+    ModelSerializer,
+    CharField
 )
 from shared.serializers import (
     AttachmentSerializer
@@ -9,18 +10,31 @@ from .models import (
     Education,
     Experience,
     Skill,
+    SkillCategory,
     Project,
     Entity,
-    Keyword
+    Keyword,
 )
+class SkillCategorySerializer(ModelSerializer):
+    class Meta:
+        model = SkillCategory
+        fields = ['name', 'description']
 
 class SkillSerializer(ModelSerializer):
+    category = SkillCategorySerializer()
     class Meta:
         model = Skill
-        fields = ['name', 'description', 'category', 'url', 'level']
+        fields = ['name', 'category', 'url', 'level']
+
+class CategorySkillSerializer(ModelSerializer):
+    skills = SkillSerializer(many=True, read_only=True, required=False)
+    class Meta:
+        model = SkillCategory
+        fields = ['name', 'description', 'skills']
 
 class ProjectSerializer(HyperlinkedModelSerializer):
     attachments = AttachmentSerializer(many=True)
+    status = CharField(source='get_status_display')
     class Meta:
         model = Project
         fields = [
@@ -30,6 +44,7 @@ class ProjectSerializer(HyperlinkedModelSerializer):
             'content',
             'attachments',
             'picture',
+            'status'
         ]
 
 class KeywordSerializer(HyperlinkedModelSerializer):

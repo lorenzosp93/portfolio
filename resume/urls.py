@@ -4,7 +4,6 @@ Define URL patterns for the resume app
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from resume.serializers import KeywordSerializer
 # from .views import (
 #     ExperienceListView, ExperienceDetailView,
 #     EducationListView, EducationDetailView,
@@ -21,6 +20,7 @@ from .viewsets import (
     KeywordViewSet,
     EntityEducationViewSet,
     EntityExperienceViewSet,
+    CategorySkillViewSet,
 )
 
 app_name = 'resume'
@@ -34,6 +34,7 @@ router.register(r'entity', EntityViewSet)
 router.register(r'entity-entries/education', EntityEducationViewSet, 'entity-education')
 router.register(r'entity-entries/experience', EntityExperienceViewSet, 'entity-experience')
 router.register(r'keyword', KeywordViewSet)
+router.register(r'skillcategory', CategorySkillViewSet, 'category-skill')
 
 urlpatterns = [
     path('', include(router.urls))

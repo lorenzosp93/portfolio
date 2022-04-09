@@ -152,22 +152,19 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/portfolio-frontend:${{ steps.extract_branch.outputs.branch }} 
 
-  # deploy:
-  #   runs-on: ubuntu-latest
-  #   if: github.ref == 'refs/heads/master'
-  #   needs: 
-  #     - build-backend
-  #     - build-frontend
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
-  #     - name: Setup helmfile
-  #       uses: mamezou-tech/setup-helmfile@v0.9.0
-  #     - name: Deploy helmfile
-  #       run: |
-  #         cd ./kubernetes
-  #         mkdir ~/.kube && echo "$KUBECONFIG_FILE" > ~/.kube/config
-  #         helmfile repo add && helmfile repo sync
-  #         helmfile sync
-  #       env:
-  #         KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    needs: 
+      - build-backend
+      - build-frontend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Kubernetes
+        uses: Azure/k8s-set-context@v1
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+      - name: Rollout deploy
+        run: kubectl rollout restart deploy 

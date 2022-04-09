@@ -1,5 +1,5 @@
 <template>
-  <div class="flex min-h-screen flex-wrap m-5 snap-start snap-always justify-self-center text-black dark:text-white">
+  <div class="flex min-h-screen flex-wrap m-5 justify-self-center text-black dark:text-white">
     
     <div class="flex-initial w-1/2 md:w-1/3 m-auto" >
       <img class='m-auto ring-4 ring-white z-20 relative rounded-full' id="heroPicture" src="@/assets/hero.jpeg" :class="{'invisible': !isHeroLogoVisible()}" alt="High res picture" @load="$emit('heroLoaded')">
@@ -56,7 +56,6 @@ export default {
   },
   props: {
     observer: Object,
-    elementsInView: Array,
     isHeroLogoVisible: Function,
   },
   emits: [

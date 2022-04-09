@@ -1,8 +1,8 @@
 <template>
-  <div class="snap-y snap-mandatory bg-gray-100 dark:bg-gray-700 absolute">
-    <the-hero :observer="observer" :elementsInView="elementsInView" id='the-hero' @hero-loaded="setupAnimation" :isHeroLogoVisible="isHeroLogoVisible" />
+  <div class="bg-gray-100 dark:bg-gray-700 absolute">
+    <the-hero :observer="observer" id='the-hero' @hero-loaded="setupAnimation" :isHeroLogoVisible="isHeroLogoVisible" />
 
-    <the-navbar id='the-navbar' :isHeroLogoVisible="isHeroLogoVisible" :elementsInView="elementsInView" @image-loaded="setupAnimation" />
+    <the-navbar id='the-navbar' :isHeroLogoVisible="isHeroLogoVisible" :elementInView="elementInView" @image-loaded="setupAnimation" />
 
     <the-resume :observer="observer" :elementsInView="elementsInView" id="the-resume" />
 
@@ -63,7 +63,16 @@ export default {
     truncationAmount () {
       let w = this.innerWidth;
       return w > 1024 ? 350 : w > 640 ? 200 : 75
-    }
+    },
+    elementInView () {
+      const a = this.elementsInView;
+      a.sort(
+        (x, y) => {
+          return x.intersectionRatio < y.intersectionRatio ? 1 : -1
+        }
+      );
+      return a.length > 0 ? a[0].target.id : null
+    },
   },
   methods: {
     isHeroLogoVisible () {

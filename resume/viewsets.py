@@ -1,13 +1,14 @@
 from django.db.models import Max
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from .serializers import (
-    EducationSerializer,
-    ExperienceSerializer,
     KeywordSerializer,
-    SkillSerializer,
     ProjectSerializer,
     EntitySerializer,
     EntityEntriesSerializer,
+    CategorySkillSerializer,
+    ExperienceSerializer,
+    EducationSerializer,
+    SkillSerializer,
 )
 from .models import (
     Education,
@@ -15,7 +16,8 @@ from .models import (
     Skill,
     Project,
     Entity,
-    Keyword
+    Keyword,
+    SkillCategory
 )
 
 class EducationViewSet(ReadOnlyModelViewSet):
@@ -76,3 +78,10 @@ class EntityEducationViewSet(ReadOnlyModelViewSet):
     """
     serializer_class = EntityEntriesSerializer
     queryset = Entity.objects.filter(type=1).annotate(max_date=Max('education_related__start_date')).order_by('-max_date')
+
+class CategorySkillViewSet(ReadOnlyModelViewSet):
+    """
+    A viewset to return Skills related to a Category.
+    """
+    serializer_class = CategorySkillSerializer
+    queryset = SkillCategory.objects.all()

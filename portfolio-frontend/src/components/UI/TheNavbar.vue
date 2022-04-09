@@ -41,8 +41,8 @@
                   <a href="#the-resume" class="text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium" :class="{active: ['experience', 'education','projects', 'skills'].includes(elementInView)}">Resume</a>
                   <a href="#experience" class="text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium scroll-smooth" v-show="['experience', 'education', 'projects', 'skills'].includes(elementInView)" :class="{active_outer: ['experience'].includes(elementInView)}">Experience</a>
                   <a href="#education" class="text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium" v-show="['experience', 'education', 'projects', 'skills'].includes(elementInView)" :class="{active_outer: ['education'].includes(elementInView)}">Education</a>
-                  <a href="#education" class="text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium" v-show="['experience', 'education', 'projects', 'skills'].includes(elementInView)" :class="{active_outer: ['projects'].includes(elementInView)}">Projects</a>
-                  <a href="#education" class="text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium" v-show="['experience', 'education', 'projects', 'skills'].includes(elementInView)" :class="{active_outer: ['skills'].includes(elementInView)}">Skills</a>
+                  <a href="#projects" class="text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium" v-show="['experience', 'education', 'projects', 'skills'].includes(elementInView)" :class="{active_outer: ['projects'].includes(elementInView)}">Projects</a>
+                  <a href="#skills" class="text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium" v-show="['experience', 'education', 'projects', 'skills'].includes(elementInView)" :class="{active_outer: ['skills'].includes(elementInView)}">Skills</a>
                   <a href="#the-blog" class="text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium" :class="{active: elementInView === 'the-blog'}">Blog</a>
                 </div>
               </div>
@@ -58,8 +58,8 @@
             <a href="#the-resume" class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium" :class="{active: ['experience', 'education', 'projects', 'skills'].includes(elementInView)}">Resume</a>
             <a href="#experience" class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium scroll-smooth" v-show="['experience', 'education', 'projects', 'skills'].includes(elementInView)" :class="{active_outer: ['experience'].includes(elementInView)}">Experience</a>
             <a href="#education" class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium" v-show="['experience', 'education', 'projects', 'skills'].includes(elementInView)" :class="{active_outer: ['education'].includes(elementInView)}">Education</a>
-            <a href="#education" class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium" v-show="['experience', 'education', 'projects', 'skills'].includes(elementInView)" :class="{active_outer: ['projects'].includes(elementInView)}">Projects</a>
-            <a href="#education" class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium" v-show="['experience', 'education', 'projects', 'skills'].includes(elementInView)" :class="{active_outer: ['skills'].includes(elementInView)}">Skills</a>
+            <a href="#projects" class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium" v-show="['experience', 'education', 'projects', 'skills'].includes(elementInView)" :class="{active_outer: ['projects'].includes(elementInView)}">Projects</a>
+            <a href="#skills" class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium" v-show="['experience', 'education', 'projects', 'skills'].includes(elementInView)" :class="{active_outer: ['skills'].includes(elementInView)}">Skills</a>
             <a href="#the-blog" class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium" :class="{active: elementInView === 'the-blog'}">Blog</a>
           </div>
         </div>
@@ -82,7 +82,7 @@ export default {
   },
   props: [
     'isHeroLogoVisible',
-    'elementsInView',
+    'elementInView',
   ],
   inject: [
   ],
@@ -92,15 +92,6 @@ export default {
     },
   },
   computed:{
-    elementInView () {
-      const a = this.elementsInView;
-      a.sort(
-        (x, y) => {
-          return x.intersectionRatio < y.intersectionRatio ? 1 : -1
-        }
-      ).find(elem => elem)
-      return a.length > 0 ? a[0].target.id : null
-    },
   },
   mounted () {
     this.$lax.addElements(

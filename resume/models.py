@@ -20,6 +20,21 @@ ENTITY_TYPES = [
     (1, 'Institution')
 ]
 
+SKILL_LEVELS = [
+    (0, 'novice'),
+    (1, 'basic'),
+    (2, 'advanced'),
+    (3, 'expert'),
+    (4, 'professional')
+]
+
+PROJECT_STATUSES = [
+    (0, 'Idea'),
+    (1, 'Started'),
+    (2, 'Ongoing'),
+    (3, 'Completed'),
+]
+
 class Entity(Serializable, Named, HasPicture):
     "Model for Entity, to be referenced by Education and Experience instances"
 
@@ -40,6 +55,10 @@ class Project(
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True)   
     object_id = models.UUIDField(null=True, blank=True)
     entry = GenericForeignKey()
+    status = models.IntegerField(
+        choices=PROJECT_STATUSES,
+        default=3,
+    )
 
     def get_absolute_url(self):
         return reverse("resume:project-detail", kwargs={"slug": self.slug})
@@ -118,11 +137,10 @@ class Skill(Serializable, Named, TimeStampable):
     category = models.ForeignKey(
         SkillCategory,
         on_delete=models.CASCADE,
+        related_name='skills',
     )
     url = models.URLField(blank=True, null=True,)
-    level = models.IntegerField(choices=(
-        (1, 'basic'),
-        (2, 'advanced'),
-        (3, 'expert'),
-        (4, 'professional')
-    ))
+    level = models.IntegerField(choices=SKILL_LEVELS)
+    
+    class Meta:
+        ordering = ['-level']
