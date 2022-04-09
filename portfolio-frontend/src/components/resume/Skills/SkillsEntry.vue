@@ -3,7 +3,7 @@
     <p class="text-md text-black dark:text-white">
         {{ name }} 
     </p>
-    <div class="ml-auto w-1/2  rounded-md border border-black dark:border-white overflow-clip">
+    <div class="ml-auto w-1/2  rounded-md border border-black dark:border-white overflow-x-hidden">
       <div class="py-3 bg-gray-600 dark:bg-gray-300 origin-left -translate-x-10" :class="{'translate-x-0 ease-in duration-1000': loadAnimation}" :style="{'width': ((level + 1) * 20) + '%'}"/>
     </div>
   </div>
