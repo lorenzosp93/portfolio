@@ -32,7 +32,7 @@
             </div>
             <div class="flex-1 flex items-center justify-end sm:items-stretch sm:justify-start">
               <div class="flex-shrink-0 flex items-center m-3">
-                <img id="heroLogo" class="h-9 w-auto rounded-full" src="@/assets/hero.jpeg" @load="this.$emit('imageLoaded')" alt="Hero image logo" :class="{'invisible': !isVisible}">
+                <img id="heroLogo" class="h-9 w-auto rounded-full" src="@/assets/hero-logo.jpeg" @load="this.$emit('imageLoaded')" alt="Hero image logo" :class="{'invisible': isHeroLogoVisible()}">
               </div>
               <div class="hidden  sm:block my-auto sm:ml-6">
                 <div class="flex space-x-4">
@@ -77,7 +77,8 @@ export default {
     };
   },
   props: [
-    'elementsInView'
+    'isHeroLogoVisible',
+    'elementsInView',
   ],
   inject: [
   ],
@@ -96,11 +97,6 @@ export default {
       ).find(elem => elem)
       return a.length > 0 ? a[0].target.id : null
     },
-    isVisible () {
-      const e = this.elementsInView.filter(elem => elem.target.id == 'the-hero');
-      if (e.length == 0) {return false}
-      return e.filter(elem => elem.intersectionRatio > 0)?.length == 0
-    }
   },
   mounted () {
     this.$lax.addElements(
@@ -108,7 +104,7 @@ export default {
       {
         scrollY: {
           opacity: [
-            [0, 'elOutY'],
+            [0, 'elCenterY'],
             [0, 1],
           ]
         }

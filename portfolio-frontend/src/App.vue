@@ -1,8 +1,8 @@
 <template>
   <div class="snap-y snap-mandatory bg-gray-100 dark:bg-gray-700 absolute">
-    <the-hero :observer="observer" :elementsInView="elementsInView" id='the-hero' @hero-loaded="setupAnimation" />
+    <the-hero :observer="observer" :elementsInView="elementsInView" id='the-hero' @hero-loaded="setupAnimation" :isHeroLogoVisible="isHeroLogoVisible" />
 
-    <the-navbar id='the-navbar' :elementsInView="elementsInView" @image-loaded="setupAnimation" />
+    <the-navbar id='the-navbar' :isHeroLogoVisible="isHeroLogoVisible" :elementsInView="elementsInView" @image-loaded="setupAnimation" />
 
     <the-resume :observer="observer" :elementsInView="elementsInView" id="the-resume" />
 
@@ -66,6 +66,11 @@ export default {
     }
   },
   methods: {
+    isHeroLogoVisible () {
+      const e = this.elementsInView.filter(elem => elem.target.id == 'the-hero');
+      if (e.length == 0) {return false}
+      return e.filter(elem => elem.intersectionRatio > 0)?.length != 0
+    },
     onElementObserved (entries) {
       entries.every(
         entry => {

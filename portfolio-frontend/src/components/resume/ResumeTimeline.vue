@@ -17,7 +17,7 @@
         />
       </ol>
       <div v-else class="p-10 m-auto">
-        <div @click="loadSettings"  class="rounded-3xl p-3 bg-gray-300 dark:bg-gray-500">
+        <div @click="loadData"  class="rounded-3xl p-3 bg-gray-300 dark:bg-gray-500">
           Unable to load, click to retry.
         </div>
       </div>
