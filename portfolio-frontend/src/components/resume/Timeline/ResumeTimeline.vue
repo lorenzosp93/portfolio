@@ -1,6 +1,6 @@
 <template>
   <div class="m-auto rounded-lg max-w-screen-lg shadow-md bg-white dark:bg-gray-900 py-1">
-    <div class="relative p-auto w-full max-h-screen overflow-x-hidden overflow-y-scroll no-scrollbar overscroll-y-auto">
+    <div class="relative p-auto w-full max-h-[85vh] overflow-x-hidden overflow-y-scroll no-scrollbar overscroll-y-auto" :id="'timeline-scroll-' + kind">
       <div class="absolute top-1/2 -right-2.5" :class="{'invisible': ix == 'last'}">
         <div class="block w-10 h-1 rounded-lg  cursor-pointer bg-gray-300 rotate-90"/>
       </div>
@@ -56,8 +56,9 @@ export default {
   watch: {
     isActive (value) {
       if (value) {
-        if (!this.data.length)
-        this.loadEntries(this.kind);
+        if (!this.data.length) {
+          this.loadEntries(this.kind);
+        }
       }
     }
   },
@@ -68,6 +69,9 @@ export default {
     }
   },
   created () {
+  },
+  beforeUnmount () {
+    this.$lax.removeDriver('scrollYdiv');
   },
   mounted() {
     this.observer.observe(this.$el);

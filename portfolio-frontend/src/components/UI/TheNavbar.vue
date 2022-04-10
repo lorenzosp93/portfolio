@@ -1,5 +1,5 @@
 <template>
-  <div class="sticky top-0 z-10" >
+  <div class="sticky top-0 z-10 opacity-0">
     <slot>
       <nav class="">
         <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 sm:bg-white sm:dark:bg-gray-600">
@@ -32,7 +32,7 @@
             </div>
             <div class="flex-1 flex items-center justify-end sm:items-stretch sm:justify-start">
               <div class="flex-shrink-0 flex items-center m-3">
-                <img id="heroLogo" class="h-9 w-auto rounded-full" src="@/assets/hero-logo.jpeg" @load="this.$emit('imageLoaded')" alt="Hero image logo" :class="{'invisible': isHeroLogoVisible()}">
+                <img id="heroLogo" class="h-9 w-auto rounded-full opacity-100" src="@/assets/hero-logo.jpeg" @load="this.$emit('imageLoaded')" alt="Hero image logo" :class="{'invisible': isHeroLogoVisible}">
               </div>
               <div class="hidden  sm:block my-auto sm:ml-6">
                 <div class="flex space-x-4">
@@ -77,12 +77,14 @@ export default {
   name: 'TheNavbar',
   data () {
     return {
-      isMenuOpen: false
+      isMenuOpen: false,
+      loadAnimation: false,
     };
   },
   props: [
     'isHeroLogoVisible',
     'elementInView',
+    'isVisible'
   ],
   inject: [
   ],
@@ -93,14 +95,17 @@ export default {
   },
   computed:{
   },
+  beforeUnmount () {
+    this.$lax.removeElements('#the-navbar');
+  },
   mounted () {
     this.$lax.addElements(
       '#the-navbar',
       {
         scrollY: {
           opacity: [
-            [0, 'elCenterY'],
-            [0, 1],
+            ['elCenterY', 'elOutY-200','elOutY-100'],
+            [0, 0.1, 1],
           ]
         }
       }

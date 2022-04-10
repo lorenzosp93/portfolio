@@ -73,13 +73,13 @@ export default {
       );
       return a.length > 0 ? a[0].target.id : null
     },
-  },
-  methods: {
     isHeroLogoVisible () {
       const e = this.elementsInView.filter(elem => elem.target.id == 'the-hero');
       if (e.length == 0) {return false}
       return e.filter(elem => elem.intersectionRatio > 0)?.length != 0
     },
+  },
+  methods: {
     onElementObserved (entries) {
       entries.every(
         entry => {
@@ -99,10 +99,10 @@ export default {
     setupAnimation () {
       const coordinates = this.calculateCoordinatesAnimation('heroPicture', 'heroLogo')
       if (coordinates?.scaleX && coordinates?.scaleY) {
-          this.addAnimation(coordinates)
+          this.addHeroAnimation(coordinates)
       }
     },
-    addAnimation (coordinates) {
+    addHeroAnimation (coordinates) {
       this.$lax.addElements(
       '#heroPicture',
       {
@@ -111,23 +111,29 @@ export default {
             [0, coordinates.deltaY],
             [0, coordinates.deltaX],
             {
-              inertia: 10,
+              easing: "easeOutQuad"
             }
           ],
           translateY: [
             [0, coordinates.deltaY],
             [0, coordinates.deltaY],
             {
-              inertia: 10,
+              easing: "easeOutQuad"
             }
           ],
           scaleX: [
             [0, coordinates.deltaY],
             [1, coordinates.scaleX],
+            {
+              easing: "easeOutQuad"
+            }
           ],
           scaleY: [
             [0, coordinates.deltaY],
             [1, coordinates.scaleY],
+            {
+              easing: "easeOutQuad"
+            }
           ]
         }
       },
@@ -155,7 +161,7 @@ export default {
     this.$lax.init();
     this.$lax.addDriver('scrollY', function () {
       return window.scrollY
-    }, {})
+    });
     this.observer = new IntersectionObserver(
       this.onElementObserved,
       {
@@ -165,7 +171,9 @@ export default {
   },
   beforeUnmount () {
     this.observer.disconnect();
+    this.$lax.removeElements('#heroPicture');
     window.removeEventListener("resize", this.resizeEventHandler);
+    this.$lax.removeDriver('scrollY');
   },
   mounted () {
     this.innerWidth = window.innerWidth;

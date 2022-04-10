@@ -5,7 +5,7 @@
     </span>
     <h3 class="flex items-center mx-5 pt-5 align-text-bottom text-lg font-semibold text-gray-900 dark:text-white">{{ entityName }}</h3>
     <ol class="pb-1">
-      <timeline-entry v-for="(entry, ix) in group[kind + 's']" :isFirst="ix === 0" :key="entry.uuid" v-bind="entry" />
+      <timeline-entry v-for="(entry, ix) in group[kind + 's']" :isFirst="ix === 0" :key="entry.uuid" v-bind="entry" :kind="kind" />
     </ol>
   </div>
 </template>

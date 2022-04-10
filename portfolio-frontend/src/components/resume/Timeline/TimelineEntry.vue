@@ -85,29 +85,11 @@ export default {
     keywords: Array,
     attachments: Object,
     isFirst: Boolean,
+    kind: String,
+  },
+  beforeUnmount () {
   },
   mounted () {
-    this.$lax.addElements(
-      ['.timeline-entry'],
-      {
-        scrollY: {
-          translateX: [
-            ['elInY', 'elCenterY'],
-            {
-              500: [20, 0],
-              900: [25, 0],
-              1400: [50, 0],
-            },
-            {
-              inertia: 10,
-            }
-          ],
-          // scale: [
-          //   []
-          // ]
-        }
-      }
-    )
   }
 }
 </script>
