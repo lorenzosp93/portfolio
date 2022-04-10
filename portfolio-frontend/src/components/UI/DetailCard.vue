@@ -109,7 +109,7 @@ export default {
       if (this.opened) {
         this.opened = false;
         this.cardP = - this.cardH - this.stripe;
-        document.body.style.overflow = "auto";
+        document.body.style.overflow = "";
         this.$emit("cardClosed");
       }
     },
