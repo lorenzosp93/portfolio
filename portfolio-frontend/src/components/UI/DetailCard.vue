@@ -75,7 +75,7 @@ export default {
         this.stripe = this.hasNotch() ? 20 : 0;
         this.cardH = this.$refs.card.clientHeight;
         this.contentH = `${this.cardH - this.$refs.pan.clientHeight}px`;
-        this.cardP =  - this.stripe;
+        this.cardP =  -this.cardH - this.stripe;
         if (!this.initiated) {
           this.initiated = true;
           let options = {
@@ -94,7 +94,7 @@ export default {
         }
         setTimeout(() => {
           resolve();
-        }, 10);
+        }, 100);
       });
     },
     open () {
@@ -202,7 +202,7 @@ export default {
 }
 .bottom-sheet__card.fx-default {
   transform: translate(-50%,0);
-  transition: bottom 0.3s ease;
+  transition: bottom 0.4s ease;
 }
 .bottom-sheet__pan {
   padding-bottom: 20px;
@@ -221,6 +221,7 @@ export default {
   opacity: 0;
   visibility: hidden;
 }
+
 .moving .bottom-sheet__card{
   transition: none; 
 }
