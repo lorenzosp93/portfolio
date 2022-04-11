@@ -17,7 +17,7 @@
       </div>
     </div>
     <div></div>
-    <div class="flex-initial w-2/3 md:w-1/2 mt-auto m-auto">
+    <div class="flex-initial w-4/5 md:w-1/2 mt-auto m-auto">
       <div class="font-serif first-letter:text-2xl justify-between m-2 indent-3">
         <h1 class="text-lg my-3">Welcome to my website!</h1>
         <p> I'm an energy engineer by formal training, jack of all trades by attitude and development. I work on Product at Tesla, aiming to always learn and grow into the role to acquire the skills and knowledge required to run a business and eventually move into VC.</p>
