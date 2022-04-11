@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gray-100 dark:bg-gray-700 absolute scroll-smooth">
+  <div class="bg-gray-100 dark:bg-gray-700 scroll-smooth">
     <the-hero :observer="observer" id='the-hero' @hero-loaded="setupAnimation" :isHeroLogoVisible="isHeroLogoVisible" />
 
     <the-navbar id='the-navbar' :isHeroLogoVisible="isHeroLogoVisible" :elementInView="elementInView" @image-loaded="setupAnimation" />

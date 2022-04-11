@@ -5,9 +5,7 @@
     <div class="bg-white dark:bg-gray-800 bottom-sheet__card fx-default" :class="{stripe: stripe}" :style="[{ bottom: cardP+'px', maxWidth: '640px', maxHeight: maxHeight+'%'},{'height': 'auto'},{'pointer-events': 'all'}, {'padding-bottom': paddingBottom+'px'}]" id='detail-card' ref="card">
       <div class="bottom-sheet__pan" ref="pan">
         <div class="bottom-sheet__bar bg-gray-300 dark:bg-white" />
-      </div>
-      <div class="bottom-sheet__content" :style="{height: contentH}" ref="content">
-        <div class=" dark:text-white p-3 mt-auto border-b-2">
+        <div class="dark:text-white p-3 mt-auto border-b-2">
           <div class="text-gray-400 text-md dark:text-gray-300 sm:ml-auto sm:order-last">
             <slot name="extra-title-content">Extra title content</slot>
           </div>
@@ -20,6 +18,8 @@
             </div>
           </div>
         </div>
+      </div>
+      <div class="bottom-sheet__content" :style="{height: contentH}" ref="content">
         <div class="container p-3 mt-3 text-sm text-gray-700 dark:text-white">
           <slot name="inner-content">
             Here goes the main content of the card.
@@ -65,7 +65,7 @@ export default {
     },
   },
   methods: {
-    hasNotch() {
+    hasNotch () {
       let iPhone = /iPhone/.test(navigator.userAgent) && !window.MSStream;
       let aspect = window.screen.width / window.screen.height;
       return iPhone && aspect.toFixed(3) === "0.462";
@@ -87,10 +87,10 @@ export default {
           this.hammer.pan.on("panstart panup pandown panend", e => {
             this.move(e, 'pan')
           })
-          this.hammer.content = new Hammer(this.$refs.content, options);
-          this.hammer.content.on("panstart panup pandown panend", e => {
-            this.move(e, 'content')
-          })
+          // this.hammer.content = new Hammer(this.$refs.content, options);
+          // this.hammer.content.on("panstart panup pandown panend", e => {
+          //   this.move(e, 'content')
+          // })
         }
         setTimeout(() => {
           resolve();
@@ -127,7 +127,7 @@ export default {
           (type === 'content' && event.type === 'panup') ||
           (type === 'content' && event.type === 'pandown' && this.contentScroll > 0)
       ) {
-        this.$refs.content.scrollTop = this.contentScroll + delta;
+        this.$refs.content.scrollTo({top: this.contentScroll + delta, behavior: 'instant'});
       } else if (event.type === 'panup' || event.type === 'pandown') {
         this.moving = true;
         if (- delta > 0) {
@@ -207,7 +207,6 @@ export default {
 .bottom-sheet__pan {
   padding-bottom: 20px;
   padding-top: 15px;
-  height: 38px;
 }
 .bottom-sheet__bar {
   display: block;
