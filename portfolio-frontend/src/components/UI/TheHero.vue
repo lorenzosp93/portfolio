@@ -1,8 +1,8 @@
 <template>
   <div class="flex min-h-screen flex-wrap m-5 justify-self-center text-black dark:text-white">
     
-    <div class="flex-initial w-1/2 md:w-1/3 m-auto" >
-      <img class="m-auto ring-4 ring-white z-20 relative rounded-full" id="heroPicture" src="@/assets/hero.jpeg" :class="{'invisible': !isHeroLogoVisible}" alt="High res picture" @load="$emit('heroLoaded')">
+    <div class="flex-initial w-1/2 sm:w-1/3 m-auto" >
+      <img class="m-auto w-full ring-4 ring-white z-20 relative rounded-full" id="heroPicture" src="@/assets/hero.webp" :class="{'invisible': !isHeroLogoVisible}" alt="High res picture" @load="$emit('heroLoaded')">
       <h1 class="text-2xl m-5 font-bold text-center">Hi, I'm Lorenzo</h1>
       <div class="container flex my-5">
         <a class=" fill-gray-700 dark:fill-white ml-auto" href="https://twitter.com/Lorenzosp">
@@ -17,7 +17,7 @@
       </div>
     </div>
     <div></div>
-    <div class="flex-initial w-4/5 md:w-1/2 mt-auto m-auto">
+    <div class="flex-initial w-4/5 sm:w-1/2 mt-auto m-auto">
       <div class="font-serif first-letter:text-2xl justify-between m-2 indent-3">
         <h1 class="text-lg my-3">Welcome to my website!</h1>
         <p> I'm an energy engineer by formal training, jack of all trades by attitude and development. I work on Product at Tesla, aiming to always learn and grow into the role to acquire the skills and knowledge required to run a business and eventually move into VC.</p>
