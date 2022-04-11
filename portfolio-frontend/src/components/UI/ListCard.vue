@@ -30,7 +30,7 @@ export default {
   },
   computed: {
     truncatedContent () {
-      return this.content.slice(0, this.truncationAmount) + '...' 
+      return this.content.slice(0, this.truncationAmount()) + '...' 
     }
   },
   inject: [

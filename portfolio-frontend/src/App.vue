@@ -30,6 +30,10 @@ export default {
       observer: null,
       elementsInView: [],
       innerWidth: null,
+      truncationAmount: () => {
+        let w = window.innerWidth;
+        return w > 1024 ? 450 : w > 640 ? 200 : 75
+      },
       loadData: (url, self) => {
         self.isLoading = true;
         let backendUrl = process.env.VUE_APP_BACKEND_URL;
@@ -59,10 +63,6 @@ export default {
   computed: {
     isBlogVisible () {
       return this.elementsInView?.filter(elem => elem.target.id == 'the-blog' && elem.isIntersecting)?.length > 0
-    },
-    truncationAmount () {
-      let w = this.innerWidth;
-      return w > 1024 ? 350 : w > 640 ? 200 : 75
     },
     elementInView () {
       const a = this.elementsInView;
