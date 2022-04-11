@@ -31,7 +31,7 @@
               </button>
             </div>
             <div class="flex-1 flex items-center justify-end sm:items-stretch sm:justify-start">
-              <div class="flex-shrink-0 flex items-center m-3">
+              <div @click="scrollToTop" class="flex-shrink-0 flex items-center m-3">
                 <img id="heroLogo" class="h-9 w-auto rounded-full opacity-100" src="@/assets/hero-logo.jpeg" @load="this.$emit('imageLoaded')" alt="Hero image logo" :class="{'invisible': isHeroLogoVisible}">
               </div>
               <div class="hidden  sm:block my-auto sm:ml-6">
@@ -92,6 +92,9 @@ export default {
     toggleMenu () {
       this.isMenuOpen = !this.isMenuOpen;
     },
+    scrollToTop () {
+      window.scrollTo({top:0, behavior: 'smooth'});
+    }
   },
   computed:{
   },
