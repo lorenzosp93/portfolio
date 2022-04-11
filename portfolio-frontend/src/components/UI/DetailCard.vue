@@ -215,7 +215,10 @@ export default {
   height: 3px;
   border-radius: 14px;
   margin: 0 auto;
-  cursor: pointer;
+  cursor: grab;
+}
+.bottom-sheet__bar:active{
+  cursor: grabbing;
 }
 .closed {
   opacity: 0;
