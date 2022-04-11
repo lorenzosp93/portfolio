@@ -109,6 +109,9 @@ export default {
           opacity: [
             ['elCenterY', 'elOutY-200','elOutY-100'],
             [0, 0.1, 1],
+            {
+              easing: 'easeInQuad'
+            }
           ]
         }
       }
