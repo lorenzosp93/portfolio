@@ -85,12 +85,8 @@ export default {
           }
           this.hammer.pan = new Hammer(this.$refs.pan, options);
           this.hammer.pan.on("panstart panup pandown panend", e => {
-            this.move(e, 'pan')
+            this.move(e)
           })
-          // this.hammer.content = new Hammer(this.$refs.content, options);
-          // this.hammer.content.on("panstart panup pandown panend", e => {
-          //   this.move(e, 'content')
-          // })
         }
         setTimeout(() => {
           resolve();
@@ -121,14 +117,9 @@ export default {
         this.close();
       }
     },
-    move(event, type) {
+    move(event) {
       let delta = -event.deltaY;
-      if (
-          (type === 'content' && event.type === 'panup') ||
-          (type === 'content' && event.type === 'pandown' && this.contentScroll > 0)
-      ) {
-        this.$refs.content.scrollTo({top: this.contentScroll + delta, behavior: 'instant'});
-      } else if (event.type === 'panup' || event.type === 'pandown') {
+      if (event.type === 'panup' || event.type === 'pandown') {
         this.moving = true;
         if (- delta > 0) {
           this.cardP = delta;
