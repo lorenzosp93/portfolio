@@ -1,6 +1,6 @@
 <template>
-<div class="container relative min-h-screen w-screen mx-auto">
-  <div class="class container flex flex-wrap mx-auto my-10">
+<div class="container relative min-h-screen w-screen mx-auto mt-10">
+  <div class="class container flex flex-wrap mx-auto mb-10">
     <h2 class="text-center text-xl w-full font-bold mx-auto  text-gray-600 dark:text-white">
       Here are a few things I've done.
     </h2>
@@ -8,7 +8,7 @@
       Because I definitely needed a website to host my CV. Swipe horizontally to change section!
     </p>
   </div>
-  <div class="z-10 sticky top-1/2 hidden sm:block max-w-screen-lg mx-auto" id="arrow-holder">
+  <div class="z-10 sticky top-1/2 hidden sm:block max-w-screen-lg mx-auto" id="arrow-holder-resume">
     <div @click="scrollToSibling(false)" class="absolute -left-5 rounded-full h-10 w-10 shadow-md bg-gray-50 dark:bg-gray-500 hidden hover:bg-gray-100 hover:dark:bg-gray-400 cursor-pointer select-none" :class="{'md:block': !isExperienceActive}">
         <div class="translate-y-full translate-x-1/4 h-1/3 w-1/3 mx-auto rotate-45 border-b-2 border-l-2 border-gray-600 dark:border-gray-900 box-border rounded-bl" ></div>
     </div>
@@ -71,7 +71,7 @@ export default {
       return this.elementsInView.filter(e => kind == e.target.id && e.isIntersecting)?.length > 0 ?? false
     },
     scrollToSibling (next) {
-      let scrollWidth = document.getElementById('arrow-holder').clientWidth;
+      let scrollWidth = document.getElementById('arrow-holder-resume').clientWidth;
       if (next) {
         document.getElementById('resume-container').scrollLeft += scrollWidth;
       } else {
@@ -80,7 +80,8 @@ export default {
     }
   },
   beforeUnmount () {
-    this.$lax.removeElements('.resume-animate');
+    this.$lax.removeElements('.resume-panels');
+    this.$lax.removeElements('#arrow-holder-resume');
     this.$lax.removeDriver('scrollX');
   },
   mounted () {
@@ -100,7 +101,7 @@ export default {
       }
     );
     this.$lax.addElements(
-      '#arrow-holder',
+      '#arrow-holder-resume',
       {
         scrollY: {
           opacity: [
