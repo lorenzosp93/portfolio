@@ -1,10 +1,10 @@
 <template>
-  <div class="flex min-h-screen flex-wrap m-5 justify-self-center text-black dark:text-white">
+  <div class="flex min-h-screen flex-wrap text-black dark:text-white">
     
-    <div class="flex-initial w-1/2 sm:w-1/3 m-auto" >
-      <img class="m-auto w-40 h-40 sm:w-auto sm:h-auto ring-4 ring-white z-30 relative rounded-full" id="heroPicture" src="@/assets/hero.webp" srcset="@/assets/hero.webp 886w, @/assets/hero-mobile.webp 320w" :class="{'invisible': !isHeroLogoVisible}" alt="High res picture" @load="$emit('heroLoaded')">
+    <div class="flex-initial w-1/2 sm:w-1/3 m-auto py-5" >
+      <img class="m-auto w-40 h-40 md:w-56 md:h-56 lg:w-auto lg:h-auto ring-4 ring-white z-30 relative rounded-full" id="heroPicture" src="@/assets/hero.webp" srcset="@/assets/hero.webp 886w, @/assets/hero-mobile.webp 320w" :class="{'invisible': !isHeroLogoVisible}" alt="High res picture" @load="$emit('heroLoaded')">
       <h1 class="text-2xl m-5 font-bold text-center">Hi, I'm Lorenzo</h1>
-      <div class="container flex my-5">
+      <div class="container flex mt-5">
         <a class=" fill-gray-700 dark:fill-white ml-auto" href="https://twitter.com/Lorenzosp">
           <svg class="h-5"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
       </a>
@@ -17,11 +17,10 @@
       </div>
     </div>
     <div></div>
-    <div class="flex-initial w-4/5 sm:w-1/2 mt-auto m-auto">
-      <div class="font-serif first-letter:text-2xl justify-between m-2 indent-3">
-        <h1 class="text-lg my-3">Welcome to my website!</h1>
+    <div class="flex-initial w-4/5 sm:w-1/2 m-auto">
+      <div class="font-sans first-letter:text-2xl justify-between m-2 indent-3">
         <p> I'm an energy engineer by formal training, jack of all trades by attitude and development. I work on Product at Tesla, aiming to always learn and grow into the role to acquire the skills and knowledge required to run a business and eventually move into VC.</p>
-        <h3 class="text-xl my-3">Why a porfolio website?</h3>
+        <h3 class="text-xl my-3">Why do I have a porfolio website?</h3>
         <p>
           <ul class="list-disc list-inside">
             <li>This has been great fun to build!
