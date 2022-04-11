@@ -34,7 +34,7 @@ export default {
   },
   computed: {
     truncatedDescription () {
-      return this.description.slice(0, this.truncationAmount) + '...'
+      return this.description.slice(0, this.truncationAmount()) + '...'
     },
   },
   inject: [
