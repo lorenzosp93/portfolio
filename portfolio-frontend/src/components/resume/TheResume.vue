@@ -8,7 +8,7 @@
       Because I definitely needed a website to host my CV. Swipe horizontally to change section!
     </p>
   </div>
-  <div class="container relative  flex gap-6 overflow-x-scroll no-scrollbar snap-x snap-mandatory" id="resume-container">
+  <div class="container relative  flex gap-6 overflow-x-scroll no-scrollbar snap-x snap-mandatory scroll-smooth" id="resume-container">
     <div class="flex-none w-full snap-always snap-center resume-panels">
       <resume-timeline :ix="'first'" :observer="observer" :isActive="isExperienceActive" :kind="'experience'" id="experience" />
     </div>
