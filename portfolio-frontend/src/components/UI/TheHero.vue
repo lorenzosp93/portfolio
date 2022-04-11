@@ -2,7 +2,7 @@
   <div class="flex min-h-screen flex-wrap m-5 justify-self-center text-black dark:text-white">
     
     <div class="flex-initial w-1/2 sm:w-1/3 m-auto" >
-      <img class="m-auto w-40 h-40 sm:w-auto sm:h-auto ring-4 ring-white z-20 relative rounded-full" id="heroPicture" src="@/assets/hero.webp" :class="{'invisible': !isHeroLogoVisible}" alt="High res picture" @load="$emit('heroLoaded')">
+      <img class="m-auto w-40 h-40 sm:w-auto sm:h-auto ring-4 ring-white z-20 relative rounded-full" id="heroPicture" src="@/assets/hero.webp" srcset="@/assets/hero.webp 886w, @/assets/hero-mobile.webp 320w" :class="{'invisible': !isHeroLogoVisible}" alt="High res picture" @load="$emit('heroLoaded')">
       <h1 class="text-2xl m-5 font-bold text-center">Hi, I'm Lorenzo</h1>
       <div class="container flex my-5">
         <a class=" fill-gray-700 dark:fill-white ml-auto" href="https://twitter.com/Lorenzosp">
