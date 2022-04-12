@@ -1,5 +1,5 @@
 <template>
-  <div class="flex min-h-screen flex-wrap text-black dark:text-white">
+  <div class="flex min-h-screen w-screen flex-wrap text-black dark:text-white">
     
     <div class="flex-initial w-1/2 sm:w-1/3 m-auto py-5" >
       <img class="m-auto w-40 h-40 md:w-56 md:h-56 lg:w-auto lg:h-auto ring-4 ring-white z-30 relative rounded-full" id="heroPicture" src="@/assets/hero.webp" srcset="@/assets/hero.webp 886w, @/assets/hero-mobile.webp 320w" :class="{'invisible': !isHeroLogoVisible}" alt="High res picture" @load="$emit('heroLoaded')">

@@ -1,5 +1,5 @@
 <template>
-  <div class="sticky top-0 z-20 opacity-0">
+  <div class="sticky top-0 z-20 opacity-0 w-screen">
     <slot>
       <nav class="">
         <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 sm:bg-white sm:dark:bg-gray-600">

@@ -19,7 +19,7 @@
           </div>
         </div>
       </div>
-      <div class="bottom-sheet__content" :style="{height: contentH}" ref="content">
+      <div class="bottom-sheet__content overscroll-contain" :style="{height: contentH}" ref="content">
         <div class="container p-3 mt-3 text-sm text-gray-700 dark:text-white">
           <slot name="inner-content">
             Here goes the main content of the card.
@@ -103,9 +103,9 @@ export default {
   },
     close () {
       if (this.opened) {
-        this.opened = false;
-        this.cardP = - this.cardH - this.stripe;
         document.body.style.overflow = "";
+        this.cardP = - this.cardH - this.stripe;
+        this.opened = false;
         this.$emit("cardClosed");
       }
     },

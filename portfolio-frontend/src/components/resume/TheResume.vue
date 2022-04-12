@@ -8,15 +8,15 @@
       Because I definitely needed a website to host my CV. Swipe horizontally to change section!
     </p>
   </div>
-  <div class="z-10 sticky top-1/2 hidden md:block" id="arrow-holder">
-    <div @click="scrollToSibling(false)" class="absolute -left-5 rounded-full h-10 w-10 shadow-md bg-gray-50 dark:bg-gray-500 hidden hover:bg-gray-100 hover:dark:bg-gray-400 cursor-pointer" :class="{'md:block': !isExperienceActive}">
+  <div class="z-10 sticky top-1/2 hidden sm:block max-w-screen-lg mx-auto" id="arrow-holder">
+    <div @click="scrollToSibling(false)" class="absolute -left-5 rounded-full h-10 w-10 shadow-md bg-gray-50 dark:bg-gray-500 hidden hover:bg-gray-100 hover:dark:bg-gray-400 cursor-pointer select-none" :class="{'md:block': !isExperienceActive}">
         <div class="translate-y-full translate-x-1/4 h-1/3 w-1/3 mx-auto rotate-45 border-b-2 border-l-2 border-gray-600 dark:border-gray-900 box-border rounded-bl" ></div>
     </div>
-    <div @click="scrollToSibling(true)" class="absolute -right-5 rounded-full h-10 w-10 shadow-md bg-gray-50 dark:bg-gray-500 hidden hover:dark:bg-gray-400 hover:bg-gray-100 cursor-pointer" :class="{'md:block': !isSkillsActive}">
+    <div @click="scrollToSibling(true)" class="absolute -right-5 rounded-full h-10 w-10 shadow-md bg-gray-50 dark:bg-gray-500 hidden hover:dark:bg-gray-400 hover:bg-gray-100 cursor-pointer select-none" :class="{'md:block': !isSkillsActive}">
         <div class="translate-y-full -translate-x-1/4 h-1/3 w-1/3 mx-auto rotate-45 border-t-2 border-r-2 border-gray-600 dark:border-gray-900 box-border rounded-tr" ></div>
     </div>
   </div>
-  <div class="container relative flex gap-6 overflow-x-scroll no-scrollbar snap-x snap-mandatory scroll-smooth" id="resume-container">
+  <div class="container relative flex gap-6 overflow-x-scroll no-scrollbar snap-x snap-mandatory scroll-smooth w-full" id="resume-container">
     <div class="flex-none w-full snap-always snap-center resume-panels">
       <resume-timeline :ix="'first'" :observer="observer" :isActive="isExperienceActive" :kind="'experience'" id="experience" />
     </div>
