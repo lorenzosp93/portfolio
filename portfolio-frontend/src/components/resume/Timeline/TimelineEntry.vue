@@ -17,7 +17,7 @@
       </div>
       <div class="p-2 flex text-sm font-normal text-ellipsis text-gray-500 bg-gray-50 rounded-lg border border-gray-200 dark:bg-gray-900 dark:border-gray-500 dark:text-gray-300" v-html="truncatedDescription" />
     </div>
-    <timeline-entry-detail v-bind="$props" @card-closed="closeDetails" :open="detailsVisible" />
+    <timeline-entry-detail v-if="isActive" v-bind="$props" @card-closed="closeDetails" :open="detailsVisible" />
   </li>
 </template>
 
@@ -85,6 +85,7 @@ export default {
     keywords: Array,
     attachments: Object,
     isFirst: Boolean,
+    isActive: Boolean,
   },
   beforeUnmount () {
   },

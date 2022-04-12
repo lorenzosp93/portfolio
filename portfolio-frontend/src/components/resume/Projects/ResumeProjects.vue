@@ -14,7 +14,7 @@
         </svg>
       </div>
       <ol v-else-if="data.length > 0" class="relative grid grid-flow-row grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 py-3 px-8">
-        <list-card type="project" class="mx-auto w-11/12" v-for="project in data" :key="project.uuid" v-bind="project"/>
+        <list-card type="project" class="mx-auto w-11/12" v-for="project in data" :key="project.uuid" v-bind="project" :isActive="isActive"/>
       </ol>
       <div v-else class="p-10 m-auto">
         <div @click="loadEntries"  class="rounded-3xl p-3 text-white bg-gray-300 dark:bg-gray-500">
