@@ -9,9 +9,9 @@
       <p v-html:="truncatedContent" class="text-sm my-3 w-full text-ellipsis" />
     </div>
 
-    <blog-entry-detail v-if="type == 'blog' && detailsVisible" @card-closed="toggleDetails"  :name="name" :created_at="created_at" :created_by="created_by" :location="location" :picture="picture" :content="content" :attachments="attachments"/>
+    <blog-entry-detail v-if="type == 'blog'" :isOpen="detailsVisible" @card-closed="toggleDetails"  :name="name" :created_at="created_at" :created_by="created_by" :location="location" :picture="picture" :content="content" :attachments="attachments"/>
     
-    <project-entry-detail v-if="type == 'project' && detailsVisible" @card-closed="toggleDetails"  :name="name" :location="location" :picture="picture" :content="content" :status="status" :attachments="attachments"/>
+    <project-entry-detail v-if="type == 'project'" :isOpen="detailsVisible" @card-closed="toggleDetails"  :name="name" :location="location" :picture="picture" :content="content" :status="status" :attachments="attachments"/>
     
   </div>
 </template>

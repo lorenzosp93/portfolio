@@ -1,5 +1,5 @@
 <template>
-  <detail-card @card-closed="cardClosed" ref="detailCard">
+  <detail-card @card-closed="cardClosed" ref="detailCard" :isOpen="open">
     <template v-slot:title>
       {{ name }}
     </template>
@@ -82,6 +82,7 @@ export default {
     keywords: Array,
     attachments: Object,
     isFirst: Boolean,
+    open: Boolean,
   }
 }
 </script>
