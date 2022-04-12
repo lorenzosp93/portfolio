@@ -16,7 +16,7 @@
       <ol v-else-if="data.length > 0" class="relative border-l border-gray-200 dark:border-gray-600 ml-5 py-1">
         <timeline-group
           v-for="group in data"
-          :key="group.uuid" :kind="kind" :groupKey="group.uuid" :group="group"
+          :key="group.uuid" :kind="kind" :groupKey="group.uuid" :group="group" :isActive="isActive"
         />
       </ol>
       <div v-else class="p-10 m-auto">

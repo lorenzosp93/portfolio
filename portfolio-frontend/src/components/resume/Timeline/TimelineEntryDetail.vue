@@ -83,6 +83,7 @@ export default {
     attachments: Object,
     isFirst: Boolean,
     open: Boolean,
+    isActive: Boolean,
   }
 }
 </script>

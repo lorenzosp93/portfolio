@@ -6,7 +6,7 @@
 
     <the-resume :observer="observer" :elementsInView="elementsInView" id="the-resume" />
 
-    <the-blog :observer="observer" :isVisible="isBlogVisible" id="the-blog"/>
+    <the-blog :observer="observer" :isActive="isBlogActive" id="the-blog"/>
 
   </div>
 </template>
@@ -61,7 +61,7 @@ export default {
     }
   },
   computed: {
-    isBlogVisible () {
+    isBlogActive () {
       return this.elementsInView?.filter(elem => elem.target.id == 'the-blog' && elem.isIntersecting)?.length > 0
     },
     elementInView () {
