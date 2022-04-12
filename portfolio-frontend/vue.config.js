@@ -1,5 +1,4 @@
 const { defineConfig } = require('@vue/cli-service')
-const zlib = require("zlib");
 
 
 module.exports = defineConfig({
