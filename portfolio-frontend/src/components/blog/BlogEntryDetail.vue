@@ -1,5 +1,5 @@
 <template>
-  <detail-card @card-closed='cardClosed' >
+  <detail-card @card-closed='cardClosed' :isOpen="isOpen">
     <template v-slot:title>
       {{ name }}
     </template>
@@ -39,6 +39,7 @@ export default {
     'picture',
     'content',
     'attachments',
+    'isOpen',
   ],
   emits: [
     'cardClosed'

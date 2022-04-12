@@ -61,7 +61,7 @@ export default {
   },
   computed: {
     maxHeight () {
-      return 90 + (this.paddingBottom > 12 ? 5 : 0)
+      return 80 + (this.paddingBottom > 12 ? 5 : 0)
     },
   },
   methods: {
@@ -141,6 +141,16 @@ export default {
     },
   },
   props: {
+    isOpen: Boolean,
+  },
+  watch: {
+    isOpen (value) {
+      if (value) {
+        this.open();
+      } else {
+        this.close();
+      }
+    }
   },
   inject: [
   ],
@@ -153,7 +163,6 @@ export default {
     this.hammer?.content?.destroy();
   },
   mounted () {
-    this.open();
   },
 }
 </script>
@@ -164,7 +173,7 @@ export default {
 }
 .bottom-sheet {
   z-index: 100;
-  transition: all 0.3s ease;
+  transition: all 0.4s ease-in;
   position: relative;
 }
 .bottom-sheet__content {
@@ -193,7 +202,7 @@ export default {
 }
 .bottom-sheet__card.fx-default {
   transform: translate(-50%,0);
-  transition: bottom 0.4s ease;
+  transition: bottom 0.4s ease-out;
 }
 .bottom-sheet__pan {
   padding-bottom: 20px;
@@ -230,24 +239,4 @@ export default {
   visibility: visible;
 }
 
-@keyframes show {
-  0% {
-    opacity: 0;
-    visibility: hidden;
-  }
-  100% {
-    opacity: 1;
-    visibility: visible;
-  }
-}
-@keyframes hide {
-  0% {
-    opacity: 1;
-    visibility: visible;
-  }
-  100% {
-    opacity: 0;
-    visibility: hidden;
-  }
-}
 </style>
