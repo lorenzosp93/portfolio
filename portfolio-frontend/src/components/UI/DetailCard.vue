@@ -19,7 +19,7 @@
           </div>
         </div>
       </div>
-      <div class="bottom-sheet__content overscroll-contain" :style="{height: contentH}" ref="content">
+      <div class="bottom-sheet__content" :style="{height: contentH}" ref="content">
         <div class="container p-3 mt-3 text-sm text-gray-700 dark:text-white">
           <slot name="inner-content">
             Here goes the main content of the card.
@@ -178,6 +178,7 @@ export default {
 }
 .bottom-sheet__content {
   overflow-y: scroll;
+  overscroll-behavior: contain;
 }
 .bottom-sheet__backdrop {
   position: fixed;

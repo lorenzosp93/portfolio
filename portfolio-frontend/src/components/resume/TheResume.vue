@@ -8,7 +8,7 @@
       Because I definitely needed a website to host my CV. Swipe horizontally to change section!
     </p>
   </div>
-  <div class="z-10 sticky top-1/2 hidden sm:block max-w-screen-lg mx-auto" id="arrow-holder-resume">
+  <div class="z-10 sticky top-1/2 hidden md:block max-w-screen-lg mx-auto" id="arrow-holder-resume">
     <div @click="scrollToSibling(false)" class="absolute -left-5 rounded-full h-10 w-10 shadow-md bg-gray-50 dark:bg-gray-500 hidden hover:bg-gray-100 hover:dark:bg-gray-400 cursor-pointer select-none" :class="{'md:block': !isExperienceActive}">
         <div class="translate-y-full translate-x-1/4 h-1/3 w-1/3 mx-auto rotate-45 border-b-2 border-l-2 border-gray-600 dark:border-gray-900 box-border rounded-bl" ></div>
     </div>
