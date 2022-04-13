@@ -74,8 +74,6 @@ export default {
       if (
         (container.scrollLeft == container.scrollWidth - container.offsetWidth) && (this.total > currentLength) && !this.isLoading
       ) {
-        // this.loadEntries();
-        this.isLoading = true;
         this.loadEntries();
       }
     }) 
