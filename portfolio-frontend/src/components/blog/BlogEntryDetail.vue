@@ -9,7 +9,7 @@
       </p>
     </template>
     <template v-slot:subtitle>
-      {{ created_by__fullname ?? created_by.username }}
+      {{ created_by__fullname ? created_by__fullname : created_by.username }}
     </template>
     <template v-slot:inner-content>
       <div class="text-sm">
@@ -46,7 +46,7 @@ export default {
   ],
   computed: {
     created_by__fullname () {
-      return this.created_by?.firstname ?? '' + this.created_by?.lastname ?? ''
+      return (this.created_by?.firstname ?? '') + (this.created_by?.lastname ?? '')
     },
     created_at_date () {
       let date = new Date(this.created_at)
