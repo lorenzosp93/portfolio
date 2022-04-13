@@ -113,7 +113,7 @@ export default {
       {
         scrollY: {
           opacity: [
-            ['elInY+(screenHeight/4)', 'elCenterY+(screenHeight/4)'],
+            ['elInY', 'elCenterY+(screenHeight/4)'],
             [0, 1],
             {
               easing: 'easeInQuad',
