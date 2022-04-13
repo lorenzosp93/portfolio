@@ -34,6 +34,10 @@ export default {
         let w = window.innerWidth;
         return w > 1024 ? 450 : w > 640 ? 200 : 75
       },
+      entriesLimit: () => {
+        let w = window.innerWidth;
+        return w > 1024 ? 6 : w > 640 ? 5 : 4
+      },
       loadData: (url, self, isPaginated) => {
         self.isLoading = true;
         let backendUrl = process.env.VUE_APP_BACKEND_URL;
@@ -188,6 +192,7 @@ export default {
     return {
       'truncationAmount': this.truncationAmount,
       'loadData': this.loadData,
+      'entriesLimit': this.entriesLimit,
     }
   },
 }

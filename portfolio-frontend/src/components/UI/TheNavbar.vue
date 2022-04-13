@@ -32,7 +32,7 @@
             </div>
             <div class="flex-1 flex items-center justify-end sm:items-stretch sm:justify-start">
               <div @click="scrollToTop" class="flex-shrink-0 flex items-center m-3">
-                <img id="heroLogo" class="h-9 w-9 rounded-full opacity-100 cursor-pointer" src="@/assets/hero-logo.webp" @load="this.$emit('imageLoaded')" alt="Hero image logo" :class="{'invisible': isHeroLogoVisible}">
+                <img id="heroLogo" class="h-10 w-10 rounded-full opacity-100 cursor-pointer" src="@/assets/hero-logo.webp" @load="this.$emit('imageLoaded')" alt="Hero image logo" :class="{'invisible': isHeroLogoVisible}">
               </div>
               <div class="hidden  sm:block my-auto sm:ml-6">
                 <div class="flex space-x-4">

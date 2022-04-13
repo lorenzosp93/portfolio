@@ -16,6 +16,9 @@
         <div class="translate-y-full -translate-x-1/4 h-1/3 w-1/3 mx-auto rotate-45 border-t-2 border-r-2 border-gray-600 dark:border-gray-900 box-border rounded-tr" ></div>
     </div>
   </div>
+  <div @click="scrollToTop" class="absolute right-10 bottom-3 z-10 h-10 w-10 rounded-full shadow-md bg-gray-50 dark:bg-gray-400 cursor-pointer select-none hover:dark:bg-gray-400 hover:bg-gray-100" id="top-scroller-resume">
+    <div class="translate-y-[1em]  h-1/3 w-1/3 mx-auto rotate-45 border-t-2 border-l-2 border-gray-600 dark:border-gray-900 box-border rounded-lt" ></div>
+  </div>
   <div class="container relative flex gap-6 overflow-x-scroll no-scrollbar snap-x snap-mandatory scroll-smooth w-full" id="resume-container">
     <div class="flex-none w-full grow snap-always snap-center resume-panels">
       <resume-timeline :ix="'first'" :observer="observer" :isActive="isExperienceActive" :kind="'experience'" id="experience" />
@@ -67,21 +70,26 @@ export default {
     },
   },
   methods: {
+    scrollToTop () {
+      this.$el.scrollIntoView({behavior: 'smooth', block: 'start'});
+    },
     isActive (kind) {
       return this.elementsInView.filter(e => kind == e.target.id && e.isIntersecting)?.length > 0 ?? false
     },
     scrollToSibling (next) {
       let scrollWidth = document.getElementById('arrow-holder-resume').clientWidth;
+      let container = document.getElementById('resume-container');
       if (next) {
-        document.getElementById('resume-container').scrollLeft += scrollWidth;
+        container.scrollLeft += scrollWidth;
       } else {
-        document.getElementById('resume-container').scrollLeft -= scrollWidth;
+        container.scrollLeft -= scrollWidth;
       }
     }
   },
   beforeUnmount () {
     this.$lax.removeElements('.resume-panels');
     this.$lax.removeElements('#arrow-holder-resume');
+    this.$lax.removeElements('#top-scroller-resume');
     this.$lax.removeDriver('scrollX');
   },
   mounted () {
@@ -101,6 +109,20 @@ export default {
       }
     );
     this.$lax.addElements(
+      '#top-scroller-resume',
+      {
+        scrollY: {
+          opacity: [
+            ['elInY+(screenHeight/4)', 'elCenterY+(screenHeight/4)'],
+            [0, 1],
+            {
+              easing: 'easeInQuad',
+            }
+          ],
+        }
+      }
+    );
+    this.$lax.addElements(
       '#arrow-holder-resume',
       {
         scrollY: {
@@ -108,7 +130,7 @@ export default {
             ['elCenterY', 'elCenterY+(screenHeight/2)', 'elCenterY+(screenHeight)'],
             [0, 1, 0],
             {
-              easing: 'easeOutQuad',
+              easing: 'easeInQuad',
             }
           ],
         }
