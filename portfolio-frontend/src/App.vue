@@ -34,10 +34,10 @@ export default {
         let w = window.innerWidth;
         return w > 1024 ? 450 : w > 640 ? 200 : 75
       },
-      loadData: (url, self) => {
+      loadData: (url, self, isPaginated) => {
         self.isLoading = true;
         let backendUrl = process.env.VUE_APP_BACKEND_URL;
-        fetch(backendUrl + url).then(
+        return fetch(backendUrl + url).then(
           response => {
             if (response.ok) {
               return response.json();
@@ -47,7 +47,12 @@ export default {
           data => {
             if (data) {
               self.isLoading = false;
-              self.data = data;
+              if (isPaginated) {
+                self.total = data.count;
+                self.data.push(...data.results);
+              } else {
+                self.data = data;
+              }
             }
           }
         ).catch(

@@ -175,10 +175,11 @@ export default {
   z-index: 100;
   transition: all 0.4s ease-in;
   position: relative;
+  overscroll-behavior: none !important;
 }
 .bottom-sheet__content {
   overflow-y: scroll;
-  overscroll-behavior: contain;
+  overscroll-behavior: contain !important;
 }
 .bottom-sheet__backdrop {
   position: fixed;

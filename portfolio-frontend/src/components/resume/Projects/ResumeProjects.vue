@@ -1,6 +1,6 @@
 <template>
   <div class="m-auto mt-5 rounded-lg max-w-screen-lg shadow-md bg-white dark:bg-gray-900 py-1">
-    <div class="relative p-auto w-full max-h-[75vh] lg:max-h-screen overflow-x-hidden overflow-y-scroll no-scrollbar">
+    <div class="relative p-auto w-full overflow-x-hidden">
       <div class="absolute top-1/2 -right-2.5 md:hidden" :class="{'hidden': ix == 'last'}">
         <div class="block w-10 h-1 rounded-lg  cursor-grab active:cursor-grabbing bg-gray-300 rotate-90"/>
       </div>
@@ -52,7 +52,8 @@ export default {
   watch: {
     isActive (value) {
       if (value) {
-        if (!this.data.length)
+        if (!this.data.length && !this.isLoading)
+        this.isLoading = true;
         this.loadEntries(this.kind);
       }
     }

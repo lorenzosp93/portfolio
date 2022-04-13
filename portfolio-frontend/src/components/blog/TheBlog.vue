@@ -38,7 +38,8 @@ export default {
   },
   watch: {
     isActive (value) {
-      if (value && this.data.length == 0) {
+      if (value && this.data.length == 0 && !this.isLoading) {
+        this.isLoading = true;
         this.loadEntries();
       }
     }

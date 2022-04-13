@@ -1,5 +1,6 @@
 from django.db.models import Max
 from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.pagination import LimitOffsetPagination
 from .serializers import (
     KeywordSerializer,
     ProjectSerializer,
@@ -29,6 +30,7 @@ class EducationViewSet(ReadOnlyModelViewSet):
     """
     queryset = Education.objects.all()
     serializer_class = EducationSerializer
+    pagination_class = LimitOffsetPagination
 
 class ExperienceViewSet(ReadOnlyModelViewSet):
     """
@@ -36,6 +38,7 @@ class ExperienceViewSet(ReadOnlyModelViewSet):
     """
     queryset = Experience.objects.all()
     serializer_class = ExperienceSerializer
+    pagination_class = LimitOffsetPagination
 
 class SkillViewSet(ReadOnlyModelViewSet):
     """

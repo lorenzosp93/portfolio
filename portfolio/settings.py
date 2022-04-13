@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'health_check.db',                          # stock Django health checkers
     'health_check.cache',
     'rest_framework',
-    'corsheaders'
+    'corsheaders',
 ]
 
 MIDDLEWARE = [

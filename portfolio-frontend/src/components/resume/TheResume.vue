@@ -17,16 +17,16 @@
     </div>
   </div>
   <div class="container relative flex gap-6 overflow-x-scroll no-scrollbar snap-x snap-mandatory scroll-smooth w-full" id="resume-container">
-    <div class="flex-none w-full snap-always snap-center resume-panels">
+    <div class="flex-none w-full grow snap-always snap-center resume-panels">
       <resume-timeline :ix="'first'" :observer="observer" :isActive="isExperienceActive" :kind="'experience'" id="experience" />
     </div>
-    <div class="flex-none w-full snap-always snap-center resume-panels">
+    <div class="flex-none w-full grow snap-always snap-center resume-panels">
       <resume-timeline :ix="'center'" :observer="observer" :isActive="isEducationActive" :kind="'education'" id="education" />
     </div>
-    <div class="flex-none w-full snap-always snap-center resume-panels">
+    <div class="flex-none w-full grow snap-always snap-center resume-panels">
       <resume-projects :ix="'center'" :observer="observer" id="projects" :isActive="isProjectsActive"/>
     </div>
-    <div class="flex-none w-full snap-always snap-center resume-panels">
+    <div class="flex-none w-full grow snap-always snap-center resume-panels">
       <resume-skills :ix="'last'" :observer="observer" id="skills" :isActive="isSkillsActive"/>
     </div>
   </div>
