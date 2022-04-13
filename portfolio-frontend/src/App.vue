@@ -36,7 +36,7 @@ export default {
       },
       entriesLimit: () => {
         let w = window.innerWidth;
-        return w > 1024 ? 6 : w > 640 ? 5 : 4
+        return w > 1024 ? 6 : w > 640 ? 4 : 3
       },
       loadData: (url, self, isPaginated) => {
         self.isLoading = true;
