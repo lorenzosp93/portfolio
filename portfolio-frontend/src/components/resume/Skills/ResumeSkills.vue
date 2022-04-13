@@ -51,8 +51,7 @@ export default {
   ],
   watch: {
     isActive (value) {
-      if (value) {
-        if (!this.data.length && !this.isLoading)
+      if (value && !this.data.length && !this.isLoading) {
         this.isloading = true;
         this.loadEntries();
       }
