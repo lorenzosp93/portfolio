@@ -35,7 +35,7 @@
                 <img id="heroLogo" class="h-10 w-10 rounded-full opacity-100 cursor-pointer" src="@/assets/hero-logo.webp" @load="this.$emit('imageLoaded')" alt="Hero image logo" :class="{'invisible': isHeroLogoVisible}">
               </div>
               <div class="hidden  sm:block my-auto sm:ml-6">
-                <div class="flex space-x-4">
+                <div class="flex space-x-4 overflow-x-scroll">
                   <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
                    <a href="#the-hero" class="text-black dark:text-gray-300 hover:border-b-2 px-3 py-2 rounded-md text-sm font-medium" :class="{active: elementInView === 'the-hero'}" aria-current="page">About</a>
                   <a href="#the-resume" class="text-black dark:text-gray-300 hover:border-b-2 px-3 py-2 rounded-md text-sm font-medium" :class="{active: ['experience', 'education','projects', 'skills'].includes(elementInView)}">Resume</a>
