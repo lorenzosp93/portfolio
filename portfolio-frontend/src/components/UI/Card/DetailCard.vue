@@ -1,7 +1,7 @@
 <template>
 <Teleport to="body">
-  <div v-on="handlers" class="bottom-sheet" :class="{opened: opened, closed: opened === false, moving:moving}" style="{'pointer-events': 'all'}" ref="bottomSheet">
-    <div class="backdrop-blur-sm bottom-sheet__backdrop" />
+  <div v-on="handlers" class="bottom-sheet shadlw-lg" :class="{opened: opened, closed: opened === false, moving:moving}" style="{'pointer-events': 'all'}" ref="bottomSheet">
+    <div class="backdrop-blur-md bottom-sheet__backdrop" />
     <div class="bg-white dark:bg-gray-800 bottom-sheet__card fx-default" :class="{stripe: stripe}" :style="[{ bottom: cardP+'px', maxWidth: '640px', maxHeight: maxHeight+'%'},{'height': 'auto'},{'pointer-events': 'all'}, {'padding-bottom': paddingBottom+'px'}]" id='detail-card' ref="card">
       <div class="bottom-sheet__pan" ref="pan">
         <div class="bottom-sheet__bar bg-gray-300 dark:bg-white" />

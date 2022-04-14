@@ -7,7 +7,7 @@
             <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
               <!-- Mobile menu button-->
               <button type="button" @click="toggleMenu"
-                class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-700 hover:dark:text-white hover:bg-white hover:dark:bg-gray-700 hover:outline-none hover:ring-2 hover:ring-inset hover:ring-gray-700 hover:dark:ring-white"
+                class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-700 hover:dark:text-white hover:bg-white hover:dark:bg-gray-700 hover:shadow-md ml-3"
                 aria-controls="mobile-menu" aria-expanded="false">
                 <span class="sr-only">Open main menu</span>
                 <!--
@@ -39,7 +39,7 @@
             <div class="flex-1 flex items-center justify-end sm:items-stretch sm:justify-start">
               <div @click="scrollToTop" class="flex-shrink-0 flex items-center m-3">
                 <img id="heroLogo"
-                  class="h-10 w-10 rounded-full opacity-100 cursor-pointer hover:scale-105 transition duration-300 ease-in-out"
+                  class="h-10 w-10 rounded-full opacity-100 cursor-pointer hover:scale-105 transition duration-300 ease-in-out ring-1 ring-white"
                   src="@/assets/hero-logo.webp" @load="this.$emit('imageLoaded')" alt="Hero image logo"
                   :class="{'invisible': isHeroLogoVisible}">
               </div>
@@ -79,25 +79,21 @@
 
         <!-- Mobile menu, show/hide based on menu state. -->
         <div
-          class="sm:hidden bg-white dark:bg-gray-700 rounded-lg mx-3 ring-1 ring-gray-100 dark:ring-gray-600 relative"
-          :class="{'hidden': !isMenuOpen,}" id="mobile-menu">
-          <div class="px-2 pt-2 pb-3 space-y-1">
+          class="sm:hidden bg-white dark:bg-gray-700 rounded-lg  dark:ring-gray-600 fixed -z-10 transform duration-500 ease-in-out overflow-hidden ml-3 -mt-1"
+          :class="{'menu-closed': !isMenuOpen,}" id="mobile-menu">
+          <div class="px-2 pt-2 pb-3 space-y-2 shadow-md">
             <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
             <a href="#the-hero" class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
               :class="{active: elementInView === 'the-hero'}" aria-current="page">About</a>
             <a href="#the-resume" class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
               :class="{active: ['experience', 'education', 'projects', 'skills'].includes(elementInView)}">Resume</a>
             <a href="#experience" class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
-              v-show="['experience', 'education', 'projects', 'skills'].includes(elementInView)"
               :class="{active_outer: ['experience'].includes(elementInView)}">Experience</a>
             <a href="#education" class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
-              v-show="['experience', 'education', 'projects', 'skills'].includes(elementInView)"
               :class="{active_outer: ['education'].includes(elementInView)}">Education</a>
             <a href="#projects" class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
-              v-show="['experience', 'education', 'projects', 'skills'].includes(elementInView)"
               :class="{active_outer: ['projects'].includes(elementInView)}">Projects</a>
             <a href="#skills" class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
-              v-show="['experience', 'education', 'projects', 'skills'].includes(elementInView)"
               :class="{active_outer: ['skills'].includes(elementInView)}">Skills</a>
             <a href="#the-blog" class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
               :class="{active: elementInView === 'the-blog'}">Blog</a>
@@ -164,5 +160,9 @@ export default {
 }
 .active_outer {
   @apply border-2 border-gray-600 text-gray-600 dark:border-white dark:text-white
+}
+
+.menu-closed {
+  @apply scale-x-[0.3] scale-y-[0.09] opacity-0 -translate-y-48 -translate-x-9
 }
 </style>
