@@ -1,5 +1,5 @@
 <template>
-  <div @click="toggleDetails" class="snap-center my-5 container flex-none rounded-2xl border-1 border-gray-200 shadow-md dark:bg-gray-600 bg-white" :class="{'pointe-events-none': detailsVisible}">
+  <div @click="toggleDetails" class="snap-center my-5 container flex-none rounded-2xl border-1 border-gray-200 shadow-md dark:bg-gray-600 bg-white hover:scale-102.5 transition duration-300 ease-in-out cursor-pointer" :class="{'pointe-events-none': detailsVisible}">
     <img class="object-cover aspect-video w-full overflow-hidden rounded-t-2xl pb-1 border-b-2 border-gray-300" :src="picture" :alt="'Picture for ' + name">
     <div class="flex flex-wrap p-3 w-full text-lg text-black dark:text-white">
       <p class="text-xs w-full text-gray-400">

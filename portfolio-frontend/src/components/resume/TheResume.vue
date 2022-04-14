@@ -5,7 +5,7 @@
       Here are a few things I've done.
     </h2>
     <p class="text-center w-full text-gray-600 dark:text-gray-300">
-      Because I definitely needed a website to host my CV. Swipe horizontally to change section!
+      Because I definitely needed a website to host my CV. <span class="md:hidden"> Swipe horizontally to change section!</span>
     </p>
   </div>
   <div class="z-10 sticky top-1/2 hidden md:block max-w-screen-lg mx-auto" id="arrow-holder-resume">

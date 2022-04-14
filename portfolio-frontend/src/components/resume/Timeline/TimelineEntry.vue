@@ -3,7 +3,7 @@
     <span v-if="!isFirst" class="absolute ring-4 ring-white dark:ring-gray-900 mt-5 -left-2">
       <div class="w-4 h-4 rounded-full bg-gray-200 dark:bg-gray-600 shadow-sm"></div>
     </span>
-    <div class="timeline-entry p-3 bg-white rounded-lg  shadow-md dark:bg-gray-700 dark:border-gray-600">
+    <div class="timeline-entry p-3 bg-white rounded-lg  shadow-md dark:bg-gray-700 dark:border-gray-600 hover:scale-102.5 transition duration-300 ease-in-out cursor-pointer">
       <div class="justify-between items-center mb-3 sm:flex">
         <time class="mb-1 text-sm font-normal text-gray-400 sm:order-last sm:mb-0">
         {{ start_date }} - {{ end_date ? end_date : current ? 'Present' : '' }}
