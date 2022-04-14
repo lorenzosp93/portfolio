@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import DetailCard from '../UI/DetailCard.vue'
+import DetailCard from '../UI/Card/DetailCard.vue'
 
 export default {
   components: {

@@ -2,18 +2,19 @@
   <div class="bg-gray-100 dark:bg-gray-700 scroll-smooth">
     <the-hero :observer="observer" id='the-hero' @hero-loaded="setupAnimation" :isHeroLogoVisible="isHeroLogoVisible" />
 
-    <the-navbar id='the-navbar' :isHeroLogoVisible="isHeroLogoVisible" :elementInView="elementInView" @image-loaded="setupAnimation" />
+    <the-navbar id='the-navbar' :isHeroLogoVisible="isHeroLogoVisible" :elementInView="elementInView"
+      @image-loaded="setupAnimation" />
 
     <the-resume :observer="observer" :elementsInView="elementsInView" id="the-resume" />
 
-    <the-blog :observer="observer" :isActive="isBlogActive" id="the-blog"/>
+    <the-blog :observer="observer" :isActive="isBlogActive" id="the-blog" />
 
   </div>
 </template>
 
 <script>
 import TheNavbar from './components/UI/TheNavbar.vue'
-import TheHero from './components/UI/TheHero.vue'
+import TheHero from './components/TheHero.vue'
 import TheResume from './components/resume/TheResume.vue'
 import TheBlog from './components/blog/TheBlog.vue'
 
