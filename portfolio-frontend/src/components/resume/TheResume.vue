@@ -103,27 +103,10 @@ export default {
     }
   },
   beforeUnmount () {
-    this.$lax.removeElements('.resume-panels');
     this.$lax.removeElements('#arrow-holder-resume');
     this.$lax.removeElements('#top-scroller-resume');
-    this.$lax.removeDriver('scrollX');
   },
   mounted () {
-    let animationMap = ["elCenterX-(elWidth)", "elCenterX", "elCenterX+(elWidth)"];
-    this.$lax.addElements(
-      '.resume-panels',
-      {
-        containerScrollX: {
-          opacity: [
-            animationMap,
-            [0.3, 1, 0.3],
-            {
-              easing: 'easeInOutCubic',
-            }
-          ],
-        }
-      }
-    );
     this.$lax.addElements(
       '#top-scroller-resume',
       {
@@ -154,10 +137,6 @@ export default {
     );
   },
   created () {
-    this.$lax.addDriver('containerScrollX', () => {
-      let scrollX = document.getElementById('resume-container')?.scrollLeft;
-      return scrollX
-    });
   },
 }
 </script>

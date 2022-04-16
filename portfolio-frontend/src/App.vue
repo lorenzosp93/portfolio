@@ -91,7 +91,7 @@ export default {
   },
   methods: {
     onElementObserved (entries) {
-      entries.every(
+      entries.forEach(
         entry => {
           if (this.elementsInView.length > 0) {
             const ix = this.elementsInView.findIndex(elem => {
@@ -104,7 +104,7 @@ export default {
           }
           this.elementsInView.push(entry);
         }
-      )
+      ) 
     },
     setupAnimation () {
       const coordinates = this.calculateCoordinatesAnimation('heroPicture', 'heroLogo')
@@ -175,7 +175,7 @@ export default {
     this.observer = new IntersectionObserver(
       this.onElementObserved,
       {
-        threshold: [0]
+        threshold: [0, 0.5]
       }
     );
   },
