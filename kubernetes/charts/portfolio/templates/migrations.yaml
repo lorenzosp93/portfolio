@@ -15,6 +15,7 @@ spec:
       containers:
         - name: portfolio
           image: "{{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.tag | default "latest"}}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["/bin/sh"]
           args:
             - -c
