@@ -83,7 +83,7 @@ tolerations: []
 affinity: {}
 
 persistentVolume:
-  storage: 1Gi
+  storage: 2Gi
   
 database:
   name: django
