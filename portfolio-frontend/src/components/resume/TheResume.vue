@@ -36,17 +36,17 @@
     id="resume-container">
     <div class="flex-none w-full grow snap-always snap-center resume-panels">
       <resume-timeline :ix="'first'" :observer="observer" :isActive="isExperienceActive" :kind="'experience'"
-        id="experience" />
+        id="experience" class="scroll-my-10"/>
     </div>
     <div class="flex-none w-full grow snap-always snap-center resume-panels">
       <resume-timeline :ix="'center'" :observer="observer" :isActive="isEducationActive" :kind="'education'"
-        id="education" />
+        id="education" class="scroll-my-10"/>
     </div>
     <div class="flex-none w-full grow snap-always snap-center resume-panels">
-      <resume-projects :ix="'center'" :observer="observer" id="projects" :isActive="isProjectsActive" />
+      <resume-projects :ix="'center'" :observer="observer" id="projects" :isActive="isProjectsActive" class="scroll-my-10"/>
     </div>
     <div class="flex-none w-full grow snap-always snap-center resume-panels">
-      <resume-skills :ix="'last'" :observer="observer" id="skills" :isActive="isSkillsActive" />
+      <resume-skills :ix="'last'" :observer="observer" id="skills" :isActive="isSkillsActive" class="scroll-my-10"/>
     </div>
   </div>
 </div>

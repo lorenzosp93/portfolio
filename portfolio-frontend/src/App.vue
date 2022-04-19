@@ -1,13 +1,13 @@
 <template>
-  <div class="bg-gray-100 dark:bg-gray-700 scroll-smooth">
+  <div class="bg-gray-100 dark:bg-gray-700">
     <the-hero :observer="observer" id='the-hero' @hero-loaded="setupAnimation" :isHeroLogoVisible="isHeroLogoVisible" />
 
     <the-navbar id='the-navbar' :isHeroLogoVisible="isHeroLogoVisible" :elementInView="elementInView"
       @image-loaded="setupAnimation" />
 
-    <the-resume :observer="observer" :elementsInView="elementsInView" id="the-resume" />
+    <the-resume :observer="observer" :elementsInView="elementsInView" id="the-resume" class="scroll-my-20"/>
 
-    <the-blog :observer="observer" :isActive="isBlogActive" id="the-blog" />
+    <the-blog :observer="observer" :isActive="isBlogActive" id="the-blog" class="scroll-my-20"/>
 
   </div>
 </template>
