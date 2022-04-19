@@ -169,4 +169,4 @@ jobs:
           method: kubeconfig
           kubeconfig: ${{ secrets.KUBECONFIG }}
       - name: Rollout deploy
-        run: kubectl rollout restart deploy portfolio && kubectl rollout restart deploy frontend-nginx
+        run: kubectl rollout restart deploy portfolio -n portfolio && kubectl rollout restart deploy frontend-nginx -n portfolio

@@ -91,9 +91,8 @@ tolerations: []
 affinity: {}
 
 configMap:
-  djangoAppStage: 'stage'
-  debug: 'True'
-  djangoHost: '.lorenzosp.com'
+  debug: 'False'
+  djangoHost: 'lorenzosp.com'
 
 database:
   host: 'postgres'
