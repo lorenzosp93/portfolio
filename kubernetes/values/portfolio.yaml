@@ -92,6 +92,7 @@ affinity: {}
 
 configMap:
   debug: 'False'
+  emailTo: 'me@lorenzosp.com'
   djangoHost: 'lorenzosp.com'
 
 database:
