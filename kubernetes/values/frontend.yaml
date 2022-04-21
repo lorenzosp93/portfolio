@@ -264,18 +264,18 @@ customReadinessProbe: {}
 ## @param autoscaling.targetMemory Target Memory utilization percentage
 ##
 autoscaling:
-  enabled: false
-  minReplicas: ""
-  maxReplicas: ""
-  targetCPU: ""
-  targetMemory: ""
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPU: 80
+  targetMemory: 80
 ## @param extraVolumes Array to add extra volumes
 ##
 extraVolumes: []
 ## @param extraVolumeMounts Array to add extra mount
 ##
 extraVolumeMounts: []
-## Pods Service Account
+## Pods Service Accoun
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
 ##
 serviceAccount:

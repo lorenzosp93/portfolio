@@ -5,10 +5,13 @@
     <the-navbar id='the-navbar' :isHeroLogoVisible="isHeroLogoVisible" :elementInView="elementInView"
       @image-loaded="setupAnimation" />
 
-    <the-resume :observer="observer" :elementsInView="elementsInView" id="the-resume" class="scroll-my-20"/>
+    <the-resume :observer="observer" :elementsInView="elementsInView" id="the-resume" class="scroll-my-20" />
 
-    <the-blog :observer="observer" :isActive="isBlogActive" id="the-blog" class="scroll-my-20"/>
+    <the-blog :observer="observer" :isActive="isBlogActive" id="the-blog" class="scroll-my-20" />
 
+    <the-contacts :observer="observer" id="the-contacts" />
+
+    <p class="px-5 pb-2 text-sm dark:text-white text-gray-700">© Lorenzo Spinelli, 2022</p>
   </div>
 </template>
 
@@ -17,6 +20,7 @@ import TheNavbar from './components/UI/TheNavbar.vue'
 import TheHero from './components/TheHero.vue'
 import TheResume from './components/resume/TheResume.vue'
 import TheBlog from './components/blog/TheBlog.vue'
+import TheContacts from './components/TheContacts.vue'
 
 export default {
   name: 'App',
@@ -24,7 +28,8 @@ export default {
     TheNavbar,
     TheHero,
     TheResume,
-    TheBlog
+    TheBlog,
+    TheContacts
   },
   data () {
     return{

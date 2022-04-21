@@ -18,7 +18,7 @@ SECRET_KEY = os.environ.get(
     '17cgw1@w%hm%a#2$z7v^$(e=+=8q)unx4!v_-q+&nd0omm$)9(',
 )
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
+DEBUG = os.environ.get('DEBUG', '') != 'False'
 
 HOST = os.environ.get('DJANGO_HOST', None)
 
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'shared',
     'resume',
     'blog',
+    'contacts',
     'portfolio',
     'storages',
     'health_check',                             # required
@@ -179,4 +180,11 @@ REST_FRAMEWORK = {
 }
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOW_ALL_ORIGINS = True
-CONN_MAX_AGE = 60
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_TO = os.environ.get('EMAIL_TO', 'me@lorenzosp.com')
+EMAIL_HOST = os.environ.get('EMAIL_HOST')
+EMAIL_PORT = os.environ.get('EMAIL_PORT', 25)
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+EMAIL_USE_SSL = os.environ.get('EMAIL_USE_SSL', "True") == "True"

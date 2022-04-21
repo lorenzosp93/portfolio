@@ -44,33 +44,37 @@
                   :class="{'invisible': isHeroLogoVisible}">
               </div>
               <div class="hidden  sm:block my-auto sm:ml-6 justify-end">
-                <div class="flex space-x-4 overflow-x-auto no-scrollbar ">
+                <div class="flex space-x-3 overflow-x-auto no-scrollbar ">
                   <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
                   <a @click="scrollToElement('the-hero')"
-                    class="text-black dark:text-gray-300 px-3 py-2 ml-autorounded-md text-sm font-medium cursor-pointer"
+                    class="text-black dark:text-gray-300 px-3 py-2 ml-auto rounded-md text-sm font-medium cursor-pointer"
                     :class="{active: elementInView === 'the-hero'}" aria-current="page">About</a>
-                  <a @click="scrollToElement('the-resume')"
-                    class="text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
-                    :class="{active: ['experience', 'education','projects', 'skills'].includes(elementInView)}">Resume</a>
-                  <a @click="scrollToElement('experience')"
-                    class="text-black dark:text-gray-300  px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
-                    v-show="['experience', 'education', 'projects', 'skills'].includes(elementInView)"
-                    :class="{active_outer: ['experience'].includes(elementInView)}">Experience</a>
-                  <a @click="scrollToElement('education')"
-                    class="text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
-                    v-show="['experience', 'education', 'projects', 'skills'].includes(elementInView)"
-                    :class="{active_outer: ['education'].includes(elementInView)}">Education</a>
-                  <a @click="scrollToElement('projects')"
-                    class="text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
-                    v-show="['experience', 'education', 'projects', 'skills'].includes(elementInView)"
-                    :class="{active_outer: ['projects'].includes(elementInView)}">Projects</a>
-                  <a @click="scrollToElement('skills')"
-                    class="text-black dark:text-gray-300 box-border px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
-                    v-show="['experience', 'education', 'projects', 'skills'].includes(elementInView)"
-                    :class="{active_outer: ['skills'].includes(elementInView)}">Skills</a>
+                  <a 
+                    class="px-0.5 py-2 rounded-lg text-sm font-medium cursor-pointer" :class="{active: ['experience', 'education','projects', 'skills'].includes(elementInView)}" >
+                    <p @click="scrollToElement('the-resume')" class="text-black dark:text-gray-300">Resume</p>
+                    <a @click="scrollToElement('experience')"
+                      class="text-white dark:text-gray-900  px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
+                      v-show="['experience', 'education', 'projects', 'skills'].includes(elementInView)"
+                      :class="{active_inner: ['experience'].includes(elementInView)}">Experience</a>
+                    <a @click="scrollToElement('education')"
+                      class="text-white dark:text-gray-900 px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
+                      v-show="['experience', 'education', 'projects', 'skills'].includes(elementInView)"
+                      :class="{active_inner: ['education'].includes(elementInView)}">Education</a>
+                    <a @click="scrollToElement('projects')"
+                      class="text-white dark:text-gray-900 px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
+                      v-show="['experience', 'education', 'projects', 'skills'].includes(elementInView)"
+                      :class="{active_inner: ['projects'].includes(elementInView)}">Projects</a>
+                    <a @click="scrollToElement('skills')"
+                      class="text-white dark:text-gray-900 box-border px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
+                      v-show="['experience', 'education', 'projects', 'skills'].includes(elementInView)"
+                      :class="{active_inner: ['skills'].includes(elementInView)}">Skills</a>
+                  </a>
                   <a @click="scrollToElement('the-blog')"
                     class="text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
                     :class="{active: elementInView === 'the-blog'}">Blog</a>
+                  <a @click="scrollToElement('the-contacts')"
+                    class="text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
+                    :class="{active: elementInView === 'the-contacts'}">Contacts</a>
                 </div>
               </div>
             </div>
@@ -83,20 +87,20 @@
           :class="{'menu-closed': !isMenuOpen,}" id="mobile-menu">
           <div class="px-2 pt-2 pb-3 space-y-2 shadow-md">
             <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-            <a @click="scrollToElement('the-hero')" class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
+            <a @click="scrollToElement('the-hero'); toggleMenu()" class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
               :class="{active: elementInView === 'the-hero'}" aria-current="page">About</a>
-            <a @click="scrollToElement('the-resume')" class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
-              :class="{active: ['experience', 'education', 'projects', 'skills'].includes(elementInView)}">Resume</a>
             <a @click="scrollToElement('experience')" class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
-              :class="{active_outer: ['experience'].includes(elementInView)}">Experience</a>
+              :class="{active: ['experience'].includes(elementInView)}">Experience</a>
             <a @click="scrollToElement('education')" class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
-              :class="{active_outer: ['education'].includes(elementInView)}">Education</a>
+              :class="{active: ['education'].includes(elementInView)}">Education</a>
             <a @click="scrollToElement('projects')" class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
-              :class="{active_outer: ['projects'].includes(elementInView)}">Projects</a>
+              :class="{active: ['projects'].includes(elementInView)}">Projects</a>
             <a @click="scrollToElement('skills')" class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
-              :class="{active_outer: ['skills'].includes(elementInView)}">Skills</a>
-            <a @click="scrollToElement('the-blog')" class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
+              :class="{active: ['skills'].includes(elementInView)}">Skills</a>
+            <a @click="scrollToElement('the-blog'); toggleMenu()" class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
               :class="{active: elementInView === 'the-blog'}">Blog</a>
+            <a @click="scrollToElement('the-contacts'); toggleMenu()" class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
+              :class="{active: elementInView === 'the-contacts'}">Contacts</a>
           </div>
         </div>
       </nav>
@@ -156,10 +160,16 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .active {
-  @apply bg-gray-600 dark:bg-white text-white dark:text-black
+  @apply bg-gray-600 dark:bg-gray-300 text-white dark:text-black
 }
-.active_outer {
-  @apply border-2 border-gray-600 text-gray-600 dark:border-white dark:text-white
+
+
+.active p {
+  @apply hidden
+}
+
+.active_inner {
+  @apply bg-white text-black dark:bg-gray-600 dark:text-white
 }
 
 .menu-closed {

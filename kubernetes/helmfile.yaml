@@ -16,7 +16,7 @@ releases:
       values:
         - ./values/postgres.yaml
     - name: ingress-controller
-      namespace: portfolio
+      namespace: ingress
       chart: ingress-nginx/ingress-nginx
       values:
         - ./values/ingress-controller.yaml
