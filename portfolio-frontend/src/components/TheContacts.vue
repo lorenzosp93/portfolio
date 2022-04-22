@@ -16,7 +16,7 @@
       </template>
       <template v-slot:subtitle > 
       <p>
-        Can you write it in a tweet? The message limit is 280 characters!
+        Can you write it in a tweet? <span class="hidden md:visible">The message limit is 280 characters!</span>
       </p>
       </template>
       <template v-slot:extra-title-content > 
@@ -62,6 +62,7 @@ export default {
     return {
       formVisible: false,
       isLoading: false,
+      data: null,
       formItems: [
         {
           id: "first_name",
@@ -107,6 +108,7 @@ export default {
     "observer",
   ],
   inject: [
+    'loadData'
   ],
   computed: {
     canSubmit () {
@@ -132,12 +134,13 @@ export default {
       );
       return fetch(url, {
         method:"POST",
-        headers:{"Content-Type": "application/json"},
+        headers:{"Content-Type": "application/json", "X-CSRFToken": this.data.token},
         body: JSON.stringify(data)
       }).then(
         response => {
           this.isLoading = false;
           if (response.ok) {
+            this.toggleFormVisible();
             return response.json();
           }
         }
@@ -154,6 +157,8 @@ export default {
   },
   mounted () {
     this.observer.observe(this.$el);
+    this.loadData('/api/contacts/get-token/', this);
+
   }
 }
 </script>
