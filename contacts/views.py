@@ -40,7 +40,7 @@ class ContactView(APIView):
             EmailMessage(
                 subject=subject,
                 body=body,
-                from_email=[settings.EMAIL_TO],
+                from_email=settings.EMAIL_TO,
                 to=[settings.EMAIL_TO],
                 connection=connection
             ).send()
