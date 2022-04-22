@@ -138,8 +138,7 @@ export default {
         response => {
           this.isLoading = false;
           if (response.ok) {
-            this.toggleFormVisible();
-            return response.json();
+            this.formVisible = false;
           } else {
             if (response.status == 400) {
               this.error = "The data is not valid, please review it and try again."
