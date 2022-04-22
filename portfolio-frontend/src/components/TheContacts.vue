@@ -4,11 +4,11 @@
       <h2 class="text-center mt-auto text-xl w-full font-bold mx-auto  text-gray-600 dark:text-white">
         Get in touch!
       </h2>
-      <div @click="toggleFormVisible" class="cursor-pointer bg-gray-400 dark:bg-gray-600 px-5 py-3 rounded-2xl font-semibold text-center mx-auto mb-auto mt-3 text-white dark:text-gray-300 shadow-md hover:scale-105 transition duration-300 ease-in" >
+      <div @click="openForm" class="cursor-pointer bg-gray-400 dark:bg-gray-600 px-5 py-3 rounded-2xl font-semibold text-center mx-auto mb-auto mt-3 text-white dark:text-gray-300 shadow-md hover:scale-105 transition duration-300 ease-in" >
         Click here to send me a message.
       </div>
     </div>
-    <detail-card :isOpen="formVisible" @card-closed="toggleFormVisible">
+    <detail-card :isOpen="formVisible" @card-closed="closeForm" ref='formCard'>
       <template v-slot:title > 
       <p>
         Contact form
@@ -115,8 +115,11 @@ export default {
     },
   },
   methods: {
-    toggleFormVisible () {
-      this.formVisible = !this.formVisible;
+    closeForm () {
+      this.formVisible = false;
+    },
+    openForm () {
+      this.formVisible = true;
     },
     submitMessage () {
       if (!this.canSubmit) {
@@ -138,7 +141,7 @@ export default {
         response => {
           this.isLoading = false;
           if (response.ok) {
-            this.formVisible = false;
+            this.$refs.formCard.close();
           } else {
             if (response.status == 400) {
               this.error = "The data is not valid, please review it and try again."
