@@ -29,10 +29,10 @@
         </div>
       </template>
       <template v-slot:inner-content >
-        <form class="max-w-md mx-auto grid grid-cols-1 sm:grid-cols-2 gap-5" autocomplete="on">
+        <form class="relative max-w-md mx-auto grid grid-cols-1 sm:grid-cols-2 gap-5" autocomplete="on">
           <div v-for="item in formItems" :key="item.id" class="mb-3 mx-auto">
-            <label class="block mb-1 ml-1 text-sm font-semibold text-gray-600 dark:text-gray-300" :for="item.id">{{ item.label }}</label>
-            <input v-if="item.type != 'textarea'" class="py-1 px-2 rounded-lg bg-gray-300 text-gray-900"
+            <label class="block mb-1 ml-1 text-sm font-semibold text-gray-600 dark:text-gray-300 " :for="item.id">{{ item.label }}</label>
+            <input v-if="item.type != 'textarea'" class="py-1 px-2 rounded-lg bg-gray-100 dark:bg-gray-300 text-gray-800 focus:shadow-inner  caret-gray-800 outline-none" :class="{'invalid:ring-red-700 invalid:ring-2': item.value}"
               :type="item.type"
               :id="item.id"
               :name="item.id"
@@ -40,12 +40,13 @@
               v-model="item.value"
               required
             />
-            <textarea v-else class="py-1 px-2 mx-auto rounded-lg bg-gray-300 text-gray-900 "
+            <textarea v-else class="py-1 px-2 mx-auto shadow-inner rounded-lg bg-gray-100 dark:bg-gray-300 text-gray-800 caret-gray-800 outline-none focus:shadow-inner"
               :maxlength="item.maxLength" rows=3
               v-model="item.value"
               required
             />
           </div>
+          <p class="absolute w-full text-center -top-6 left-1/2 -translate-x-1/2 text-red-700 text-xs" v-if="error" v-html="error"/>
         </form>
       </template>
     </detail-card>
@@ -63,6 +64,7 @@ export default {
       formVisible: false,
       isLoading: false,
       data: null,
+      error: null,
       formItems: [
         {
           id: "first_name",
@@ -117,6 +119,9 @@ export default {
       this.formVisible = !this.formVisible;
     },
     submitMessage () {
+      if (!this.canSubmit) {
+        return
+      }
       this.isLoading = true;
       let url = process.env.VUE_APP_BACKEND_URL + "/api/contacts/";
       let data = {};
@@ -135,12 +140,19 @@ export default {
           if (response.ok) {
             this.toggleFormVisible();
             return response.json();
+          } else {
+            if (response.status == 400) {
+              this.error = "The data is not valid, please review it and try again."
+              this.formItems.find(item => item.id == 'email').value = "";
+            } else if (response.status == 500) {
+              this.error = "There was a problem processing your request, please try again later"
+            }
           }
         }
       ).catch(
         error => {
           this.isLoading = false;
-          self.error = "Something went wrong when submitting.";
+          this.error = "Something went wrong when submitting.";
           console.log(error);
         }
       )
@@ -158,7 +170,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
 a {
   @apply bg-white dark:bg-gray-400 p-3 m-auto  shadow-md rounded-xl 
 }
