@@ -4,7 +4,7 @@
       <h2 class="text-center mt-auto text-xl w-full font-bold mx-auto  text-gray-600 dark:text-white">
         Get in touch!
       </h2>
-      <div @click="toggleFormVisible" class="cursor-pointer bg-gray-600 p-3 rounded-lg text-center mx-auto mb-auto mt-3 text-gray-600 dark:text-gray-300 shadow-md" >
+      <div @click="toggleFormVisible" class="cursor-pointer bg-gray-400 dark:bg-gray-600 px-5 py-3 rounded-2xl font-semibold text-center mx-auto mb-auto mt-3 text-white dark:text-gray-300 shadow-md hover:scale-105 transition duration-300 ease-in" >
         Click here to send me a message.
       </div>
     </div>
@@ -20,7 +20,7 @@
       </p>
       </template>
       <template v-slot:extra-title-content > 
-        <button v-if="!isLoading" @click.prevent="submitMessage" class="absolute right-3 py-2 px-5 mx-auto mt-auto mb-2 rounded-2xl  bg-gray-600 dark:bg-gray-700 text-white transition duration-300 ease-in opacity-50" :class="{'hover:scale-105 shadow-md opacity-100': canSubmit}" type="submit" :disabled="!canSubmit" >Send</button>
+        <button v-if="!isLoading" @click.prevent="submitMessage" class="absolute right-3 py-2 px-5 mx-auto mt-auto mb-2 rounded-2xl text-semibold bg-gray-500 dark:bg-gray-600 dark:text-gray-300 text-white transition duration-300 ease-in opacity-50" :class="{'hover:scale-105 shadow-md opacity-100': canSubmit}" type="submit" :disabled="!canSubmit" >Send</button>
         <div class="absolute right-3 snap-center w-10 h-10 p-6 my-auto mr-5 flex bg-white dark:bg-gray-800 shadow-md container flex-none rounded-full" v-else >
           <svg role="status" class="absolute left-1 top-1 w-10 h-10 text-gray-100 animate-spin dark:text-gray-400 fill-gray-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
@@ -40,8 +40,8 @@
               v-model="item.value"
               required
             />
-            <textarea v-else class="py-1 px-2 rounded-lg bg-gray-300 text-gray-900 "
-              :maxlength="item.maxLength"
+            <textarea v-else class="py-1 px-2 mx-auto rounded-lg bg-gray-300 text-gray-900 "
+              :maxlength="item.maxLength" rows=3
               v-model="item.value"
               required
             />
