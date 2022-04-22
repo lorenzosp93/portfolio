@@ -29,24 +29,26 @@
         </div>
       </template>
       <template v-slot:inner-content >
-        <form class="relative max-w-md mx-auto grid grid-cols-1 sm:grid-cols-2 gap-5" autocomplete="on">
+        <form class="relative max-w-md mx-auto -mt-3 grid grid-cols-1 sm:grid-cols-2" autocomplete="on">
           <div v-for="item in formItems" :key="item.id" class="mb-3 mx-auto">
-            <label class="block mb-1 ml-1 text-sm font-semibold text-gray-600 dark:text-gray-300 " :for="item.id">{{ item.label }}</label>
-            <input v-if="item.type != 'textarea'" class="py-1 px-2 rounded-lg bg-gray-100 dark:bg-gray-300 text-gray-800 focus:shadow-inner  caret-gray-800 outline-none" :class="{'invalid:ring-red-700 invalid:ring-2': item.value}"
+            <label class="block mb-1 ml-1 text-base font-semibold text-gray-600 dark:text-gray-300 " :for="item.id">{{ item.label }}</label>
+            <input v-if="item.type != 'textarea'" class="py-1 px-2 text-lg rounded-lg bg-gray-100 dark:bg-gray-300 text-gray-800 focus:shadow-inner placeholder:font-thin caret-gray-800 outline-none" :class="{'invalid:ring-red-700 invalid:ring-2': item.value}"
               :type="item.type"
               :id="item.id"
               :name="item.id"
               :maxlength="item.maxLength"
+              :placeholder="item.placeholder"
               v-model="item.value"
               required
             />
-            <textarea v-else class="py-1 px-2 mx-auto shadow-inner rounded-lg bg-gray-100 dark:bg-gray-300 text-gray-800 caret-gray-800 outline-none focus:shadow-inner"
-              :maxlength="item.maxLength" rows=3
+            <textarea v-else class="py-1 px-2 mx-auto shadow-inner text-lg rounded-lg bg-gray-100 dark:bg-gray-300 text-gray-800 placeholder:font-thin caret-gray-800 outline-none focus:shadow-inner"
+              :id="item.id" :maxlength="item.maxLength" rows=2
+              :placeholder="item.placeholder"
               v-model="item.value"
               required
             />
           </div>
-          <p class="absolute w-full text-center -top-6 left-1/2 -translate-x-1/2 text-red-700 text-xs" v-if="error" v-html="error"/>
+          <p class="absolute w-full text-center -top-4 left-1/2 -translate-x-1/2 text-red-700 text-xs" v-if="error" v-html="error"/>
         </form>
       </template>
     </detail-card>
@@ -70,6 +72,7 @@ export default {
           id: "first_name",
           type: "text",
           label: "First name",
+          placeholder: "Jane",
           maxLength: 50,
           value: ""
         },
@@ -77,6 +80,7 @@ export default {
           id: "last_name",
           type: "text",
           label: "Last name",
+          placeholder: "Doe",
           maxLength: 50,
           value: ""
         },
@@ -84,6 +88,7 @@ export default {
           id: "email",
           type: "email",
           label: "Email",
+          placeholder: "jane.doe@mail.com",
           maxLength: 100,
           value: ""
         },
@@ -91,6 +96,7 @@ export default {
           id: "content",
           type: "textarea",
           label: "Message",
+          placeholder: "Here goes my message",
           maxLength: 280,
           value: ""
         },
