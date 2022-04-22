@@ -27,10 +27,13 @@ class ContactView(APIView):
         serializer_class = ContactSerializer(data=request.data)
         if serializer_class.is_valid():
             data = serializer_class.validated_data
-            self.send_mail(
-                subject=f"Contact from {data.get('first_name')} {data.get('last_name')} - {data.get('email')}",
-                body=data.get('content'),
-            )
+            try:
+                self.send_mail(
+                    subject=f"Contact from {data.get('first_name')} {data.get('last_name')} - {data.get('email')}",
+                    body=data.get('content'),
+                )
+            except:
+                return Response({"success": "Failed"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             return Response({"success": "Sent"}, status=status.HTTP_200_OK)
         return Response({'success': "Failed"}, status=status.HTTP_400_BAD_REQUEST)
 
