@@ -28,20 +28,19 @@ class ContactView(APIView):
         if serializer_class.is_valid():
             data = serializer_class.validated_data
             self.send_mail(
-                subject=f"Contact from {data.get('first_name')} {data.get('last_name')}: {data.get('subject')}",
+                subject=f"Contact from {data.get('first_name')} {data.get('last_name')} - {data.get('email')}",
                 body=data.get('content'),
-                from_email=data.get('email')
             )
             return Response({"success": "Sent"}, status=status.HTTP_200_OK)
         return Response({'success': "Failed"}, status=status.HTTP_400_BAD_REQUEST)
 
     @staticmethod
-    def send_mail(subject, body, from_email):
+    def send_mail(subject, body):
         with get_connection() as connection:
             EmailMessage(
                 subject=subject,
                 body=body,
-                from_email=from_email,
+                from_email=[settings.EMAIL_TO],
                 to=[settings.EMAIL_TO],
                 connection=connection
             ).send()
