@@ -2,11 +2,20 @@ from django.core.mail import EmailMessage, get_connection
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.decorators import api_view, renderer_classes, permission_classes
+from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer
 from rest_framework import status
 from .serializers import ContactSerializer
 from django.conf import settings
+from django.middleware.csrf import get_token
 
 # Create your views here.
+@api_view(('GET',))
+@permission_classes((AllowAny,))
+def get_csrf_token(request):
+    token = get_token(request)
+    return Response({"token": token}, status=status.HTTP_200_OK)
 
 class ContactView(APIView):
     """
