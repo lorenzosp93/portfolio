@@ -30,7 +30,7 @@
       </template>
       <template v-slot:inner-content >
         <form class="max-w-md mx-auto grid grid-cols-1 sm:grid-cols-2 gap-5" autocomplete="on">
-          <div v-for="item in formItems" :key="item.id" class="mb-3 mx-auto" :class="{hidden: item.type == 'hidden'}" >
+          <div v-for="item in formItems" :key="item.id" class="mb-3 mx-auto">
             <label class="block mb-1 ml-1 text-sm font-semibold text-gray-600 dark:text-gray-300" :for="item.id">{{ item.label }}</label>
             <input v-if="item.type != 'textarea'" class="py-1 px-2 rounded-lg bg-gray-300 text-gray-900"
               :type="item.type"
@@ -84,13 +84,6 @@ export default {
           label: "Email",
           maxLength: 100,
           value: ""
-        },
-        {
-          id: "subject",
-          type: "hidden",
-          label: "",
-          maxLength: 100,
-          value: "Contact form"
         },
         {
           id: "content",
