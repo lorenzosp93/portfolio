@@ -1,9 +1,15 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import './index.css'
-import lax from "lax.js";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Draggable } from "gsap/Draggable";
+
 
 const myApp = createApp(App);
-myApp.config.globalProperties.$lax = lax;
+
+gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(Draggable);
+myApp.config.globalProperties.$gsap = gsap;
 
 myApp.mount('#app');

@@ -118,41 +118,18 @@ export default {
       }
     },
     addHeroAnimation (coordinates) {
-      this.$lax.addElements(
-      '#heroPicture',
-      {
-        scrollY: {
-          translateX: [
-            [0, coordinates.deltaY],
-            [0, coordinates.deltaX],
-            {
-              easing: "easeOutQuad"
-            }
-          ],
-          translateY: [
-            [0, coordinates.deltaY],
-            [0, coordinates.deltaY],
-            {
-              easing: "easeOutQuad"
-            }
-          ],
-          scaleX: [
-            [0, coordinates.deltaY],
-            [1, coordinates.scaleX],
-            {
-              easing: "easeOutQuad"
-            }
-          ],
-          scaleY: [
-            [0, coordinates.deltaY],
-            [1, coordinates.scaleY],
-            {
-              easing: "easeOutQuad"
-            }
-          ]
-        }
-      },
-    )
+      this.$gsap.to('#heroPicture', {
+        scrollTrigger: {
+          scrub: true,
+          start: 'top top',
+          end: coordinates.deltaY
+        },
+        x: coordinates.deltaX,
+        y: coordinates.deltaY,
+        scaleX: coordinates.scaleX,
+        scaleY: coordinates.scaleY,
+        ease: 'slow (0.1, 0.7, false)',
+      })
     },
     calculateCoordinatesAnimation (originTag, destinationTag) {
       const originBox = document.getElementById(originTag)?.getBoundingClientRect()
@@ -168,15 +145,10 @@ export default {
     resizeEventHandler (event) {
       if (this.innerWidth != event.target.innerWidth) {
         this.innerWidth = event.target.innerWidth;
-        this.setupAnimation();
       }
     }
   },
   created () {
-    this.$lax.init();
-    this.$lax.addDriver('scrollY', function () {
-      return window.scrollY
-    });
     this.observer = new IntersectionObserver(
       this.onElementObserved,
       {
@@ -186,9 +158,7 @@ export default {
   },
   beforeUnmount () {
     this.observer.disconnect();
-    this.$lax.removeElements('#heroPicture');
     window.removeEventListener("resize", this.resizeEventHandler);
-    this.$lax.removeDriver('scrollY');
   },
   mounted () {
     this.innerWidth = window.innerWidth;

@@ -2,7 +2,7 @@
   <resume-panel :dataLoaded="data.length > 0" :isLoading="isLoading" :ix="ix">
     <template v-slot:content>
   <ol v-if="data.length > 0" class="relative grid grid-flow-row grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 py-3 px-8">
-    <skills-category class="" v-for="category in data" :key="category.name" v-bind="category" :isActive="isActive"> </skills-category>
+    <skills-category class="hover:scale-102.5" v-for="category in data" :key="category.name" v-bind="category" :isActive="isActive"> </skills-category>
   </ol>
     </template>
   </resume-panel>

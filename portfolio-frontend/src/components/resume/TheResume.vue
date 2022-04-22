@@ -9,7 +9,7 @@
         section!</span>
     </p>
   </div>
-  <div class="z-10 sticky top-1/2 hidden md:block max-w-screen-lg mx-auto" id="arrow-holder-resume">
+  <div class="z-10 sticky top-1/2 hidden md:block max-w-screen-lg mx-auto opacity-0" id="arrow-holder-resume">
     <div @click="scrollToSibling(false)"
       class="absolute -left-5 rounded-full h-10 w-10 shadow-md bg-gray-50 dark:bg-gray-500 hidden hover:bg-gray-100 hover:dark:bg-gray-400 cursor-pointer select-none"
       :class="{'md:block': !isExperienceActive}">
@@ -26,7 +26,7 @@
     </div>
   </div>
   <div @click="scrollToTop"
-    class="absolute right-10 bottom-3 z-10 h-10 w-10 rounded-full shadow-md bg-gray-50 dark:bg-gray-400 cursor-pointer select-none hover:dark:bg-gray-400 hover:bg-gray-100"
+    class="absolute right-10 bottom-3 z-10 h-10 w-10 rounded-full shadow-md bg-gray-50 dark:bg-gray-500 cursor-pointer select-none hover:dark:bg-gray-400 hover:bg-gray-100 opacity-0"
     id="top-scroller-resume">
     <div
       class="translate-y-[1em]  h-1/3 w-1/3 mx-auto rotate-45 border-t-2 border-l-2 border-gray-600 dark:border-gray-900 box-border rounded-lt">
@@ -34,18 +34,18 @@
   </div>
   <div class="container relative flex gap-6 overflow-x-scroll no-scrollbar snap-x snap-mandatory scroll-smooth w-full"
     id="resume-container">
-    <div class="flex-none w-full grow snap-always snap-center resume-panels">
+    <div class="flex-none w-full grow snap-center resume-panels">
       <resume-timeline :ix="'first'" :observer="observer" :isActive="isExperienceActive" :kind="'experience'"
-        id="experience" class="scroll-my-10"/>
+        id="experience" class="scroll-my-10" @load-complete="refreshAnimations" />
     </div>
-    <div class="flex-none w-full grow snap-always snap-center resume-panels">
+    <div class="flex-none w-full grow snap-center resume-panels">
       <resume-timeline :ix="'center'" :observer="observer" :isActive="isEducationActive" :kind="'education'"
-        id="education" class="scroll-my-10"/>
+        id="education" class="scroll-my-10" @load-complete="refreshAnimations" />
     </div>
-    <div class="flex-none w-full grow snap-always snap-center resume-panels">
+    <div class="flex-none w-full grow snap-center resume-panels">
       <resume-projects :ix="'center'" :observer="observer" id="projects" :isActive="isProjectsActive" class="scroll-my-10"/>
     </div>
-    <div class="flex-none w-full grow snap-always snap-center resume-panels">
+    <div class="flex-none w-full grow snap-center resume-panels">
       <resume-skills :ix="'last'" :observer="observer" id="skills" :isActive="isSkillsActive" class="scroll-my-10"/>
     </div>
   </div>
@@ -60,9 +60,11 @@ import ResumeTimeline from './Timeline/ResumeTimeline.vue';
 export default {
   components: { ResumeTimeline, ResumeProjects, ResumeSkills },
   name: 'TheResume',
-  
-    ResumeProjectsdata () {
+  data () {
     return {
+      t1: null,
+      t2: null,
+      t3: [],
     }
   },
   props: [
@@ -100,41 +102,42 @@ export default {
       } else {
         container.scrollLeft -= scrollWidth;
       }
+    },
+    setUpAnimations () {
+      const t1 = this.$gsap.timeline({
+        scrollTrigger: {
+          trigger: '#resume-container',
+          start: '10% center',
+          end: '90% center',
+          scrub: true,
+        }
+      })
+      t1
+        .to('#arrow-holder-resume', {opacity: 1, duration: 0.3})
+        .to('#arrow-holder-resume', {opacity: 0, duration: 0.3}, 0.7);
+      this.t1 = t1;
+
+      const t2 = this.$gsap.timeline({
+        scrollTrigger: {
+          trigger: '#resume-container',
+          start: '90% bottom',
+          end: '90% center',
+          scrub: true,
+        }
+      });
+      t2.to('#top-scroller-resume', {opacity: 1});
+      this.t2 = t2;
+
+    },
+    refreshAnimations () {
+      this.t1.scrollTrigger.refresh(true);
+      this.t2.scrollTrigger.refresh(true);
     }
   },
   beforeUnmount () {
-    this.$lax.removeElements('#arrow-holder-resume');
-    this.$lax.removeElements('#top-scroller-resume');
   },
   mounted () {
-    this.$lax.addElements(
-      '#top-scroller-resume',
-      {
-        scrollY: {
-          opacity: [
-            ['elInY', 'elCenterY+(screenHeight/4)'],
-            [0, 1],
-            {
-              easing: 'easeInQuad',
-            }
-          ],
-        }
-      }
-    );
-    this.$lax.addElements(
-      '#arrow-holder-resume',
-      {
-        scrollY: {
-          opacity: [
-            ['elCenterY', 'elCenterY+(screenHeight/2)', 'elCenterY+(screenHeight)'],
-            [0, 1, 0],
-            {
-              easing: 'easeInQuad',
-            }
-          ],
-        }
-      }
-    );
+    this.setUpAnimations();
   },
   created () {
   },
