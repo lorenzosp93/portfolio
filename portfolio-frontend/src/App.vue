@@ -131,8 +131,8 @@ export default {
           ease: 'slow (0.1, 0.7, false)',
           duration: 0.7
         })
-        .to('#heroPicture', {opacity: 0, ease: 'circ.in', duration: 0.3}, 0.7)
-        .to('#the-navbar', {opacity: 1, ease: 'power1.in', duration: 0.3}, 0.7);
+        .to('#the-navbar', {opacity: 1, ease: 'power1.in', duration: 0.3}, 0.7)
+        .set('#heroPicture', {opacity: 0}, 1);
       this.tl = tl;
     },
     calculateCoordinatesAnimation (originTag, destinationTag) {
