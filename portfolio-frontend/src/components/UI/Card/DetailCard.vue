@@ -2,7 +2,7 @@
 <Teleport to="body">
   <div v-on="handlers" class="bottom-sheet shadlw-lg" :class="{opened: opened, closed: opened === false, moving:moving}" style="{'pointer-events': 'all'}" ref="bottomSheet">
     <div class="backdrop-blur-md bottom-sheet__backdrop" ref="backdrop" />
-    <div class="bg-white dark:bg-gray-800 bottom-sheet__card fx-default" :style="[{ bottom: cardP+'px', maxWidth: '640px', maxHeight: maxHeight+'%'},{'height': 'auto'},{'pointer-events': 'all'}, {'padding-bottom': paddingBottom+'px'}]" id='detail-card' ref="card">
+    <div class="bg-white dark:bg-gray-800 bottom-sheet__card fx-default" :style="[{ bottom: cardP+'px', maxWidth: '640px', maxHeight: maxHeight+'%'},{'height': 'auto'},{'padding-bottom': paddingBottom+'px'}]" id='detail-card' ref="card">
       <div class="bottom-sheet__pan" ref="pan">
         <div class="bottom-sheet__bar bg-gray-300 dark:bg-white" />
         <div class="dark:text-white p-3 mt-auto border-b-2">

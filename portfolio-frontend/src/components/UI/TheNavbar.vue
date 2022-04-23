@@ -41,7 +41,7 @@
                 <img id="heroLogo"
                   class="h-10 w-10 rounded-full opacity-100 cursor-pointer hover:scale-105 transition duration-300 ease-in-out ring-1 ring-white"
                   src="@/assets/hero-logo.webp" @load="this.$emit('imageLoaded')" alt="Hero image logo"
-                  :class="{'invisible': isHeroLogoVisible}">
+                  >
               </div>
               <div class="hidden  sm:block my-auto sm:ml-6 justify-end">
                 <div class="flex space-x-3 overflow-x-auto no-scrollbar ">
@@ -118,9 +118,7 @@ export default {
     };
   },
   props: [
-    'isHeroLogoVisible',
     'elementInView',
-    'isVisible'
   ],
   inject: [
   ],
@@ -137,18 +135,6 @@ export default {
   beforeUnmount () {
   },
   mounted () {
-      this.$gsap.to(
-        '#the-navbar', {
-          scrollTrigger: {
-            trigger: "#the-navbar",
-            scrub: true,
-            start: 'bottom center',
-            end: "top top"
-          },
-          opacity: 1,
-          ease: 'circ.in',
-      }
-    )
   }
 }
 </script>

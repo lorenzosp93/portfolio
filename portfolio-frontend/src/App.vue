@@ -1,8 +1,8 @@
 <template>
   <div class="bg-gray-100 dark:bg-gray-700">
-    <the-hero :observer="observer" id='the-hero' @hero-loaded="setupAnimation" :isHeroLogoVisible="isHeroLogoVisible" />
+    <the-hero :observer="observer" id='the-hero' @hero-loaded="setupAnimation" />
 
-    <the-navbar id='the-navbar' :isHeroLogoVisible="isHeroLogoVisible" :elementInView="elementInView"
+    <the-navbar id='the-navbar' :elementInView="elementInView"
       @image-loaded="setupAnimation" />
 
     <the-resume :observer="observer" :elementsInView="elementsInView" id="the-resume" class="scroll-my-20" />
@@ -35,6 +35,7 @@ export default {
     return{
       observer: null,
       elementsInView: [],
+      tl: null,
       innerWidth: null,
       truncationAmount: () => {
         let w = window.innerWidth;
@@ -87,12 +88,7 @@ export default {
         }
       );
       return a.length > 0 ? a[0].target.id : null
-    },
-    isHeroLogoVisible () {
-      const e = this.elementsInView.filter(elem => elem.target.id == 'the-hero');
-      if (e.length == 0) {return false}
-      return e.filter(elem => elem.intersectionRatio > 0)?.length != 0
-    },
+    }
   },
   methods: {
     onElementObserved (entries) {
@@ -118,18 +114,26 @@ export default {
       }
     },
     addHeroAnimation (coordinates) {
-      this.$gsap.to('#heroPicture', {
+      const tl = this.$gsap.timeline({
         scrollTrigger: {
+          trigger: "#the-hero",
           scrub: true,
           start: 'top top',
-          end: coordinates.deltaY
-        },
-        x: coordinates.deltaX,
-        y: coordinates.deltaY,
-        scaleX: coordinates.scaleX,
-        scaleY: coordinates.scaleY,
-        ease: 'slow (0.1, 0.7, false)',
-      })
+          end: 'bottom top',
+        }
+      });
+      tl
+        .to('#heroPicture', {
+          x: coordinates.deltaX,
+          y: coordinates.deltaY,
+          scaleX: coordinates.scaleX,
+          scaleY: coordinates.scaleY,
+          ease: 'slow (0.1, 0.7, false)',
+          duration: 0.7
+        })
+        .to('#heroPicture', {opacity: 0, ease: 'circ.in', duration: 0.3}, 0.7)
+        .to('#the-navbar', {opacity: 1, ease: 'power1.in', duration: 0.3}, 0.7);
+      this.tl = tl;
     },
     calculateCoordinatesAnimation (originTag, destinationTag) {
       const originBox = document.getElementById(originTag)?.getBoundingClientRect()
@@ -159,6 +163,7 @@ export default {
   beforeUnmount () {
     this.observer.disconnect();
     window.removeEventListener("resize", this.resizeEventHandler);
+    this.tl?.kill();
   },
   mounted () {
     this.innerWidth = window.innerWidth;
