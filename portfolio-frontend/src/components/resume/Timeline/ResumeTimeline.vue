@@ -51,6 +51,9 @@ export default {
     'loadData',
     'entriesLimit',
   ],
+  emits: [
+    'loadComplete'
+  ],
   watch: {
     isActive (value) {
       if (value) {
@@ -81,7 +84,7 @@ export default {
         this.entities.forEach(en => {
           en[this.kind] = this.groups[en.uuid];
         })
-      });
+      }).then( () => {this.$emit('loadComplete')});
       this.counter += 1;
     },
     groupBy (xs, key) {
@@ -96,7 +99,6 @@ export default {
   created () {
   },
   beforeUnmount () {
-    this.$lax.removeDriver('scrollYdiv');
   },
   mounted() {
     this.observer.observe(this.$el);

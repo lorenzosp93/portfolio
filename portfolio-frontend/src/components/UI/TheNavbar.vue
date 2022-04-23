@@ -135,23 +135,19 @@ export default {
   computed:{
   },
   beforeUnmount () {
-    this.$lax.removeElements('#the-navbar');
   },
   mounted () {
-    this.$lax.addElements(
-      '#the-navbar',
-      {
-        scrollY: {
-          opacity: [
-            ['elCenterY', 'elOutY-200','elOutY-100'],
-            [0, 0.1, 1],
-            {
-              easing: 'easeInQuad'
-            }
-          ]
-        }
+      this.$gsap.to(
+        '#the-navbar', {
+          scrollTrigger: {
+            trigger: "#the-navbar",
+            scrub: true,
+            start: 'bottom center',
+            end: "top top"
+          },
+          opacity: 1,
+          ease: 'circ.in',
       }
-
     )
   }
 }
