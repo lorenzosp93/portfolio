@@ -1,8 +1,8 @@
 <template>
 <Teleport to="body">
   <div v-on="handlers" class="bottom-sheet shadlw-lg" :class="{opened: opened, closed: opened === false, moving:moving}" style="{'pointer-events': 'all'}" ref="bottomSheet">
-    <div class="backdrop-blur-md bottom-sheet__backdrop" />
-    <div class="bg-white dark:bg-gray-800 bottom-sheet__card fx-default" :class="{stripe: stripe}" :style="[{ bottom: cardP+'px', maxWidth: '640px', maxHeight: maxHeight+'%'},{'height': 'auto'},{'pointer-events': 'all'}, {'padding-bottom': paddingBottom+'px'}]" id='detail-card' ref="card">
+    <div class="backdrop-blur-md bottom-sheet__backdrop" ref="backdrop" />
+    <div class="bg-white dark:bg-gray-800 bottom-sheet__card fx-default" :style="[{ bottom: cardP+'px', maxWidth: '640px', maxHeight: maxHeight+'%'},{'height': 'auto'},{'pointer-events': 'all'}, {'padding-bottom': paddingBottom+'px'}]" id='detail-card' ref="card">
       <div class="bottom-sheet__pan" ref="pan">
         <div class="bottom-sheet__bar bg-gray-300 dark:bg-white" />
         <div class="dark:text-white p-3 mt-auto border-b-2">
@@ -33,7 +33,6 @@
 </template>
 
 <script>
-import Hammer from "hammerjs";
 
 export default {
   name: 'DetailCard',
@@ -41,17 +40,14 @@ export default {
     const vm = this;
     return {
       initiated: false,
+      maxHeight: 85,
       opened: false,
       contentScroll: 0,
       moving: false,
       cardP: null,
       cardH: null,
+      tl: null,
       contentH: "auto",
-      hammer: {
-        pan: null,
-        content: null,
-      },
-      stripe: 0,
       handlers: {
         mousedown: vm.clickOnBottomSheet,
         touchstart: vm.clickOnBottomSheet
@@ -60,51 +56,64 @@ export default {
     }
   },
   computed: {
-    maxHeight () {
-      return 85 + (this.paddingBottom > 12 ? 5 : 0)
-    },
   },
   methods: {
-    hasNotch () {
-      let iPhone = /iPhone/.test(navigator.userAgent) && !window.MSStream;
-      let aspect = window.screen.width / window.screen.height;
-      return iPhone && aspect.toFixed(3) === "0.462";
-    },
     init () {
-      return new Promise(resolve => {
-        this.stripe = this.hasNotch() ? 20 : 0;
-        this.cardH = this.$refs.card.clientHeight;
-        this.contentH = `${this.cardH - this.$refs.pan.clientHeight}px`;
-        this.cardP =  -this.cardH - this.stripe;
-        if (!this.initiated) {
-          this.initiated = true;
-          let options = {
-            recognizers: [
-              [Hammer.Pan, {direction: Hammer.DIRECTION_VERTICAL}]
-            ]
-          }
-          this.hammer.pan = new Hammer(this.$refs.pan, options);
-          this.hammer.pan.on("panstart panup pandown panend", e => {
-            this.move(e)
-          })
-        }
-        setTimeout(() => {
-          resolve();
-        }, 100);
-      });
+      this.cardP = 0;
+      this.cardH = this.$refs.card.clientHeight;
+      this.contentH = `${this.cardH - this.$refs.pan.clientHeight}px`;
+      if (!this.initiated) {
+        this.initiated = true;
+      const tl = this.$gsap.timeline();
+      tl
+        .from(this.$refs.card, {y: this.cardH, duration: 0.4, ease: 'power2'})
+        .from(this.$refs.backdrop, {opacity: 0, duration: 0.3}, 0)
+      this.tl = tl;
+        let startY = 0;
+        this.$drag.create(this.$refs.card, {
+          type: 'y',
+          trigger: this.$refs.pan,
+          bounds: {
+            maxY: 0,
+            minY: 0,
+          },
+          edgeResistance: 0,
+          snap: {top: startY},
+          onDragStart: event => {startY = event.y},
+          onMove: function (event) {
+            let deltaY = startY - event.y;
+            if (deltaY > 0) {
+              this.endDrag(event);
+            }
+          },
+          onDragEnd: event => {
+            let deltaY = startY - event.y;
+            if (deltaY < - 150) {
+              this.close(deltaY);
+            }
+          },
+        })
+      } else {
+        this.tl.restart();
+      }
     },
     open () {
-      this.init().then(() => {
-        this.opened = true;
-        this.cardP = 0;
-        document.body.style.overflow = "hidden";
-        this.$emit("cardOpened");
-      });
+      this.init()
+      this.opened = true;
+      document.body.style.overflow = "hidden";
+      this.$emit("cardOpened");
   },
-    close () {
+    close (deltaY) {
       if (this.opened) {
         document.body.style.overflow = "";
-        this.cardP = - this.cardH - this.stripe;
+        if (deltaY) {
+          const tl = this.$gsap.timeline();
+          tl
+            .to(this.$refs.card, { y: this.cardH - deltaY, duration: 0.4 })
+            .to(this.$refs.backdrop, { opacity: 0, duration: 0.3 }, 0.1)
+        } else {
+          this.tl.reverse()
+        }
         this.opened = false;
         this.$emit("cardClosed");
       }
@@ -115,28 +124,6 @@ export default {
         event.target.classList.contains("bottom-sheet")
       ) {
         this.close();
-      }
-    },
-    move(event) {
-      let delta = -event.deltaY;
-      if (event.type === 'panup' || event.type === 'pandown') {
-        this.moving = true;
-        if (- delta > 0) {
-          this.cardP = delta;
-        } else if (- delta > -150) {
-          this.cardP = 0;
-          this.paddingBottom = 12 + delta;
-        }
-      }
-      if (event.isFinal) {
-        this.contentScroll = this.$refs.content.scrollTop;
-        this.moving = false;
-        if (this.cardP < -100) {
-          this.close()
-        } else {
-          this.cardP = 0;
-          this.paddingBottom = 12;
-        }
       }
     },
   },
@@ -159,8 +146,6 @@ export default {
     'cardClosed',
   ],
   beforeUnmount () {
-    this.hammer?.pan?.destroy();
-    this.hammer?.content?.destroy();
   },
   mounted () {
   },
@@ -173,7 +158,6 @@ export default {
 }
 .bottom-sheet {
   z-index: 100;
-  transition: all 0.4s ease-in;
   position: relative;
   overscroll-behavior: none !important;
 }
@@ -188,7 +172,7 @@ export default {
   right: 0;
   bottom: 0;
   z-index: 100;
-  opacity: 0;
+  opacity: 1;
   visibility: hidden;
 }
 .bottom-sheet__card {
@@ -204,7 +188,6 @@ export default {
 }
 .bottom-sheet__card.fx-default {
   transform: translate(-50%,0);
-  transition: bottom 0.4s ease-out;
 }
 .bottom-sheet__pan {
   padding-bottom: 20px;
@@ -221,14 +204,7 @@ export default {
 .bottom-sheet__bar:active{
   cursor: grabbing;
 }
-.closed {
-  opacity: 0;
-  visibility: hidden;
-}
 
-.moving .bottom-sheet__card{
-  transition: none; 
-}
 .opened {
   position: fixed;
   top: 0;
@@ -237,7 +213,6 @@ export default {
   height: 100%;
 }
 .opened .bottom-sheet__backdrop {
-  opacity: 1;
   visibility: visible;
 }
 

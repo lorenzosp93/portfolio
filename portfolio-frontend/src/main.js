@@ -8,8 +8,8 @@ import { Draggable } from "gsap/Draggable";
 
 const myApp = createApp(App);
 
-gsap.registerPlugin(ScrollTrigger);
-gsap.registerPlugin(Draggable);
+gsap.registerPlugin(ScrollTrigger, Draggable);
 myApp.config.globalProperties.$gsap = gsap;
+myApp.config.globalProperties.$drag = Draggable;
 
 myApp.mount('#app');
