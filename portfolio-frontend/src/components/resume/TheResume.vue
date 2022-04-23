@@ -135,6 +135,8 @@ export default {
     }
   },
   beforeUnmount () {
+    this.t1.kill();
+    this.t2.kill();
   },
   mounted () {
     this.setUpAnimations();

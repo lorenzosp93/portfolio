@@ -46,6 +46,7 @@ export default {
       moving: false,
       cardP: null,
       cardH: null,
+      drag: null,
       tl: null,
       contentH: "auto",
       handlers: {
@@ -59,6 +60,7 @@ export default {
   },
   methods: {
     init () {
+      this.drag?.applyBounds({maxY: 0, minY: 0})
       this.cardP = 0;
       this.cardH = this.$refs.card.clientHeight;
       this.contentH = `${this.cardH - this.$refs.pan.clientHeight}px`;
@@ -67,10 +69,10 @@ export default {
       const tl = this.$gsap.timeline();
       tl
         .from(this.$refs.card, {y: this.cardH, opacity:0, duration: 0.4, ease: 'power3'})
-        .from(this.$refs.backdrop, {opacity: 0, duration: 0.3}, 0)
+        .from(this.$refs.backdrop, {opacity: 0, duration: 0.3}, 0);
       this.tl = tl;
         let startY = 0;
-        this.$drag.create(this.$refs.card, {
+        const drag = this.$drag.create(this.$refs.card, {
           type: 'y',
           trigger: this.$refs.pan,
           bounds: {
@@ -79,14 +81,15 @@ export default {
           },
           edgeResistance: 0,
           autoScroll: 0,
-          onDragStart: event => {startY = event.y},
-          onDragEnd: event => {
-            let deltaY = startY - event.y;
+          onDragStart: () => {startY = this.drag.pointerY},
+          onDragEnd: () => {
+            let deltaY = startY - this.drag.pointerY;
             if (deltaY < - 150) {
               this.close(deltaY);
             }
           },
-        })
+        });
+        this.drag = drag[0];
       } else {
         this.tl.restart();
       }
@@ -103,8 +106,9 @@ export default {
         if (deltaY != null) {
           const tl = this.$gsap.timeline();
           tl
-            .to(this.$refs.card, { y: this.cardH - deltaY, opacity: 0, duration: 0.4 })
-            .to(this.$refs.backdrop, { opacity: 0, duration: 0.3 }, 0.1)
+            .fromTo(this.$refs.card, {y: -deltaY}, { y: this.cardH - deltaY, opacity: 0, duration: 0.4 })
+            .to(this.$refs.backdrop, { opacity: 0, duration: 0.3 }, 0.1);
+          tl.eventCallback('onComplete', function () {this.kill()});
         } else {
           this.tl.reverse()
         }
@@ -140,6 +144,8 @@ export default {
     'cardClosed',
   ],
   beforeUnmount () {
+    this.tl?.kill();
+    this.drag?.kill();
   },
   mounted () {
   },
