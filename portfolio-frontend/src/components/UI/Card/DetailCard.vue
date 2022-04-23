@@ -66,7 +66,7 @@ export default {
         this.initiated = true;
       const tl = this.$gsap.timeline();
       tl
-        .from(this.$refs.card, {y: this.cardH, duration: 0.4, ease: 'power2'})
+        .from(this.$refs.card, {y: this.cardH, opacity:0, duration: 0.4, ease: 'power3'})
         .from(this.$refs.backdrop, {opacity: 0, duration: 0.3}, 0)
       this.tl = tl;
         let startY = 0;
@@ -78,14 +78,8 @@ export default {
             minY: 0,
           },
           edgeResistance: 0,
-          snap: {top: startY},
+          autoScroll: 0,
           onDragStart: event => {startY = event.y},
-          onMove: function (event) {
-            let deltaY = startY - event.y;
-            if (deltaY > 0) {
-              this.endDrag(event);
-            }
-          },
           onDragEnd: event => {
             let deltaY = startY - event.y;
             if (deltaY < - 150) {
@@ -106,10 +100,10 @@ export default {
     close (deltaY) {
       if (this.opened) {
         document.body.style.overflow = "";
-        if (deltaY) {
+        if (deltaY != null) {
           const tl = this.$gsap.timeline();
           tl
-            .to(this.$refs.card, { y: this.cardH - deltaY, duration: 0.4 })
+            .to(this.$refs.card, { y: this.cardH - deltaY, opacity: 0, duration: 0.4 })
             .to(this.$refs.backdrop, { opacity: 0, duration: 0.3 }, 0.1)
         } else {
           this.tl.reverse()
@@ -204,7 +198,6 @@ export default {
 .bottom-sheet__bar:active{
   cursor: grabbing;
 }
-
 .opened {
   position: fixed;
   top: 0;

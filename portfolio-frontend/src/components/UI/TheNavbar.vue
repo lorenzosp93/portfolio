@@ -83,7 +83,7 @@
 
         <!-- Mobile menu, show/hide based on menu state. -->
         <div
-          class="sm:hidden bg-white dark:bg-gray-700 rounded-lg  dark:ring-gray-600 fixed -z-10 transform duration-500 ease-in-out overflow-hidden ml-3 -mt-1"
+          class="sm:hidden bg-white dark:bg-gray-700 rounded-lg  dark:ring-gray-600 absolute -z-10 transform duration-500 ease-in-out overflow-hidden ml-3 -mt-1"
           :class="{'menu-closed': !isMenuOpen,}" id="mobile-menu">
           <div class="px-2 pt-2 pb-3 space-y-2 shadow-md">
             <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
