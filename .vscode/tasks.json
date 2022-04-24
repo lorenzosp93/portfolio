@@ -16,7 +16,7 @@
 			"dockerBuild": {
 				"tag": "portfolio:latest",
 				"dockerfile": "${workspaceFolder}/portfolio-backend/Dockerfile",
-				"context": "${workspaceFolder}",
+				"context": "${workspaceFolder}/portfolio-backend",
 				"pull": true
 			},
 			"problemMatcher": [],
