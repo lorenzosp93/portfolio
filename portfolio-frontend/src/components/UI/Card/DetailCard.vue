@@ -1,6 +1,6 @@
 <template>
 <Teleport to="body">
-  <div v-on="handlers" class="bottom-sheet shadlw-lg" :class="{opened: opened, closed: opened === false, moving:moving}" style="{'pointer-events': 'all'}" ref="bottomSheet">
+  <div @mousedown="clickOnBottomSheet" @touchstart="clickOnBottomSheet" class="bottom-sheet shadlw-xl" :class="{opened: opened, closed: opened === false, moving:moving}" style="{'pointer-events': 'all'}" ref="bottomSheet">
     <div class="backdrop-blur-md bottom-sheet__backdrop" ref="backdrop" />
     <div class="bg-white dark:bg-gray-800 bottom-sheet__card fx-default" :style="[{ bottom: cardP+'px', maxWidth: '640px', maxHeight: maxHeight+'%'},{'height': 'auto'},{'padding-bottom': paddingBottom+'px'}]" id='detail-card' ref="card">
       <div class="bottom-sheet__pan" ref="pan">
@@ -37,22 +37,16 @@
 export default {
   name: 'DetailCard',
   data () {
-    const vm = this;
     return {
       initiated: false,
       maxHeight: 85,
       opened: false,
-      contentScroll: 0,
       moving: false,
       cardP: null,
       cardH: null,
       drag: null,
       tl: null,
       contentH: "auto",
-      handlers: {
-        mousedown: vm.clickOnBottomSheet,
-        touchstart: vm.clickOnBottomSheet
-      },
       paddingBottom: 12,
     }
   },
@@ -80,12 +74,19 @@ export default {
             minY: 0,
           },
           liveSnap: value => {
-            return value < 0 ? value / 4 : value
+            return value < 0 ? 0 : value
           },
           edgeResistance: 0,
           autoScroll: 0,
           onPress: () => {startY = this.drag.pointerY},
+          onDrag: () => {
+            let deltaY = startY - this.drag.pointerY;
+            if (deltaY > 0) {
+              this.$gsap.set(this.$refs.card, {'border-bottom': `${deltaY/5}px solid transparent`});
+            }
+          },
           onDragEnd: () => {
+            this.$gsap.set(this.$refs.card, {'border-bottom': `0px solid transparent`});
             let deltaY = startY - this.drag.pointerY;
             if (deltaY < - 150) {
               this.close(deltaY);
@@ -157,7 +158,7 @@ export default {
 
 <style scoped>
 .bottom-sheet * {
-  box-sizing: border-box;
+  box-sizing: content-box;
 }
 .bottom-sheet {
   z-index: 100;
