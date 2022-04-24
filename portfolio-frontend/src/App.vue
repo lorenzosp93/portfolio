@@ -133,7 +133,7 @@ export default {
           duration: 0.7
         })
         .to('#the-navbar', {opacity: 1, ease: 'power1.in', duration: 0.3}, 0.7)
-        .set('#heroPicture', {opacity: 0}, 1);
+        .set('#heroPicture', {opacity: 0}, 0.99);
       this.tl = tl;
     },
     calculateCoordinatesAnimation (originTag, destinationTag) {

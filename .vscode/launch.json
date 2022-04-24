@@ -20,12 +20,10 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/portfolio-backend/manage.py",
-            "args": [
-                "runserver",
-                "--noreload",
-                "0.0.0.0:8000"
-            ],
-            "django": true
+            "cwd": "${workspaceFolder}/portfolio-backend",
+            "args": ["runserver"],
+            "django": true,
+            "justMyCode": true
         },
         {
             "name": "Docker: Python - Django",
@@ -33,12 +31,10 @@
             "request": "launch",
             "preLaunchTask": "docker-run: debug",
             "python": {
-                "pathMappings": [
-                    {
-                        "localRoot": "${workspaceFolder}/portfolio-backend",
-                        "remoteRoot": "/app"
-                    }
-                ],
+                "pathMappings": [{
+                    "localRoot": "${workspaceFolder}/portfolio-backend",
+                    "remoteRoot": "/app"
+                }],
                 "projectType": "django"
             }
         },
