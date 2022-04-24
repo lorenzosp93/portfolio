@@ -114,6 +114,7 @@ export default {
       }
     },
     addHeroAnimation (coordinates) {
+      this.tl?.kill();
       const tl = this.$gsap.timeline({
         scrollTrigger: {
           trigger: "#the-hero",
@@ -148,6 +149,9 @@ export default {
     },
     resizeEventHandler (event) {
       if (this.innerWidth != event.target.innerWidth) {
+        this.tl?.restart();
+        window.scrollTo({top: 0});
+        this.setupAnimation();
         this.innerWidth = event.target.innerWidth;
       }
     }

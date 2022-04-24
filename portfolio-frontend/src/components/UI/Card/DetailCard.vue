@@ -79,9 +79,12 @@ export default {
             maxY: 0,
             minY: 0,
           },
+          liveSnap: value => {
+            return value < 0 ? value / 4 : value
+          },
           edgeResistance: 0,
           autoScroll: 0,
-          onDragStart: () => {startY = this.drag.pointerY},
+          onPress: () => {startY = this.drag.pointerY},
           onDragEnd: () => {
             let deltaY = startY - this.drag.pointerY;
             if (deltaY < - 150) {
@@ -184,18 +187,18 @@ export default {
   margin: 0 auto;
 }
 .bottom-sheet__card.stripe {
-  padding-bottom: 20px;
+  padding-bottom: 15px;
 }
 .bottom-sheet__card.fx-default {
   transform: translate(-50%,0);
 }
 .bottom-sheet__pan {
-  padding-bottom: 20px;
-  padding-top: 15px;
+  padding-bottom: 10px;
+  padding-top: 12px;
 }
 .bottom-sheet__bar {
   display: block;
-  width: 40px;
+  width: 35px;
   height: 3px;
   border-radius: 14px;
   margin: 0 auto;
