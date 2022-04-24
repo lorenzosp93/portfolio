@@ -15,7 +15,7 @@
 			"platform": "python",
 			"dockerBuild": {
 				"tag": "portfolio:latest",
-				"dockerfile": "${workspaceFolder}/Dockerfile",
+				"dockerfile": "${workspaceFolder}/portfolio-backend/Dockerfile",
 				"context": "${workspaceFolder}",
 				"pull": true
 			},

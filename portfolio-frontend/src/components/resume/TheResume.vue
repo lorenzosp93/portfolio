@@ -26,7 +26,7 @@
     </div>
   </div>
   <div @click="scrollToTop"
-    class="absolute right-10 bottom-3 z-10 h-10 w-10 rounded-full shadow-md bg-gray-50 dark:bg-gray-500 cursor-pointer select-none hover:dark:bg-gray-400 hover:bg-gray-100 opacity-0"
+    class="absolute right-10 bottom-3 z-10 h-10 w-10 rounded-full shadow-md bg-gray-50 dark:bg-gray-500 cursor-pointer select-none hover:dark:bg-gray-400 hover:bg-gray-100"
     id="top-scroller-resume">
     <div
       class="translate-y-[1em]  h-1/3 w-1/3 mx-auto rotate-45 border-t-2 border-l-2 border-gray-600 dark:border-gray-900 box-border rounded-lt">
@@ -116,27 +116,13 @@ export default {
         .to('#arrow-holder-resume', {opacity: 1, duration: 0.3})
         .to('#arrow-holder-resume', {opacity: 0, duration: 0.3}, 0.7);
       this.t1 = t1;
-
-      const t2 = this.$gsap.timeline({
-        scrollTrigger: {
-          trigger: '#resume-container',
-          start: '90% bottom',
-          end: '90% center',
-          scrub: true,
-        }
-      });
-      t2.to('#top-scroller-resume', {opacity: 1});
-      this.t2 = t2;
-
     },
     refreshAnimations () {
       this.t1.scrollTrigger.refresh(true);
-      this.t2.scrollTrigger.refresh(true);
     }
   },
   beforeUnmount () {
-    this.t1.kill();
-    this.t2.kill();
+    this.t1?.kill();
   },
   mounted () {
     this.setUpAnimations();
