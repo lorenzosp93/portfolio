@@ -69,7 +69,7 @@ export default {
         ).catch(
           error => {
             self.isLoading = false;
-            self.error = "Something went wrong when loading the site settings...";
+            self.error = "Something went wrong when loading the site data...";
             console.log(error);
           }
         )

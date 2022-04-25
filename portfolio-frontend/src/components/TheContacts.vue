@@ -47,7 +47,7 @@
               v-model="item.value"
               required
             />
-            <span class="text-xs px-1 text-gray-400">{{ item?.help }} </span>
+            <span class="text-xs px-1 text-gray-400 block">{{ item?.help }} </span>
           </div>
           <p class="absolute w-full text-center -top-4 left-1/2 -translate-x-1/2 text-red-700 text-xs" v-if="error" v-html="error"/>
         </form>
