@@ -5,7 +5,7 @@
     </template>
     <template v-slot:extra-title-content>
       <p>
-        {{ location ? location + ', ' : '' }}{{ created_at_date }}
+        {{ location ? location + ' — ' : '' }}{{ created_at_date }}
       </p>
     </template>
     <template v-slot:subtitle>
@@ -50,7 +50,7 @@ export default {
     },
     created_at_date () {
       let date = new Date(this.created_at)
-      return date.toDateString()
+      return date.toLocaleDateString(undefined, {year: 'numeric', month: 'short', day: 'numeric'})
     }
   },
   methods: {

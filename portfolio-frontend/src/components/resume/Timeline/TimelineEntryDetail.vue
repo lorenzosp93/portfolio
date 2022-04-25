@@ -4,7 +4,7 @@
       {{ name }}
     </template>
     <template v-slot:extra-title-content>
-      {{ start_date }} — {{ current ? "Present" : end_date }}
+      {{ start_date__date }} — {{ end_date__date }}
     </template>
     <template v-slot:subtitle>
       <div class="flex flex-wrap my-auto">
@@ -86,6 +86,8 @@ export default {
     isFirst: Boolean,
     open: Boolean,
     isActive: Boolean,
+    start_date__date: String,
+    end_date__date: String
   }
 }
 </script>

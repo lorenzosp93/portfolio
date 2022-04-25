@@ -9,7 +9,7 @@
         {{ location }}
       </p>
       <h2 class="font-semibold w-full text-gray-900 dark:text-white">{{ name }}</h2>
-      <p v-html:="truncatedContent" class="text-sm my-3 w-full text-ellipsis after:text-gray:900 after:content-['_↗']" />
+      <p v-html:="truncatedContent" class="text-sm my-3 w-full text-ellipsis text-gray-500 dark:text-gray-300 after:content-['_⏎']" />
     </div>
     <blog-entry-detail v-if="type == 'blog' && isActive" :isOpen="detailsVisible" @card-closed="toggleDetails"
       :name="name" :created_at="created_at" :created_by="created_by" :location="location" :picture="picture"
