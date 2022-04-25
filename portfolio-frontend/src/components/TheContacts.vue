@@ -29,10 +29,10 @@
         </div>
       </template>
       <template v-slot:inner-content >
-        <form class="relative max-w-lg mx-auto -mt-3 grid grid-cols-1 sm:grid-cols-2" autocomplete="on">
+        <form class="relative max-w-lg mx-auto grid grid-cols-1 sm:grid-cols-2" autocomplete="on">
           <div v-for="item in formItems" :key="item.id" class="mb-3 mx-auto">
             <label class="block mb-1 ml-1 text-base font-semibold text-gray-600 dark:text-gray-300 " :for="item.id">{{ item.label }}</label>
-            <input v-if="item.type != 'textarea'" class="py-1 px-2 text-lg rounded-lg bg-gray-100 dark:bg-gray-300 text-gray-800 focus:shadow-inner placeholder:font-thin placeholder:dark:text-gray-500 caret-gray-800 outline-none" :class="{'invalid:ring-red-700 invalid:ring-2': item.value}"
+            <input v-if="item.type != 'textarea'" class="py-1 px-2 text-lg rounded-lg bg-gray-100 dark:bg-gray-300 text-gray-800 focus:shadow-inner placeholder:font-thin placeholder:dark:text-gray-500 caret-gray-800 outline-none" :class="{'invalid:ring-red-500 invalid:focus:ring-0 invalid:ring-2': item.value}"
               :type="item.type"
               :id="item.id"
               :name="item.id"
@@ -49,7 +49,7 @@
             />
             <span class="text-xs px-1 text-gray-400 block">{{ item?.help }} </span>
           </div>
-          <p class="absolute w-full text-center -top-4 left-1/2 -translate-x-1/2 text-red-700 text-xs" v-if="error" v-html="error"/>
+          <p class="absolute w-full text-center -top-3.5 left-1/2 -translate-x-1/2 text-red-700 text-xs" v-if="error" v-html="error"/>
         </form>
       </template>
     </detail-card>
@@ -152,7 +152,7 @@ export default {
             this.$refs.formCard.close();
           } else {
             if (response.status == 400) {
-              this.error = "The data is not valid, please review it and try again."
+              this.error = "Invalid data, please review your inputs and try again."
               this.formItems.find(item => item.id == 'email').value = "";
             } else if (response.status == 500) {
               this.error = "There was a problem processing your request, please try again later"
