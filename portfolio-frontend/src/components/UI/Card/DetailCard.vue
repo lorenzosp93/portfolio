@@ -194,7 +194,7 @@ export default {
   transform: translate(-50%,0);
 }
 .bottom-sheet__pan {
-  padding-bottom: 10px;
+  padding-bottom: 8px;
   padding-top: 12px;
 }
 .bottom-sheet__bar {

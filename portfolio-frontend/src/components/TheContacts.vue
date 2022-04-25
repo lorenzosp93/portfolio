@@ -16,7 +16,7 @@
       </template>
       <template v-slot:subtitle > 
       <p>
-        Can you write it in a tweet? <span class="hidden md:visible">The message limit is 280 characters!</span>
+        Send me a quick message!
       </p>
       </template>
       <template v-slot:extra-title-content > 
@@ -47,6 +47,7 @@
               v-model="item.value"
               required
             />
+            <span class="text-xs px-1 text-gray-400">{{ item?.help }} </span>
           </div>
           <p class="absolute w-full text-center -top-4 left-1/2 -translate-x-1/2 text-red-700 text-xs" v-if="error" v-html="error"/>
         </form>
@@ -97,6 +98,7 @@ export default {
           type: "textarea",
           label: "Message",
           placeholder: "Here goes my message",
+          help: "Please keep it within 280 characters",
           maxLength: 280,
           value: ""
         },
