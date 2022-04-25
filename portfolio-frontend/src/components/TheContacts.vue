@@ -32,7 +32,7 @@
         <form class="relative max-w-lg mx-auto -mt-3 grid grid-cols-1 sm:grid-cols-2" autocomplete="on">
           <div v-for="item in formItems" :key="item.id" class="mb-3 mx-auto">
             <label class="block mb-1 ml-1 text-base font-semibold text-gray-600 dark:text-gray-300 " :for="item.id">{{ item.label }}</label>
-            <input v-if="item.type != 'textarea'" class="py-1 px-2 text-lg rounded-lg bg-gray-100 dark:bg-gray-300 text-gray-800 focus:shadow-inner placeholder:font-thin caret-gray-800 outline-none" :class="{'invalid:ring-red-700 invalid:ring-2': item.value}"
+            <input v-if="item.type != 'textarea'" class="py-1 px-2 text-lg rounded-lg bg-gray-100 dark:bg-gray-300 text-gray-800 focus:shadow-inner placeholder:font-thin placeholder:dark:text-gray-500 caret-gray-800 outline-none" :class="{'invalid:ring-red-700 invalid:ring-2': item.value}"
               :type="item.type"
               :id="item.id"
               :name="item.id"
@@ -41,7 +41,7 @@
               v-model="item.value"
               required
             />
-            <textarea v-else class="py-1 px-2 mx-auto shadow-inner text-lg rounded-lg bg-gray-100 dark:bg-gray-300 text-gray-800 placeholder:font-thin caret-gray-800 outline-none focus:shadow-inner"
+            <textarea v-else class="py-1 px-2 mx-auto shadow-inner text-lg rounded-lg bg-gray-100 dark:bg-gray-300 text-gray-800 placeholder:font-thin placeholder:dark:text-gray-500 caret-gray-800 outline-none focus:shadow-inner"
               :id="item.id" :maxlength="item.maxLength" rows=2
               :placeholder="item.placeholder"
               v-model="item.value"

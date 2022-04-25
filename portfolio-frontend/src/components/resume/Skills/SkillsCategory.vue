@@ -1,5 +1,5 @@
 <template>
-  <div class="m-6 justify-start bg-gray-50 rounded-lg shadow-md  dark:bg-gray-600 dark:border-gray-500 dark:text-gray-300 z-1">
+  <div class="justify-start bg-gray-50 rounded-lg shadow-md  dark:bg-gray-600 dark:border-gray-500 dark:text-gray-300 z-1">
     <h3 class="items-center mx-5 pt-5 align-text-bottom text-lg font-semibold text-gray-900 dark:text-white">{{ name }}</h3>
     <p class="text-sm text-gray-700 dark:text-gray-200 mx-5">
       {{ description }}

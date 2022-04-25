@@ -12,7 +12,7 @@
           {{ name }}
         </div>
         <div class="text-xs sm:text-sm text-gray-500 dark:text-gray-300">
-          {{ department ? department + ', ' : '' }}{{ location }}
+          {{ location }}
         </div>
       </div>
       <div class="p-2 flex text-xs sm:text-sm font-normal text-ellipsis text-gray-500 bg-gray-50 rounded-lg shadow-sm  dark:bg-gray-900  dark:text-gray-300" v-html="truncatedDescription" />
