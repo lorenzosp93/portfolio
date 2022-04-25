@@ -20,7 +20,7 @@
         </div>
       </div>
       <div class="bottom-sheet__content min-h-[40vh] lg:min-h-[70vh]" :style="{height: contentH}" ref="content">
-        <div class="container p-3 mt-3 text-sm text-gray-700 dark:text-white">
+        <div class="container mt-3 text-sm text-gray-700 dark:text-white px-auto">
           <slot name="inner-content">
             Here goes the main content of the card.
             Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolorem alias, maiores ad dolor cum culpa similique voluptatibus. Molestias laudantium dolorum minus eaque minima qui, autem, veritatis earum pariatur, accusantium fugit.

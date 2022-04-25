@@ -14,7 +14,7 @@
       </p>
     </template>
     <template v-slot:inner-content>
-      <div class="text-sm">
+      <div class="text-sm px-3">
         <p v-html="content"/>
       </div>
     </template>

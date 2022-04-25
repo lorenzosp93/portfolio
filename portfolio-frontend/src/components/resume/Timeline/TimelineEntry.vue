@@ -5,17 +5,17 @@
     </span>
     <div class="timeline-entry p-3 bg-white rounded-lg  shadow-md dark:bg-gray-700 dark:border-gray-600 hover:scale-102.5 transition duration-300 ease-in-out cursor-pointer">
       <div class="justify-between items-center mb-3 sm:flex">
-        <time class="mb-1 text-sm font-normal text-gray-400 sm:order-last sm:mb-0">
+        <p class="mb-1 text-sm font-normal text-gray-400 sm:order-last sm:mb-0">
         {{ start_date }} — {{ end_date ? end_date : current ? 'Present' : '' }}
-        </time>
-        <div class="font-semibold text-gray-900 dark:text-gray-300">
+        </p>
+        <p class="font-semibold text-gray-900 dark:text-gray-300">
           {{ name }}
-        </div>
-        <div class="text-xs sm:text-sm text-gray-500 dark:text-gray-300">
+        </p>
+        <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-300">
           {{ location }}
-        </div>
+        </p>
       </div>
-      <div class="p-2 flex text-xs sm:text-sm font-normal text-ellipsis text-gray-500 bg-gray-50 rounded-lg shadow-sm  dark:bg-gray-900  dark:text-gray-300" v-html="truncatedDescription" />
+      <div class="p-2 flex text-xs sm:text-sm font-normal text-ellipsis text-gray-500 bg-gray-50 rounded-lg shadow-sm  dark:bg-gray-900  dark:text-gray-300 after:text-gray-900 after:content-['_↗'] after:ml-auto after:mt-auto" v-html="truncatedDescription" />
     </div>
     <timeline-entry-detail v-if="isActive" v-bind="$props" @card-closed="closeDetails" :open="detailsVisible" />
   </li>
@@ -34,7 +34,7 @@ export default {
   },
   computed: {
     truncatedDescription () {
-      return this.description.slice(0, this.truncationAmount()) + '...'
+      return this.description.slice(0, this.truncationAmount()).replace(/<\/?[^>]+(>|$)/g, " ") + (this.truncationAmount() < this.description.length ? '... ' : ' ')
     },
   },
   inject: [
