@@ -6,7 +6,7 @@
       :src="picture" :alt="'Picture for ' + name">
     <div class="flex flex-wrap p-3 w-full text-lg text-black dark:text-white">
       <p class="text-xs w-full text-gray-400">
-        {{ location }}
+        {{ location }}{{ status }}
       </p>
       <h2 class="font-semibold w-full text-gray-900 dark:text-white">{{ name }}</h2>
       <p v-html:="truncatedContent" class="text-sm my-3 w-full text-ellipsis text-gray-500 dark:text-gray-300 after:content-['_⏎']" />
