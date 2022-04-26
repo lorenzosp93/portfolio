@@ -1,5 +1,5 @@
 <template>
-  <div class="container min-h-[50vh] lg:min-h-[60vh] relative flex w-screen mx-auto flex-wrap">
+  <div class="container min-h-[55vh] lg:min-h-[60vh] relative flex w-screen mx-auto flex-wrap">
     <div class="class container flex flex-wrap mx-auto my-10">
       <h2 class="text-center mt-auto text-xl w-full font-bold mx-auto  text-gray-600 dark:text-white">
         Get in touch!
