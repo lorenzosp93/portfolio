@@ -2,7 +2,7 @@
   <div class="sticky top-0 z-20 opacity-0 w-screen">
     <slot>
       <nav class="">
-        <div class="max-w-7xl mx-auto sm:bg-white sm:dark:bg-gray-600">
+        <div class=" mx-auto sm:bg-white sm:dark:bg-gray-600">
           <div class="relative flex items-center justify-between h-16">
             <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
               <!-- Mobile menu button-->
