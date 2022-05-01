@@ -53,6 +53,7 @@ class ProjectViewSet(ReadOnlyModelViewSet):
     """
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+    pagination_class = LimitOffsetPagination
 
 class KeywordViewSet(ReadOnlyModelViewSet):
     """

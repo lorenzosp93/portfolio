@@ -43,7 +43,7 @@
         id="education" class="scroll-my-10" @load-complete="refreshAnimations" />
     </div>
     <div class="flex-none w-full grow snap-center resume-panels">
-      <resume-projects :ix="'center'" :observer="observer" id="projects" :isActive="isProjectsActive" class="scroll-my-10"/>
+      <resume-projects :ix="'center'" :observer="observer" id="projects" :isActive="isProjectsActive" class="scroll-my-10" @load-complete="refreshAnimations" />
     </div>
     <div class="flex-none w-full grow snap-center resume-panels">
       <resume-skills :ix="'last'" :observer="observer" id="skills" :isActive="isSkillsActive" class="scroll-my-10"/>

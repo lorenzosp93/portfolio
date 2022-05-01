@@ -85,7 +85,6 @@ export default {
           en[this.kind] = this.groups[en.uuid];
         })
       }).then( () => {this.$emit('loadComplete')});
-      this.counter += 1;
     },
     groupBy (xs, key) {
       return xs.reduce((rv, x) => {
