@@ -15,7 +15,7 @@
           {{ location }}
         </p>
       </div>
-      <div class="p-2 flex text-xs sm:text-sm font-normal text-ellipsis text-gray-500 bg-gray-50 rounded-lg shadow-sm  dark:bg-gray-900  dark:text-gray-300   after:content-['_⏎'] after:ml-auto after:mt-auto" v-html="truncatedDescription" />
+      <div class="p-2 flex text-xs sm:text-sm font-normal text-ellipsis text-gray-500 bg-gray-50 rounded-lg shadow-sm  dark:bg-gray-900  dark:text-gray-300   after:content-['_⏎'] after:ml-auto after:mt-auto after:text-gray-400" v-html="truncatedDescription" />
     </div>
     <timeline-entry-detail v-if="isActive" v-bind="$props" :end_date__date="end_date__date" :start_date__date="start_date__date" @card-closed="closeDetails" :open="detailsVisible" />
   </li>

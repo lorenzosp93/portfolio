@@ -14,7 +14,7 @@
     <div v-if="data.length && scrollPosition != 'end'" @click="scrollToSibling(true)" class="z-10 absolute -right-5 top-1/2 rounded-full h-10 w-10 shadow-md bg-gray-50 dark:bg-gray-500 hidden md:block hover:dark:bg-gray-400 hover:bg-gray-100 cursor-pointer select-none">
         <div class="translate-y-full -translate-x-1/4 h-1/3 w-1/3 mx-auto rotate-45 border-t-2 border-r-2 border-gray-600 dark:border-gray-900 box-border rounded-tr" ></div>
     </div>
-    <div class="p-auto gap-6 container relative w-screen flex overflow-x-scroll no-scrollbar snap-x snap-mandatory m-auto scroll-smooth scroll-px-1" id="blog-container">
+    <div class="p-auto gap-6 container relative w-screen flex overflow-x-scroll no-scrollbar snap-x snap-mandatory m-auto scroll-smooth scroll-px-1 p-5" id="blog-container">
         <list-card type="blog" class="blog-card w-3/5 md:w-1/3 lg:w-1/4" v-for="post in data" :key="post?.uuid" v-bind="post" :isActive="isActive"/>
       <div class="snap-center relative w-10 h-10 p-6 my-auto mx-10 flex bg-white dark:bg-gray-900 shadow-md container flex-none rounded-full" v-if="isLoading">
         <svg role="status" class="absolute left-1 top-1 w-10 h-10 text-gray-100 animate-spin dark:text-gray-400 fill-gray-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
