@@ -4,7 +4,7 @@
       <h2 class="text-center mt-auto text-xl w-full font-bold mx-auto  text-gray-600 dark:text-white">
         Get in touch!
       </h2>
-      <div @click="openForm" class="cursor-pointer bg-gray-400 dark:bg-gray-600 px-5 py-3 rounded-2xl font-semibold text-center mx-auto mb-auto mt-3 text-white dark:text-gray-300 shadow-md hover:scale-105 transition duration-300 ease-in" >
+      <div @click="openForm" class="cursor-pointer bg-gray-600 dark:bg-gray-300 px-5 py-3 rounded-2xl font-semibold text-center mx-auto mb-auto mt-3 text-white dark:text-gray-900 shadow-md hover:scale-105 transition duration-300 ease-in" >
         Click here to send me a message.
       </div>
     </div>
