@@ -8,7 +8,7 @@ data:
   STATIC_ENDPOINT_URL: 'http://portfolio.s3-website.eu-west-3.amazonaws.com'
   STATIC_BUCKET_NAME: portfolio
   DJANGO_LOGLEVEL: INFO
-  EMAIL_TO: {{ .Values.ConfigMap.emailTo | quote }}
+  EMAIL_TO: {{ .Values.configMap.emailTo | quote }}
   DEBUG: {{ .Values.configMap.debug | quote }}
   DATABASE_NAME: {{ .Values.database.name }}
   DATABASE_HOST: {{ .Values.database.host }}
