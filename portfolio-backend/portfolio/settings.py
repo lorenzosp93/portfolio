@@ -17,14 +17,10 @@ LOGGING = {
          'class': 'logging.FileHandler',
          'filename': '/tmp/debug.log',
       },
-      'console': {
-        'level': 'DEBUG',
-        'class': 'logging.StreamHandler',
-      }
    },
    'loggers': {
       'django': {
-         'handlers': ['file', 'console'],
+         'handlers': ['file'],
          'level': 'DEBUG',
          'propagate': True,
       },
@@ -55,7 +51,7 @@ else:
     ]
 
 if HOST:
-    ALLOWED_HOSTS.append(HOST)
+    ALLOWED_HOSTS.append('.' + HOST)
     CSRF_TRUSTED_ORIGINS = 'https://*' + HOST
 
 # Application definition
