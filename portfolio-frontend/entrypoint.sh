@@ -7,6 +7,9 @@ for file in $ROOT_DIR/js/index.*.js* $ROOT_DIR/index.html;
 do
   echo "Replacing occurrences of 'VUE_APP_BACKEND_URL' in $file with ${VUE_APP_BACKEND_URL}";
   sed -i 's|VUE_APP_BACKEND_URL|'${VUE_APP_BACKEND_URL}'|g' $file 
+  # replace compressed versions of files
+  echo "Updating zipped files"
+  gzip -f $file
 
 done
 
