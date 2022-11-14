@@ -85,9 +85,7 @@ args: []
 ##   - name: FOO
 ##     value: BAR
 ##
-extraEnvVars:
-  - name: VUE_APP_BACKEND_URL
-    value: ""
+extraEnvVars: []
 ## @param extraEnvVarsCM ConfigMap with extra environment variables
 ##
 extraEnvVarsCM: ""
