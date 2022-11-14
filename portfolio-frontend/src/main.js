@@ -8,8 +8,13 @@ import { Draggable } from "gsap/Draggable";
 
 const myApp = createApp(App);
 
+ScrollTrigger.config({
+    ignoreMobileResize: true,
+  });
+
 gsap.registerPlugin(ScrollTrigger, Draggable);
 myApp.config.globalProperties.$gsap = gsap;
 myApp.config.globalProperties.$drag = Draggable;
+myApp.config.globalProperties.$st = ScrollTrigger;
 
 myApp.mount('#app');
