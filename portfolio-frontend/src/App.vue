@@ -115,6 +115,7 @@ export default {
     },
     addHeroAnimation (coordinates) {
       this.tl?.kill();
+      this.$st.normalizeScroll(true);
       const tl = this.$gsap.timeline({
         scrollTrigger: {
           trigger: "#the-hero",
