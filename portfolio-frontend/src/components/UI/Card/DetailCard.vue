@@ -102,12 +102,12 @@ export default {
     open () {
       this.init()
       this.opened = true;
-      document.body.style.overflow = "hidden";
+      document.body.style.overflowY = "hidden";
       this.$emit("cardOpened");
   },
     close (deltaY) {
       if (this.opened) {
-        document.body.style.overflow = "";
+        document.body.style.overflowY = "";
         if (deltaY != null) {
           const tl = this.$gsap.timeline();
           tl
