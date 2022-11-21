@@ -1,17 +1,21 @@
 <template>
-  <div class="bg-gray-100 dark:bg-gray-700">
-    <the-hero :observer="observer" id='the-hero' @hero-loaded="setupAnimation" />
+  <div id="smooth-wrapper">
 
-    <the-navbar id='the-navbar' :elementInView="elementInView"
-      @image-loaded="setupAnimation" />
+    <div id="smooth-content" class="bg-gray-100 dark:bg-gray-700">
+      <the-hero :observer="observer" id='the-hero' @hero-loaded="setupAnimation" />
 
-    <the-resume :observer="observer" :elementsInView="elementsInView" id="the-resume" class="scroll-my-20" />
+      <the-navbar id='the-navbar' :elementInView="elementInView"
+        @image-loaded="setupAnimation" />
 
-    <the-blog :observer="observer" :isActive="isBlogActive" id="the-blog" class="scroll-my-20" />
+      <the-resume :observer="observer" :elementsInView="elementsInView" id="the-resume" class="scroll-my-20" />
 
-    <the-contacts :observer="observer" id="the-contacts" />
+      <the-blog :observer="observer" :isActive="isBlogActive" id="the-blog" class="scroll-my-20" />
 
-    <p class="px-5 pb-2 text-sm dark:text-white text-gray-700">© Lorenzo Spinelli, 2022</p>
+      <the-contacts :observer="observer" id="the-contacts" />
+
+      <p class="px-5 pb-2 text-sm dark:text-white text-gray-700">© Lorenzo Spinelli, 2022</p>
+    </div>
+
   </div>
 </template>
 
@@ -121,6 +125,11 @@ export default {
           scrub: true,
           start: 'top top',
           end: 'bottom top',
+        },
+        ScrollSmoother: {
+          smooth: 2,
+          effects: true,
+          smoothTouch: 0.2,
         }
       });
       tl

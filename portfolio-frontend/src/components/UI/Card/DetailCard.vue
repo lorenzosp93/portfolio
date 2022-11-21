@@ -76,6 +76,7 @@ export default {
           liveSnap: value => {
             return value < 0 ? 0 : value
           },
+          inertia: true,
           edgeResistance: 0,
           autoScroll: 0,
           onPress: () => {startY = this.drag.pointerY},
