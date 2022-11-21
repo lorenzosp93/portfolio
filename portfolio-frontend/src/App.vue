@@ -130,6 +130,7 @@ export default {
           smooth: 2,
           effects: true,
           smoothTouch: 0.2,
+          ignoreMobileResize: true,
         }
       });
       tl
