@@ -2,18 +2,16 @@
   <div id="smooth-wrapper">
 
     <div id="smooth-content" class="bg-gray-100 dark:bg-gray-700">
-      <the-hero :observer="observer" id='the-hero' @hero-loaded="setupAnimation" />
 
+      <the-hero :observer="observer" id='the-hero' @hero-loaded="setupAnimation" />
       <the-navbar id='the-navbar' :elementInView="elementInView"
         @image-loaded="setupAnimation" />
-
       <the-resume :observer="observer" :elementsInView="elementsInView" id="the-resume" class="scroll-my-20" />
-
       <the-blog :observer="observer" :isActive="isBlogActive" id="the-blog" class="scroll-my-20" />
-
       <the-contacts :observer="observer" id="the-contacts" />
 
       <p class="px-5 pb-2 text-sm dark:text-white text-gray-700">© Lorenzo Spinelli, 2022</p>
+
     </div>
 
   </div>
@@ -117,20 +115,17 @@ export default {
           this.addHeroAnimation(coordinates)
       }
     },
-    addHeroAnimation (coordinates) {
+    cleanupAnimation(){
       this.tl?.kill();
+    },
+    addHeroAnimation (coordinates) {
+      this.cleanupAnimation();
       const tl = this.$gsap.timeline({
         scrollTrigger: {
           trigger: "#the-hero",
           scrub: true,
           start: 'top top',
           end: 'bottom top',
-        },
-        ScrollSmoother: {
-          smooth: 2,
-          effects: true,
-          smoothTouch: 0.2,
-          ignoreMobileResize: true,
         }
       });
       tl
@@ -177,7 +172,7 @@ export default {
   beforeUnmount () {
     this.observer.disconnect();
     window.removeEventListener("resize", this.resizeEventHandler);
-    this.tl?.kill();
+    this.cleanupAnimation();
   },
   mounted () {
     this.innerWidth = window.innerWidth;

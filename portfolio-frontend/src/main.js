@@ -13,6 +13,5 @@ gsap.registerPlugin(ScrollTrigger, Draggable, ScrollSmoother);
 myApp.config.globalProperties.$gsap = gsap;
 myApp.config.globalProperties.$drag = Draggable;
 myApp.config.globalProperties.$str = ScrollTrigger;
-myApp.config.globalProperties.$ssm = ScrollTrigger;
 
 myApp.mount('#app');
