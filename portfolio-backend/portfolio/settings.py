@@ -52,7 +52,7 @@ else:
 
 if HOST:
     ALLOWED_HOSTS.append('.' + HOST)
-    CSRF_TRUSTED_ORIGINS = 'https://' + HOST
+    CSRF_TRUSTED_ORIGINS = ['https://' + HOST]
 
 # Application definition
 
