@@ -9,22 +9,22 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 
 LOGGING = {
-   'version': 1,
-   'disable_existing_loggers': False,
-   'handlers': {
-      'file': {
-         'level': 'DEBUG',
-         'class': 'logging.FileHandler',
-         'filename': '/tmp/debug.log',
-      },
-   },
-   'loggers': {
-      'django': {
-         'handlers': ['file'],
-         'level': 'DEBUG',
-         'propagate': True,
-      },
-   },
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/tmp/debug.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
 }
 
 
@@ -47,12 +47,12 @@ if DEBUG:
 else:
     ALLOWED_HOSTS = [
         'localhost',
-        '127.0.0.1', #local debugging
+        '127.0.0.1',  # local debugging
     ]
 
 if HOST:
     ALLOWED_HOSTS.append('.' + HOST)
-    CSRF_TRUSTED_ORIGINS = 'https://*' + HOST
+    CSRF_TRUSTED_ORIGINS = ['https://' + HOST]
 
 # Application definition
 
@@ -120,7 +120,7 @@ DATABASES = {
         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
         'HOST': os.getenv('DATABASE_HOST'),
         'PORT': os.getenv('DATABASE_PORT', 5432)
-     }
+    }
 }
 
 
