@@ -31,10 +31,15 @@ spec:
           ports:
             - containerPort: 8000
               name: gunicorn
-          resources:
-            limits:
-              memory: 265Mi
-              cpu: 500m
+              memory: {{ .Values.resources.limits.memory }}
+              cpu: {{ .Values.resources.limits.cpu }}
+            {{- end}}
+            {{- if .Values.resources.requests }}
+            requests:
+              memory: {{ .Values.resources.requests.memory }}
+              cpu: {{ .Values.resources.requests.cpu }}
+            {{- end}}
+          {{- end}}
           {{- if .Values.livenessProbe.enabled }}
           livenessProbe:
             httpGet:
