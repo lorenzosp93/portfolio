@@ -18,7 +18,7 @@ if [ "$PROCESS_TYPE" = "server" ]; then
             --log-level DEBUG \
             --access-logfile "-" \
             --error-logfile "-" \
-            wedding.wsgi
+            portfolio.wsgi
     else
         gunicorn \
             --bind 0.0.0.0:8000 \
@@ -26,17 +26,17 @@ if [ "$PROCESS_TYPE" = "server" ]; then
             --log-level DEBUG \
             --access-logfile "-" \
             --error-logfile "-" \
-            wedding.wsgi
+            portfolio.wsgi
     fi
 elif [ "$PROCESS_TYPE" = "beat" ]; then
     celery \
-        --app wedding \
+        --app portfolio \
         beat \
         --loglevel INFO \
         --scheduler django_celery_beat.schedulers:DatabaseScheduler
 elif [ "$PROCESS_TYPE" = "flower" ]; then
     celery \
-        --app wedding \
+        --app portfolio \
         flower \
         --basic_auth="${CELERY_FLOWER_USER}:${CELERY_FLOWER_PASSWORD}" \
         --loglevel INFO
