@@ -6,6 +6,7 @@ metadata:
     type: local
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
 spec:
+  storageClassName: manual
   accessModes:
     - ReadWriteOnce
   resources:
