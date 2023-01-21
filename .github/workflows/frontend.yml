@@ -53,6 +53,8 @@ jobs:
           platforms: linux/amd64,linux/arm64/v8
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/portfolio-frontend:${{ steps.extract_branch.outputs.branch }} 
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   deploy:
     runs-on: ubuntu-latest
