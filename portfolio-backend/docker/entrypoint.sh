@@ -69,6 +69,5 @@ done
 # Section 3- Idempotent Django commands  
 python manage.py collectstatic --noinput  
 python manage.py migrate --noinput
-python manage.py compilemessages -l es -l it
 
 exec "$@"
