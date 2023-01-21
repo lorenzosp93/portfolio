@@ -31,15 +31,29 @@ spec:
           ports:
             - containerPort: 8000
               name: gunicorn
-              memory: {{ .Values.resources.limits.memory }}
-              cpu: {{ .Values.resources.limits.cpu }}
-            {{- end}}
             {{- if .Values.resources.requests }}
             requests:
               memory: {{ .Values.resources.requests.memory }}
               cpu: {{ .Values.resources.requests.cpu }}
             {{- end}}
-          {{- end}}
+          {{- if .Values.startupProbe.enabled }}
+          startupProbe:
+            httpGet:
+              path: {{ .Values.startupProbe.path }}
+              port: {{ .Values.service.port }}
+              httpHeaders:
+              - name: Accept
+                value: application/json
+              {{- if .Values.ingress.enabled }}
+              {{- with (first .Values.ingress.hosts) }}
+              - name: Host
+                value: {{ .host }}
+              {{- end }}
+              {{- end }}
+            initialDelaySeconds: {{ .Values.startupProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.startupProbe.periodSeconds }}
+            failureThreshold: {{ .Values.startupProbe.failureThreshold }}
+          {{- end }}
           {{- if .Values.livenessProbe.enabled }}
           livenessProbe:
             httpGet:
@@ -48,7 +62,31 @@ spec:
               httpHeaders:
               - name: Accept
                 value: application/json
+              {{- if .Values.ingress.enabled }}
+              {{- with (first .Values.ingress.hosts) }}
+              - name: Host
+                value: {{ .host }}
+              {{- end }}
+              {{- end }}
             initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
-            periodSeconds: 10
-            {{- end }}
-
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+          {{- end }}
+          {{- if .Values.readinessProbe.enabled }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.readinessProbe.path }}
+              port: {{ .Values.service.port }}
+              httpHeaders:
+              - name: Accept
+                value: application/json
+              {{- if .Values.ingress.enabled }}
+              {{- with (first .Values.ingress.hosts) }}
+              - name: Host
+                value: {{ .host }}
+              {{- end }}
+              {{- end }}
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+          {{- end }}

@@ -84,6 +84,7 @@ affinity: {}
 
 persistentVolume:
   storage: 2Gi
+  path: /data/postgres-portfolio-pv-prod
   
 database:
   name: django

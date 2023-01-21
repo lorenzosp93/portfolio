@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 name: portfolio
 
-replicaCount: 1
+replicaCount: 2
 
 image:
   name: portfolio
@@ -72,6 +72,19 @@ resources: {}
   #   cpu: 100m
   #   memory: 128Mi
 
+startupProbe:
+  enabled: true
+  path: /api/health/
+  initialDelaySeconds: 60
+  periodSeconds: 30
+  failureThreshold: 5
+  timeoutSeconds: 2
+
+readinessProbe:
+  enabled: false
+  path: /api/health/
+  initialDelaySeconds: 60
+  
 livenessProbe:
   enabled: false
   path: /api/health/
@@ -96,7 +109,7 @@ configMap:
   djangoHost: 'lorenzosp.com'
 
 database:
-  host: 'postgres'
+  host: 'postgres-portfolio'
   port: 5432
   engine: django.db.backends.postgresql
   name: django
