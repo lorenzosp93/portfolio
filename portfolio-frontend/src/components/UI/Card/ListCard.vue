@@ -1,7 +1,7 @@
 <template>
 	<div
 		@click="toggleDetails"
-		class="snap-center container flex-none rounded-2xl border-1 border-gray-200 shadow-md dark:bg-gray-600 bg-white hover:scale-102.5 transition duration-300 ease-in-out cursor-pointer"
+		class="rounded-2xl border-1 border-gray-200 shadow-md dark:bg-gray-600 bg-white hover:scale-102.5 transition duration-300 ease-in-out cursor-pointer"
 		:class="{ 'pointe-events-none': detailsVisible }"
 	>
 		<img
