@@ -34,12 +34,12 @@
 			></chevron-right-icon>
 		</div>
 		<div
-			class="p-auto gap-6 container relative w-screen flex overflow-x-scroll no-scrollbar snap-x snap-mandatory m-auto scroll-smooth scroll-px-1 p-5"
+			class="p-auto gap-3 container relative flex overflow-x-scroll no-scrollbar snap-x snap-mandatory m-auto scroll-smooth scroll-px-1 py-5 w-screen"
 			id="blog-container"
 		>
 			<list-card
 				type="blog"
-				class="blog-card w-3/5 md:w-1/3 lg:w-1/4"
+				class="blog-card w-3/5 md:w-1/3 lg:w-1/4 snap-center flex-none"
 				v-for="post in data"
 				:key="post?.uuid"
 				v-bind="post"
@@ -78,6 +78,7 @@
 import ListCard from "../UI/Card/ListCard.vue";
 import RetryButton from "../UI/Buttons/RetryButton.vue";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/vue/24/outline";
+import { useEventListener, useDebounceFn } from "@vueuse/core";
 
 export default {
 	components: { ListCard, RetryButton, ChevronLeftIcon, ChevronRightIcon },
@@ -121,11 +122,10 @@ export default {
 			}
 		},
 	},
-	beforeUnmount() {},
 	mounted() {
 		this.observer.observe(this.$el);
 		let container = document.getElementById("blog-container");
-		container.addEventListener("scroll", () => {
+		useEventListener(container, "scroll", () => {
 			let currentLength = this.data.length;
 			if (container.scrollLeft == 0) {
 				this.scrollPosition = "begin";
@@ -137,6 +137,9 @@ export default {
 				if (this.total > currentLength && !this.isLoading) {
 					this.isLoading = true;
 					this.loadEntries();
+					useDebounceFn(() => {
+						this.loadEntries();
+					}, 100);
 				}
 			} else {
 				this.scrollPosition = null;
