@@ -14,7 +14,7 @@
 			}}
 		</template>
 		<template v-slot:inner-content>
-			<div class="text-sm px-3 prose dark:prose-invert">
+			<div class="px-3 prose dark:prose-invert">
 				<p v-html="html_content" />
 			</div>
 		</template>

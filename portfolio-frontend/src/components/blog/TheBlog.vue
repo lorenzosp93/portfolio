@@ -34,12 +34,13 @@
 			></chevron-right-icon>
 		</div>
 		<div
-			class="p-auto gap-3 container relative flex overflow-x-auto no-scrollbar snap-x snap-mandatory m-auto scroll-smooth py-5 w-screen scroll-px-56"
+			class="p-auto container relative flex overflow-x-scroll no-scrollbar snap-x snap-mandatory m-auto scroll-smooth py-5 w-full"
 			id="blog-container"
 		>
+			<div class="px-[12.5%] lg:px-0"></div>
 			<list-card
 				type="blog"
-				class="blog-card w-3/5 lg:w-1/3 xl:w-1/4 snap-center flex-none"
+				class="blog-card w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4 snap-center flex-none mx-2.5"
 				v-for="post in data"
 				:key="post?.uuid"
 				v-bind="post"
@@ -70,6 +71,7 @@
 				v-else-if="!data.length"
 				@load-entries="loadEntries"
 			/>
+			<div class="px-[12.5%] lg:px-0"></div>
 		</div>
 	</div>
 </template>
@@ -127,11 +129,11 @@ export default {
 		let container = document.getElementById("blog-container");
 		useEventListener(container, "scroll", () => {
 			let currentLength = this.data.length;
-			if (container.scrollLeft == 0) {
+			if (container.scrollLeft <= 20) {
 				this.scrollPosition = "begin";
 			} else if (
-				container.scrollLeft ==
-				container.scrollWidth - container.offsetWidth
+				container.scrollLeft >=
+				container.scrollWidth - container.offsetWidth - 20
 			) {
 				this.scrollPosition = "end";
 				if (this.total > currentLength && !this.isLoading) {

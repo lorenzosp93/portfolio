@@ -59,8 +59,8 @@
 					class="scroll-my-10"
 					@load-complete="refreshAnimations"
 				/>
-			</div>
-			<div class="flex-none w-full grow snap-center resume-panels">
+				<!-- </div>
+			<div class="flex-none w-full grow snap-center resume-panels"> -->
 				<resume-timeline
 					:ix="'center'"
 					:observer="observer"
