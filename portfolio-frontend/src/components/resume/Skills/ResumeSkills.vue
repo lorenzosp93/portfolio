@@ -6,7 +6,7 @@
 				class="relative mx-10 my-8 flex flex-wrap"
 			>
 				<div
-					v-for="col in 3"
+					v-for="col in 4"
 					:key="col"
 					class="flex-[100%] md:flex-[50%] lg:flex-[25%] max-w-full md:max-w-[50%] lg:max-w-[25%] px-2.5 h-fit"
 				>
