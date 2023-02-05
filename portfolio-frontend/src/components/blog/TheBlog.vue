@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="container min-h-[55vh] lg:min-h-[60vh] relative flex w-screen mx-auto flex-wrap"
+		class="container min-h-[55vh] lg:min-h-[60vh] w-full relative flex flex-wrap mx-auto"
 	>
 		<div class="class container flex flex-wrap mx-auto my-10">
 			<h2
@@ -34,12 +34,12 @@
 			></chevron-right-icon>
 		</div>
 		<div
-			class="p-auto gap-3 container relative flex overflow-x-scroll no-scrollbar snap-x snap-mandatory m-auto scroll-smooth scroll-px-1 py-5 w-screen"
+			class="p-auto gap-3 container relative flex overflow-x-auto no-scrollbar snap-x snap-mandatory m-auto scroll-smooth py-5 w-screen scroll-px-56"
 			id="blog-container"
 		>
 			<list-card
 				type="blog"
-				class="blog-card w-3/5 md:w-1/3 lg:w-1/4 snap-center flex-none"
+				class="blog-card w-3/5 lg:w-1/3 xl:w-1/4 snap-center flex-none"
 				v-for="post in data"
 				:key="post?.uuid"
 				v-bind="post"
