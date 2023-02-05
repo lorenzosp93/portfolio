@@ -3,8 +3,13 @@
 		<template v-slot:content>
 			<ol
 				v-if="data.length > 0"
-				class="relative mx-10 my-8 flex flex-wrap"
+				class="relative mx-10 my-1 flex flex-wrap"
 			>
+				<h1
+					class="dark:text-white text-xl font-semibold capitalize pt-3 md:hidden"
+				>
+					Skills
+				</h1>
 				<div
 					v-for="col in 4"
 					:key="col"

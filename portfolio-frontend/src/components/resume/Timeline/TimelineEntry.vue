@@ -10,16 +10,16 @@
 		<div
 			class="timeline-entry p-3 bg-white rounded-lg shadow-md dark:bg-gray-700 dark:border-gray-600 hover:scale-102.5 transition duration-300 ease-in-out cursor-pointer"
 		>
-			<div class="justify-between items-center mb-3 sm:flex">
+			<div class="justify-between items-center f mb-3">
 				<p
-					class="text-xs sm:text-sm font-normal text-gray-400 sm:order-last sm:mb-0"
+					class="text-xs sm:text-sm font-normal text-gray-400 sm:order-last sm:mb-0 float-right"
 				>
 					{{ start_date__date }} — {{ end_date__date }}
 				</p>
 				<p class="font-semibold text-gray-900 dark:text-gray-300">
 					{{ name }}
 				</p>
-				<p class="text-xs sm:text-sm text-gray-500 dark:text-gray-300">
+				<p class="text-xs text-gray-500 dark:text-gray-300">
 					{{ location }}
 				</p>
 			</div>
