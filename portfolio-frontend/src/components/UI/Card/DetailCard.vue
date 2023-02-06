@@ -59,6 +59,7 @@
 					</div>
 				</div>
 				<div
+					style="min-height: 40vh; min-height: 40svh"
 					class="bottom-sheet__content min-h-[40vh] lg:min-h-[70vh]"
 					:style="{ height: contentH }"
 					ref="content"

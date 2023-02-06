@@ -7,7 +7,8 @@
 			"path": "portfolio-frontend/",
 			"problemMatcher": [],
 			"label": "npm: serve - portfolio-frontend",
-			"detail": "vue-cli-service serve"
+			"detail": "vue-cli-service serve",
+			"isBackground": true
 		},
 		{
 			"type": "docker-build",

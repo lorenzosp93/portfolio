@@ -1,6 +1,7 @@
 <template>
 	<div
-		class="m-auto mt-5 rounded-lg max-w-screen-lg shadow-md bg-white dark:bg-gray-900 py-1"
+		class="m-auto mt-5 rounded-lg max-w-screen-lg overflow-y-scroll shadow-md bg-white dark:bg-gray-900 py-1"
+		style="max-height: 90vh; max-height: 90svh"
 	>
 		<div class="relative p-auto w-full overflow-hidden">
 			<div
@@ -8,7 +9,7 @@
 				:class="{ hidden: ix == 'last' }"
 			>
 				<div
-					class="block w-10 h-1 rounded-lg cursor-grab active:cursor-grabbing bg-gray-300 rotate-90"
+					class="flex w-10 h-1 rounded-lg cursor-grab active:cursor-grabbing bg-gray-300 rotate-90"
 				/>
 			</div>
 			<div
@@ -16,7 +17,7 @@
 				:class="{ hidden: ix == 'first' }"
 			>
 				<div
-					class="block w-10 h-1 rounded-lg cursor-grab active:cursor-grabbing bg-gray-300 rotate-90"
+					class="flex w-10 h-1 rounded-lg cursor-grab active:cursor-grabbing bg-gray-300 rotate-90"
 				/>
 			</div>
 			<slot name="content"> </slot>
