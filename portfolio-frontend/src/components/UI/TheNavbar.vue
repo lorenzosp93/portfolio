@@ -300,9 +300,11 @@ export default {
 			this.isMenuOpen = !this.isMenuOpen;
 		},
 		scrollToElement(elem) {
-			document
-				.getElementById(elem)
-				.scrollIntoView({ behavior: "smooth" });
+			document.getElementById(elem).scrollIntoView({
+				behavior: "smooth",
+				block: "nearest",
+				inline: "center",
+			});
 		},
 	},
 	computed: {},

@@ -37,15 +37,6 @@
 			</div>
 		</div>
 		<div
-			@click="scrollToTop"
-			class="absolute right-10 bottom-3 z-10 h-10 w-10 rounded-full shadow-md bg-gray-50 dark:bg-gray-500 cursor-pointer select-none hover:dark:bg-gray-400 hover:bg-gray-100"
-			id="top-scroller-resume"
-		>
-			<chevron-up-icon
-				class="w-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-			></chevron-up-icon>
-		</div>
-		<div
 			class="container relative flex gap-6 overflow-x-scroll no-scrollbar snap-x snap-mandatory scroll-smooth w-full"
 			id="resume-container"
 		>
@@ -56,18 +47,16 @@
 					:isActive="isExperienceActive"
 					:kind="'experience'"
 					id="experience"
-					class="scroll-my-10"
 					@load-complete="refreshAnimations"
 				/>
-				<!-- </div>
-			<div class="flex-none w-full grow snap-center resume-panels"> -->
+			</div>
+			<div class="flex-none w-full grow snap-center resume-panels">
 				<resume-timeline
 					:ix="'center'"
 					:observer="observer"
 					:isActive="isEducationActive"
 					:kind="'education'"
 					id="education"
-					class="scroll-my-10"
 					@load-complete="refreshAnimations"
 				/>
 			</div>
@@ -77,7 +66,6 @@
 					:observer="observer"
 					id="projects"
 					:isActive="isProjectsActive"
-					class="scroll-my-10"
 					@load-complete="refreshAnimations"
 				/>
 			</div>
@@ -87,7 +75,6 @@
 					:observer="observer"
 					id="skills"
 					:isActive="isSkillsActive"
-					class="scroll-my-10"
 				/>
 			</div>
 		</div>
@@ -98,11 +85,7 @@
 import ResumeProjects from "./Projects/ResumeProjects.vue";
 import ResumeSkills from "./Skills/ResumeSkills.vue";
 import ResumeTimeline from "./Timeline/ResumeTimeline.vue";
-import {
-	ChevronLeftIcon,
-	ChevronRightIcon,
-	ChevronUpIcon,
-} from "@heroicons/vue/24/outline";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/vue/24/outline";
 
 export default {
 	components: {
@@ -111,7 +94,6 @@ export default {
 		ResumeSkills,
 		ChevronLeftIcon,
 		ChevronRightIcon,
-		ChevronUpIcon,
 	},
 	name: "TheResume",
 	data() {
@@ -138,9 +120,6 @@ export default {
 		},
 	},
 	methods: {
-		scrollToTop() {
-			this.$el.scrollIntoView({ behavior: "smooth", block: "start" });
-		},
 		isActive(kind) {
 			return (
 				this.elementsInView.filter(
