@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="m-auto mt-5 rounded-lg max-w-screen-lg overflow-y-scroll shadow-md bg-white dark:bg-gray-900 py-1"
+		class="m-auto mt-5 rounded-lg max-w-screen-lg overflow-y-scroll shadow-md bg-white dark:bg-gray-900 py-1 overscroll-auto"
 		style="max-height: 90vh; max-height: 90svh"
 	>
 		<div class="relative p-auto w-full overflow-hidden">

@@ -2,7 +2,7 @@
 	<Teleport to="body">
 		<div
 			@click="clickOnBottomSheet"
-			class="bottom-sheet shadlw-xl"
+			class="bottom-sheet shadow-xl"
 			:class="{
 				opened: opened,
 				closed: opened === false,
@@ -83,6 +83,8 @@
 </template>
 
 <script>
+import { useEventListener } from "@vueuse/core";
+
 export default {
 	name: "DetailCard",
 	data() {
@@ -214,7 +216,13 @@ export default {
 		this.tl?.kill();
 		this.drag?.kill();
 	},
-	mounted() {},
+	mounted() {
+		useEventListener("keyup", (event) => {
+			if (event.key == "Escape") {
+				this.close();
+			}
+		});
+	},
 };
 </script>
 
