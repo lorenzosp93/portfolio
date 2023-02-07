@@ -60,7 +60,7 @@ export default {
 			innerWidth: null,
 			truncationAmount: () => {
 				let w = window.innerWidth;
-				return w > 1024 ? 450 : w > 640 ? 200 : 75;
+				return w > 1024 ? 350 : w > 640 ? 200 : 75;
 			},
 			entriesLimit: () => {
 				let w = window.innerWidth;
