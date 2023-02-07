@@ -1,6 +1,6 @@
 <template>
-	<div class="container relative min-h-screen w-full mx-auto mt-10">
-		<div class="class container flex flex-wrap mx-auto mb-10">
+	<div class="relative min-h-screen w-full mx-auto mt-10">
+		<div class="flex flex-wrap w-full mx-auto mb-10">
 			<h2
 				class="text-center text-xl w-full font-bold mx-auto text-gray-600 dark:text-white"
 			>
@@ -14,12 +14,12 @@
 			</p>
 		</div>
 		<div
-			class="z-10 sticky top-1/2 hidden md:block max-w-screen-lg mx-auto opacity-0"
+			class="z-10 sticky top-1/2 hidden md:block mx-auto opacity-0"
 			id="arrow-holder-resume"
 		>
 			<div
 				@click="scrollToSibling(false)"
-				class="absolute -left-5 rounded-full h-10 w-10 shadow-md bg-gray-50 dark:bg-gray-500 hidden hover:bg-gray-100 hover:dark:bg-gray-400 cursor-pointer select-none"
+				class="absolute left-2 rounded-full h-10 w-10 shadow-md bg-gray-50 dark:bg-gray-500 hidden hover:bg-gray-100 hover:dark:bg-gray-400 cursor-pointer select-none"
 				:class="{ 'md:block': !isExperienceActive }"
 			>
 				<chevron-left-icon
@@ -28,7 +28,7 @@
 			</div>
 			<div
 				@click="scrollToSibling(true)"
-				class="absolute -right-5 rounded-full h-10 w-10 shadow-md bg-gray-50 dark:bg-gray-500 hidden hover:dark:bg-gray-400 hover:bg-gray-100 cursor-pointer select-none"
+				class="absolute right-2 rounded-full h-10 w-10 shadow-md bg-gray-50 dark:bg-gray-500 hidden hover:dark:bg-gray-400 hover:bg-gray-100 cursor-pointer select-none"
 				:class="{ 'md:block': !isSkillsActive }"
 			>
 				<chevron-right-icon
@@ -37,7 +37,7 @@
 			</div>
 		</div>
 		<div
-			class="container relative flex gap-6 overflow-x-scroll no-scrollbar snap-x snap-mandatory scroll-smooth w-full"
+			class="relative flex gap-6 overflow-x-scroll no-scrollbar snap-x snap-mandatory scroll-smooth w-full"
 			id="resume-container"
 		>
 			<div class="flex-none w-full grow snap-center resume-panels">

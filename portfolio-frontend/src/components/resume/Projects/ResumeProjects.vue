@@ -6,7 +6,7 @@
 				class="relative mx-10 my-1 flex flex-wrap"
 			>
 				<h1
-					class="dark:text-white text-xl font-semibold capitalize pt-3 md:hidden"
+					class="dark:text-white text-xl font-semibold capitalize pt-2 md:hidden"
 				>
 					Projects
 				</h1>
