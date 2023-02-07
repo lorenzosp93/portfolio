@@ -97,8 +97,4 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-.contentClassesOptions {
-	@apply pl-5 list-disc list-inside underline;
-}
-</style>
+<style scoped></style>
