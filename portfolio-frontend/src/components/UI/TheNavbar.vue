@@ -1,10 +1,10 @@
 <template>
 	<div class="sticky top-0 z-20 opacity-0 w-screen">
 		<slot>
-			<nav class="">
+			<nav>
 				<div class="mx-auto sm:bg-white sm:dark:bg-gray-600">
 					<div
-						class="relative flex items-center justify-between h-16"
+						class="relative flex items-center justify-between h-16 max-w-6xl mx-auto"
 					>
 						<div
 							class="absolute inset-y-0 left-0 flex items-center sm:hidden"
@@ -64,10 +64,10 @@
 								/>
 							</div>
 							<div
-								class="hidden sm:block my-auto sm:ml-6 justify-end"
+								class="hidden sm:block my-auto sm:ml-6 justify-end w-full"
 							>
 								<div
-									class="flex space-x-3 overflow-x-auto no-scrollbar"
+									class="flex space-x-5 overflow-x-auto no-scrollbar"
 								>
 									<!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
 									<a

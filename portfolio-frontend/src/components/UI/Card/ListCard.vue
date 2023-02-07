@@ -18,7 +18,7 @@
 			<h2 class="font-semibold w-full text-gray-900 dark:text-white">
 				{{ name }}
 			</h2>
-			<p
+			<div
 				v-html="truncatedContent"
 				class="text-sm my-3 w-full text-ellipsis text-gray-500 dark:text-gray-300 after:content-['_⏎'] after:text-gray-400"
 			/>

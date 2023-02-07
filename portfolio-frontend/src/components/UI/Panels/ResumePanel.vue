@@ -1,23 +1,15 @@
 <template>
 	<div
-		class="m-auto mt-5 rounded-lg md:max-w-xl lg:max-w-3xl xl:max-w-5xl overflow-y-scroll shadow-md bg-white dark:bg-gray-900 py-1 overscroll-auto mx-auto"
+		class="m-auto mt-5 rounded-lg md:max-w-xl lg:max-w-3xl xl:max-w-5xl overflow-y-scroll shadow-md bg-white dark:bg-gray-900 py-1 mx-auto no-scrollbar"
 		style="max-height: 90vh; max-height: 90svh"
 	>
-		<div class="relative p-auto w-full overflow-hidden">
+		<div class="p-auto w-full overflow-x-hidden">
 			<div
 				class="absolute top-1/2 -right-2.5 md:hidden"
 				:class="{ hidden: ix == 'last' }"
 			>
 				<div
-					class="flex w-10 h-1 rounded-lg cursor-grab active:cursor-grabbing bg-gray-300 rotate-90"
-				/>
-			</div>
-			<div
-				class="absolute top-1/2 -left-2.5 md:hidden"
-				:class="{ hidden: ix == 'first' }"
-			>
-				<div
-					class="flex w-10 h-1 rounded-lg cursor-grab active:cursor-grabbing bg-gray-300 rotate-90"
+					class="w-10 p-0.5 rounded-lg cursor-grab active:cursor-grabbing bg-gray-300 rotate-90"
 				/>
 			</div>
 			<slot name="content"> </slot>

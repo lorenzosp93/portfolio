@@ -40,7 +40,7 @@
 			class="relative flex gap-6 overflow-x-scroll no-scrollbar snap-x snap-mandatory scroll-smooth w-full"
 			id="resume-container"
 		>
-			<div class="flex-none w-full grow snap-center resume-panels">
+			<div class="flex-none w-full snap-center">
 				<resume-timeline
 					:ix="'first'"
 					:observer="observer"
@@ -50,7 +50,7 @@
 					@load-complete="refreshAnimations"
 				/>
 			</div>
-			<div class="flex-none w-full grow snap-center resume-panels">
+			<div class="flex-none w-full snap-center">
 				<resume-timeline
 					:ix="'center'"
 					:observer="observer"
@@ -60,7 +60,7 @@
 					@load-complete="refreshAnimations"
 				/>
 			</div>
-			<div class="flex-none w-full grow snap-center resume-panels">
+			<div class="flex-none w-full snap-center">
 				<resume-projects
 					:ix="'center'"
 					:observer="observer"
@@ -69,7 +69,7 @@
 					@load-complete="refreshAnimations"
 				/>
 			</div>
-			<div class="flex-none w-full grow snap-center resume-panels">
+			<div class="flex-none w-full snap-center">
 				<resume-skills
 					:ix="'last'"
 					:observer="observer"
@@ -169,8 +169,4 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-.resume-panels {
-	@apply flex-shrink-0;
-}
-</style>
+<style scoped></style>
