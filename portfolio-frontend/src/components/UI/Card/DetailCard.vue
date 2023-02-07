@@ -16,7 +16,7 @@
 				ref="backdrop"
 			/>
 			<div
-				class="bg-white dark:bg-gray-800 bottom-sheet__card fx-default md:max-w-lg lg:max-w-xl xl:max-w-2xl 2xl:max-w-4xl"
+				class="bg-white dark:bg-gray-800 bottom-sheet__card fx-default md:max-w-lg lg:max-w-2xl xl:max-w-4xl 2xl:max-w-6xl"
 				:style="[
 					{
 						bottom: cardP + 'px',
