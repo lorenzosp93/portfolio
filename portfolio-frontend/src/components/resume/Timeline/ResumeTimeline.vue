@@ -11,7 +11,7 @@
 				class="relative border-l border-gray-200 dark:border-gray-600 ml-5 py-1"
 			>
 				<h1
-					class="dark:text-white text-xl font-semibold px-5 pt-3 capitalize md:hidden"
+					class="dark:text-white text-xl font-semibold px-5 pt-2 capitalize md:hidden"
 				>
 					{{ kind }}
 				</h1>

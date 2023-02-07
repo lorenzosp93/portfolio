@@ -1,5 +1,5 @@
 <template>
-	<li @click="openDetails" class="mx-3 my-5 z-2">
+	<li @click="openDetails" class="mx-3 my-3 z-2">
 		<span
 			class="absolute ring-4 ring-white dark:ring-gray-900 mt-5 -left-1"
 		>
@@ -10,9 +10,9 @@
 		<div
 			class="timeline-entry p-3 bg-white rounded-lg shadow-md dark:bg-gray-700 dark:border-gray-600 hover:scale-102.5 transition duration-300 ease-in-out cursor-pointer"
 		>
-			<div class="justify-between items-center f mb-3">
+			<div class="justify-between items-center mb-3 w-full">
 				<p
-					class="text-xs sm:text-sm font-normal text-gray-400 sm:order-last sm:mb-0 float-right"
+					class="text-xs sm:text-sm font-normal text-gray-400 sm:order-last sm:mb-0 float-right pt-1"
 				>
 					{{ start_date__date }} — {{ end_date__date }}
 				</p>

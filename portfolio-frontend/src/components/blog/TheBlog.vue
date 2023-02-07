@@ -1,8 +1,8 @@
 <template>
 	<div
-		class="container min-h-[55vh] lg:min-h-[60vh] w-full relative flex flex-wrap mx-auto"
+		class="min-h-[55vh] lg:min-h-[60vh] w-full relative flex flex-wrap mx-auto"
 	>
-		<div class="class container flex flex-wrap mx-auto my-10">
+		<div class="flex flex-wrap mx-auto my-10">
 			<h2
 				class="w-full mt-auto text-center text-xl font-bold text-gray-600 dark:text-white"
 			>
@@ -18,7 +18,7 @@
 		<div
 			v-if="data.length && scrollPosition != 'begin'"
 			@click="scrollToSibling(false)"
-			class="z-10 absolute -left-5 top-1/2 rounded-full h-10 w-10 shadow-md bg-gray-50 dark:bg-gray-500 hidden md:block hover:bg-gray-100 hover:dark:bg-gray-400 cursor-pointer select-none"
+			class="z-10 absolute left-2 top-1/2 rounded-full h-10 w-10 shadow-md bg-gray-50 dark:bg-gray-500 hidden md:block hover:bg-gray-100 hover:dark:bg-gray-400 cursor-pointer select-none"
 		>
 			<chevron-left-icon
 				class="w-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
@@ -27,17 +27,17 @@
 		<div
 			v-if="data.length && scrollPosition != 'end'"
 			@click="scrollToSibling(true)"
-			class="z-10 absolute -right-5 top-1/2 rounded-full h-10 w-10 shadow-md bg-gray-50 dark:bg-gray-500 hidden md:block hover:dark:bg-gray-400 hover:bg-gray-100 cursor-pointer select-none"
+			class="z-10 absolute right-2 top-1/2 rounded-full h-10 w-10 shadow-md bg-gray-50 dark:bg-gray-500 hidden md:block hover:dark:bg-gray-400 hover:bg-gray-100 cursor-pointer select-none"
 		>
 			<chevron-right-icon
 				class="w-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
 			></chevron-right-icon>
 		</div>
 		<div
-			class="p-auto container relative flex overflow-x-scroll no-scrollbar snap-x snap-mandatory m-auto scroll-smooth py-5 w-full"
+			class="p-auto relative flex overflow-x-scroll no-scrollbar snap-x snap-mandatory m-auto scroll-smooth py-5 w-full"
 			id="blog-container"
 		>
-			<div class="px-[12.5%] lg:px-0"></div>
+			<div class="px-[12.5%] lg:px-10"></div>
 			<list-card
 				type="blog"
 				class="blog-card w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4 snap-center flex-none mx-2.5"
@@ -71,7 +71,7 @@
 				v-else-if="!data.length"
 				@load-entries="loadEntries"
 			/>
-			<div class="px-[12.5%] lg:px-0"></div>
+			<div class="px-[12.5%] lg:px-10"></div>
 		</div>
 	</div>
 </template>
