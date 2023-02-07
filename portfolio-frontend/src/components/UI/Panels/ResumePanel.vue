@@ -1,9 +1,9 @@
 <template>
 	<div
-		class="m-auto mt-5 rounded-lg md:max-w-xl lg:max-w-3xl xl:max-w-5xl overflow-y-scroll shadow-md bg-white dark:bg-gray-900 py-1 mx-auto no-scrollbar"
-		style="max-height: 90vh; max-height: 90svh"
+		class="m-auto rounded-lg md:max-w-xl lg:max-w-3xl xl:max-w-5xl overflow-y-scroll shadow-md bg-white dark:bg-gray-900 py-1 mx-auto no-scrollbar border-2 dark:border-gray-900 border-white"
+		style="max-height: 90vh; max-height: 90svh; overscroll-behavior: unset"
 	>
-		<div class="p-auto w-full overflow-x-hidden">
+		<div class="overflow-x-hidden">
 			<div
 				class="absolute top-1/2 -right-2.5 md:hidden"
 				:class="{ hidden: ix == 'last' }"

@@ -8,7 +8,7 @@
 			></div>
 		</span>
 		<div
-			class="timeline-entry p-3 bg-white rounded-lg shadow-md dark:bg-gray-700 dark:border-gray-600 hover:scale-102.5 transition duration-300 ease-in-out cursor-pointer"
+			class="p-3 bg-white rounded-lg shadow-md dark:bg-gray-700 dark:border-gray-600 hover:scale-102.5 transition duration-300 ease-in-out cursor-pointer"
 		>
 			<div class="justify-between items-center mb-3 w-full">
 				<p
@@ -19,7 +19,7 @@
 				<p class="font-semibold text-gray-900 dark:text-gray-300">
 					{{ name }}
 				</p>
-				<p class="text-xs text-gray-500 dark:text-gray-300">
+				<p class="text-xs sm:text-sm text-gray-500 dark:text-gray-300">
 					{{ location }}
 				</p>
 			</div>

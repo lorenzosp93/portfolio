@@ -34,7 +34,7 @@
 			></chevron-right-icon>
 		</div>
 		<div
-			class="p-auto relative flex overflow-x-scroll no-scrollbar snap-x snap-mandatory m-auto scroll-smooth py-5 w-full"
+			class="relative flex overflow-x-scroll no-scrollbar snap-x snap-mandatory m-auto scroll-smooth w-full"
 			id="blog-container"
 		>
 			<div class="px-[12.5%] lg:px-10"></div>

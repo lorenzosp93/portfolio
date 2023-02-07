@@ -3,7 +3,7 @@
 		class="m-5 justify-start bg-gray-50 rounded-lg shadow-md dark:bg-gray-600 dark:border-gray-500 dark:text-gray-300 z-1"
 	>
 		<span
-			class="flex absolute mt-5 -left-4 justify-center items-center w-8 h-8 bg-white rounded-full ring-8 ring-white dark:ring-gray-900 dark:bg-gray-900"
+			class="flex absolute mt-3 -left-3.5 justify-center items-center w-7 h-7 rounded-full ring-4 ring-white dark:ring-gray-900 dark:bg-gray-900"
 		>
 			<img
 				class="object-contain rounded-full shadow-lg"
