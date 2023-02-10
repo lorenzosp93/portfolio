@@ -1,38 +1,36 @@
 <template>
-	<div id="smooth-wrapper">
-		<div id="smooth-content" class="w-full snap-y snap-mandatory">
-			<the-hero
-				:observer="observer"
-				id="the-hero"
-				@hero-loaded="setupAnimation"
-			/>
-			<the-navbar
-				id="the-navbar"
-				:elementInView="elementInView"
-				@image-loaded="setupAnimation"
-			/>
-			<the-resume
-				:observer="observer"
-				:elementsInView="elementsInView"
-				id="the-resume"
-				class="scroll-mt-16"
-			/>
-			<the-blog
-				:observer="observer"
-				:isActive="isBlogActive"
-				id="the-blog"
-				class="scroll-mt-16"
-			/>
-			<the-contacts
-				:observer="observer"
-				id="the-contacts"
-				class="scroll-mt-16"
-			/>
+	<div class="w-full">
+		<the-hero
+			:observer="observer"
+			id="the-hero"
+			@hero-loaded="setupAnimation"
+		/>
+		<the-navbar
+			id="the-navbar"
+			:elementInView="elementInView"
+			@image-loaded="setupAnimation"
+		/>
+		<the-resume
+			:observer="observer"
+			:elementsInView="elementsInView"
+			id="the-resume"
+			class="scroll-mt-16"
+		/>
+		<the-blog
+			:observer="observer"
+			:isActive="isBlogActive"
+			id="the-blog"
+			class="scroll-mt-16"
+		/>
+		<the-contacts
+			:observer="observer"
+			id="the-contacts"
+			class="scroll-mt-16"
+		/>
 
-			<p class="px-5 pb-2 text-sm dark:text-white text-gray-700">
-				© Lorenzo Spinelli, 2022
-			</p>
-		</div>
+		<p class="px-5 pb-2 text-sm dark:text-white text-gray-700">
+			© Lorenzo Spinelli, 2022
+		</p>
 	</div>
 </template>
 
