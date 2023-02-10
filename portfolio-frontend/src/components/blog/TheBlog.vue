@@ -34,7 +34,7 @@
 			></chevron-right-icon>
 		</div>
 		<div
-			class="relative flex overflow-x-scroll no-scrollbar snap-x snap-proximity m-auto w-full scroll-smooth px-[12.5%] md:px-[33.3%] lg:px-32"
+			class="relative flex overflow-x-scroll no-scrollbar snap-x snap-proximity h-fit w-full scroll-smooth px-[12.5%] md:px-[33.3%] lg:px-32 py-5"
 			id="blog-container"
 		>
 			<list-card
