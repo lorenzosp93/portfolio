@@ -1,7 +1,7 @@
 <template>
 	<div
 		@click="toggleDetails"
-		class="rounded-2xl border-1 border-gray-200 shadow-md dark:bg-gray-600 bg-white cursor-pointer"
+		class="rounded-xl shadow-md dark:bg-gray-600 bg-white cursor-pointer"
 		:class="{ 'pointe-events-none': detailsVisible }"
 	>
 		<img

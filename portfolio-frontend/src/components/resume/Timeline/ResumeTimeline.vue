@@ -8,7 +8,7 @@
 		<template v-slot:content>
 			<ol
 				v-if="data.length > 0"
-				class="relative border-l border-gray-200 dark:border-gray-600 ml-5 py-1"
+				class="relative border-l border-gray-200 dark:border-gray-600 ml-5 lg:ml-10 py-[1px]"
 			>
 				<h1
 					class="dark:text-white text-xl font-semibold px-5 pt-2 capitalize md:hidden"
