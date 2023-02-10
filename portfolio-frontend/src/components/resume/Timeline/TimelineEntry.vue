@@ -1,14 +1,14 @@
 <template>
 	<li @click="openDetails" class="mx-3 my-3 z-2">
 		<span
-			class="absolute ring-4 ring-white dark:ring-gray-900 mt-5 -left-1"
+			class="absolute ring-4 ring-white dark:ring-gray-900 mt-5 left-0 -translate-x-1/2"
 		>
 			<div
-				class="w-2 h-2 rounded-full bg-gray-200 dark:bg-gray-600 shadow-sm"
+				class="w-2 lg:w-3 aspect-square rounded-full bg-gray-200 dark:bg-gray-600 shadow-sm"
 			></div>
 		</span>
 		<div
-			class="p-3 bg-white rounded-lg shadow-md dark:bg-gray-700 dark:border-gray-600 hover:scale-102.5 transition duration-300 ease-in-out cursor-pointer"
+			class="p-3 bg-white rounded-lg shadow-md dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
 		>
 			<div class="justify-between items-center mb-3 w-full">
 				<p

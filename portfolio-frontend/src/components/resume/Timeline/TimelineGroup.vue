@@ -1,9 +1,9 @@
 <template>
 	<div
-		class="m-5 justify-start bg-gray-50 rounded-lg shadow-md dark:bg-gray-600 dark:border-gray-500 dark:text-gray-300 z-1"
+		class="my-5 mx-5 lg:ml-10 justify-start bg-gray-50 rounded-lg shadow-md dark:bg-gray-600 dark:border-gray-500 dark:text-gray-300 z-1"
 	>
 		<span
-			class="flex absolute mt-3 -left-3.5 justify-center items-center w-7 h-7 rounded-full ring-4 ring-white dark:ring-gray-900 dark:bg-gray-900"
+			class="flex absolute -translate-x-1/2 mt-3 left-0 justify-center items-center h-7 lg:w-10 aspect-square rounded-full ring-4 ring-white dark:ring-gray-900 dark:bg-gray-900"
 		>
 			<img
 				class="object-contain rounded-full shadow-lg"

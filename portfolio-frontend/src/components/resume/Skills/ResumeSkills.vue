@@ -16,7 +16,7 @@
 					class="flex-[100%] md:flex-[50%] lg:flex-[25%] max-w-full md:max-w-[50%] lg:max-w-[25%] px-2.5 h-fit"
 				>
 					<skills-category
-						class="hover:scale-102.5 transition duration-300 ease-in-out my-5"
+						class="my-5"
 						v-for="category in data.filter(
 							(_, idx) =>
 								idx %

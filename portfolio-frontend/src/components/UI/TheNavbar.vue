@@ -70,7 +70,7 @@
 									class="flex space-x-5 overflow-x-auto no-scrollbar"
 								>
 									<!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-									<a
+									<button
 										@click="scrollToElement('the-hero')"
 										class="text-black dark:text-gray-300 px-3 py-2 ml-auto rounded-md text-sm font-medium cursor-pointer"
 										:class="{
@@ -78,10 +78,11 @@
 												elementInView === 'the-hero',
 										}"
 										aria-current="page"
-										>About</a
 									>
-									<a
-										class="px-0.5 py-2 rounded-lg text-sm font-medium cursor-pointer"
+										About
+									</button>
+									<button
+										class="px-0.5 py-0.5 rounded-lg text-sm font-medium cursor-pointer"
 										:class="{
 											active: [
 												'experience',
@@ -99,7 +100,7 @@
 										>
 											Resume
 										</p>
-										<a
+										<button
 											@click="
 												scrollToElement('experience')
 											"
@@ -117,9 +118,10 @@
 													'experience',
 												].includes(elementInView),
 											}"
-											>Experience</a
 										>
-										<a
+											Experience
+										</button>
+										<button
 											@click="
 												scrollToElement('education')
 											"
@@ -137,9 +139,10 @@
 													'education',
 												].includes(elementInView),
 											}"
-											>Education</a
 										>
-										<a
+											Education
+										</button>
+										<button
 											@click="scrollToElement('projects')"
 											class="text-white dark:text-gray-900 px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
 											v-show="
@@ -155,9 +158,10 @@
 													'projects',
 												].includes(elementInView),
 											}"
-											>Projects</a
 										>
-										<a
+											Projects
+										</button>
+										<button
 											@click="scrollToElement('skills')"
 											class="text-white dark:text-gray-900 box-border px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
 											v-show="
@@ -173,19 +177,21 @@
 													'skills',
 												].includes(elementInView),
 											}"
-											>Skills</a
 										>
-									</a>
-									<a
+											Skills
+										</button>
+									</button>
+									<button
 										@click="scrollToElement('the-blog')"
 										class="text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
 										:class="{
 											active:
 												elementInView === 'the-blog',
 										}"
-										>Blog</a
 									>
-									<a
+										Blog
+									</button>
+									<button
 										@click="scrollToElement('the-contacts')"
 										class="text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
 										:class="{
@@ -193,8 +199,9 @@
 												elementInView ===
 												'the-contacts',
 										}"
-										>Contacts</a
 									>
+										Contacts
+									</button>
 								</div>
 							</div>
 						</div>
@@ -209,7 +216,7 @@
 				>
 					<div class="px-2 pt-2 pb-3 space-y-2 shadow-md">
 						<!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-						<a
+						<button
 							@click="
 								scrollToElement('the-hero');
 								toggleMenu();
@@ -217,50 +224,56 @@
 							class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
 							:class="{ active: elementInView === 'the-hero' }"
 							aria-current="page"
-							>About</a
 						>
-						<a
+							About
+						</button>
+						<button
 							@click="scrollToElement('experience')"
 							class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
 							:class="{
 								active: ['experience'].includes(elementInView),
 							}"
-							>Experience</a
 						>
-						<a
+							Experience
+						</button>
+						<button
 							@click="scrollToElement('education')"
 							class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
 							:class="{
 								active: ['education'].includes(elementInView),
 							}"
-							>Education</a
 						>
-						<a
+							Education
+						</button>
+						<button
 							@click="scrollToElement('projects')"
 							class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
 							:class="{
 								active: ['projects'].includes(elementInView),
 							}"
-							>Projects</a
 						>
-						<a
+							Projects
+						</button>
+						<button
 							@click="scrollToElement('skills')"
 							class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
 							:class="{
 								active: ['skills'].includes(elementInView),
 							}"
-							>Skills</a
 						>
-						<a
+							Skills
+						</button>
+						<button
 							@click="
 								scrollToElement('the-blog');
 								toggleMenu();
 							"
 							class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
 							:class="{ active: elementInView === 'the-blog' }"
-							>Blog</a
 						>
-						<a
+							Blog
+						</button>
+						<button
 							@click="
 								scrollToElement('the-contacts');
 								toggleMenu();
@@ -269,8 +282,9 @@
 							:class="{
 								active: elementInView === 'the-contacts',
 							}"
-							>Contacts</a
 						>
+							Contacts
+						</button>
 					</div>
 				</div>
 			</nav>
