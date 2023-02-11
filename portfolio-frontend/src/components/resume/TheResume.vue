@@ -14,7 +14,7 @@
 			</p>
 		</div>
 		<div
-			class="z-10 sticky top-1/2 hidden md:block mx-auto opacity-0"
+			class="z-10 absolute w-full top-1/2 hidden md:block mx-auto"
 			id="arrow-holder-resume"
 		>
 			<div
@@ -138,31 +138,6 @@ export default {
 				container.scrollLeft -= scrollWidth;
 			}
 		},
-		setUpAnimations() {
-			const t1 = this.$gsap.timeline({
-				scrollTrigger: {
-					trigger: "#resume-container",
-					start: "10% center",
-					end: "90% center",
-					scrub: true,
-				},
-			});
-			t1.to("#arrow-holder-resume", { opacity: 1, duration: 0.3 }).to(
-				"#arrow-holder-resume",
-				{ opacity: 0, duration: 0.3 },
-				0.7
-			);
-			this.t1 = t1;
-		},
-		refreshAnimations() {
-			this.t1.scrollTrigger.refresh(true);
-		},
-	},
-	beforeUnmount() {
-		this.t1?.kill();
-	},
-	mounted() {
-		this.setUpAnimations();
 	},
 	created() {},
 };
