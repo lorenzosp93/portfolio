@@ -15,7 +15,7 @@
 				class="backdrop-blur-md bottom-sheet__backdrop"
 				ref="backdrop"
 			/>
-			<div
+			<article
 				class="bg-white dark:bg-gray-800 bottom-sheet__card fx-default md:max-w-lg lg:max-w-2xl"
 				:style="[
 					{
@@ -30,7 +30,7 @@
 			>
 				<div class="bottom-sheet__pan" ref="pan">
 					<div class="bottom-sheet__bar bg-gray-300 dark:bg-white" />
-					<div class="dark:text-white p-3 mt-auto border-b-2">
+					<header class="dark:text-white p-3 mt-auto border-b-2">
 						<div
 							class="text-gray-400 text-md dark:text-gray-300 sm:ml-auto sm:order-last"
 						>
@@ -55,7 +55,7 @@
 								>
 							</div>
 						</div>
-					</div>
+					</header>
 				</div>
 				<div
 					style="min-height: 40vh; min-height: 40svh"
@@ -76,7 +76,7 @@
 						</slot>
 					</div>
 				</div>
-			</div>
+			</article>
 		</div>
 	</Teleport>
 </template>

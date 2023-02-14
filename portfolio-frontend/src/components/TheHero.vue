@@ -1,5 +1,5 @@
 <template>
-  <div class="flex min-h-screen w-screen flex-wrap text-black dark:text-white">
+  <section class="flex min-h-screen w-screen flex-wrap text-black dark:text-white">
     
     <div class="relative flex-initial w-1/2 sm:w-1/3 m-auto py-5" >
       <img class="top-0 left-0 right-0 mx-auto my-4 w-40 h-40 md:w-56 md:h-56 ring-4 ring-white z-30 absolute rounded-full" id="heroPicture" src="@/assets/hero.webp" srcset="@/assets/hero.webp 886w, @/assets/hero-mobile.webp 320w" alt="High res picture" @load="$emit('heroLoaded')">
@@ -19,12 +19,12 @@
     </div>
     <div></div>
     <div class="flex-initial w-4/5 sm:w-1/2 m-auto">
-      <div class="font-sans first-letter:text-2xl justify-between m-2 indent-3">
-        <p> I'm an energy engineer by formal training, jack of all trades by attitude and development. I work on Product at Tesla, aiming to always learn and grow into the role to acquire the skills and knowledge required to run a business and eventually move into VC.</p>
+      <div class="font-sans first-letter:text-2xl justify-between m-2 indent-3 prose dark:prose-invert">
+        <p> I'm an energy engineer by formal training, jack of all trades by attitude and development. I manage Software Products at Tesla, aiming to always learn and grow into the role to acquire the skills and knowledge required to run my business and move into VC.</p>
         <p class="text-xl my-3">Why do I have a porfolio website?</p>
         <p>
           <ul class="list-disc list-inside">
-            <li>This has been great fun to build!
+            <li>It's great fun to build!
             </li>
             <li>To get my hands dirty with the technologies in web development, including: 
               <ul class="list-disc ml-3 list-inside">
@@ -33,13 +33,13 @@
                 <li> a state-of-the-art Continuous Integration / Continuous Development pipeline, based on Docker containers running in Kubernetes, and taking advantage of load balancing, autoscaling, and more!</li>
               </ul>
             </li>
-            <li>To have a nice <a href="#blog">place</a> to write whatever comes to mind</li>
+            <li>To have a nice <a href="#blog" >place</a> to write whatever comes to mind</li>
             <li>To extend and supplement my Linkedin profile</li>
           </ul>
         </p>
       </div>
       </div>
-  </div>
+  </section>
 </template>
 
 <script>
