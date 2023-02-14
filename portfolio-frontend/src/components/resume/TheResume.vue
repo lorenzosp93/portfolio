@@ -47,7 +47,6 @@
 					:isActive="isExperienceActive"
 					:kind="'experience'"
 					id="experience"
-					@load-complete="refreshAnimations"
 				/>
 			</div>
 			<div class="flex-none w-full snap-center">
@@ -57,7 +56,6 @@
 					:isActive="isEducationActive"
 					:kind="'education'"
 					id="education"
-					@load-complete="refreshAnimations"
 				/>
 			</div>
 			<div class="flex-none w-full snap-center">
@@ -66,7 +64,6 @@
 					:observer="observer"
 					id="projects"
 					:isActive="isProjectsActive"
-					@load-complete="refreshAnimations"
 				/>
 			</div>
 			<div class="flex-none w-full snap-center">

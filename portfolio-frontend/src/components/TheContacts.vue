@@ -1,5 +1,5 @@
 <template>
-	<div
+	<section
 		class="container min-h-[55vh] lg:min-h-[60vh] relative flex w-screen mx-auto flex-wrap"
 	>
 		<div class="class container flex flex-wrap mx-auto my-10">
@@ -114,7 +114,7 @@
 				</form>
 			</template>
 		</detail-card>
-	</div>
+	</section>
 </template>
 
 <script>

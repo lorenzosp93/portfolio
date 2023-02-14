@@ -1,5 +1,5 @@
 <template>
-	<div class="w-full">
+	<section class="w-full">
 		<the-hero
 			:observer="observer"
 			id="the-hero"
@@ -28,10 +28,12 @@
 			class="scroll-mt-16"
 		/>
 
-		<p class="px-5 pb-2 text-sm dark:text-white text-gray-700">
-			© Lorenzo Spinelli, 2022
-		</p>
-	</div>
+		<footer>
+			<p class="px-5 pb-2 text-sm dark:text-white text-gray-700">
+				© Lorenzo Spinelli, 2023
+			</p>
+		</footer>
+	</section>
 </template>
 
 <script>

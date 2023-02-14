@@ -4,18 +4,23 @@
 			{{ name }}
 		</template>
 		<template v-slot:extra-title-content>
-			<p>{{ location ? location + " — " : "" }}{{ created_at_date }}</p>
+			<p>
+				{{ location ? location + " — " : ""
+				}}<time>{{ created_at_date }}</time>
+			</p>
 		</template>
 		<template v-slot:subtitle>
-			{{
-				created_by__fullname
-					? created_by__fullname
-					: created_by.username
-			}}
+			<address>
+				{{
+					created_by__fullname
+						? created_by__fullname
+						: created_by.username
+				}}
+			</address>
 		</template>
 		<template v-slot:inner-content>
 			<div class="px-3 prose dark:prose-invert">
-				<p v-html="html_content" />
+				<div v-html="html_content" />
 			</div>
 		</template>
 	</detail-card>

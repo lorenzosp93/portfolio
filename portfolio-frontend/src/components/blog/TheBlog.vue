@@ -1,5 +1,5 @@
 <template>
-	<div
+	<section
 		class="min-h-[55vh] lg:min-h-[60vh] w-full relative flex flex-wrap mx-auto"
 	>
 		<div class="flex flex-wrap mx-auto my-10">
@@ -71,7 +71,7 @@
 				@load-entries="loadEntries"
 			/>
 		</div>
-	</div>
+	</section>
 </template>
 
 <script>
