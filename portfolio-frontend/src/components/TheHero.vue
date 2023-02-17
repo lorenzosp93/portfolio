@@ -2,7 +2,7 @@
   <section class="flex min-h-screen w-screen flex-wrap text-black dark:text-white">
     
     <div class="relative flex-initial w-1/2 sm:w-1/3 m-auto py-5" >
-      <img class="top-0 left-0 right-0 mx-auto my-4 w-40 h-40 md:w-56 md:h-56 ring-4 ring-white z-30 absolute rounded-full" id="heroPicture" src="@/assets/hero.webp" srcset="@/assets/hero.webp 886w, @/assets/hero-mobile.webp 320w" alt="High res picture" @load="$emit('heroLoaded')">
+      <img id="heroPicture" class="top-0 left-0 right-0 mx-auto my-4 w-40 h-40 md:w-56 md:h-56 ring-4 ring-white z-30 absolute rounded-full" src="@/assets/hero.webp" srcset="@/assets/hero.webp 886w, @/assets/hero-mobile.webp 320w" alt="High res picture" @load="$emit('heroLoaded')">
       <h1 class="mt-44 md:mt-60 text-2xl m-5 font-bold text-center">Hi, I'm Lorenzo</h1>
       <div class="container flex mt-5">
         <!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
@@ -45,6 +45,13 @@
 <script>
 export default {
   name: 'TheHero',
+  props: {
+    observer: Object,
+    isHeroLogoVisible: Boolean,
+  },
+  emits: [
+    'heroLoaded',
+  ],
   data () {
     return {
       data: [],
@@ -54,15 +61,6 @@ export default {
       aboutLoaded: false,
     }
   },
-  props: {
-    observer: Object,
-    isHeroLogoVisible: Boolean,
-  },
-  emits: [
-    'heroLoaded',
-  ],
-  inject: [
-  ],
   computed: {
   },
   mounted () {

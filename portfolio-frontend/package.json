@@ -3,31 +3,31 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
+    "format": "prettier .  --write"
   },
   "dependencies": {
     "@heroicons/vue": "^2.0.14",
+    "@vitejs/plugin-vue": "^1.6.1",
     "@vueuse/core": "^9.12.0",
     "core-js": "^3.8.3",
     "gsap": "file:gsap-bonus.tgz",
     "marked": "^4.2.12",
+    "vite": "^2.9.15",
     "vue": "^3.2.13"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.16",
-    "@babel/eslint-parser": "^7.12.16",
     "@tailwindcss/typography": "^0.5.9",
-    "@vue/cli-plugin-babel": "~5.0.0",
-    "@vue/cli-plugin-eslint": "~5.0.0",
-    "@vue/cli-service": "~5.0.0",
     "autoprefixer": "^10.4.4",
-    "eslint": "^7.32.0",
-    "eslint-plugin-vue": "^8.0.3",
+    "eslint": "^8.34.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-vue": "^8.7.1",
     "postcss": "^8.4.21",
-    "tailwindcss": "^3.2.4",
-    "vue-cli-plugin-compression": "~2.0.0"
+    "prettier": "2.8.4",
+    "tailwindcss": "^3.2.4"
   },
   "eslintConfig": {
     "root": true,
@@ -38,9 +38,6 @@
       "plugin:vue/vue3-essential",
       "eslint:recommended"
     ],
-    "parserOptions": {
-      "parser": "@babel/eslint-parser"
-    },
     "rules": {}
   },
   "browserslist": [
