@@ -13,6 +13,7 @@
         Who needs MySpace when you can create your own blog and write whatever
         comes to mind on it, right?
       </p>
+      <PushSubscribe class="mx-auto dark:fill-white" />
     </div>
     <ArrowScroller @end="loadEntries" :scroll-container="blogContainer" />
     <div
@@ -64,6 +65,7 @@ import { Ref, inject, ref, watch } from "vue";
 import { useBlogStore } from "@/stores/blog.store";
 import { useVisibilityObserver } from "@/composables/visibilityObserver";
 import ArrowScroller from "../composables/ArrowScroller.vue";
+import PushSubscribe from "./PushSubscribe.vue";
 
 const blogContainer = ref(null);
 
