@@ -57,15 +57,13 @@ class SubscriptionSerializer(ModelSerializer):
         model = Subscription
         fields = ['endpoint', 'keys']
 
-    def create(self, validated_data: dict) -> Subscription | None:
+    def create(self, validated_data: dict):
         keys_data = validated_data.pop('keys')
         request= self.context.get('request')
         if request:
             user_agent: str = self.get_user_agent(request)
-            user = request.user
             keys = Keys.objects.create(**keys_data)
             subscription = Subscription.objects.create(
-                user=user,
                 user_agent=user_agent,
                 keys=keys,
                 **validated_data,
