@@ -1,6 +1,7 @@
 <template>
   <section
-    class="container min-h-[55vh] lg:min-h-[60vh] relative flex w-screen mx-auto flex-wrap"
+    class="container min-h-[50vh] relative flex w-screen mx-auto flex-wrap my-[20vh]"
+    ref="root"
   >
     <div class="class container flex flex-wrap mx-auto my-10">
       <h2
@@ -10,12 +11,16 @@
       </h2>
       <div
         class="cursor-pointer bg-gray-600 dark:bg-gray-300 px-5 py-3 rounded-2xl font-semibold text-center mx-auto mb-auto mt-3 text-white dark:text-gray-900 shadow-md hover:scale-105 transition duration-300 ease-in"
-        @click="openForm"
+        @click="formVisible = true"
       >
         Click here to send me a message.
       </div>
     </div>
-    <detail-card ref="formCard" :is-open="formVisible" @card-closed="closeForm">
+    <detail-card
+      ref="formCard"
+      :is-open="formVisible"
+      @card-closed="formVisible = false"
+    >
       <template #title>
         <p>Contact form</p>
       </template>
@@ -113,118 +118,90 @@
   </section>
 </template>
 
-<script>
+<script setup lang="ts">
+import { Ref, computed, ref } from "vue";
 import DetailCard from "./UI/Card/DetailCard.vue";
+import apiService from "@/services/api.service";
+import { ContactForm } from "@/models/models.interface";
+import { useVisibilityObserver } from "@/composables/visibilityObserver";
 
-export default {
-  name: "TheContacts",
-  components: { DetailCard },
-  inject: ["loadData"],
-  props: ["observer"],
-  data() {
-    return {
-      formVisible: false,
-      isLoading: false,
-      data: null,
-      error: null,
-      formItems: [
-        {
-          id: "first_name",
-          type: "text",
-          label: "First name",
-          placeholder: "Jane",
-          maxLength: 50,
-          value: "",
-        },
-        {
-          id: "last_name",
-          type: "text",
-          label: "Last name",
-          placeholder: "Doe",
-          maxLength: 50,
-          value: "",
-        },
-        {
-          id: "email",
-          type: "email",
-          label: "Email",
-          placeholder: "jane.doe@mail.com",
-          maxLength: 100,
-          value: "",
-        },
-        {
-          id: "content",
-          type: "textarea",
-          label: "Message",
-          placeholder: "Here goes my message",
-          help: "Please keep it within 280 characters",
-          maxLength: 280,
-          value: "",
-        },
-      ],
-    };
-  },
-  computed: {
-    canSubmit() {
-      return this.formItems.every((item) => {
-        return item.value;
-      });
-    },
-  },
-  watch: {},
-  beforeUnmount() {},
-  mounted() {
-    this.observer.observe(this.$el);
-    this.loadData("/api/contacts/get-token/", this);
-  },
-  methods: {
-    closeForm() {
-      this.formVisible = false;
-    },
-    openForm() {
-      this.formVisible = true;
-    },
-    async submitMessage() {
-      if (!this.canSubmit) {
-        return;
-      }
-      this.isLoading = true;
-      let url = import.meta.env.VITE_BACKEND_URL + "/api/contacts/";
-      let data = {};
-      this.formItems.forEach((item) => {
-        data[item.id] = item.value;
-      });
-      return fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": this.data.token,
-        },
-        body: JSON.stringify(data),
-      })
-        .then((response) => {
-          this.isLoading = false;
-          if (response.ok) {
-            this.$refs.formCard.close();
-          } else {
-            if (response.status == 400) {
-              this.error =
-                "Invalid data, please review your inputs and try again.";
-              this.formItems.find((item) => item.id == "email").value = "";
-            } else if (response.status == 500) {
-              this.error =
-                "There was a problem processing your request, please try again later";
-            }
-          }
-        })
-        .catch((error) => {
-          this.isLoading = false;
-          this.error = "Something went wrong when submitting.";
-          console.log(error);
-        });
-    },
-  },
+const root: Ref<HTMLDivElement | null> = ref(null);
+
+useVisibilityObserver("theContacts", root);
+
+type FormItem = {
+  id: string;
+  type: string;
+  label: string;
+  placeholder: string;
+  maxLength: number;
+  value: string;
+  help?: string;
 };
+
+const formVisible = ref(false);
+const isLoading = ref(false);
+const error = ref(null);
+const formItems: Ref<FormItem[]> = ref([
+  {
+    id: "first_name",
+    type: "text",
+    label: "First name",
+    placeholder: "Jane",
+    maxLength: 50,
+    value: "",
+  },
+  {
+    id: "last_name",
+    type: "text",
+    label: "Last name",
+    placeholder: "Doe",
+    maxLength: 50,
+    value: "",
+  },
+  {
+    id: "email",
+    type: "email",
+    label: "Email",
+    placeholder: "jane.doe@mail.com",
+    maxLength: 100,
+    value: "",
+  },
+  {
+    id: "content",
+    type: "textarea",
+    label: "Message",
+    placeholder: "Here goes my message",
+    help: "Please keep it within 280 characters",
+    maxLength: 280,
+    value: "",
+  },
+]);
+
+const canSubmit = computed(() => {
+  return formItems.value.every((item: FormItem) => {
+    return item.value;
+  });
+});
+
+function createFormPayload() {
+  return formItems.value.reduce<ContactForm>(
+    (acc, obj) => {
+      return { ...acc, [obj.id]: obj.value };
+    },
+    { first_name: "", last_name: "", email: "", content: "" }
+  );
+}
+
+async function submitMessage() {
+  if (canSubmit.value) {
+    isLoading.value = true;
+    apiService.postContactForm(createFormPayload()).then(() => {
+      isLoading.value = false;
+      DetailCard.close();
+    });
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

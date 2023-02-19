@@ -13,5 +13,6 @@
     "python.testing.promptToConfigure": false,
     "python.linting.pylintArgs": [
      "--load-plugins=pylint_django"
-    ]
+    ],
+    "typescript.tsdk": "node_modules/typescript/lib"
 }

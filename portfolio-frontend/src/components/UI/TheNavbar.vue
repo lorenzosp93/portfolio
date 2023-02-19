@@ -47,7 +47,7 @@
         >
           <div
             class="flex-shrink-0 flex items-center mx-3 my-3"
-            @click="scrollToElement('the-hero')"
+            @click="scrollToElement(navStore.refs?.theHero.value)"
           >
             <img
               id="heroLogo"
@@ -63,83 +63,63 @@
               <button
                 class="text-black dark:text-gray-300 px-3 py-2 ml-auto rounded-md text-sm font-medium cursor-pointer"
                 :class="{
-                  active: elementInView === 'the-hero',
+                  active: navStore.visible === 'theHero',
                 }"
                 aria-current="page"
-                @click="scrollToElement('the-hero')"
+                @click="scrollToElement(navStore.refs?.theHero)"
               >
                 About
               </button>
               <button
                 class="px-0.5 py-0.5 rounded-lg text-sm font-medium cursor-pointer"
                 :class="{
-                  active: [
-                    'experience',
-                    'education',
-                    'projects',
-                    'skills',
-                  ].includes(elementInView),
+                  active: isResumeActive,
                 }"
               >
                 <p
                   class="text-black dark:text-gray-300"
-                  @click="scrollToElement('the-resume')"
+                  v-show="!isResumeActive"
+                  @click="scrollToElement(navStore.refs?.experience)"
                 >
                   Resume
                 </p>
                 <button
-                  v-show="
-                    ['experience', 'education', 'projects', 'skills'].includes(
-                      elementInView
-                    )
-                  "
+                  v-show="isResumeActive"
                   class="text-white dark:text-gray-900 px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
                   :class="{
-                    active_inner: ['experience'].includes(elementInView),
+                    active_inner: navStore.visible === 'experience',
                   }"
-                  @click="scrollToElement('experience')"
+                  @click="scrollToElement(navStore.refs?.experience)"
                 >
                   Experience
                 </button>
                 <button
-                  v-show="
-                    ['experience', 'education', 'projects', 'skills'].includes(
-                      elementInView
-                    )
-                  "
+                  v-show="isResumeActive"
                   class="text-white dark:text-gray-900 px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
                   :class="{
-                    active_inner: ['education'].includes(elementInView),
+                    active_inner: navStore.visible === 'education',
                   }"
-                  @click="scrollToElement('education')"
+                  @click="scrollToElement(navStore.refs?.education)"
                 >
                   Education
                 </button>
                 <button
-                  v-show="
-                    ['experience', 'education', 'projects', 'skills'].includes(
-                      elementInView
-                    )
-                  "
+                  v-show="isResumeActive"
                   class="text-white dark:text-gray-900 px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
                   :class="{
-                    active_inner: ['projects'].includes(elementInView),
+                    active_inner: navStore.visible === 'projects',
                   }"
-                  @click="scrollToElement('projects')"
+                  @click="scrollToElement(navStore.refs?.projects)"
                 >
                   Projects
                 </button>
                 <button
-                  v-show="
-                    ['experience', 'education', 'projects', 'skills'].includes(
-                      elementInView
-                    )
-                  "
+                  v-show="isResumeActive"
                   class="text-white dark:text-gray-900 box-border px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
                   :class="{
-                    active_inner: ['skills'].includes(elementInView),
+                    active_inner: navStore.visible === 'skills',
                   }"
-                  @click="scrollToElement('skills')"
+                  @click="scrollToElement(navStore.refs?.skills)"
                 >
                   Skills
                 </button>
@@ -147,18 +127,18 @@
               <button
                 class="text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
                 :class="{
-                  active: elementInView === 'the-blog',
+                  active: navStore.visible === 'theBlog',
                 }"
-                @click="scrollToElement('the-blog')"
+                @click="scrollToElement(navStore.refs?.theBlog)"
               >
                 Blog
               </button>
               <button
                 class="text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
                 :class="{
-                  active: elementInView === 'the-contacts',
+                  active: navStore.visible === 'theContacts',
                 }"
-                @click="scrollToElement('the-contacts')"
+                @click="scrollToElement(navStore.refs?.theContacts)"
               >
                 Contacts
               </button>
@@ -178,10 +158,10 @@
         <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
         <button
           class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
-          :class="{ active: elementInView === 'the-hero' }"
+          :class="{ active: navStore.visible === 'theHero' }"
           aria-current="page"
           @click="
-            scrollToElement('the-hero');
+            scrollToElement(navStore.refs?.theHero);
             toggleMenu();
           "
         >
@@ -190,44 +170,42 @@
         <button
           class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
           :class="{
-            active: ['experience'].includes(elementInView),
+            active: navStore.visible === 'experience',
           }"
-          @click="scrollToElement('experience')"
+          @click="scrollToElement(navStore.refs?.experience)"
         >
           Experience
         </button>
         <button
           class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
           :class="{
-            active: ['education'].includes(elementInView),
+            active: navStore.visible === 'education',
           }"
-          @click="scrollToElement('education')"
+          @click="scrollToElement(navStore.refs?.education)"
         >
           Education
         </button>
         <button
           class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
           :class="{
-            active: ['projects'].includes(elementInView),
+            active: navStore.visible === 'projects',
           }"
-          @click="scrollToElement('projects')"
+          @click="scrollToElement(navStore.refs?.projects)"
         >
           Projects
         </button>
         <button
           class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
-          :class="{
-            active: ['skills'].includes(elementInView),
-          }"
-          @click="scrollToElement('skills')"
+          :class="{ active: navStore.visible === 'skills' }"
+          @click="scrollToElement(navStore.refs?.skills)"
         >
           Skills
         </button>
         <button
           class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
-          :class="{ active: elementInView === 'the-blog' }"
+          :class="{ active: navStore.visible === 'theBlog' }"
           @click="
-            scrollToElement('the-blog');
+            scrollToElement(navStore.refs?.theBlog);
             toggleMenu();
           "
         >
@@ -235,11 +213,9 @@
         </button>
         <button
           class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
-          :class="{
-            active: elementInView === 'the-contacts',
-          }"
+          :class="{ active: navStore.visible === 'theContacts' }"
           @click="
-            scrollToElement('the-contacts');
+            scrollToElement(navStore.refs?.theContacts);
             toggleMenu();
           "
         >
@@ -250,39 +226,39 @@
   </nav>
 </template>
 
-<script>
+<script setup lang="ts">
+import { useNavStore } from "@/stores/nav.store";
 import { Bars3Icon, XMarkIcon } from "@heroicons/vue/24/outline";
+import { MaybeRef } from "@vueuse/core";
+import { computed, ref } from "vue";
+const navStore = useNavStore();
 
-export default {
-  name: "TheNavbar",
-  components: {
-    Bars3Icon,
-    XMarkIcon,
-  },
-  inject: [],
-  props: ["elementInView"],
-  data() {
-    return {
-      isMenuOpen: false,
-      loadAnimation: false,
-    };
-  },
-  computed: {},
-  beforeUnmount() {},
-  mounted() {},
-  methods: {
-    toggleMenu() {
-      this.isMenuOpen = !this.isMenuOpen;
-    },
-    scrollToElement(elem) {
-      document.getElementById(elem).scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-        inline: "center",
-      });
-    },
-  },
+const isMenuOpen = ref(false);
+const isResumeActive = computed(() => {
+  return (
+    navStore.isActive?.experience ||
+    navStore.isActive?.education ||
+    navStore.isActive?.projects ||
+    navStore.isActive?.skills
+  );
+});
+
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value;
 };
+
+function scrollToElement(elem: MaybeRef<HTMLDivElement | null>) {
+  if (elem) {
+    if ("value" in elem) {
+      elem = elem.value;
+    }
+    elem?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "center",
+    });
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
