@@ -11,9 +11,6 @@
             "type": "chrome",
             "url": "http://localhost:8080",
             "webRoot": "${workspaceFolder}/portfolio-frontend/src",
-            "sourceMapPathOverrides": {
-                "webpack:///src/*": "${webRoot}/*"
-            },
             "preLaunchTask": "npm: serve - portfolio-frontend"
         },
         {

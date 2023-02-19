@@ -3,7 +3,7 @@
 	"tasks": [
 		{
 			"type": "npm",
-			"script": "serve",
+			"script": "dev",
 			"path": "portfolio-frontend/",
 			"problemMatcher": [],
 			"label": "npm: serve - portfolio-frontend",
