@@ -50,8 +50,8 @@ useEventListener("resize", resizeEventHandler);
 
 function resizeEventHandler(event: UIEvent) {
   if (innerWidth.value != (event.target as Window).innerWidth) {
-    tl.value?.restart();
-    window.scrollTo({ top: 0 });
+    timeline.value?.restart();
+    // window.scrollTo({ top: 0 });
     setupAnimation();
     innerWidth.value = (event.target as Window).innerWidth;
   }
@@ -64,10 +64,10 @@ function setupAnimation() {
   }
 }
 
-const tl: Ref<GSAPTimeline | null> = ref(null);
+const timeline: Ref<GSAPTimeline | null> = ref(null);
 
 function cleanupAnimation() {
-  tl.value?.kill();
+  timeline.value?.kill();
 }
 
 type DOMCoordinates = {
@@ -91,12 +91,12 @@ function addHeroAnimation(coordinates: DOMCoordinates) {
     y: coordinates.deltaY,
     scaleX: coordinates.scaleX,
     scaleY: coordinates.scaleY,
-    ease: "slow (0.1, 0.7, false)",
+    ease: "power2",
     duration: 0.7,
   })
     .to("#the-navbar", { opacity: 1, ease: "power1.in", duration: 0.3 }, 0.7)
-    .set("#heroPicture", { opacity: 0 }, 0.97);
-  tl.value = tl;
+    .set("#heroPicture", { opacity: 0 }, 1);
+  timeline.value = tl;
 }
 
 function calculateCoordinatesAnimation(

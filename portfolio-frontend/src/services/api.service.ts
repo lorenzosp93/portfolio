@@ -46,7 +46,7 @@ class ApiService extends ApiClient {
   async postSubscription(
     subscription: PushSubscriptionJSON
   ): Promise<AxiosResponse<LimitOffsetResult<BlogPost>>> {
-    return this.instance.post(`/api/blog/subscribe/`, subscription);
+    return this.instance.post(`/api/subscribe/`, subscription);
   }
 
   async postContactForm(form: ContactForm): Promise<AxiosResponse> {

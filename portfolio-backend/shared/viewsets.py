@@ -1,10 +1,12 @@
 from django.conf import Settings
-from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
 from .serializers import (
-    SettingsSerializer
+    SettingsSerializer,
+    SubscriptionSerializer
 )
 from .models import (
-    SiteSettings
+    SiteSettings,
+    Subscription
 )
 
 class SettingsViewSet(ReadOnlyModelViewSet):
@@ -16,3 +18,8 @@ class SettingsViewSet(ReadOnlyModelViewSet):
     """
     queryset = SiteSettings.objects.all()
     serializer_class = SettingsSerializer
+
+class SubscriptionViewset(ModelViewSet):
+    serializer_class = SubscriptionSerializer
+    queryset = Subscription.objects.all()
+    http_method_names = ['post']

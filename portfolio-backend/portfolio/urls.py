@@ -21,7 +21,8 @@ from rest_framework.routers import DefaultRouter
 from shared import viewsets
 
 router = DefaultRouter()
-router.register(r'settings', viewsets.SettingsViewSet, '')
+router.register(r'settings', viewsets.SettingsViewSet, 'settings')
+router.register(r'subscribe', viewsets.SubscriptionViewset, 'subscribe')
 
 urlpatterns = [
     path('api/resume/', include('resume.urls', namespace='resume')),
@@ -30,7 +31,8 @@ urlpatterns = [
     path('api/contacts/', include('contacts.urls', namespace='contacts')),
     path('api/admin/', admin.site.urls),
     path('api/health/', include('health_check.urls')),
-    path('api/api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    path('api/api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('api/', include(router.urls)),
 ]
 
 if settings.DEBUG:

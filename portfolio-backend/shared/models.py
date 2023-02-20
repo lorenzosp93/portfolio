@@ -1,11 +1,15 @@
 "Define abstract models to be used in all apps"
-from tabnanny import verbose
+from io import BytesIO
+import os
 import uuid
+from PIL import Image, ImageOps
 from django.db import models
 from django.utils.text import slugify
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth.models import User
+THUMBNAIL_SIZE = (640,640)
 
 class Serializable(models.Model):
     "Abstract model to define an uuid based id field"
@@ -166,13 +170,52 @@ class Authorable(models.Model):
 
 class HasPicture(models.Model):
     "Abstract class to capture a picture"
-    picture = models.ImageField(
-        verbose_name='Header picture',
-        upload_to="pictures/"
+    picture: models.Field = models.ImageField(
+        upload_to="pictures/",
+        blank=True,
+        null=True,
+    )
+    thumbnail: models.Field = models.ImageField(
+        upload_to="thumb/",
+        blank=True,
+        null=True,
+        editable=False,
     )
 
+    def save(self, *args, **kwargs) -> None:
+        if not self.thumbnail and self.picture:
+            self.save_thumb()
+        return super(HasPicture, self).save(*args, **kwargs)
+
+    def save_thumb(self) -> None:
+        with Image.open(self.picture) as img:
+            thumb = self.create_thumb(img)
+            save_path = f"{os.path.split(self.picture.name)[1]}"
+            suf = self.save_img(thumb, save_path)
+            self.thumbnail.save(save_path, suf, save=False)
+
+    def create_thumb(self, img: Image.Image) -> Image.Image:
+        thumb = ImageOps.exif_transpose(img)
+        thumb.thumbnail(THUMBNAIL_SIZE, Image.ANTIALIAS)
+        return thumb
+
+    def save_img(self, img: Image.Image, save_path: str) -> SimpleUploadedFile:
+        with BytesIO() as io:
+            img.save(
+                io,
+                quality=90,
+                optimize=True,
+                format='png'
+            )
+            io.seek(0)
+            return SimpleUploadedFile(
+                save_path,
+                content=io.read(),
+            )
+    
     class Meta:
         abstract = True
+
 
 class HasContent(models.Model):
     "Abstract class to define content"
@@ -202,3 +245,20 @@ class SiteSettings(SingletonBaseModel):
     "Concrete model for the settings for the website"
     about_text = models.TextField()
 
+class Keys(models.Model):
+    p256dh= models.CharField(max_length=100)
+    auth = models.CharField(max_length=30)
+
+class Subscription(TimeStampable):
+    endpoint= models.URLField()
+    keys= models.OneToOneField(
+        Keys, on_delete=models.CASCADE, null=True)
+    user_agent= models.TextField()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=[ 'user_agent', 'endpoint'],
+                name='unique_subscription_per_device'
+            ),
+        ]

@@ -10,7 +10,6 @@ app_name = 'blog'
 router = DefaultRouter()
 router.register(r'post', viewsets.PostViewSet)
 router.register(r'comment', viewsets.CommentViewSet)
-router.register(r'subscribe', viewsets.SubscriptionViewset, 'subscribe')
 
 urlpatterns = [
     path('', include(router.urls))
