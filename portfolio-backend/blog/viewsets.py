@@ -3,12 +3,10 @@ from rest_framework.pagination import LimitOffsetPagination
 from .serializers import (
     PostSerializer,
     CommentSerializer,
-    SubscriptionSerializer
 )
 from .models import (
     Post,
     Comment,
-    Subscription
 )
 
 class PostViewSet(ReadOnlyModelViewSet):
@@ -32,9 +30,3 @@ class CommentViewSet(ModelViewSet):
     queryset = Comment.objects.filter(active=True)
     serializer_class = CommentSerializer
     pagination_class = LimitOffsetPagination
-
-
-class SubscriptionViewset(ModelViewSet):
-    serializer_class = SubscriptionSerializer
-    queryset = Subscription.objects.all()
-    http_method_names = ['post']

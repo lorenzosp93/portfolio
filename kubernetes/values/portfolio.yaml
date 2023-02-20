@@ -107,6 +107,8 @@ configMap:
   debug: 'False'
   emailTo: 'me@lorenzosp.com'
   djangoHost: 'lorenzosp.com'
+  frontendHost: 'https://www.lorenzosp.com'
+  backendHost: 'https://www.lorenzosp.com'
 
 database:
   host: 'postgres-portfolio'

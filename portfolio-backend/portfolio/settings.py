@@ -54,6 +54,9 @@ if HOST:
     ALLOWED_HOSTS.append('.' + HOST)
     CSRF_TRUSTED_ORIGINS = ['https://' + HOST]
 
+FRONTEND_HOST = os.environ.get('FRONTEND_HOST', 'http://localhost:8080')
+BACKEND_HOST = os.environ.get('BACKEND_HOST', 'http://localhost:8080')
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -211,3 +214,9 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', "True") == "True"
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+WEBPUSH_SETTINGS = {
+    "VAPID_PUBLIC_KEY": os.environ.get('WEB_PUSH_PUBLIC_KEY'),
+    "VAPID_PRIVATE_KEY": os.environ.get('WEB_PUSH_PRIVATE_KEY'),
+    "VAPID_ADMIN_EMAIL": os.environ.get('WEB_PUSH_ADMIN_EMAIL', "me@lorenzosp.com"),
+}
