@@ -1,5 +1,4 @@
 {
-    "python.pythonPath": "env\\",
     "python.testing.unittestArgs": [
         "-v",
         "-s",
@@ -8,11 +7,15 @@
         "test*.py"
     ],
     "python.testing.pytestEnabled": false,
-    "python.testing.nosetestsEnabled": false,
     "python.testing.unittestEnabled": false,
     "python.testing.promptToConfigure": false,
     "python.linting.pylintArgs": [
      "--load-plugins=pylint_django"
     ],
-    "typescript.tsdk": "node_modules/typescript/lib"
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "vite.base": "./portfolio-frontend",
+    "vite.browserType": "embedded",
+    "vite.devCommand": "npm run dev",
+    "vite.port": 8080,
+    "python.envFile": "${workspaceFolder}/portfolio-backend/.env"
 }

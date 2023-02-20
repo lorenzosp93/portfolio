@@ -36,7 +36,7 @@ export default defineConfig({
         ],
       },
       devOptions: {
-        enabled: false,
+        enabled: true,
       },
       includeAssets: [
         "favicon.ico",

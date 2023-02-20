@@ -1,7 +1,7 @@
 <template>
   <section
     ref="root"
-    class="flex min-h-screen w-screen flex-wrap text-black dark:text-white"
+    class="flex min-h-screen w-full flex-wrap text-black dark:text-white mx-auto"
   >
     <div class="relative flex-initial w-1/2 sm:w-1/3 m-auto py-5">
       <img
@@ -23,7 +23,7 @@
           aria-label="Twitter profile"
         >
           <svg
-            class="h-5"
+            class="h-6"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 512 512"
           >
@@ -38,7 +38,7 @@
           aria-label="Linkedin profile"
         >
           <svg
-            class="h-5"
+            class="h-6"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 448 512"
           >
@@ -53,7 +53,7 @@
           aria-label="Github space"
         >
           <svg
-            class="h-5"
+            class="h-6"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 496 512"
           >
@@ -65,7 +65,7 @@
       </div>
     </div>
     <div></div>
-    <div class="flex-initial w-4/5 sm:w-1/2 m-auto">
+    <div class="flex-initial w-4/5 sm:w-2/3 m-auto">
       <div
         class="font-sans first-letter:text-2xl justify-between m-2 indent-3 prose dark:prose-invert max-sm:prose-sm prose-slate"
       >
@@ -75,32 +75,6 @@
           to always learn and grow into the role to acquire the skills and
           knowledge required to run my business and move into VC.
         </p>
-        <h3>Why do I have a porfolio website?</h3>
-        <ul>
-          <li>It's great fun to build!</li>
-          <li>
-            To get my hands dirty with the technologies in web development,
-            including:
-            <ul>
-              <li>a Django REST API to serve the website content,</li>
-              <li>
-                a Vue.js front-end, enhanced with plenty of cool animations and
-                touch-effects,
-              </li>
-              <li>
-                a state-of-the-art Continuous Integration / Continuous
-                Development pipeline, based on Docker containers running in
-                Kubernetes, and taking advantage of load balancing, autoscaling,
-                and more!
-              </li>
-            </ul>
-          </li>
-          <li>
-            To have a nice <a href="#the-blog">place</a> to write whatever comes
-            to mind
-          </li>
-          <li>To extend and supplement my Linkedin profile</li>
-        </ul>
       </div>
     </div>
   </section>
