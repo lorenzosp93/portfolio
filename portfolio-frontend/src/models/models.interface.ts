@@ -88,7 +88,7 @@ export interface CreatedBy {
 export interface BlogPost {
   uuid: string;
   name: string;
-  created_at: Date;
+  created_at: Date | string;
   location: string;
   picture: string;
   content: string;

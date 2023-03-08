@@ -22,20 +22,16 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
+import { type Skill } from "@/models/models.interface";
 import SkillsEntry from "./SkillsEntry.vue";
-export default defineComponent({
-  name: "SkillsCategory",
-  components: { SkillsEntry },
-  data() {
-    return {};
-  },
-  computed: {},
-  methods: {},
-  props: ["name", "description", "skills", "isActive"],
-  mounted() {},
-});
+
+defineProps<{
+  name: string;
+  description: string;
+  skills: Skill[];
+  isActive: boolean;
+}>();
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

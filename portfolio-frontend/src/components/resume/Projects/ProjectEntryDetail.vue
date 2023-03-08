@@ -21,48 +21,29 @@
   </detail-card>
 </template>
 
-<script lang="ts">
-import { marked } from "marked";
+<script setup lang="ts">
+import { useTextUtils } from "@/composables/textUtils";
+import { Attachment } from "@/models/models.interface";
 import DetailCard from "../../UI/Card/DetailCard.vue";
-import { defineComponent } from "vue";
 
-export default defineComponent({
-  components: {
-    DetailCard,
-  },
-  name: "ProjectEntryDetail",
-  data() {
-    return {};
-  },
-  props: [
-    "name",
-    "location",
-    "picture",
-    "content",
-    "attachments",
-    "status",
-    "isOpen",
-  ],
-  emits: ["cardClosed"],
-  computed: {
-    created_by__fullname() {
-      return this.created_by?.firstname ?? "" + this.created_by?.lastname ?? "";
-    },
-    created_at_date() {
-      let date = new Date(this.created_at);
-      return date.toDateString();
-    },
-    html_content() {
-      return marked.parse(this.content);
-    },
-  },
-  methods: {
-    cardClosed() {
-      this.$emit("cardClosed");
-    },
-  },
-  mounted() {},
-});
+const props = defineProps<{
+  name: string;
+  location?: string;
+  picture: string;
+  content: string;
+  attachments?: Attachment[];
+  status?: string;
+  isOpen: boolean;
+}>();
+
+const emit = defineEmits(["cardClosed"]);
+
+const { html_content, created_at__date, created_by__fullname } =
+  useTextUtils(props);
+
+function cardClosed() {
+  emit("cardClosed");
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

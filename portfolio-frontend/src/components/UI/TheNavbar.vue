@@ -58,7 +58,7 @@
             />
           </div>
           <div class="hidden sm:block my-auto sm:ml-6 justify-end w-full">
-            <div class="flex space-x-5 overflow-x-auto no-scrollbar">
+            <div class="flex space-x-3 overflow-x-auto no-scrollbar">
               <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
               <button
                 class="text-black dark:text-gray-300 px-3 py-2 ml-auto rounded-md text-sm font-medium cursor-pointer"
