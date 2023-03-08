@@ -45,48 +45,41 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { marked } from "marked";
 import BlogEntryDetail from "../../blog/BlogEntryDetail.vue";
 import ProjectEntryDetail from "../../resume/Projects/ProjectEntryDetail.vue";
-import { defineComponent } from "vue";
+import { computed, inject, ref } from "vue";
+import type { Attachment, CreatedBy } from "@/models/models.interface";
 
-export default defineComponent({
-  components: { BlogEntryDetail, ProjectEntryDetail },
-  name: "ListCard",
-  data() {
-    return {
-      detailsVisible: false,
-    };
-  },
-  computed: {
-    truncatedContent() {
-      return marked.parse(
-        this.content.slice(0, this.truncationAmount()) +
-          (this.truncationAmount() < this.content.length ? "... " : " ")
-      );
-    },
-  },
-  inject: ["truncationAmount"],
-  props: [
-    "type",
-    "uuid",
-    "name",
-    "created_at",
-    "created_by",
-    "location",
-    "picture",
-    "content",
-    "status",
-    "attachments",
-    "isActive",
-  ],
-  methods: {
-    toggleDetails() {
-      this.detailsVisible = !this.detailsVisible;
-    },
-  },
+const detailsVisible = ref(false);
+
+const props = defineProps<{
+  type?: string;
+  uuid: string;
+  name: string;
+  created_at?: Date | string;
+  created_by?: CreatedBy;
+  location?: string;
+  picture: string;
+  content: string;
+  status?: string;
+  attachments: Attachment[];
+  isActive: boolean;
+}>();
+const truncationAmount: (() => number) | undefined = inject("truncationAmount");
+
+const truncatedContent = computed(() => {
+  if (truncationAmount)
+    return marked.parse(
+      props.content.slice(0, truncationAmount() ?? 0) +
+        (truncationAmount() < props.content.length ? "... " : " ")
+    );
 });
+
+function toggleDetails() {
+  detailsVisible.value = !detailsVisible.value;
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

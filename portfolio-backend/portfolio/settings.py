@@ -35,7 +35,7 @@ LOGGING = {
 # SECRET_KEY = '17cgw1@w%hm%a#2$z7v^$(e=+=8q)unx4!v_-q+&nd0omm$)9('
 SECRET_KEY = os.environ.get(
     'DJANGO_SECRET_KEY',
-    '17cgw1@w%hm%a#2$z7v^$(e=+=8q)unx4!v_-q+&nd0omm$)9(',
+    '17cgw1@w%hm%a#2$z7v^$(e=+18q)unx4!v_-q+&nd0omm$)9(',
 )
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', '') != 'False'

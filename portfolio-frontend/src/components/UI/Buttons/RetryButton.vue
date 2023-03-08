@@ -9,14 +9,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  name: "RetryButton",
-  props: [],
-  emits: ["loadEntries"],
-});
+<script setup lang="ts">
+defineEmits(["loadEntries"]);
 </script>
 
 <style></style>

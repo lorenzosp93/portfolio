@@ -5,12 +5,13 @@
     </template>
     <template v-slot:extra-title-content>
       <p>
-        {{ location ? location + " — " : "" }}<time>{{ created_at_date }}</time>
+        {{ location ? location + " — " : ""
+        }}<time>{{ created_at__date }}</time>
       </p>
     </template>
     <template v-slot:subtitle>
       <address>
-        {{ created_by__fullname ? created_by__fullname : created_by.username }}
+        {{ created_by__fullname ?? created_by?.username }}
       </address>
     </template>
     <template v-slot:inner-content>
@@ -21,55 +22,30 @@
   </detail-card>
 </template>
 
-<script lang="ts">
-import { marked } from "marked";
+<script setup lang="ts">
+import { useTextUtils } from "@/composables/textUtils";
+import { Attachment, CreatedBy } from "@/models/models.interface";
 import DetailCard from "../UI/Card/DetailCard.vue";
-import { defineComponent } from "vue";
 
-export default defineComponent({
-  components: {
-    DetailCard,
-  },
-  name: "BlogEntryDetail",
-  data() {
-    return {};
-  },
-  props: [
-    "name",
-    "created_at",
-    "created_by",
-    "location",
-    "picture",
-    "content",
-    "attachments",
-    "isOpen",
-  ],
-  emits: ["cardClosed"],
-  computed: {
-    created_by__fullname() {
-      return (
-        (this.created_by?.firstname ?? "") + (this.created_by?.lastname ?? "")
-      );
-    },
-    created_at_date() {
-      let date = new Date(this.created_at);
-      return date.toLocaleDateString(undefined, {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      });
-    },
-    html_content() {
-      return marked.parse(this.content);
-    },
-  },
-  methods: {
-    cardClosed() {
-      this.$emit("cardClosed");
-    },
-  },
-  mounted() {},
-});
+const props = defineProps<{
+  name: string;
+  created_at: Date | string | undefined;
+  created_by: CreatedBy | undefined;
+  location?: string;
+  picture: string;
+  content: string;
+  attachments: Attachment[];
+  isOpen: boolean;
+}>();
+
+const emit = defineEmits(["cardClosed"]);
+
+const { html_content, created_at__date, created_by__fullname } =
+  useTextUtils(props);
+
+function cardClosed() {
+  emit("cardClosed");
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

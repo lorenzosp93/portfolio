@@ -15,32 +15,29 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
+import { onMounted, ref, watch } from "vue";
 
-export default defineComponent({
-  name: "SkillsEntry",
-  components: {},
-  data() {
-    return {
-      loadAnimation: false,
-    };
-  },
-  watch: {
-    isActive(value) {
-      if (value) {
-        setTimeout(() => (this.loadAnimation = true), 300);
-      } else {
-        this.loadAnimation = false;
-      }
-    },
-  },
-  computed: {},
-  methods: {},
-  props: ["name", "category", "url", "level", "isActive"],
-  mounted() {
-    setTimeout(() => (this.loadAnimation = true), 500);
-  },
+const loadAnimation = ref(false);
+const props = defineProps<{
+  name: string;
+  url: string;
+  level: number;
+  isActive: boolean;
+}>();
+
+watch(
+  () => props.isActive,
+  (val) => {
+    if (val) {
+      setTimeout(() => (loadAnimation.value = true), 300);
+    } else {
+      loadAnimation.value = false;
+    }
+  }
+);
+onMounted(() => {
+  setTimeout(() => (loadAnimation.value = true), 500);
 });
 </script>
 

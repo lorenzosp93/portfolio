@@ -22,18 +22,14 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import LoadingCard from "../Card/LoadingCard.vue";
 import RetryButton from "../Buttons/RetryButton.vue";
-import { defineComponent } from "vue";
 
-export default defineComponent({
-  name: "ResumePanel",
-  components: { LoadingCard, RetryButton },
-  props: ["ix", "dataLoaded", "isLoading"],
-  emits: ["loadEntries"],
-  data() {
-    return {};
-  },
-});
+defineProps<{
+  ix: string;
+  dataLoaded: boolean;
+  isLoading: boolean;
+}>();
+defineEmits(["loadEntries"]);
 </script>

@@ -68,142 +68,154 @@
   </Teleport>
 </template>
 
-<script>
+<script setup lang="ts">
 import { useEventListener } from "@vueuse/core";
-import { defineComponent } from "vue";
+import { onBeforeUnmount, onMounted, Ref, ref, watch } from "vue";
+import gsap from "gsap";
+import { Draggable } from "gsap/Draggable";
 
-export default defineComponent({
-  name: "DetailCard",
-  data() {
-    return {
-      initiated: false,
-      maxHeight: 85,
-      opened: false,
-      moving: false,
-      cardP: null,
-      cardH: null,
-      drag: null,
-      tl: null,
-      contentH: "auto",
-      paddingBottom: 12,
-    };
-  },
-  methods: {
-    init() {
-      this.drag?.applyBounds({ maxY: 0, minY: 0 });
-      this.cardP = 0;
-      this.cardH = this.$refs.card.clientHeight;
-      this.contentH = `${this.cardH - this.$refs.pan.clientHeight}px`;
-      if (!this.initiated) {
-        this.initiated = true;
-        const tl = this.$gsap.timeline();
-        tl.from(this.$refs.card, {
-          y: this.cardH,
-          opacity: 0,
-          duration: 0.4,
-          ease: "power3",
-        }).from(this.$refs.backdrop, { opacity: 0, duration: 0.3 }, 0);
-        this.tl = tl;
-        let startY = 0;
-        const drag = this.$drag.create(this.$refs.card, {
-          type: "y",
-          trigger: this.$refs.pan,
-          bounds: {
-            maxY: 0,
-            minY: 0,
-          },
-          liveSnap: (value) => {
-            return value < 0 ? 0 : value;
-          },
-          inertia: true,
-          edgeResistance: 0,
-          autoScroll: 0,
-          onPress: () => {
-            startY = this.drag.pointerY;
-          },
-          onDrag: () => {
-            let deltaY = startY - this.drag.pointerY;
-            if (deltaY > 0) {
-              this.$gsap.set(this.$refs.card, {
-                "border-bottom": `${deltaY / 5}px solid transparent`,
-              });
-            }
-          },
-          onDragEnd: () => {
-            this.$gsap.set(this.$refs.card, {
-              "border-bottom": `0px solid transparent`,
+const card: Ref<HTMLElement | null> = ref(null);
+const content: Ref<HTMLElement | null> = ref(null);
+const bottomSheet: Ref<HTMLElement | null> = ref(null);
+const pan: Ref<HTMLElement | null> = ref(null);
+const backdrop: Ref<HTMLElement | null> = ref(null);
+
+const initiated = ref(false);
+const maxHeight = ref(85);
+const opened = ref(false);
+const moving = ref(false);
+const cardP: Ref<number | null> = ref(null);
+const cardH: Ref<number | null> = ref(null);
+
+const drag: Ref<Draggable | null> = ref(null);
+const timeline: Ref<GSAPTimeline | null> = ref(null);
+
+const contentH = ref("auto");
+const paddingBottom = ref(12);
+
+function init() {
+  if (card.value && pan.value) {
+    drag.value?.applyBounds({ maxY: 0, minY: 0 });
+    cardP.value = 0;
+    cardH.value = card.value.clientHeight;
+    contentH.value = `${cardH.value - pan.value.clientHeight}px`;
+    if (!initiated.value) {
+      initiated.value = true;
+      const tl = gsap.timeline();
+      tl.from(card.value, {
+        y: cardH.value,
+        opacity: 0,
+        duration: 0.4,
+        ease: "power3",
+      }).from(backdrop.value, { opacity: 0, duration: 0.3 }, 0);
+      timeline.value = tl;
+      let startY = 0;
+      const dr = Draggable.create(card.value, {
+        type: "y",
+        trigger: pan.value,
+        bounds: {
+          maxY: 0,
+          minY: 0,
+        },
+        liveSnap: (value) => {
+          return value < 0 ? 0 : value;
+        },
+        inertia: true,
+        edgeResistance: 0,
+        autoScroll: 0,
+        onPress: () => {
+          startY = drag.value?.pointerY ?? 0;
+        },
+        onDrag: () => {
+          let deltaY = startY - (drag.value?.pointerY ?? 0);
+          if (deltaY > 0) {
+            gsap.set(card.value, {
+              "border-bottom": `${deltaY / 5}px solid transparent`,
             });
-            let deltaY = startY - this.drag.pointerY;
-            if (deltaY < -150) {
-              this.close(deltaY);
-            }
-          },
-        });
-        this.drag = drag[0];
-      } else {
-        this.tl.restart();
-      }
-    },
-    open() {
-      this.init();
-      this.opened = true;
-      document.body.style.overflowY = "hidden";
-      this.$emit("cardOpened");
-    },
-    close(deltaY) {
-      if (this.opened) {
-        document.body.style.overflowY = "";
-        if (deltaY != null) {
-          const tl = this.$gsap.timeline();
-          tl.fromTo(
-            this.$refs.card,
-            { y: -deltaY },
-            { y: this.cardH - deltaY, opacity: 0, duration: 0.4 }
-          ).to(this.$refs.backdrop, { opacity: 0, duration: 0.3 }, 0.1);
-          tl.eventCallback("onComplete", function () {
-            this.kill();
+          }
+        },
+        onDragEnd: () => {
+          gsap.set(card.value, {
+            "border-bottom": `0px solid transparent`,
           });
-        } else {
-          this.tl.reverse();
-        }
-        this.opened = false;
-        this.$emit("cardClosed");
-      }
-    },
-    clickOnBottomSheet(event) {
-      if (
-        event.target.classList.contains("bottom-sheet__backdrop") ||
-        event.target.classList.contains("bottom-sheet")
-      ) {
-        this.close();
-      }
-    },
-  },
-  props: {
-    isOpen: Boolean,
-  },
-  watch: {
-    isOpen(value) {
-      if (value) {
-        this.open();
-      } else {
-        this.close();
-      }
-    },
-  },
-  inject: [],
-  emits: ["cardOpened", "cardClosed"],
-  beforeUnmount() {
-    this.tl?.kill();
-    this.drag?.kill();
-  },
-  mounted() {
-    useEventListener("keyup", (event) => {
-      if (event.key == "Escape") {
-        this.close();
-      }
-    });
-  },
+          let deltaY = startY - (drag.value?.pointerY ?? 0);
+          if (deltaY < -150) {
+            close(deltaY);
+          }
+        },
+      });
+      drag.value = dr[0];
+    } else {
+      timeline.value?.restart();
+    }
+  }
+}
+
+const emit = defineEmits(["cardOpened", "cardClosed"]);
+
+function open() {
+  init();
+  opened.value = true;
+  document.body.style.overflowY = "hidden";
+  emit("cardOpened");
+}
+
+function close(deltaY: number | null) {
+  if (opened.value) {
+    document.body.style.overflowY = "";
+    if (deltaY != null) {
+      const tl = gsap.timeline();
+      tl.fromTo(
+        card.value,
+        { y: -deltaY },
+        { y: (cardH?.value ?? 0) - deltaY, opacity: 0, duration: 0.4 }
+      ).to(backdrop.value, { opacity: 0, duration: 0.3 }, 0.1);
+      tl.eventCallback("onComplete", function (this: typeof tl) {
+        this.kill();
+      });
+    } else {
+      timeline.value?.reverse();
+    }
+    opened.value = false;
+    emit("cardClosed");
+  }
+}
+
+function clickOnBottomSheet(event: MouseEvent) {
+  let target = event.target as HTMLElement;
+  if (
+    target.classList.contains("bottom-sheet__backdrop") ||
+    target.classList.contains("bottom-sheet")
+  ) {
+    close(null);
+  }
+}
+const props = defineProps<{
+  isOpen: boolean;
+}>();
+
+watch(
+  () => props.isOpen,
+  (val: boolean) => {
+    if (val) {
+      open();
+    } else {
+      close(null);
+    }
+  }
+);
+
+onBeforeUnmount(() => {
+  timeline.value?.kill();
+  drag.value?.kill();
+});
+
+onMounted(() => {
+  useEventListener("keyup", (event) => {
+    if (event.key == "Escape") {
+      close(null);
+    }
+  });
 });
 </script>
 

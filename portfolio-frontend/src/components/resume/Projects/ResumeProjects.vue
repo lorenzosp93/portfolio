@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { Ref, inject, onMounted, onUnmounted, provide, ref, watch } from "vue";
+import { Ref, inject, ref, watch } from "vue";
 import ListCard from "../../UI/Card/ListCard.vue";
 import ResumePanel from "../../UI/Panels/ResumePanel.vue";
 import { useBreakpoints } from "@/composables/breakpoint";
