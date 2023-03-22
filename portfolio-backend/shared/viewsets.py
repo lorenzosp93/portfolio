@@ -1,5 +1,5 @@
-from django.conf import Settings
 from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
+from rest_framework.permissions import AllowAny
 from .serializers import (
     SettingsSerializer,
     SubscriptionSerializer
@@ -20,6 +20,7 @@ class SettingsViewSet(ReadOnlyModelViewSet):
     serializer_class = SettingsSerializer
 
 class SubscriptionViewset(ModelViewSet):
+    permission_classes = [ AllowAny ]
     serializer_class = SubscriptionSerializer
     queryset = Subscription.objects.all()
     http_method_names = ['post']
