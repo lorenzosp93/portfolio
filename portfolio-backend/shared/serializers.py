@@ -38,7 +38,7 @@ class SubscriptionSerializer(ModelSerializer):
 
     def create(self, validated_data: dict):
         keys_data = validated_data.pop('keys')
-        request= self.context.get('request')
+        request = self.context.get('request')
         if request:
             user_agent: str = self.get_user_agent(request)
             keys = Keys.objects.create(**keys_data)
@@ -53,4 +53,3 @@ class SubscriptionSerializer(ModelSerializer):
     @staticmethod
     def get_user_agent(request) -> str:
         return request.META.get('HTTP_USER_AGENT', '')
-
