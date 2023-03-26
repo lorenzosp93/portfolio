@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/vue/24/outline";
-import { useDebounceFn, useEventListener } from "@vueuse/core";
+import { useEventListener, useThrottleFn } from "@vueuse/core";
 import { watch, ref } from "vue";
 
 const props = defineProps<{
@@ -58,7 +58,14 @@ function calculateScrollPosition(target: HTMLDivElement) {
   }
   if (target.scrollLeft + target.clientWidth >= target.scrollWidth) {
     end.value = true;
-    emit("end");
+    return useThrottleFn(
+      () => {
+        emit("end");
+      },
+      1000,
+      false,
+      true
+    )();
   } else {
     end.value = false;
   }
