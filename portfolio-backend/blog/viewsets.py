@@ -17,7 +17,7 @@ class PostViewSet(ReadOnlyModelViewSet):
     A simple viewset to view Post entires.
     """
     pagination_class = LimitOffsetPagination
-    queryset = Post.objects.filter(active=True)
+    queryset = Post.objects.filter(active=True).order_by('-created_at')
     serializer_class = PostSerializer
 
 class CommentViewSet(ModelViewSet):
