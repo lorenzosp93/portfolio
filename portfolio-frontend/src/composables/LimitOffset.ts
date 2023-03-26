@@ -9,6 +9,8 @@ import type {
   Project,
 } from "@/models/models.interface";
 import { cacheInvalidation } from "./utilities/cacheInvalidation";
+import { valueToNode } from "@babel/types";
+import { resourceLimits } from "worker_threads";
 
 function useExpiry(resource: string) {
   const expiry: RemovableRef<number> = useStorage(
@@ -76,14 +78,17 @@ export function useBlogLimitOffset(resource: string) {
 
   async function getLimitOffsetEntries(limit: number, ttlInMinutes: number) {
     cacheInvalidation(data, expiry);
-    if (!data.value.results.length)
+    if (!data.value.results.length || data.value.next?.length)
       return apiService
         .loadBlogEntries({
           limit,
           overrideLink: data.value.next.length ? data.value.next : undefined,
         })
         .then((response: AxiosResponse<LimitOffsetResult<BlogPost>>) => {
-          data.value.results = response.data.results;
+          data.value.results = [
+            ...data.value.results,
+            ...response.data.results,
+          ];
           data.value.next = response.data.next;
           setExpiry(ttlInMinutes);
         });
