@@ -2,7 +2,6 @@
 FROM node:17.8.0-alpine as build-stage
 WORKDIR /app
 COPY package*.json ./
-COPY gsap-bonus.tgz ./
 RUN npm install
 COPY . .
 RUN npm run build

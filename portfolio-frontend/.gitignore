@@ -2,6 +2,7 @@
 node_modules
 /dist
 /dev-dist
+gsap-bonus.tgz
 
 
 # local env files
