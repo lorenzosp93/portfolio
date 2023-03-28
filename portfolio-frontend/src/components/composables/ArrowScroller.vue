@@ -51,7 +51,7 @@ function scrollToSibling(next: boolean) {
 }
 
 function calculateScrollPosition(target: HTMLDivElement) {
-  if (target.scrollLeft == 0) {
+  if (target.scrollLeft <= 0) {
     begin.value = true;
   } else {
     begin.value = false;
