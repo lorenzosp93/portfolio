@@ -70,10 +70,17 @@
         class="font-sans first-letter:text-2xl justify-between m-2 indent-3 prose dark:prose-invert max-sm:prose-sm prose-slate"
       >
         <p>
-          I'm an energy engineer by formal training, jack of all trades by
-          attitude and development. I manage Software Products at Tesla, aiming
-          to always learn and grow into the role to acquire the skills and
-          knowledge required to run my business and move into VC.
+          I'm a Product leader deeply rooted in software and energy engineering.
+          Throughout my career, I've immersed myself in various roles, thriving
+          in both scrappy and established environments. My approach is defined
+          by a constant drive for innovation and an ability to decipher complex
+          problems.
+        </p>
+        <p>
+          Actively working on refining and expanding my skillset, I have a clear
+          vision: to lay the groundwork for my own venture in the near future.
+          I'm always on the lookout for collaboration with forward-thinkers.
+          Ready for the next adventure in innovation? Let's dive in together.
         </p>
       </div>
     </div>

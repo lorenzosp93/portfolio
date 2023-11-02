@@ -121,7 +121,7 @@
 <script setup lang="ts">
 import { Ref, computed, ref } from "vue";
 import DetailCard from "./UI/Card/DetailCard.vue";
-import apiService from "@/services/api.service";
+import backendService from "@/services/api.service";
 import { ContactForm } from "@/models/models.interface";
 import { useVisibilityObserver } from "@/composables/visibilityObserver";
 
@@ -196,7 +196,7 @@ function createFormPayload() {
 async function submitMessage() {
   if (canSubmit.value) {
     isLoading.value = true;
-    apiService.postContactForm(createFormPayload()).then(() => {
+    backendService.postContactForm(createFormPayload()).then(() => {
       isLoading.value = false;
       DetailCard.close();
     });

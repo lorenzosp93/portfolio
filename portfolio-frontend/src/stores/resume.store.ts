@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { useStorage, type RemovableRef } from "@vueuse/core";
-import ApiService from "@/services/api.service";
+import backendService from "@/services/api.service";
 import {
   Experience,
   Education,
@@ -54,11 +54,11 @@ export const useSkillStore = defineStore("skill", () => {
   const data: RemovableRef<SkillCategory[]> = useStorage("skill-data", []);
 
   async function getEntries() {
-    return ApiService.loadSkillCategory().then(
-      (response: AxiosResponse<SkillCategory[]>) => {
+    return backendService
+      .loadSkillCategory()
+      .then((response: AxiosResponse<SkillCategory[]>) => {
         data.value = response.data;
-      }
-    );
+      });
   }
 
   return { data, getEntries };

@@ -17,7 +17,7 @@
     </div>
     <ArrowScroller @end="loadEntries" :scroll-container="blogContainer" />
     <div
-      class="relative flex overflow-x-scroll no-scrollbar snap-x snap-proximity h-full w-full scroll-smooth px-[12.5%] md:px-[33.3%] lg:px-32 py-5 gap-x-5"
+      class="relative flex overflow-x-scroll overflow-y-hidden no-scrollbar snap-x snap-proximity h-full w-full scroll-smooth px-[12.5%] md:px-[33.3%] lg:px-32 py-5 gap-x-5"
       id="blog-container"
       ref="blogContainer"
     >

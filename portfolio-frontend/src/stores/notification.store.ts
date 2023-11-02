@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import apiService from "@/services/api.service";
+import backendService from "@/services/api.service";
 import type { AxiosError } from "axios";
 import { useStorage, type RemovableRef } from "@vueuse/core";
 
@@ -52,10 +52,12 @@ export const useNotificationStore = defineStore({
     },
     async publishSubscription() {
       if (this.pushSubscription)
-        apiService.postSubscription(this.pushSubscription.toJSON()).then(() => {
-          this.isSubscribed = true;
-          localStorage.setItem("notificationSubscribed", "true");
-        });
+        backendService
+          .postSubscription(this.pushSubscription.toJSON())
+          .then(() => {
+            this.isSubscribed = true;
+            localStorage.setItem("notificationSubscribed", "true");
+          });
     },
     urlBase64ToUint8Array(base64String: string): Uint8Array {
       var padding = "=".repeat((4 - (base64String.length % 4)) % 4);

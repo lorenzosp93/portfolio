@@ -19,11 +19,11 @@
     <template v-slot:inner-content>
       <div class="px-3 pb-5 prose dark:prose-invert">
         <h3 v-if="description" class="mb-3">Description:</h3>
-        <p v-html="parse(description)" />
+        <p v-html="parse(description ?? '')" />
         <h3 v-if="key_achievements" class="my-3">Key Achievements:</h3>
         <p v-html="parse(key_achievements)" />
-        <h3 v-if="keywords.length > 0" class="my-3">Keywords:</h3>
-        <div class="flex overflow-x-auto pb-1 no-scrollbar">
+        <h3 v-if="keywords && keywords.length > 0" class="my-3">Keywords:</h3>
+        <div class="flex overflow-x-scroll overflow-y-hidden pb-1 no-scrollbar">
           <div
             class="rounded-lg shadow-md mx-2 px-3 py-1 bg-gray-100 dark:bg-gray-700 whitespace-nowrap"
             v-for="keyword in keywords"
@@ -41,6 +41,7 @@
 import { marked } from "marked";
 import DetailCard from "../../UI/Card/DetailCard.vue";
 import { defineComponent } from "vue";
+import { Keyword } from "@/models/models.interface";
 
 export default defineComponent({
   name: "TimelineEntryDetail",
@@ -52,7 +53,7 @@ export default defineComponent({
     cardClosed() {
       this.$emit("cardClosed");
     },
-    parse(text) {
+    parse(text: string) {
       return marked.parse(text);
     },
   },
@@ -86,7 +87,7 @@ export default defineComponent({
       required: true,
     },
     project: Array,
-    keywords: Array,
+    keywords: Array<Keyword>,
     attachments: Object,
     isFirst: Boolean,
     open: Boolean,
