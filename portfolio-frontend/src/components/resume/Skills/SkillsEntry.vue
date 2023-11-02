@@ -16,14 +16,16 @@
 </template>
 
 <script setup lang="ts">
+import { type SkillCategory } from "@/models/models.interface";
 import { onMounted, ref, watch } from "vue";
 
 const loadAnimation = ref(false);
 const props = defineProps<{
-  name: string;
-  url: string;
-  level: number;
   isActive: boolean;
+  name: string;
+  category?: SkillCategory;
+  url?: string;
+  level: number;
 }>();
 
 watch(

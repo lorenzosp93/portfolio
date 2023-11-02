@@ -67,8 +67,8 @@ export interface Project {
 
 export interface Skill {
   name: string;
-  category?: string;
-  url: string;
+  category?: SkillCategory;
+  url?: string;
   level: number;
 }
 
