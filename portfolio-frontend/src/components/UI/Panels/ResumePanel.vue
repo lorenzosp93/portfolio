@@ -1,6 +1,6 @@
 <template>
   <div
-    class="m-auto rounded-lg md:max-w-xl lg:max-w-4xl xl:max-w-6xl shadow-md bg-white dark:bg-gray-900 py-1 mx-auto no-scrollbar border-2 dark:border-gray-900 border-white max-w-[99%] overflow-y-scroll overscroll-none max-h-screen"
+    class="m-auto rounded-lg md:max-w-xl lg:max-w-4xl xl:max-w-6xl shadow-md bg-white dark:bg-gray-900 py-1 mx-auto no-scrollbar border-2 dark:border-gray-900 border-white max-w-[99%] overflow-y-scroll max-h-screen"
     @touchstart="onTouchStart"
     ref="innerScroll"
   >
