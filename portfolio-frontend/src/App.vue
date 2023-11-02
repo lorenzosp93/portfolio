@@ -27,6 +27,9 @@ import TheContacts from "./components/TheContacts.vue";
 import { Ref, provide, ref, onUnmounted } from "vue";
 import { useEventListener } from "@vueuse/core";
 import { gsap } from "gsap";
+import { registerSW } from "virtual:pwa-register";
+
+registerSW({ immediate: true });
 
 const truncationAmount = () => {
   let w = window.innerWidth;
