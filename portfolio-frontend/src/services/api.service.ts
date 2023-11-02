@@ -16,7 +16,7 @@ class ApiClient extends HttpClient {
   }
 }
 
-class ApiService extends ApiClient {
+class BackendService extends ApiClient {
   async getLimitOffset<T>(
     resourceURL: string,
     options: LimitOffsetOptions
@@ -30,7 +30,7 @@ class ApiService extends ApiClient {
     kind: "experience" | "education" | "projects",
     options: LimitOffsetOptions
   ): Promise<AxiosResponse<LimitOffsetResult<T>>> {
-    return this.getLimitOffset(`/api/resume/${kind}/`, options);
+    return this.getLimitOffset<T>(`/api/resume/${kind}/`, options);
   }
 
   async loadSkillCategory(): Promise<AxiosResponse<SkillCategory[]>> {
@@ -40,7 +40,7 @@ class ApiService extends ApiClient {
   async loadBlogEntries(
     options: LimitOffsetOptions
   ): Promise<AxiosResponse<LimitOffsetResult<BlogPost>>> {
-    return this.getLimitOffset(`/api/blog/post/`, options);
+    return this.getLimitOffset<BlogPost>(`/api/blog/post/`, options);
   }
 
   async postSubscription(
@@ -54,4 +54,4 @@ class ApiService extends ApiClient {
   }
 }
 
-export default new ApiService();
+export default new BackendService();

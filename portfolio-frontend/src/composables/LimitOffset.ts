@@ -1,5 +1,5 @@
 import { useStorage, type RemovableRef } from "@vueuse/core";
-import apiService from "@/services/api.service";
+import backendService from "@/services/api.service";
 import { AxiosResponse } from "axios";
 import type {
   BlogPost,
@@ -9,8 +9,6 @@ import type {
   Project,
 } from "@/models/models.interface";
 import { cacheInvalidation } from "./utilities/cacheInvalidation";
-import { valueToNode } from "@babel/types";
-import { resourceLimits } from "worker_threads";
 
 function useExpiry(resource: string) {
   const expiry: RemovableRef<number> = useStorage(
@@ -51,7 +49,7 @@ export function useResumeLimitOffset<T extends ResumeLimitOffsetType>(
   async function getLimitOffsetEntries(limit: number) {
     cacheInvalidation<T>(data, expiry);
     if (!data.value.results.length || data.value.next?.length) {
-      return apiService
+      return backendService
         .loadResumeEntries<T>(resource, {
           limit,
           overrideLink: data.value.next.length ? data.value.next : undefined,
@@ -79,7 +77,7 @@ export function useBlogLimitOffset(resource: string) {
   async function getLimitOffsetEntries(limit: number, ttlInMinutes: number) {
     cacheInvalidation(data, expiry);
     if (!data.value.results.length || data.value.next?.length)
-      return apiService
+      return backendService
         .loadBlogEntries({
           limit,
           overrideLink: data.value.next.length ? data.value.next : undefined,

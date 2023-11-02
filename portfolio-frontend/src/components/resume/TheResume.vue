@@ -13,7 +13,7 @@
     </div>
     <ArrowScroller :scroll-container="resumeContainer" />
     <div
-      class="relative flex gap-6 overflow-x-scroll no-scrollbar snap-x snap-mandatory scroll-smooth w-full"
+      class="relative flex gap-6 overflow-x-scroll overflow-y-hidden no-scrollbar snap-x snap-mandatory scroll-smooth w-full"
       id="resume-container"
       ref="resumeContainer"
     >
