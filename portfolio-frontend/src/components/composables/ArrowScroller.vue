@@ -64,13 +64,12 @@ function calculateScrollPosition(target: HTMLDivElement) {
           emit("end");
         },
         1000,
-        false,
         true
       )();
     } else {
       end.value = false;
     }
-  }, 200)();
+  }, 500)();
 }
 
 watch(

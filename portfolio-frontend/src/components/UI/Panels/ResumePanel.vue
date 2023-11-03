@@ -46,16 +46,16 @@ let innerHeight = 0;
 let visibleHeight = 0;
 
 const onTouchStart = (e: TouchEvent) => {
-  startY = e.touches[0].pageY;
-  startX = e.touches[0].pageX;
+  startY = e.touches[0].clientY;
+  startX = e.touches[0].clientX;
   innerHeight = innerScroll.value?.scrollHeight ?? 0;
   visibleHeight = innerScroll.value?.offsetHeight ?? 0;
   scrollY = innerScroll.value?.scrollTop ?? 0;
 };
 
 const onTouchMove = (e: TouchEvent) => {
-  const touchY = e.touches[0].pageY;
-  const touchX = e.touches[0].pageX;
+  const touchY = e.touches[0].clientY;
+  const touchX = e.touches[0].clientX;
   const scrollDeltaY = touchY - startY;
   const scrollDeltaX = touchX - startX;
   const up = scrollDeltaY > 0;
@@ -63,7 +63,7 @@ const onTouchMove = (e: TouchEvent) => {
 
   if (
     !horizontal &&
-    ((scrollY === 0 && up) || (scrollY + visibleHeight >= innerHeight && !up))
+    ((scrollY <= 0 && up) || (scrollY + visibleHeight >= innerHeight && !up))
   ) {
     e.preventDefault();
     window.scrollBy({
