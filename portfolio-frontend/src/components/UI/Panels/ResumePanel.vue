@@ -38,11 +38,12 @@ defineProps<{
 defineEmits(["loadEntries"]);
 
 const innerScroll: Ref<HTMLDivElement | null> = ref(null);
+
 let startY = 0;
 let startX = 0;
 let scrollY = 0;
-let innerHeight = innerScroll.value?.scrollHeight ?? 0;
-let visibleHeight = innerScroll.value?.offsetHeight ?? 0;
+let innerHeight = 0;
+let visibleHeight = 0;
 
 const onTouchStart = (e: TouchEvent) => {
   startY = e.touches[0].pageY;
@@ -69,7 +70,7 @@ const onTouchMove = (e: TouchEvent) => {
       left: scrollDeltaX,
       behavior: "instant",
     });
-  }
+  } else return;
 };
 
 onMounted(() => {
