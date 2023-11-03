@@ -3,6 +3,7 @@
     class="m-auto rounded-lg md:max-w-xl lg:max-w-4xl xl:max-w-6xl shadow-md bg-white dark:bg-gray-900 py-1 mx-auto no-scrollbar border-2 dark:border-gray-900 border-white max-w-[99%] overflow-y-scroll"
     style="max-height: 90vh; max-height: 90svh"
     ref="innerScroll"
+    @touchstart="onTouchStart"
   >
     <div class="mx-auto">
       <div
@@ -47,8 +48,7 @@ const onTouchStart = (e: TouchEvent) => {
   startY = e.touches[0].pageY;
   startX = e.touches[0].pageX;
   scrollY = innerScroll.value?.scrollTop ?? 0;
-  innerHeight = innerScroll.value?.scrollHeight ?? 0;
-  visibleHeight = innerScroll.value?.clientHeight ?? 0;
+  checkTouchMoveListener();
 };
 
 const onTouchMove = (e: TouchEvent) => {
@@ -73,17 +73,18 @@ const onTouchMove = (e: TouchEvent) => {
   }
 };
 
-onMounted(() => {
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+const checkTouchMoveListener = () => {
   innerHeight = innerScroll.value?.scrollHeight ?? 0;
   visibleHeight = innerScroll.value?.clientHeight ?? 0;
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
   if (isIOS && innerHeight != visibleHeight) {
-    innerScroll.value?.addEventListener("touchstart", onTouchStart, {
-      passive: false,
-    });
     innerScroll.value?.addEventListener("touchmove", onTouchMove, {
       passive: false,
     });
   }
+};
+
+onMounted(() => {
+  checkTouchMoveListener();
 });
 </script>
