@@ -49,11 +49,12 @@ const onTouchStart = (e: TouchEvent) => {
   startY = e.touches[0].clientY;
   startX = e.touches[0].clientX;
   innerHeight = innerScroll.value?.scrollHeight ?? 0;
-  visibleHeight = innerScroll.value?.offsetHeight ?? 0;
+  visibleHeight = innerScroll.value?.clientHeight ?? 0;
   scrollY = innerScroll.value?.scrollTop ?? 0;
 };
 
 const onTouchMove = (e: TouchEvent) => {
+  if (innerHeight == visibleHeight) return;
   const touchY = e.touches[0].clientY;
   const touchX = e.touches[0].clientX;
   const scrollDeltaY = touchY - startY;
