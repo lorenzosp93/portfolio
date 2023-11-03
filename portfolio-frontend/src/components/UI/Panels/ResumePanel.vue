@@ -1,6 +1,7 @@
 <template>
   <div
-    class="m-auto rounded-lg md:max-w-xl lg:max-w-4xl xl:max-w-6xl shadow-md bg-white dark:bg-gray-900 py-1 mx-auto no-scrollbar border-2 dark:border-gray-900 border-white max-w-[99%] overflow-y-scroll max-h-screen"
+    class="m-auto rounded-lg md:max-w-xl lg:max-w-4xl xl:max-w-6xl shadow-md bg-white dark:bg-gray-900 py-1 mx-auto no-scrollbar border-2 dark:border-gray-900 border-white max-w-[99%] overflow-y-scroll"
+    style="max-height: 95vh; max-height: 95svh"
     @touchstart="onTouchStart"
     ref="innerScroll"
   >
@@ -37,11 +38,12 @@ defineProps<{
 defineEmits(["loadEntries"]);
 
 const innerScroll: Ref<HTMLDivElement | null> = ref(null);
+
 let startY = 0;
 let startX = 0;
 let scrollY = 0;
-let innerHeight = innerScroll.value?.scrollHeight ?? 0;
-let visibleHeight = innerScroll.value?.offsetHeight ?? 0;
+let innerHeight = 0;
+let visibleHeight = 0;
 
 const onTouchStart = (e: TouchEvent) => {
   startY = e.touches[0].pageY;
@@ -68,7 +70,7 @@ const onTouchMove = (e: TouchEvent) => {
       left: scrollDeltaX,
       behavior: "instant",
     });
-  }
+  } else return;
 };
 
 onMounted(() => {
