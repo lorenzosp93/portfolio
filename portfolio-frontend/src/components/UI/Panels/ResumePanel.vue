@@ -1,7 +1,7 @@
 <template>
   <div
     class="m-auto rounded-lg md:max-w-xl lg:max-w-4xl xl:max-w-6xl shadow-md bg-white dark:bg-gray-900 py-1 mx-auto no-scrollbar border-2 dark:border-gray-900 border-white max-w-[99%] overflow-y-scroll"
-    style="max-height: 95vh; max-height: 95svh"
+    style="max-height: 90vh; max-height: 90svh"
     @touchstart="onTouchStart"
     ref="innerScroll"
   >
@@ -59,10 +59,11 @@ const onTouchMove = (e: TouchEvent) => {
   const scrollDeltaY = touchY - startY;
   const scrollDeltaX = touchX - startX;
   const up = scrollDeltaY > 0;
+  const horizontal = Math.abs(scrollDeltaX) > Math.abs(scrollDeltaY);
 
   if (
-    (scrollY === 0 && up) ||
-    (scrollY + visibleHeight >= innerHeight && !up)
+    !horizontal &&
+    ((scrollY === 0 && up) || (scrollY + visibleHeight >= innerHeight && !up))
   ) {
     e.preventDefault();
     window.scrollBy({
@@ -70,7 +71,7 @@ const onTouchMove = (e: TouchEvent) => {
       left: scrollDeltaX,
       behavior: "instant",
     });
-  } else return;
+  }
 };
 
 onMounted(() => {

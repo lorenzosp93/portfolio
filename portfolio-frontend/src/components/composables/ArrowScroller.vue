@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/vue/24/outline";
-import { useEventListener, useThrottleFn } from "@vueuse/core";
+import { useDebounceFn, useEventListener, useThrottleFn } from "@vueuse/core";
 import { watch, ref } from "vue";
 
 const props = defineProps<{
@@ -51,24 +51,26 @@ function scrollToSibling(next: boolean) {
 }
 
 function calculateScrollPosition(target: HTMLDivElement) {
-  if (target.scrollLeft <= 0) {
-    begin.value = true;
-  } else {
-    begin.value = false;
-  }
-  if (target.scrollLeft + target.clientWidth >= target.scrollWidth) {
-    end.value = true;
-    return useThrottleFn(
-      () => {
-        emit("end");
-      },
-      1000,
-      false,
-      true
-    )();
-  } else {
-    end.value = false;
-  }
+  return useDebounceFn(() => {
+    if (target.scrollLeft <= 0) {
+      begin.value = true;
+    } else {
+      begin.value = false;
+    }
+    if (target.scrollLeft + target.clientWidth >= target.scrollWidth) {
+      end.value = true;
+      return useThrottleFn(
+        () => {
+          emit("end");
+        },
+        1000,
+        false,
+        true
+      )();
+    } else {
+      end.value = false;
+    }
+  }, 200)();
 }
 
 watch(
