@@ -2,7 +2,6 @@
   <div
     class="m-auto rounded-lg md:max-w-xl lg:max-w-4xl xl:max-w-6xl shadow-md bg-white dark:bg-gray-900 py-1 mx-auto no-scrollbar border-2 dark:border-gray-900 border-white max-w-[99%] overflow-y-scroll"
     style="max-height: 90vh; max-height: 90svh"
-    @touchstart="onTouchStart"
     ref="innerScroll"
   >
     <div class="mx-auto">
@@ -28,7 +27,6 @@
 import LoadingCard from "../Card/LoadingCard.vue";
 import RetryButton from "../Buttons/RetryButton.vue";
 import { type Ref, ref, onMounted } from "vue";
-import { useEventListener } from "@vueuse/core";
 
 defineProps<{
   ix: string;
@@ -42,21 +40,21 @@ const innerScroll: Ref<HTMLDivElement | null> = ref(null);
 let startY = 0;
 let startX = 0;
 let scrollY = 0;
-let innerHeight = 0;
 let visibleHeight = 0;
+let innerHeight = 0;
 
 const onTouchStart = (e: TouchEvent) => {
-  startY = e.touches[0].clientY;
-  startX = e.touches[0].clientX;
+  startY = e.touches[0].pageY;
+  startX = e.touches[0].pageX;
+  scrollY = innerScroll.value?.scrollTop ?? 0;
   innerHeight = innerScroll.value?.scrollHeight ?? 0;
   visibleHeight = innerScroll.value?.clientHeight ?? 0;
-  scrollY = innerScroll.value?.scrollTop ?? 0;
 };
 
 const onTouchMove = (e: TouchEvent) => {
-  if (innerHeight == visibleHeight) return;
-  const touchY = e.touches[0].clientY;
-  const touchX = e.touches[0].clientX;
+  const touch = e.touches[0];
+  const touchY = touch.pageY;
+  const touchX = touch.pageX;
   const scrollDeltaY = touchY - startY;
   const scrollDeltaX = touchX - startX;
   const up = scrollDeltaY > 0;
@@ -76,8 +74,16 @@ const onTouchMove = (e: TouchEvent) => {
 };
 
 onMounted(() => {
-  useEventListener(innerScroll, "touchmove", onTouchMove, {
-    passive: false,
-  });
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  innerHeight = innerScroll.value?.scrollHeight ?? 0;
+  visibleHeight = innerScroll.value?.clientHeight ?? 0;
+  if (isIOS && innerHeight != visibleHeight) {
+    innerScroll.value?.addEventListener("touchstart", onTouchStart, {
+      passive: false,
+    });
+    innerScroll.value?.addEventListener("touchmove", onTouchMove, {
+      passive: false,
+    });
+  }
 });
 </script>

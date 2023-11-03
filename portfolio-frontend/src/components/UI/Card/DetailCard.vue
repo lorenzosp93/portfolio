@@ -1,7 +1,6 @@
 <template>
   <Teleport to="body">
     <div
-      @click="clickOnBottomSheet"
       class="bottom-sheet shadow-xl"
       :class="{
         opened: opened,
@@ -11,7 +10,13 @@
       style="{'pointer-events': 'all'}"
       ref="bottomSheet"
     >
-      <div class="backdrop-blur-md bottom-sheet__backdrop" ref="backdrop" />
+      <div
+        class="backdrop-blur-md bottom-sheet__backdrop"
+        ref="backdrop"
+        @click="handleClickOnBottomSheet"
+        @scroll.prevent="() => {}"
+        @touchmove.prevent="() => {}"
+      />
       <article
         class="bg-white dark:bg-gray-800 bottom-sheet__card fx-default md:max-w-lg lg:max-w-2xl"
         :style="[
@@ -156,7 +161,6 @@ const emit = defineEmits(["cardOpened", "cardClosed"]);
 function open() {
   init();
   opened.value = true;
-  document.body.style.overflowY = "hidden";
   emit("cardOpened");
 }
 
@@ -181,15 +185,12 @@ function close(deltaY: number | null) {
   }
 }
 
-function clickOnBottomSheet(event: MouseEvent) {
+function handleClickOnBottomSheet(event: MouseEvent) {
   let target = event.target as HTMLElement;
-  if (
-    target.classList.contains("bottom-sheet__backdrop") ||
-    target.classList.contains("bottom-sheet")
-  ) {
-    close(null);
-  }
+  close(null);
+  event.stopPropagation();
 }
+
 const props = defineProps<{
   isOpen: boolean;
 }>();
