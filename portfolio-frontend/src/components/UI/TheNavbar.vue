@@ -170,36 +170,11 @@
         <button
           class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
           :class="{
-            active: navStore.visible === 'experience',
+            active: navStore.visible === 'the-resume',
           }"
           @click="scrollToElement(navStore.refs?.experience)"
         >
-          Experience
-        </button>
-        <button
-          class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
-          :class="{
-            active: navStore.visible === 'education',
-          }"
-          @click="scrollToElement(navStore.refs?.education)"
-        >
-          Education
-        </button>
-        <button
-          class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
-          :class="{
-            active: navStore.visible === 'projects',
-          }"
-          @click="scrollToElement(navStore.refs?.projects)"
-        >
-          Projects
-        </button>
-        <button
-          class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
-          :class="{ active: navStore.visible === 'skills' }"
-          @click="scrollToElement(navStore.refs?.skills)"
-        >
-          Skills
+          Resume
         </button>
         <button
           class="block text-black dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium"
