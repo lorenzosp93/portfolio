@@ -198,6 +198,9 @@ async function submitMessage() {
     isLoading.value = true;
     backendService.postContactForm(createFormPayload()).then(() => {
       isLoading.value = false;
+      formItems.value.forEach((item) => {
+        item.value = "";
+      });
       DetailCard.close();
     });
   }

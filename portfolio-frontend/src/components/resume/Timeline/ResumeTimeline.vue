@@ -43,7 +43,7 @@
 import TimelineGroup from "./TimelineGroup.vue";
 import ResumePanel from "../../UI/Panels/ResumePanel.vue";
 import { ChevronDoubleDownIcon } from "@heroicons/vue/24/outline";
-import { Ref, inject, ref, watch } from "vue";
+import { Ref, computed, inject, ref, watch } from "vue";
 import { useEducationStore, useExperienceStore } from "@/stores/resume.store";
 import { useVisibilityObserver } from "@/composables/visibilityObserver";
 
@@ -55,20 +55,29 @@ const props = defineProps<{
 const isLoading = ref(false);
 
 const root: Ref<HTMLDivElement | null> = ref(null);
-const { isActive } = useVisibilityObserver(props.kind, root);
+const observer = computed(() => {
+  return useVisibilityObserver(props.kind, root);
+});
+
+const isActive = computed(() => {
+  return observer.value?.isActive.value;
+});
 
 const entriesLimit: () => number = inject("entriesLimit", () => 5);
 
 const emit = defineEmits(["loadComplete"]);
 
-const store =
-  props.kind === "education" ? useEducationStore() : useExperienceStore();
+const store = computed(() => {
+  return props.kind === "education"
+    ? useEducationStore()
+    : useExperienceStore();
+});
 
 watch(isActive, (val) => {
   if (val) {
-    if (!store.entities.length && !isLoading.value) {
+    if (!store.value.entities.length && !isLoading.value) {
       isLoading.value = true;
-      store.getLimitOffsetEntries(entriesLimit()).then(() => {
+      store.value.getLimitOffsetEntries(entriesLimit()).then(() => {
         isLoading.value = false;
       });
     }
@@ -77,7 +86,7 @@ watch(isActive, (val) => {
 
 function loadEntries() {
   isLoading.value = true;
-  store.getLimitOffsetEntries(entriesLimit()).then(() => {
+  store.value.getLimitOffsetEntries(entriesLimit()).then(() => {
     isLoading.value = false;
     emit("loadComplete");
   });
