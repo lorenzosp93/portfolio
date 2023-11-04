@@ -29,7 +29,7 @@
     </div>
     <div v-if="isMobile">
       <ul
-        class="flex flex-wrap dark:text-white text-gray-600 capitalize border-b-2 border-white my-3"
+        class="flex flex-wrap dark:text-white text-gray-600 capitalize border-b-2 dark:border-white border-gray-600 my-3"
       >
         <li
           v-for="comp in resumeList"
@@ -112,7 +112,8 @@ const isMobile = breakpoints.smaller("md");
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .active {
-  border-bottom: 1mm solid #fff;
+  border-bottom: 1mm solid;
   font-weight: bold;
+  @dark (border-bottom: 1mm solid #fff;);
 }
 </style>

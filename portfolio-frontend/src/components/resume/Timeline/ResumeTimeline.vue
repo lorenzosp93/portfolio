@@ -55,7 +55,13 @@ const props = defineProps<{
 const isLoading = ref(false);
 
 const root: Ref<HTMLDivElement | null> = ref(null);
-const { isActive } = useVisibilityObserver(props.kind, root);
+const observer = computed(() => {
+  return useVisibilityObserver(props.kind, root);
+});
+
+const isActive = computed(() => {
+  return observer.value?.isActive.value;
+});
 
 const entriesLimit: () => number = inject("entriesLimit", () => 5);
 
