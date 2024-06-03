@@ -1,6 +1,9 @@
 import { CreatedBy } from "@/models/models.interface";
 import { marked } from "marked";
 import { computed } from "vue";
+import markedKatex from "marked-katex-extension";
+
+marked.use(markedKatex({ throwOnError: false }));
 
 export function useTextUtils(props: {
   created_by?: CreatedBy;
