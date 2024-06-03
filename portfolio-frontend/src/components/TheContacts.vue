@@ -91,6 +91,7 @@
               :maxlength="item.maxLength"
               :placeholder="item.placeholder"
               :autofocus="idx == 0"
+              :autocomplete="item.autocomplete ? 'on' : 'off'"
               required
             />
             <textarea
@@ -101,6 +102,7 @@
               :maxlength="item.maxLength"
               rows="2"
               :placeholder="item.placeholder"
+              :autocomplete="item.autocomplete ? 'on' : 'off'"
               required
             />
             <span class="text-xs px-1 text-gray-400 block"
@@ -137,6 +139,7 @@ type FormItem = {
   maxLength: number;
   value: string;
   help?: string;
+  autocomplete?: boolean;
 };
 
 const formVisible = ref(false);
@@ -150,6 +153,7 @@ const formItems: Ref<FormItem[]> = ref([
     placeholder: "Jane",
     maxLength: 50,
     value: "",
+    autocomplete: true,
   },
   {
     id: "last_name",
@@ -158,6 +162,7 @@ const formItems: Ref<FormItem[]> = ref([
     placeholder: "Doe",
     maxLength: 50,
     value: "",
+    autocomplete: true,
   },
   {
     id: "email",
@@ -166,6 +171,7 @@ const formItems: Ref<FormItem[]> = ref([
     placeholder: "jane.doe@mail.com",
     maxLength: 100,
     value: "",
+    autocomplete: true,
   },
   {
     id: "content",
@@ -175,6 +181,7 @@ const formItems: Ref<FormItem[]> = ref([
     help: "Please keep it within 280 characters",
     maxLength: 280,
     value: "",
+    autocomplete: false,
   },
 ]);
 
