@@ -49,4 +49,6 @@ function cardClosed() {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped></style>
+<style scoped>
+@import url("https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css");
+</style>
