@@ -9,24 +9,24 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth.models import User
-THUMBNAIL_SIZE = (640,640)
+
+THUMBNAIL_SIZE = (640, 640)
+
 
 class Serializable(models.Model):
     "Abstract model to define an uuid based id field"
-    uuid = models.UUIDField(
-        editable=False,
-        default=uuid.uuid4
-    )
+    uuid = models.UUIDField(editable=False, default=uuid.uuid4)
 
     class Meta:
         abstract = True
+
 
 class Named(models.Model):
     "Abstract model to define names and slug behavior"
     name = models.CharField(max_length=90, unique=True)
     slug = models.SlugField(max_length=100, editable=False)
 
-    def save(self, **kwargs): # pylint: disable=W0221
+    def save(self, **kwargs):  # pylint: disable=W0221
         "Override save method to create slug from name"
         if not self.slug:
             self.slug = slugify(self.name)
@@ -37,6 +37,7 @@ class Named(models.Model):
 
     class Meta:
         abstract = True
+
 
 class TimeStampable(models.Model):
     "Abstract model to define timestamps for the entries"
@@ -53,13 +54,12 @@ class TimeStampable(models.Model):
 
     class Meta:
         abstract = True
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
+
 
 class Datable(models.Model):
     "Abstract model to define dates for the entries"
-    start_date = models.DateField(
-        verbose_name="Start date"
-    )
+    start_date = models.DateField(verbose_name="Start date")
     end_date = models.DateField(
         verbose_name="End date",
         blank=True,
@@ -79,7 +79,7 @@ class Datable(models.Model):
             return self.end_date
         return "No end date"
 
-    def save(self, **kwargs): # pylint: disable=W0221
+    def save(self, **kwargs):  # pylint: disable=W0221
         "Override save method to validate end date"
         if self.end_date:
             self.end_date_validation()
@@ -108,6 +108,7 @@ class Datable(models.Model):
     class Meta:
         abstract = True
 
+
 class Localizable(models.Model):
     "Abstract model to define locations"
     location = models.CharField(
@@ -116,6 +117,7 @@ class Localizable(models.Model):
 
     class Meta:
         abstract = True
+
 
 class Described(models.Model):
     "Abstract model to define descriptions"
@@ -131,9 +133,10 @@ class Described(models.Model):
 class Attachment(Named, Serializable):
     "Concrete model to define attachments"
     file = models.FileField(
-        upload_to='attachments/',
+        upload_to="attachments/",
         verbose_name="File",
     )
+
 
 class Attachable(models.Model):
     "Abstract model to allow attachments"
@@ -147,6 +150,7 @@ class Attachable(models.Model):
 
     class Meta:
         abstract = True
+
 
 class Authorable(models.Model):
     "Abstract model to describe the author"
@@ -167,6 +171,7 @@ class Authorable(models.Model):
         related_query_name="%(app_label)s_%(class)s_modified",
         editable=False,
     )
+
 
 class HasPicture(models.Model):
     "Abstract class to capture a picture"
@@ -196,23 +201,18 @@ class HasPicture(models.Model):
 
     def create_thumb(self, img: Image.Image) -> Image.Image:
         thumb = ImageOps.exif_transpose(img)
-        thumb.thumbnail(THUMBNAIL_SIZE, Image.ANTIALIAS)
+        thumb.thumbnail(THUMBNAIL_SIZE, Image.Resampling.LANCZOS)
         return thumb
 
     def save_img(self, img: Image.Image, save_path: str) -> SimpleUploadedFile:
         with BytesIO() as io:
-            img.save(
-                io,
-                quality=90,
-                optimize=True,
-                format='png'
-            )
+            img.save(io, quality=90, optimize=True, format="png")
             io.seek(0)
             return SimpleUploadedFile(
                 save_path,
                 content=io.read(),
             )
-    
+
     class Meta:
         abstract = True
 
@@ -224,8 +224,10 @@ class HasContent(models.Model):
     class Meta:
         abstract = True
 
+
 class SingletonBaseModel(models.Model):
     "Abstract class to implement the singleton design pattern"
+
     class Meta:
         abstract = True
 
@@ -241,24 +243,25 @@ class SingletonBaseModel(models.Model):
         obj, created = cls.objects.get_or_create(pk=1)
         return obj
 
+
 class SiteSettings(SingletonBaseModel):
     "Concrete model for the settings for the website"
     about_text = models.TextField()
 
+
 class Keys(models.Model):
-    p256dh= models.CharField(max_length=100)
+    p256dh = models.CharField(max_length=100)
     auth = models.CharField(max_length=30)
 
+
 class Subscription(TimeStampable):
-    endpoint= models.URLField()
-    keys= models.OneToOneField(
-        Keys, on_delete=models.CASCADE, null=True)
-    user_agent= models.TextField()
+    endpoint = models.URLField()
+    keys = models.OneToOneField(Keys, on_delete=models.CASCADE, null=True)
+    user_agent = models.TextField()
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=[ 'user_agent', 'endpoint'],
-                name='unique_subscription_per_device'
+                fields=["user_agent", "endpoint"], name="unique_subscription_per_device"
             ),
         ]
