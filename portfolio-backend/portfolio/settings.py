@@ -173,6 +173,9 @@ STATICFILES_DIRS = [
 
 USE_S3 = os.getenv('USE_S3') == 'True'
 
+# update for Django 5.2+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 if USE_S3:
     # aws settings
     AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
@@ -191,7 +194,7 @@ if USE_S3:
     DEFAULT_FILE_STORAGE = 'portfolio.custom_storages.MediaStorage'
 else:
     STATIC_URL = '/staticfiles/'
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+#    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
     MEDIA_URL = '/mediafiles/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 
