@@ -193,16 +193,8 @@ if USE_S3:
     MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/'
     DEFAULT_FILE_STORAGE = 'portfolio.custom_storages.MediaStorage'
     STORAGES = {
-        "default": {
-            "BACKEND": DEFAULT_FILE_STORAGE, 
-            "OPTIONS": {
-                "location": MEDIA_LOCATION, 
-                "base_url": MEDIA_URL
-            }
-        },
-        "staticfiles": {
-            "BACKEND": STATICFILES_STORAGE,
-        },
+        "default": {"BACKEND": DEFAULT_FILE_STORAGE, },
+        "staticfiles": {"BACKEND": STATICFILES_STORAGE, },
     }
 else:
     STORAGES = {
@@ -240,6 +232,7 @@ WEBPUSH_SETTINGS = {
     "VAPID_PRIVATE_KEY": os.environ.get('WEB_PUSH_PRIVATE_KEY'),
     "VAPID_ADMIN_EMAIL": os.environ.get('WEB_PUSH_ADMIN_EMAIL', "me@lorenzosp.com"),
 }
+
 
 
 
