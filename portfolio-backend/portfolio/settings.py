@@ -201,11 +201,7 @@ if USE_S3:
             }
         },
         "staticfiles": {
-            "BACKEND": STATICFILES_STORAGE, 
-            "OPTIONS": {
-                "location": STATIC_LOCATION, 
-                "base_url": STATIC_URL
-            }
+            "BACKEND": STATICFILES_STORAGE,
         },
     }
 else:
@@ -244,5 +240,6 @@ WEBPUSH_SETTINGS = {
     "VAPID_PRIVATE_KEY": os.environ.get('WEB_PUSH_PRIVATE_KEY'),
     "VAPID_ADMIN_EMAIL": os.environ.get('WEB_PUSH_ADMIN_EMAIL', "me@lorenzosp.com"),
 }
+
 
 
