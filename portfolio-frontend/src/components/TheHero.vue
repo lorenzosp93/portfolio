@@ -6,7 +6,7 @@
     <div class="relative flex-initial w-1/2 sm:w-1/3 m-auto py-5">
       <img
         id="heroPicture"
-        class="top-0 left-0 right-0 mx-auto my-4 w-40 h-40 md:w-56 md:h-56 ring-4 ring-white z-30 absolute rounded-full"
+        class="will-change-transform top-0 left-0 right-0 mx-auto my-4 w-40 h-40 md:w-56 md:h-56 ring-4 ring-white z-30 absolute rounded-full"
         src="@/assets/hero.webp"
         srcset="@/assets/hero.webp 886w, @/assets/hero-mobile.webp 320w"
         alt="High res picture"
