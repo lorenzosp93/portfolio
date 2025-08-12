@@ -192,7 +192,16 @@ if USE_S3:
     MEDIA_LOCATION = 'media'
     MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/'
     DEFAULT_FILE_STORAGE = 'portfolio.custom_storages.MediaStorage'
+    STORAGES = {
+    "default": {"BACKEND": DEFAULT_FILE_STORAGE, "OPTIONS": {"location": MEDIA_LOCATION, "base_url": MEDIA_URL},
+    "staticfiles": {"BACKEND": STATICFILES_STORAGE, "OPTIONS": {"location": STATIC_LOCATION, "base_url": STATIC_URL}},
+}
 else:
+    STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+}
+
     STATIC_URL = '/staticfiles/'
 #    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
     MEDIA_URL = '/mediafiles/'
@@ -223,3 +232,4 @@ WEBPUSH_SETTINGS = {
     "VAPID_PRIVATE_KEY": os.environ.get('WEB_PUSH_PRIVATE_KEY'),
     "VAPID_ADMIN_EMAIL": os.environ.get('WEB_PUSH_ADMIN_EMAIL', "me@lorenzosp.com"),
 }
+
