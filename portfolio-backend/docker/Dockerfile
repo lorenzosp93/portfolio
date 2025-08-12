@@ -18,7 +18,7 @@ COPY requirements.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir -r /tmp/requirements.txt \  
   && rm -rf /tmp/requirements.txt \  
   && useradd -U app_user \  
-  && install -d -m 0755 -o app_user -g app_user /app/static /app/staticfiles /app/mediafiles /app/thumb
+  && install -d -m 0755 -o app_user -g app_user /app/static /app/staticfiles /app/mediafiles /app/thumb /app/pictures
 
 # Section 5- Code and User Setup
 WORKDIR /app
@@ -34,4 +34,5 @@ RUN chmod +x docker/*.sh
 ENTRYPOINT [ "docker/entrypoint.sh" ]
 
 CMD [ "docker/start.sh", "server" ]
+
 
