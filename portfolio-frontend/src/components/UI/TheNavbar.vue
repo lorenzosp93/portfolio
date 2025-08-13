@@ -103,7 +103,7 @@
                 >
                   Education
                 </button>
-                <button
+<!--                <button
                   v-show="isResumeActive"
                   class="text-white dark:text-gray-900 px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
                   :class="{
@@ -112,7 +112,7 @@
                   @click="scrollToElement(navStore.refs?.projects)"
                 >
                   Projects
-                </button>
+                </button> -->
                 <button
                   v-show="isResumeActive"
                   class="text-white dark:text-gray-900 box-border px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
