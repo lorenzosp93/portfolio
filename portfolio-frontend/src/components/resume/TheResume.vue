@@ -79,13 +79,13 @@ const resumeList = [
     },
     id: "education",
   },
-  {
-    component: ResumeProjects,
-    props: {
-      ix: "center",
-    },
-    id: "projects",
-  },
+//  {
+//    component: ResumeProjects,
+//    props: {
+//      ix: "center",
+//    },
+//    id: "projects",
+//  },
   {
     component: ResumeSkills,
     props: {
