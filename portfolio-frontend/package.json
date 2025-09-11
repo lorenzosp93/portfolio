@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@heroicons/vue": "^2.0.14",
-    "@vitejs/plugin-vue": "^4.0.0",
+    "@vitejs/plugin-vue": "^6.0.1",
     "@vueuse/core": "^9.12.0",
     "axios": "^1.3.3",
     "core-js": "^3.8.3",
@@ -19,7 +19,7 @@
     "marked": "^12.0.2",
     "marked-katex-extension": "^5.0.1",
     "pinia": "^2.0.30",
-    "vite": "^4.5.0",
+    "vite": "^7.1.5",
     "vue": "^3.2.13",
     "vue-axios": "^3.5.2"
   },
@@ -39,8 +39,8 @@
     "typescript": "^5.2.2",
     "typescript-eslint": "^0.0.1-alpha.0",
     "vite-plugin-compression": "^0.5.1",
-    "vite-plugin-pwa": "^0.14.4",
-    "vitest": "^0.34.6"
+    "vite-plugin-pwa": "^1.0.3",
+    "vitest": "^3.2.4"
   },
   "eslintConfig": {
     "root": true,
