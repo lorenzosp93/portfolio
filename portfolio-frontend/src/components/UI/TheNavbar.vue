@@ -31,67 +31,84 @@
           </div>
 
           <div class="my-auto hidden w-full justify-end sm:ml-6 sm:block">
-            <div class="flex items-center space-x-2 overflow-x-auto no-scrollbar">
+            <div
+              ref="desktopNav"
+              class="relative flex items-center space-x-2 overflow-x-auto no-scrollbar"
+            >
+              <div
+                class="nav-active-indicator"
+                :style="activeIndicatorStyle"
+              />
               <button
-                class="nav-link ml-auto"
-                :class="{ active: navStore.visible === 'theHero' }"
+                :ref="(el) => setNavItemRef('theHero', el)"
+                class="nav-link nav-link-layer ml-auto"
+                :class="{ active_text: activeNavItem === 'theHero' }"
                 aria-current="page"
                 @click="scrollToElement(navStore.refs?.theHero)"
               >
                 About
               </button>
 
-              <div class="rounded-full p-0.5 text-sm font-medium" :class="{ active: isResumeActive }">
+              <Transition name="resume-nav" mode="out-in" @after-enter="updateActiveIndicator">
                 <button
                   v-if="!isResumeActive"
-                  class="nav-link"
+                  key="resume"
+                  :ref="(el) => setNavItemRef('theResume', el)"
+                  class="nav-link nav-link-layer"
+                  :class="{ active_text: activeNavItem === 'theResume' }"
                   @click="scrollToResumeSection"
                 >
                   Resume
                 </button>
-                <template v-else>
+                <div v-else key="resume-subnav" class="resume-subnav">
                   <button
-                    class="nav-link-active-group"
-                    :class="{ active_inner: navStore.visible === 'experience' }"
+                    :ref="(el) => setNavItemRef('experience', el)"
+                    class="nav-link-active-group nav-link-layer"
+                    :class="{ active_text: activeNavItem === 'experience' }"
                     @click="scrollToElement(navStore.refs?.experience)"
                   >
                     Experience
                   </button>
                   <button
-                    class="nav-link-active-group"
-                    :class="{ active_inner: navStore.visible === 'education' }"
+                    :ref="(el) => setNavItemRef('education', el)"
+                    class="nav-link-active-group nav-link-layer"
+                    :class="{ active_text: activeNavItem === 'education' }"
                     @click="scrollToElement(navStore.refs?.education)"
                   >
                     Education
                   </button>
                   <button
                     v-if="navStore.refs?.projects"
-                    class="nav-link-active-group"
-                    :class="{ active_inner: navStore.visible === 'projects' }"
+                    :ref="(el) => setNavItemRef('projects', el)"
+                    class="nav-link-active-group nav-link-layer"
+                    :class="{ active_text: activeNavItem === 'projects' }"
                     @click="scrollToElement(navStore.refs?.projects)"
                   >
                     Projects
                   </button>
                   <button
-                    class="nav-link-active-group"
-                    :class="{ active_inner: navStore.visible === 'skills' }"
+                    :ref="(el) => setNavItemRef('skills', el)"
+                    class="nav-link-active-group nav-link-layer"
+                    :class="{ active_text: activeNavItem === 'skills' }"
                     @click="scrollToElement(navStore.refs?.skills)"
                   >
                     Skills
                   </button>
-                </template>
-              </div>
+                </div>
+              </Transition>
 
               <button
-                class="nav-link"
-                :class="{ active: navStore.visible === 'theBlog' }"
+                :ref="(el) => setNavItemRef('theBlog', el)"
+                class="nav-link nav-link-layer"
+                :class="{ active_text: activeNavItem === 'theBlog' }"
                 @click="scrollToElement(navStore.refs?.theBlog)"
               >
                 Blog
               </button>
               <button
-                class="nav-link"
-                :class="{ active: navStore.visible === 'theContacts' }"
+                :ref="(el) => setNavItemRef('theContacts', el)"
+                class="nav-link nav-link-layer"
+                :class="{ active_text: activeNavItem === 'theContacts' }"
                 @click="scrollToElement(navStore.refs?.theContacts)"
               >
                 Contacts
@@ -128,11 +145,16 @@
 <script setup lang="ts">
 import { useNavStore } from "@/stores/nav.store";
 import { Bars3Icon, XMarkIcon } from "@heroicons/vue/24/outline";
-import { MaybeRef } from "@vueuse/core";
-import { computed, ref } from "vue";
+import { MaybeRef, useEventListener } from "@vueuse/core";
+import { computed, nextTick, reactive, ref, watch } from "vue";
 const navStore = useNavStore();
 
 const isMenuOpen = ref(false);
+const desktopNav = ref<HTMLElement | null>(null);
+const navItemRefs = reactive<Record<string, HTMLElement | null>>({});
+const activeIndicator = reactive({ left: 0, width: 0, visible: false });
+const resumeSectionName = "theResume";
+
 const isResumeActive = computed(() => {
   return (
     navStore.isActive?.experience ||
@@ -142,9 +164,49 @@ const isResumeActive = computed(() => {
   );
 });
 
+const activeNavItem = computed(() => {
+  if (!isResumeActive.value && navStore.visible === "theResume") {
+    return resumeSectionName;
+  }
+
+  return navStore.visible || "theHero";
+});
+
+const activeIndicatorStyle = computed(() => ({
+  width: `${activeIndicator.width}px`,
+  transform: `translate3d(${activeIndicator.left}px, -50%, 0)`,
+  opacity: activeIndicator.visible ? 1 : 0,
+}));
+
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
 };
+
+function setNavItemRef(name: string, el: Element | null) {
+  navItemRefs[name] = el instanceof HTMLElement ? el : null;
+  nextTick(updateActiveIndicator);
+}
+
+function updateActiveIndicator() {
+  const activeEl = navItemRefs[activeNavItem.value];
+  const navEl = desktopNav.value;
+  if (!activeEl || !navEl) {
+    activeIndicator.visible = false;
+    return;
+  }
+
+  const navBox = navEl.getBoundingClientRect();
+  const activeBox = activeEl.getBoundingClientRect();
+  activeIndicator.left = activeBox.left - navBox.left + navEl.scrollLeft;
+  activeIndicator.width = activeBox.width;
+  activeIndicator.visible = true;
+}
+
+watch([activeNavItem, isResumeActive], () => nextTick(updateActiveIndicator), {
+  immediate: true,
+});
+
+useEventListener(window, "resize", updateActiveIndicator);
 
 function scrollMobile(elem: MaybeRef<HTMLDivElement | null>) {
   scrollToElement(elem);
@@ -214,12 +276,47 @@ function getHorizontalScrollParent(elem: HTMLElement): HTMLElement | null {
 </script>
 
 <style scoped>
+.nav-active-indicator {
+  @apply pointer-events-none absolute top-1/2 z-0 h-9 rounded-full bg-teal shadow-sm transition-all duration-300 ease-out dark:bg-tealSoft;
+}
+
+.nav-link-layer {
+  @apply relative z-10;
+}
+
 .nav-link {
-  @apply cursor-pointer rounded-full px-3 py-2 text-sm font-medium text-ink transition hover:bg-tealSoft hover:text-teal dark:text-gray-300 dark:hover:bg-teal/20 dark:hover:text-tealSoft;
+  @apply cursor-pointer rounded-full px-3 py-2 text-sm font-medium text-ink transition-colors duration-300 hover:text-teal dark:text-gray-300 dark:hover:text-tealSoft;
 }
 
 .nav-link-active-group {
-  @apply cursor-pointer rounded-full px-3 py-2 text-sm font-medium text-white transition dark:text-night;
+  @apply cursor-pointer rounded-full px-3 py-2 text-sm font-medium text-ink transition-colors duration-300 hover:text-teal dark:text-gray-300 dark:hover:text-tealSoft;
+}
+
+.resume-subnav {
+  @apply relative z-10 flex items-center rounded-full p-0.5 text-sm font-medium;
+}
+
+.resume-nav-enter-active,
+.resume-nav-leave-active {
+  transition:
+    opacity 180ms ease,
+    transform 220ms ease,
+    max-width 260ms ease;
+  overflow: hidden;
+}
+
+.resume-nav-enter-from,
+.resume-nav-leave-to {
+  max-width: 5rem;
+  opacity: 0;
+  transform: scaleX(0.92);
+}
+
+.resume-nav-enter-to,
+.resume-nav-leave-from {
+  max-width: 22rem;
+  opacity: 1;
+  transform: scaleX(1);
 }
 
 .mobile-link {
@@ -230,8 +327,8 @@ function getHorizontalScrollParent(elem: HTMLElement): HTMLElement | null {
   @apply bg-teal text-white shadow-sm dark:bg-tealSoft dark:text-night;
 }
 
-.active_inner {
-  @apply bg-surface text-teal shadow-sm dark:bg-nightSurface dark:text-tealSoft;
+.active_text {
+  @apply text-white dark:text-night;
 }
 
 .menu-closed {
