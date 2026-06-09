@@ -29,6 +29,8 @@ import { registerSW } from "virtual:pwa-register";
 
 registerSW({ immediate: true });
 
+const root: Ref<HTMLDivElement | null> = ref(null);
+
 const truncationAmount = () => {
   let w = window.innerWidth;
   return w > 1024 ? 350 : w > 640 ? 200 : 75;
@@ -43,18 +45,20 @@ provide("entriesLimit", entriesLimit);
 
 onUnmounted(() => {
   cleanupAnimation();
+  clearTimeout(resizeTimer);
 });
 
 const innerWidth = ref(window.innerWidth);
+let resizeTimer: ReturnType<typeof setTimeout>;
 
 useEventListener("resize", resizeEventHandler);
 
 function resizeEventHandler(event: UIEvent) {
-  if (innerWidth.value != (event.target as Window).innerWidth) {
-    timeline.value?.restart();
-    // window.scrollTo({ top: 0 });
-    setupAnimation();
-    innerWidth.value = (event.target as Window).innerWidth;
+  const nextInnerWidth = (event.target as Window).innerWidth;
+  if (innerWidth.value != nextInnerWidth) {
+    innerWidth.value = nextInnerWidth;
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(setupAnimation, 150);
   }
 }
 
@@ -69,6 +73,7 @@ const timeline: Ref<GSAPTimeline | null> = ref(null);
 
 function cleanupAnimation() {
   timeline.value?.kill();
+  timeline.value = null;
 }
 
 type DOMCoordinates = {
@@ -85,6 +90,7 @@ function addHeroAnimation(coordinates: DOMCoordinates) {
       scrub: true,
       start: "top top",
       end: "bottom top",
+      invalidateOnRefresh: true,
     },
   });
   tl.to("#heroPicture", {
@@ -92,10 +98,10 @@ function addHeroAnimation(coordinates: DOMCoordinates) {
     y: coordinates.deltaY,
     scaleX: coordinates.scaleX,
     scaleY: coordinates.scaleY,
-    ease: "power2",
+    ease: "none",
     duration: 0.7,
   })
-    .to("#the-navbar", { opacity: 1, ease: "power1.in", duration: 0.3 }, 0.7)
+    .to("#the-navbar", { opacity: 1, ease: "none", duration: 0.3 }, 0.7)
     .set("#heroPicture", { opacity: 0 }, 1);
   timeline.value = tl;
 }
