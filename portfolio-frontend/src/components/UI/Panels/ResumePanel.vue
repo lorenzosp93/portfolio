@@ -78,12 +78,12 @@ watch(
   left: 0;
   right: 0;
   bottom: 0;
-  height: 4rem;
+  height: 6rem;
   pointer-events: none;
   border-radius: 0 0 1rem 1rem;
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  mask-image: linear-gradient(to bottom, transparent, black 70%);
-  -webkit-mask-image: linear-gradient(to bottom, transparent, black 70%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  mask-image: linear-gradient(to bottom, transparent, rgb(0 0 0 / 0.18) 20%, rgb(0 0 0 / 0.7) 58%, black 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, rgb(0 0 0 / 0.18) 20%, rgb(0 0 0 / 0.7) 58%, black 100%);
 }
 </style>
