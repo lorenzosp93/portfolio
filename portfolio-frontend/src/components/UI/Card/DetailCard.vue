@@ -108,12 +108,20 @@ const hasNudgedContent = ref(false);
 const isNudgingContent = ref(false);
 let nudgeTimer: ReturnType<typeof window.setTimeout> | null = null;
 
+function getDownwardDragLimit() {
+  return Math.max(closeThreshold * 1.5, (cardH.value ?? 0) * 0.75);
+}
+
+function updateDragBounds() {
+  drag.value?.applyBounds({ maxY: getDownwardDragLimit(), minY: upwardDragLimit });
+}
+
 function init() {
   if (card.value && pan.value) {
-    drag.value?.applyBounds({ maxY: 0, minY: upwardDragLimit });
     cardP.value = 0;
     cardH.value = card.value.clientHeight;
     contentH.value = `${cardH.value - pan.value.clientHeight}px`;
+    updateDragBounds();
     if (!initiated.value) {
       initiated.value = true;
       const tl = gsap.timeline();
@@ -129,15 +137,16 @@ function init() {
         type: "y",
         trigger: pan.value,
         bounds: {
-          maxY: 0,
+          maxY: getDownwardDragLimit(),
           minY: upwardDragLimit,
         },
         liveSnap: (value) => {
           return value < upwardDragLimit ? upwardDragLimit : value;
         },
-        edgeResistance: 0.65,
+        edgeResistance: 0.85,
         autoScroll: 0,
         onPress: () => {
+          clearNudgeTimer();
           startY = drag.value?.pointerY ?? 0;
           gsap.killTweensOf(card.value);
         },
@@ -285,7 +294,10 @@ onMounted(() => {
       close(null);
     }
   });
-  useEventListener("resize", maybeNudgeContentAfterRender);
+  useEventListener("resize", () => {
+    updateDragBounds();
+    maybeNudgeContentAfterRender();
+  });
 });
 </script>
 
