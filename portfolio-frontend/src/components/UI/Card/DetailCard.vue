@@ -7,7 +7,7 @@
         closed: opened === false,
         moving: moving,
       }"
-      style="{'pointer-events': 'all'}"
+      style="pointer-events: all"
       ref="bottomSheet"
     >
       <div
@@ -18,7 +18,7 @@
         @touchmove.prevent="() => {}"
       />
       <article
-        class="bg-white dark:bg-gray-800 bottom-sheet__card fx-default md:max-w-lg lg:max-w-2xl"
+        class="bottom-sheet__card fx-default bg-surface shadow-2xl ring-1 ring-ink/10 dark:bg-nightSurface dark:ring-white/10 md:max-w-lg lg:max-w-2xl"
         :style="[
           {
             bottom: cardP + 'px',
@@ -31,18 +31,18 @@
         ref="card"
       >
         <div class="bottom-sheet__pan" ref="pan">
-          <div class="bottom-sheet__bar bg-gray-300 dark:bg-white" />
-          <header class="dark:text-white p-3 mt-auto border-b-2">
+          <div class="bottom-sheet__bar bg-tealSoft dark:bg-teal/50" />
+          <header class="mt-auto border-b border-ink/10 p-3 dark:border-white/10">
             <div
-              class="text-gray-400 text-md dark:text-gray-300 sm:ml-auto sm:order-last"
+              class="text-md text-muted dark:text-gray-300 sm:order-last sm:ml-auto"
             >
               <slot name="extra-title-content">Extra title content</slot>
             </div>
             <div>
-              <div class="text-gray-600 text-2xl font-semibold dark:text-white">
+              <div class="text-2xl font-semibold text-ink dark:text-white">
                 <slot name="title">Some title for the card</slot>
               </div>
-              <div class="text-gray-400 text-md dark:text-gray-300 pb-auto">
+              <div class="text-md text-muted dark:text-gray-300 pb-auto">
                 <slot name="subtitle"
                   >A subtitle for the card. This should be somewhat longer</slot
                 >
@@ -57,7 +57,7 @@
           ref="content"
         >
           <div
-            class="container my-3 text-sm text-gray-700 dark:text-white px-auto"
+            class="container my-3 text-sm text-ink dark:text-gray-100 px-auto"
           >
             <slot name="inner-content">
               Here goes the main content of the card. Lorem ipsum dolor sit,
@@ -125,24 +125,12 @@ function init() {
         liveSnap: (value) => {
           return value < 0 ? 0 : value;
         },
-        inertia: true,
         edgeResistance: 0,
         autoScroll: 0,
         onPress: () => {
           startY = drag.value?.pointerY ?? 0;
         },
-        onDrag: () => {
-          let deltaY = startY - (drag.value?.pointerY ?? 0);
-          if (deltaY > 0) {
-            gsap.set(card.value, {
-              "border-bottom": `${deltaY / 5}px solid transparent`,
-            });
-          }
-        },
         onDragEnd: () => {
-          gsap.set(card.value, {
-            "border-bottom": `0px solid transparent`,
-          });
           let deltaY = startY - (drag.value?.pointerY ?? 0);
           if (deltaY < -150) {
             close(deltaY);
@@ -186,7 +174,6 @@ function close(deltaY: number | null) {
 }
 
 function handleClickOnBottomSheet(event: MouseEvent) {
-  let target = event.target as HTMLElement;
   close(null);
   event.stopPropagation();
 }
@@ -221,9 +208,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.bottom-sheet * {
-  box-sizing: content-box;
-}
 .bottom-sheet {
   z-index: 100;
   position: relative;
@@ -250,6 +234,7 @@ onMounted(() => {
   left: 50%;
   z-index: 100;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 .bottom-sheet__card.stripe {
   padding-bottom: 15px;
