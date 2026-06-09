@@ -3,7 +3,7 @@
     ref="root"
     class="relative mx-auto flex min-h-screen w-full flex-wrap text-ink dark:text-white"
   >
-    <div class="relative m-auto flex-initial w-1/2 py-5 sm:w-1/3">
+    <div class="relative z-10 m-auto flex-initial w-1/2 py-5 sm:w-1/3">
       <div class="relative mx-auto h-56 w-56 md:h-72 md:w-72">
         <div
           class="absolute left-1/2 top-1/2 h-44 w-56 -translate-x-1/2 -translate-y-1/2 rotate-[-9deg] rounded-[42%_58%_48%_52%/58%_39%_61%_42%] bg-tealSoft/80 shadow-xl ring-1 ring-teal/20 dark:bg-teal/25 dark:ring-tealSoft/20 md:h-56 md:w-72"
@@ -79,9 +79,9 @@
       </div>
     </div>
     <div></div>
-    <div class="m-auto flex-initial w-4/5 sm:w-2/3">
+    <div class="relative z-20 m-auto flex-initial w-4/5 sm:w-2/3">
       <div
-        class="m-2 max-sm:prose-sm prose prose-slate font-sans first-letter:text-2xl indent-3 dark:prose-invert prose-strong:text-coral dark:prose-strong:text-coralSoft"
+        class="m-2 max-sm:prose-sm prose prose-slate font-sans first-letter:text-2xl indent-3 dark:prose-invert prose-strong:text-coral dark:prose-strong:text-coralSoft lg:prose-lg xl:prose-xl"
       >
         <p>
           I'm a Product leader deeply rooted in <strong>software</strong> and
