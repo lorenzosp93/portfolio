@@ -148,7 +148,7 @@ function scrollToResume() {
 
 <style scoped>
 .hero-scroll-cue {
-  @apply absolute bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full bg-surface/80 px-3 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-muted shadow-sm ring-1 ring-ink/10 backdrop-blur-sm transition hover:-translate-y-0.5 hover:text-teal dark:bg-nightSurface/80 dark:text-gray-300 dark:ring-white/10 dark:hover:text-tealSoft;
+  @apply fixed bottom-5 left-1/2 z-30 flex -translate-x-1/2 items-center gap-1 rounded-full bg-ink/90 px-3 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-white shadow-lg ring-1 ring-white/20 backdrop-blur-md transition hover:-translate-y-0.5 hover:bg-teal hover:text-white dark:bg-white/90 dark:text-night dark:ring-night/20 dark:hover:bg-tealSoft;
   animation: hero-scroll-cue-bob 1.6s ease-in-out infinite;
 }
 
