@@ -9,10 +9,10 @@
       <template v-slot:content>
         <ol
           v-if="store.entities.length > 0"
-          class="relative border-l border-gray-200 dark:border-gray-600 ml-5 lg:ml-10 py-[1px]"
+          class="relative ml-5 border-l border-teal/20 py-[1px] dark:border-tealSoft/20 lg:ml-10"
         >
           <h1
-            class="dark:text-white text-xl font-semibold px-5 pt-2 capitalize md:hidden"
+            class="px-5 pt-2 text-xl font-semibold capitalize text-ink dark:text-white md:hidden"
           >
             {{ kind }}
           </h1>
@@ -27,7 +27,7 @@
           <div
             v-if="store.results.length < store.total && !isLoading"
             @click="loadEntries()"
-            class="h-10 w-10 bg-gray-200 dark:bg-gray-600 shadow-md rounded-full mx-auto stroke-1 fill-gray-500 dark:fill-white animate-bounce cursor-pointer"
+            class="mx-auto h-10 w-10 cursor-pointer rounded-full bg-tealSoft fill-teal shadow-md stroke-1 animate-bounce dark:bg-teal/30 dark:fill-tealSoft"
           >
             <chevron-double-down-icon
               class="h-5 absolute top-[55%] left-1/2 -translate-x-1/2 -translate-y-1/2"
