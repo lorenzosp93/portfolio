@@ -5,7 +5,7 @@
         <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
           <button
             type="button"
-            class="ml-2 inline-flex items-center justify-center rounded-full p-2 text-muted transition hover:bg-tealSoft hover:text-teal dark:text-gray-300 dark:hover:bg-teal/20 dark:hover:text-tealSoft"
+            class="ml-2 inline-flex items-center justify-center rounded-full p-2 text-muted transition hover:text-teal dark:text-gray-300 dark:hover:text-tealSoft"
             aria-controls="mobile-menu"
             :aria-expanded="isMenuOpen"
             @click="toggleMenu"
@@ -299,7 +299,7 @@ function getHorizontalScrollParent(elem: HTMLElement): HTMLElement | null {
 }
 
 .nav-link-active-group {
-  @apply cursor-pointer rounded-full px-3 py-2 text-sm font-medium text-white transition-colors duration-300 hover:bg-surface/20 dark:text-night dark:hover:bg-nightSurface/20;
+  @apply cursor-pointer rounded-full px-3 py-2 text-sm font-medium text-white transition-colors duration-300 hover:text-white dark:text-night dark:hover:text-night;
 }
 
 .resume-subnav {
@@ -331,7 +331,7 @@ function getHorizontalScrollParent(elem: HTMLElement): HTMLElement | null {
 }
 
 .mobile-link {
-  @apply block w-full rounded-xl px-4 py-2 text-left text-sm font-medium text-ink transition hover:bg-tealSoft hover:text-teal dark:text-gray-300 dark:hover:bg-teal/20 dark:hover:text-tealSoft;
+  @apply block w-full rounded-xl px-4 py-2 text-left text-sm font-medium text-ink transition hover:text-teal dark:text-gray-300 dark:hover:text-tealSoft;
 }
 
 .active {
