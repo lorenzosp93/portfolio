@@ -1,24 +1,30 @@
 <template>
   <section
     ref="root"
-    class="flex min-h-screen w-full flex-wrap text-black dark:text-white mx-auto"
+    class="mx-auto flex min-h-screen w-full flex-wrap text-ink dark:text-white"
   >
-    <div class="relative flex-initial w-1/2 sm:w-1/3 m-auto py-5">
+    <div class="relative m-auto flex-initial w-1/2 py-5 sm:w-1/3">
+      <div
+        class="absolute left-1/2 top-4 h-44 w-44 -translate-x-1/2 rounded-[2rem] bg-coralSoft shadow-xl ring-1 ring-coral/20 rotate-6 dark:bg-teal/20 dark:ring-tealSoft/20 md:h-60 md:w-60"
+      />
+      <div
+        class="absolute left-1/2 top-6 h-44 w-44 -translate-x-1/2 rounded-[2rem] bg-tealSoft/70 shadow-lg ring-1 ring-teal/20 -rotate-3 dark:bg-coral/20 dark:ring-coralSoft/20 md:h-60 md:w-60"
+      />
       <img
         id="heroPicture"
-        class="will-change-transform top-0 left-0 right-0 mx-auto my-4 w-40 h-40 md:w-56 md:h-56 ring-4 ring-white z-30 absolute rounded-full"
+        class="will-change-transform absolute left-0 right-0 top-0 z-30 mx-auto my-4 h-40 w-40 rounded-[1.7rem] object-cover shadow-2xl ring-4 ring-surface transition dark:ring-nightSurface md:h-56 md:w-56"
         src="@/assets/hero.webp"
         srcset="@/assets/hero.webp 886w, @/assets/hero-mobile.webp 320w"
         alt="High res picture"
         @load="$emit('heroLoaded')"
       />
-      <h1 class="mt-44 md:mt-60 text-3xl m-5 font-bold text-center">
-        Hi, I'm Lorenzo
+      <h1 class="m-5 mt-44 text-center text-3xl font-bold md:mt-60">
+        Hi, I'm <span class="text-coral dark:text-coralSoft">Lorenzo</span>
       </h1>
       <div class="container flex mt-5">
         <!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
         <a
-          class="fill-gray-700 dark:fill-white ml-auto"
+          class="ml-auto fill-muted transition hover:fill-coral dark:fill-gray-300 dark:hover:fill-coralSoft"
           href="https://twitter.com/Lorenzosp"
           aria-label="Twitter profile"
         >
@@ -34,7 +40,7 @@
         </a>
         <a
           href="https://www.linkedin.com/in/lorenzosp/"
-          class="fill-gray-700 dark:fill-white mx-5"
+          class="mx-5 fill-muted transition hover:fill-teal dark:fill-gray-300 dark:hover:fill-tealSoft"
           aria-label="Linkedin profile"
         >
           <svg
@@ -49,7 +55,7 @@
         </a>
         <a
           href="https://github.com/lorenzosp93"
-          class="fill-gray-700 dark:fill-white mr-auto"
+          class="mr-auto fill-muted transition hover:fill-coral dark:fill-gray-300 dark:hover:fill-coralSoft"
           aria-label="Github space"
         >
           <svg
@@ -65,22 +71,24 @@
       </div>
     </div>
     <div></div>
-    <div class="flex-initial w-4/5 sm:w-2/3 m-auto">
+    <div class="m-auto flex-initial w-4/5 sm:w-2/3">
       <div
-        class="font-sans first-letter:text-2xl justify-between m-2 indent-3 prose dark:prose-invert max-sm:prose-sm prose-slate"
+        class="m-2 max-sm:prose-sm prose prose-slate font-sans first-letter:text-2xl indent-3 dark:prose-invert prose-strong:text-coral dark:prose-strong:text-coralSoft"
       >
         <p>
-          I'm a Product leader deeply rooted in software and energy engineering.
-          Throughout my career, I've immersed myself in various roles, thriving
-          in both scrappy and established environments. My approach is defined
-          by a constant drive for innovation and an ability to decipher complex
+          I'm a Product leader deeply rooted in <strong>software</strong> and
+          <strong>energy engineering</strong>. Throughout my career, I've
+          immersed myself in various roles, thriving in both scrappy and
+          established environments. My approach is defined by a constant drive
+          for <strong>innovation</strong> and an ability to decipher complex
           problems.
         </p>
         <p>
           Actively working on refining and expanding my skillset, I have a clear
-          vision: to lay the groundwork for my own venture in the near future.
-          I'm always on the lookout for collaboration with forward-thinkers.
-          Ready for the next adventure in innovation? Let's dive in together.
+          vision: to lay the groundwork for my own <strong>venture</strong> in
+          the near future. I'm always on the lookout for collaboration with
+          <strong>forward-thinkers</strong>. Ready for the next adventure in
+          innovation? Let's dive in together.
         </p>
       </div>
     </div>
