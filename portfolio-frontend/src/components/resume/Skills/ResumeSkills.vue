@@ -1,5 +1,5 @@
 <template>
-  <div ref="root">
+  <div ref="root" class="scroll-mt-20">
     <resume-panel
       :dataLoaded="skillStore.data.length > 0"
       :isLoading="isLoading"
