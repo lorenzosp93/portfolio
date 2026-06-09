@@ -83,8 +83,10 @@ function recalculateAnimation() {
 }
 
 const timeline: Ref<GSAPTimeline | null> = ref(null);
+let animationSignature = "";
 
 function cleanupAnimation() {
+  timeline.value?.scrollTrigger?.kill();
   timeline.value?.kill();
   timeline.value = null;
 }
@@ -96,13 +98,33 @@ type DOMCoordinates = {
   scaleY: number;
 };
 function addHeroAnimation(coordinates: DOMCoordinates) {
+  const nextSignature = JSON.stringify(coordinates);
+  if (timeline.value && animationSignature === nextSignature) {
+    timeline.value.scrollTrigger?.refresh();
+    return;
+  }
+
   cleanupAnimation();
+  animationSignature = nextSignature;
+  gsap.set("#heroPicture", {
+    x: 0,
+    y: 0,
+    scaleX: 1,
+    scaleY: 1,
+    opacity: 1,
+    transformOrigin: "50% 50%",
+    willChange: "transform, opacity",
+    force3D: true,
+  });
+  gsap.set("#the-navbar", { opacity: 0 });
+
   const tl = gsap.timeline({
     scrollTrigger: {
       trigger: "#the-hero",
       scrub: true,
       start: "top top",
       end: "bottom top",
+      invalidateOnRefresh: true,
     },
   });
   tl.to("#heroPicture", {
@@ -117,6 +139,7 @@ function addHeroAnimation(coordinates: DOMCoordinates) {
     .to("#the-navbar", { opacity: 1, ease: "none", duration: 0.3 }, 0.7)
     .set("#heroPicture", { opacity: 0 }, 1);
   timeline.value = tl;
+  tl.scrollTrigger?.refresh();
 }
 
 function calculateCoordinatesAnimation(
