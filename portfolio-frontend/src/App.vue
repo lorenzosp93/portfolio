@@ -6,7 +6,7 @@
       id="the-navbar"
       @image-loaded="setupAnimation"
     />
-    <the-resume class="snap-center" id="the-resume" />
+    <the-resume class="snap-center scroll-mt-20" id="the-resume" />
     <the-blog class="snap-center" id="the-blog" />
     <the-contacts class="snap-center" id="the-contacts" />
 
