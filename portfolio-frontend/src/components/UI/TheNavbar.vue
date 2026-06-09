@@ -166,9 +166,10 @@ function scrollToElement(elem: MaybeRef<HTMLDivElement | null>) {
 
   const navbarHeight = document.getElementById("the-navbar")?.offsetHeight ?? 0;
   const targetTop = elem.getBoundingClientRect().top + window.scrollY;
+  const breathingRoom = parseFloat(getComputedStyle(document.documentElement).fontSize);
 
   window.scrollTo({
-    top: Math.max(targetTop - navbarHeight, 0),
+    top: Math.max(targetTop - navbarHeight - breathingRoom, 0),
     behavior: "smooth",
   });
 }
