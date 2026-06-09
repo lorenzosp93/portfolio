@@ -33,7 +33,7 @@
           <div class="my-auto hidden w-full justify-end sm:ml-6 sm:block">
             <div
               ref="desktopNav"
-              class="relative flex items-center space-x-2 overflow-x-auto no-scrollbar"
+              class="relative flex w-full items-center justify-end space-x-2 overflow-x-auto no-scrollbar"
             >
               <div
                 class="nav-active-indicator"
@@ -41,7 +41,7 @@
               />
               <button
                 :ref="(el) => setNavItemRef('theHero', el)"
-                class="nav-link nav-link-layer ml-auto"
+                class="nav-link nav-link-layer"
                 :class="{ active_text: activeNavItem === 'theHero' }"
                 aria-current="page"
                 @click="scrollToElement(navStore.refs?.theHero)"
@@ -49,7 +49,7 @@
                 About
               </button>
 
-              <Transition name="resume-nav" mode="out-in" @after-enter="updateActiveIndicator">
+              <Transition name="resume-nav" @after-enter="updateActiveIndicator" @after-leave="updateActiveIndicator">
                 <button
                   v-if="!isResumeActive"
                   key="resume"
@@ -60,11 +60,16 @@
                 >
                   Resume
                 </button>
-                <div v-else key="resume-subnav" class="resume-subnav">
+                <div
+                  v-else
+                  key="resume-subnav"
+                  :ref="(el) => setNavItemRef('resumeGroup', el)"
+                  class="resume-subnav"
+                >
                   <button
                     :ref="(el) => setNavItemRef('experience', el)"
                     class="nav-link-active-group nav-link-layer"
-                    :class="{ active_text: activeNavItem === 'experience' }"
+                    :class="{ active_inner: navStore.visible === 'experience' }"
                     @click="scrollToElement(navStore.refs?.experience)"
                   >
                     Experience
@@ -72,7 +77,7 @@
                   <button
                     :ref="(el) => setNavItemRef('education', el)"
                     class="nav-link-active-group nav-link-layer"
-                    :class="{ active_text: activeNavItem === 'education' }"
+                    :class="{ active_inner: navStore.visible === 'education' }"
                     @click="scrollToElement(navStore.refs?.education)"
                   >
                     Education
@@ -81,7 +86,7 @@
                     v-if="navStore.refs?.projects"
                     :ref="(el) => setNavItemRef('projects', el)"
                     class="nav-link-active-group nav-link-layer"
-                    :class="{ active_text: activeNavItem === 'projects' }"
+                    :class="{ active_inner: navStore.visible === 'projects' }"
                     @click="scrollToElement(navStore.refs?.projects)"
                   >
                     Projects
@@ -89,7 +94,7 @@
                   <button
                     :ref="(el) => setNavItemRef('skills', el)"
                     class="nav-link-active-group nav-link-layer"
-                    :class="{ active_text: activeNavItem === 'skills' }"
+                    :class="{ active_inner: navStore.visible === 'skills' }"
                     @click="scrollToElement(navStore.refs?.skills)"
                   >
                     Skills
@@ -154,6 +159,7 @@ const desktopNav = ref<HTMLElement | null>(null);
 const navItemRefs = reactive<Record<string, HTMLElement | null>>({});
 const activeIndicator = reactive({ left: 0, width: 0, visible: false });
 const resumeSectionName = "theResume";
+const resumeGroupName = "resumeGroup";
 
 const isResumeActive = computed(() => {
   return (
@@ -165,7 +171,11 @@ const isResumeActive = computed(() => {
 });
 
 const activeNavItem = computed(() => {
-  if (!isResumeActive.value && navStore.visible === "theResume") {
+  if (isResumeActive.value) {
+    return resumeGroupName;
+  }
+
+  if (navStore.visible === "theResume") {
     return resumeSectionName;
   }
 
@@ -289,27 +299,28 @@ function getHorizontalScrollParent(elem: HTMLElement): HTMLElement | null {
 }
 
 .nav-link-active-group {
-  @apply cursor-pointer rounded-full px-3 py-2 text-sm font-medium text-ink transition-colors duration-300 hover:text-teal dark:text-gray-300 dark:hover:text-tealSoft;
+  @apply cursor-pointer rounded-full px-3 py-2 text-sm font-medium text-white transition-colors duration-300 hover:bg-surface/20 dark:text-night dark:hover:bg-nightSurface/20;
 }
 
 .resume-subnav {
-  @apply relative z-10 flex items-center rounded-full p-0.5 text-sm font-medium;
+  @apply relative z-10 flex origin-center items-center rounded-full p-0.5 text-sm font-medium;
 }
 
 .resume-nav-enter-active,
 .resume-nav-leave-active {
   transition:
     opacity 180ms ease,
-    transform 220ms ease,
-    max-width 260ms ease;
+    transform 240ms ease,
+    max-width 280ms ease;
   overflow: hidden;
+  transform-origin: center;
 }
 
 .resume-nav-enter-from,
 .resume-nav-leave-to {
   max-width: 5rem;
   opacity: 0;
-  transform: scaleX(0.92);
+  transform: scaleX(0.94);
 }
 
 .resume-nav-enter-to,
@@ -329,6 +340,10 @@ function getHorizontalScrollParent(elem: HTMLElement): HTMLElement | null {
 
 .active_text {
   @apply text-white dark:text-night;
+}
+
+.active_inner {
+  @apply bg-surface text-teal shadow-sm dark:bg-nightSurface dark:text-tealSoft;
 }
 
 .menu-closed {
