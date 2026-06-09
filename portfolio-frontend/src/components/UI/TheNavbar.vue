@@ -303,7 +303,7 @@ function getHorizontalScrollParent(elem: HTMLElement): HTMLElement | null {
 }
 
 .resume-subnav {
-  @apply relative z-10 flex origin-center items-center rounded-full p-0.5 text-sm font-medium;
+  @apply relative z-10 flex origin-center items-center rounded-full bg-teal p-0.5 text-sm font-medium shadow-sm dark:bg-tealSoft;
 }
 
 .resume-nav-enter-active,
