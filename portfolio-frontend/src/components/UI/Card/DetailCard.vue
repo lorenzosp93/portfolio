@@ -30,9 +30,9 @@
         id="detail-card"
         ref="card"
       >
-        <div class="bottom-sheet__pan bg-sand/80 dark:bg-nightElevated" ref="pan">
+        <div class="bottom-sheet__pan bg-gradient-to-br from-sand via-surface to-tealSoft/40 dark:from-nightElevated dark:via-nightSurface dark:to-teal/20" ref="pan">
           <div class="bottom-sheet__bar bg-teal dark:bg-tealSoft" />
-          <header class="mt-auto border-b border-ink/10 bg-gradient-to-br from-sand via-surface to-tealSoft/40 p-4 dark:border-white/10 dark:from-nightElevated dark:via-nightSurface dark:to-teal/20">
+          <header class="mt-auto border-b border-ink/10 p-4 dark:border-white/10">
             <div
               class="text-md text-muted dark:text-gray-300 sm:order-last sm:ml-auto"
             >
