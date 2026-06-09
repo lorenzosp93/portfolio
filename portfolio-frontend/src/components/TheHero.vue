@@ -3,30 +3,30 @@
     ref="root"
     class="relative mx-auto flex min-h-screen w-full flex-wrap text-ink dark:text-white"
   >
-    <div class="relative z-10 m-auto flex-initial w-1/2 py-5 sm:w-1/3">
+    <div class="relative m-auto flex-initial w-1/2 py-5 sm:w-1/3">
       <div class="relative mx-auto h-56 w-56 md:h-72 md:w-72">
         <div
-          class="absolute left-1/2 top-1/2 h-44 w-56 -translate-x-1/2 -translate-y-1/2 rotate-[-9deg] rounded-[42%_58%_48%_52%/58%_39%_61%_42%] bg-tealSoft/80 shadow-xl ring-1 ring-teal/20 dark:bg-teal/25 dark:ring-tealSoft/20 md:h-56 md:w-72"
+          class="absolute z-10 left-1/2 top-1/2 h-44 w-56 -translate-x-1/2 -translate-y-1/2 rotate-[-9deg] rounded-[42%_58%_48%_52%/58%_39%_61%_42%] bg-tealSoft/80 shadow-xl ring-1 ring-teal/20 dark:bg-teal/25 dark:ring-tealSoft/20 md:h-56 md:w-72"
         />
         <div
-          class="absolute left-1/2 top-1/2 h-48 w-48 -translate-x-[42%] -translate-y-[56%] rotate-12 rounded-[55%_45%_63%_37%/45%_62%_38%_55%] bg-coralSoft/90 shadow-lg ring-1 ring-coral/20 dark:bg-coral/25 dark:ring-coralSoft/20 md:h-60 md:w-60"
+          class="absolute z-10 left-1/2 top-1/2 h-48 w-48 -translate-x-[42%] -translate-y-[56%] rotate-12 rounded-[55%_45%_63%_37%/45%_62%_38%_55%] bg-coralSoft/90 shadow-lg ring-1 ring-coral/20 dark:bg-coral/25 dark:ring-coralSoft/20 md:h-60 md:w-60"
         />
         <div
-          class="absolute left-1/2 top-1/2 h-28 w-28 translate-x-6 translate-y-5 rounded-full bg-amberSoft/90 blur-[1px] ring-1 ring-amber/20 dark:bg-amber/25 dark:ring-amberSoft/20 md:h-36 md:w-36"
+          class="absolute z-10 left-1/2 top-1/2 h-28 w-28 translate-x-6 translate-y-5 rounded-full bg-amberSoft/90 blur-[1px] ring-1 ring-amber/20 dark:bg-amber/25 dark:ring-amberSoft/20 md:h-36 md:w-36"
         />
         <div
-          class="absolute left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full bg-surface/70 shadow-2xl ring-1 ring-ink/10 backdrop-blur-sm dark:bg-nightSurface/70 dark:ring-white/10 md:h-56 md:w-56"
+          class="absolute z-10 left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full bg-surface/70 shadow-2xl ring-1 ring-ink/10 backdrop-blur-sm dark:bg-nightSurface/70 dark:ring-white/10 md:h-56 md:w-56"
         />
         <img
           id="heroPicture"
-          class="will-change-transform absolute left-1/2 top-1/2 z-30 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full object-cover shadow-2xl ring-4 ring-surface dark:ring-nightSurface md:h-56 md:w-56 z-30"
+          class="will-change-transform absolute z-30 left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full object-cover shadow-2xl ring-4 ring-surface dark:ring-nightSurface md:h-56 md:w-56 z-30"
           src="@/assets/hero.webp"
           srcset="@/assets/hero.webp 886w, @/assets/hero-mobile.webp 320w"
           alt="High res picture"
           @load="$emit('heroLoaded')"
         />
       </div>
-      <h1 class="m-5 mt-8 text-center text-3xl font-bold md:mt-10">
+      <h1 class="z-20 m-5 mt-8 text-center text-3xl font-bold md:mt-10">
         Hi, I'm <span class="text-coral dark:text-coralSoft">Lorenzo</span>
       </h1>
       <div class="container flex mt-5">
