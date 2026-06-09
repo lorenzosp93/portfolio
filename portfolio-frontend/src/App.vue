@@ -50,6 +50,7 @@ onUnmounted(() => {
 
 const viewport = ref({ width: window.innerWidth, height: window.innerHeight });
 let resizeTimer: ReturnType<typeof setTimeout>;
+const safariChromeResizeThreshold = 120;
 
 useEventListener("resize", resizeEventHandler);
 
@@ -59,17 +60,22 @@ function resizeEventHandler(event: UIEvent) {
     height: (event.target as Window).innerHeight,
   };
   const widthChanged = viewport.value.width !== nextViewport.width;
-  const heightChanged = viewport.value.height !== nextViewport.height;
+  const heightDelta = Math.abs(viewport.value.height - nextViewport.height);
+  const significantHeightChange = heightDelta > safariChromeResizeThreshold;
 
   viewport.value = nextViewport;
 
-  if (widthChanged && heightChanged) {
+  if (widthChanged || significantHeightChange) {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(setupAnimation, 150);
+    resizeTimer = setTimeout(recalculateAnimation, 150);
   }
 }
 
 function setupAnimation() {
+  recalculateAnimation();
+}
+
+function recalculateAnimation() {
   const coordinates = calculateCoordinatesAnimation("heroPicture", "heroLogo");
   if (coordinates?.scaleX && coordinates?.scaleY) {
     addHeroAnimation(coordinates);
