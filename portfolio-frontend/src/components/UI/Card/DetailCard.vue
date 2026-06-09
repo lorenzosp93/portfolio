@@ -53,9 +53,10 @@
         <div class="bottom-sheet__content-wrap bg-surface dark:bg-nightSurface">
           <div
             style="min-height: 40vh; min-height: 40svh"
-            class="bottom-sheet__content min-h-[40vh] lg:min-h-[70vh] bg-surface pb-14 dark:bg-nightSurface"
+            class="bottom-sheet__content min-h-[40vh] lg:min-h-[70vh] bg-surface dark:bg-nightSurface"
             :style="{ height: contentH }"
             ref="content"
+            @scroll="updateScrollAffordance"
           >
             <div
               class="container my-3 text-sm text-ink dark:text-gray-100 px-auto"
@@ -69,9 +70,11 @@
               </slot>
             </div>
           </div>
-          <div class="bottom-sheet__scroll-affordance" aria-hidden="true">
-            <div class="bottom-sheet__scroll-pill" />
-          </div>
+          <div
+            v-if="showScrollAffordance"
+            class="bottom-sheet__scroll-affordance"
+            aria-hidden="true"
+          />
         </div>
       </article>
     </div>
@@ -80,7 +83,7 @@
 
 <script setup lang="ts">
 import { useEventListener } from "@vueuse/core";
-import { onBeforeUnmount, onMounted, Ref, ref, watch } from "vue";
+import { nextTick, onBeforeUnmount, onMounted, Ref, ref, watch } from "vue";
 import gsap from "gsap";
 import { Draggable } from "gsap/Draggable";
 
@@ -104,6 +107,7 @@ const contentH = ref("auto");
 const paddingBottom = ref(12);
 const upwardDragLimit = -72;
 const closeThreshold = 150;
+const showScrollAffordance = ref(false);
 
 function init() {
   if (card.value && pan.value) {
@@ -111,6 +115,7 @@ function init() {
     cardP.value = 0;
     cardH.value = card.value.clientHeight;
     contentH.value = `${cardH.value - pan.value.clientHeight}px`;
+    updateScrollAffordanceAfterRender();
     if (!initiated.value) {
       initiated.value = true;
       const tl = gsap.timeline();
@@ -197,6 +202,22 @@ function handleClickOnBottomSheet(event: MouseEvent) {
   event.stopPropagation();
 }
 
+function updateScrollAffordance() {
+  const el = content.value;
+  if (!el) {
+    showScrollAffordance.value = false;
+    return;
+  }
+
+  const hasOverflow = el.scrollHeight > el.clientHeight + 2;
+  const canScrollFurther = el.scrollTop + el.clientHeight < el.scrollHeight - 8;
+  showScrollAffordance.value = hasOverflow && canScrollFurther;
+}
+
+function updateScrollAffordanceAfterRender() {
+  nextTick(updateScrollAffordance);
+}
+
 const props = defineProps<{
   isOpen: boolean;
 }>();
@@ -223,6 +244,7 @@ onMounted(() => {
       close(null);
     }
   });
+  useEventListener("resize", updateScrollAffordanceAfterRender);
 });
 </script>
 
@@ -244,25 +266,13 @@ onMounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 4.5rem;
+  height: 4rem;
   pointer-events: none;
-  background: linear-gradient(to bottom, rgb(255 255 255 / 0), rgb(255 255 255 / 0.92) 70%, rgb(255 255 255));
-}
-:global(.dark) .bottom-sheet__scroll-affordance {
-  background: linear-gradient(to bottom, rgb(17 24 39 / 0), rgb(17 24 39 / 0.92) 70%, rgb(17 24 39));
-}
-.bottom-sheet__scroll-pill {
-  position: absolute;
-  left: 50%;
-  bottom: 0.85rem;
-  width: 2.5rem;
-  height: 0.25rem;
-  transform: translateX(-50%);
-  border-radius: 9999px;
-  background: rgb(15 118 110 / 0.45);
-}
-:global(.dark) .bottom-sheet__scroll-pill {
-  background: rgb(153 246 228 / 0.45);
+  border-radius: 0 0 1rem 1rem;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  mask-image: linear-gradient(to bottom, transparent, black 70%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 70%);
 }
 .bottom-sheet__backdrop {
   position: fixed;
