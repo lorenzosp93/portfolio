@@ -45,11 +45,9 @@ provide("entriesLimit", entriesLimit);
 
 onUnmounted(() => {
   cleanupAnimation();
-  clearTimeout(resizeTimer);
 });
 
 const innerWidth = ref(window.innerWidth);
-let resizeTimer: ReturnType<typeof setTimeout>;
 
 useEventListener("resize", resizeEventHandler);
 
@@ -57,8 +55,7 @@ function resizeEventHandler(event: UIEvent) {
   const nextInnerWidth = (event.target as Window).innerWidth;
   if (innerWidth.value != nextInnerWidth) {
     innerWidth.value = nextInnerWidth;
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(setupAnimation, 150);
+    setupAnimation();
   }
 }
 
@@ -90,7 +87,6 @@ function addHeroAnimation(coordinates: DOMCoordinates) {
       scrub: true,
       start: "top top",
       end: "bottom top",
-      invalidateOnRefresh: true,
     },
   });
   tl.to("#heroPicture", {
@@ -98,10 +94,11 @@ function addHeroAnimation(coordinates: DOMCoordinates) {
     y: coordinates.deltaY,
     scaleX: coordinates.scaleX,
     scaleY: coordinates.scaleY,
-    ease: "none",
+    ease: "power2",
     duration: 0.7,
+    force3D: true,
   })
-    .to("#the-navbar", { opacity: 1, ease: "none", duration: 0.3 }, 0.7)
+    .to("#the-navbar", { opacity: 1, ease: "power1.in", duration: 0.3 }, 0.7)
     .set("#heroPicture", { opacity: 0 }, 1);
   timeline.value = tl;
 }
