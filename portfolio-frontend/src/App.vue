@@ -45,17 +45,27 @@ provide("entriesLimit", entriesLimit);
 
 onUnmounted(() => {
   cleanupAnimation();
+  clearTimeout(resizeTimer);
 });
 
-const innerWidth = ref(window.innerWidth);
+const viewport = ref({ width: window.innerWidth, height: window.innerHeight });
+let resizeTimer: ReturnType<typeof setTimeout>;
 
 useEventListener("resize", resizeEventHandler);
 
 function resizeEventHandler(event: UIEvent) {
-  const nextInnerWidth = (event.target as Window).innerWidth;
-  if (innerWidth.value != nextInnerWidth) {
-    innerWidth.value = nextInnerWidth;
-    setupAnimation();
+  const nextViewport = {
+    width: (event.target as Window).innerWidth,
+    height: (event.target as Window).innerHeight,
+  };
+  const widthChanged = viewport.value.width !== nextViewport.width;
+  const heightChanged = viewport.value.height !== nextViewport.height;
+
+  viewport.value = nextViewport;
+
+  if (widthChanged && heightChanged) {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(setupAnimation, 150);
   }
 }
 
