@@ -9,16 +9,16 @@
       :src="picture"
       :alt="'Picture for ' + name"
     />
-    <div class="flex flex-wrap p-4 w-full text-lg text-ink dark:text-white">
+    <div class="w-full border-b border-ink/10 bg-sand/70 p-4 text-lg text-ink dark:border-white/10 dark:bg-nightElevated dark:text-white">
       <p class="text-xs font-medium uppercase tracking-wide text-coral dark:text-coralSoft">{{ location }}{{ status }}</p>
       <h2 class="mt-1 w-full text-xl font-semibold tracking-tight text-ink dark:text-white">
         {{ name }}
       </h2>
-      <div
-        v-html="truncatedContent"
-        class="mt-3 w-full text-sm leading-relaxed text-muted dark:text-gray-300 after:content-['_⏎'] after:text-coral"
-      />
     </div>
+    <div
+      v-html="truncatedContent"
+      class="w-full p-4 text-sm leading-relaxed text-muted dark:text-gray-300 after:content-['_⏎'] after:text-coral"
+    />
     <blog-entry-detail
       v-if="type == 'blog' && isActive"
       :isOpen="detailsVisible"
