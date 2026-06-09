@@ -152,16 +152,23 @@ function scrollMobile(elem: MaybeRef<HTMLDivElement | null>) {
 }
 
 function scrollToElement(elem: MaybeRef<HTMLDivElement | null>) {
-  if (elem) {
-    if ("value" in elem) {
-      elem = elem.value;
-    }
-    elem?.scrollIntoView({
-      behavior: "smooth",
-      block: "nearest",
-      inline: "center",
-    });
+  if (!elem) {
+    return;
   }
+  if ("value" in elem) {
+    elem = elem.value;
+  }
+  if (!elem) {
+    return;
+  }
+
+  const navbarHeight = document.getElementById("the-navbar")?.offsetHeight ?? 0;
+  const targetTop = elem.getBoundingClientRect().top + window.scrollY;
+
+  window.scrollTo({
+    top: Math.max(targetTop - navbarHeight, 0),
+    behavior: "smooth",
+  });
 }
 </script>
 
