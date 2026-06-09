@@ -3,7 +3,7 @@
     <div
       ref="scrollContainer"
       class="max-h-[90vh] max-h-[90svh] overflow-y-scroll rounded-2xl border border-ink/10 bg-surface py-1 shadow-sm ring-1 ring-ink/5 no-scrollbar dark:border-white/10 dark:bg-nightSurface dark:ring-white/10"
-      @scroll="updateScrollAffordance"
+      @scroll="handleScroll"
     >
       <div class="mx-auto">
         <div
@@ -22,11 +22,6 @@
         />
       </div>
     </div>
-    <div
-      v-if="showScrollAffordance"
-      class="resume-panel__scroll-affordance"
-      aria-hidden="true"
-    />
   </div>
 </template>
 
@@ -45,45 +40,62 @@ const props = defineProps<{
 defineEmits(["loadEntries"]);
 
 const scrollContainer = ref<HTMLElement | null>(null);
-const showScrollAffordance = ref(false);
+const hasNudged = ref(false);
+const isNudging = ref(false);
 
-function updateScrollAffordance() {
+function prefersReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function hasOverflow(el: HTMLElement) {
+  return el.scrollHeight > el.clientHeight + 2;
+}
+
+function handleScroll() {
+  if (!isNudging.value) {
+    hasNudged.value = true;
+  }
+}
+
+function maybeNudgeScroll() {
   const el = scrollContainer.value;
-  if (!el) {
-    showScrollAffordance.value = false;
+  if (!el || hasNudged.value || prefersReducedMotion() || !hasOverflow(el)) {
     return;
   }
 
-  const hasOverflow = el.scrollHeight > el.clientHeight + 2;
-  const canScrollFurther = el.scrollTop + el.clientHeight < el.scrollHeight - 8;
-  showScrollAffordance.value = hasOverflow && canScrollFurther;
+  hasNudged.value = true;
+  isNudging.value = true;
+  const startTop = el.scrollTop;
+  const nudgeTop = Math.min(startTop + 18, el.scrollHeight - el.clientHeight);
+
+  el.scrollTo({ top: nudgeTop, behavior: "smooth" });
+  window.setTimeout(() => {
+    el.scrollTo({ top: startTop, behavior: "smooth" });
+  }, 220);
+  window.setTimeout(() => {
+    isNudging.value = false;
+  }, 700);
 }
 
-function updateScrollAffordanceAfterRender() {
-  nextTick(updateScrollAffordance);
+function maybeNudgeAfterRender() {
+  nextTick(maybeNudgeScroll);
 }
 
-onMounted(updateScrollAffordanceAfterRender);
-useEventListener("resize", updateScrollAffordanceAfterRender);
+onMounted(maybeNudgeAfterRender);
+useEventListener("resize", maybeNudgeAfterRender);
 
 watch(
   () => [props.dataLoaded, props.isLoading],
-  updateScrollAffordanceAfterRender
+  ([dataLoaded, isLoading]) => {
+    if (isLoading) {
+      hasNudged.value = false;
+      return;
+    }
+    if (dataLoaded) {
+      maybeNudgeAfterRender();
+    }
+  }
 );
 </script>
 
-<style scoped>
-.resume-panel__scroll-affordance {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 6rem;
-  pointer-events: none;
-  border-radius: 0 0 1rem 1rem;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  mask-image: linear-gradient(to bottom, transparent, rgb(0 0 0 / 0.18) 20%, rgb(0 0 0 / 0.7) 58%, black 100%);
-  -webkit-mask-image: linear-gradient(to bottom, transparent, rgb(0 0 0 / 0.18) 20%, rgb(0 0 0 / 0.7) 58%, black 100%);
-}
-</style>
+<style scoped></style>
