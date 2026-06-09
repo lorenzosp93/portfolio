@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full overflow-x-hidden bg-paper text-ink snap-y snap-proximity dark:bg-night" ref="root">
+  <div class="w-full bg-paper text-ink snap-y snap-proximity dark:bg-night" ref="root">
     <the-hero class="snap-center" id="the-hero" @hero-loaded="setupAnimation" />
     <the-navbar
       class="snap-center"
