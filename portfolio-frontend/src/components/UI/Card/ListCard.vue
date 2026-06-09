@@ -14,9 +14,10 @@
       <h2 class="mt-1 w-full text-xl font-semibold tracking-tight text-ink dark:text-white">
         {{ name }}
       </h2>
-      <p class="mt-3 w-full text-sm leading-relaxed text-muted dark:text-gray-300 after:content-['_⏎'] after:text-coral">
-        {{ truncatedContent }}
-      </p>
+      <div
+        v-html="truncatedContent"
+        class="mt-3 w-full text-sm leading-relaxed text-muted dark:text-gray-300 after:content-['_⏎'] after:text-coral"
+      />
     </div>
     <blog-entry-detail
       v-if="type == 'blog' && isActive"
@@ -45,6 +46,7 @@
 </template>
 
 <script setup lang="ts">
+import { marked } from "marked";
 import BlogEntryDetail from "../../blog/BlogEntryDetail.vue";
 import ProjectEntryDetail from "../../resume/Projects/ProjectEntryDetail.vue";
 import { computed, inject, ref } from "vue";
@@ -68,8 +70,11 @@ const props = defineProps<{
 const truncationAmount: (() => number) | undefined = inject("truncationAmount");
 
 const truncatedContent = computed(() => {
-  const limit = truncationAmount?.() ?? 0;
-  return props.content.slice(0, limit) + (limit < props.content.length ? "..." : "");
+  if (truncationAmount)
+    return marked.parse(
+      props.content.slice(0, truncationAmount() ?? 0) +
+        (truncationAmount() < props.content.length ? "... " : " ")
+    );
 });
 
 function toggleDetails() {
