@@ -1,7 +1,7 @@
 <template>
   <nav class="sticky top-0 z-20 w-full opacity-0">
-    <div class="mx-auto max-w-6xl rounded-b-3xl bg-surface/90 shadow-sm ring-1 ring-ink/10 backdrop-blur-md dark:bg-nightSurface/90 dark:ring-white/10">
-      <div class="relative flex items-center justify-between px-2">
+    <div class="w-full rounded-b-3xl bg-surface/90 shadow-sm ring-1 ring-ink/10 backdrop-blur-md dark:bg-nightSurface/90 dark:ring-white/10">
+      <div class="relative flex items-center justify-between px-4 sm:px-6 lg:px-8">
         <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
           <button
             type="button"
