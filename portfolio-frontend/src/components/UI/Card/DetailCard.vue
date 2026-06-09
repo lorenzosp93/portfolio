@@ -50,22 +50,27 @@
             </div>
           </header>
         </div>
-        <div
-          style="min-height: 40vh; min-height: 40svh"
-          class="bottom-sheet__content min-h-[40vh] lg:min-h-[70vh] bg-surface dark:bg-nightSurface"
-          :style="{ height: contentH }"
-          ref="content"
-        >
+        <div class="bottom-sheet__content-wrap bg-surface dark:bg-nightSurface">
           <div
-            class="container my-3 text-sm text-ink dark:text-gray-100 px-auto"
+            style="min-height: 40vh; min-height: 40svh"
+            class="bottom-sheet__content min-h-[40vh] lg:min-h-[70vh] bg-surface pb-14 dark:bg-nightSurface"
+            :style="{ height: contentH }"
+            ref="content"
           >
-            <slot name="inner-content">
-              Here goes the main content of the card. Lorem ipsum dolor sit,
-              amet consectetur adipisicing elit. Dolorem alias, maiores ad dolor
-              cum culpa similique voluptatibus. Molestias laudantium dolorum
-              minus eaque minima qui, autem, veritatis earum pariatur,
-              accusantium fugit.
-            </slot>
+            <div
+              class="container my-3 text-sm text-ink dark:text-gray-100 px-auto"
+            >
+              <slot name="inner-content">
+                Here goes the main content of the card. Lorem ipsum dolor sit,
+                amet consectetur adipisicing elit. Dolorem alias, maiores ad dolor
+                cum culpa similique voluptatibus. Molestias laudantium dolorum
+                minus eaque minima qui, autem, veritatis earum pariatur,
+                accusantium fugit.
+              </slot>
+            </div>
+          </div>
+          <div class="bottom-sheet__scroll-affordance" aria-hidden="true">
+            <div class="bottom-sheet__scroll-pill" />
           </div>
         </div>
       </article>
@@ -227,9 +232,37 @@ onMounted(() => {
   position: relative;
   overscroll-behavior: none !important;
 }
+.bottom-sheet__content-wrap {
+  position: relative;
+}
 .bottom-sheet__content {
   overflow-y: scroll;
   overscroll-behavior: contain !important;
+}
+.bottom-sheet__scroll-affordance {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4.5rem;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgb(255 255 255 / 0), rgb(255 255 255 / 0.92) 70%, rgb(255 255 255));
+}
+:global(.dark) .bottom-sheet__scroll-affordance {
+  background: linear-gradient(to bottom, rgb(17 24 39 / 0), rgb(17 24 39 / 0.92) 70%, rgb(17 24 39));
+}
+.bottom-sheet__scroll-pill {
+  position: absolute;
+  left: 50%;
+  bottom: 0.85rem;
+  width: 2.5rem;
+  height: 0.25rem;
+  transform: translateX(-50%);
+  border-radius: 9999px;
+  background: rgb(15 118 110 / 0.45);
+}
+:global(.dark) .bottom-sheet__scroll-pill {
+  background: rgb(153 246 228 / 0.45);
 }
 .bottom-sheet__backdrop {
   position: fixed;
