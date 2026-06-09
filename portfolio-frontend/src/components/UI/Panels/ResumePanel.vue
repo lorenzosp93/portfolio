@@ -25,7 +25,6 @@
 <script setup lang="ts">
 import LoadingCard from "../Card/LoadingCard.vue";
 import RetryButton from "../Buttons/RetryButton.vue";
-import { type Ref, ref, onMounted } from "vue";
 
 defineProps<{
   ix: string;
