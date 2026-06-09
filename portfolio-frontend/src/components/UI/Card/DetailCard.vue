@@ -18,7 +18,7 @@
         @touchmove.prevent="() => {}"
       />
       <article
-        class="bottom-sheet__card fx-default bg-surface shadow-2xl ring-1 ring-ink/10 dark:bg-nightSurface dark:ring-white/10 md:max-w-lg lg:max-w-2xl"
+        class="bottom-sheet__card fx-default overflow-hidden bg-surface shadow-2xl ring-1 ring-ink/10 dark:bg-nightSurface dark:ring-white/10 md:max-w-lg lg:max-w-2xl"
         :style="[
           {
             bottom: cardP + 'px',
@@ -30,9 +30,9 @@
         id="detail-card"
         ref="card"
       >
-        <div class="bottom-sheet__pan" ref="pan">
-          <div class="bottom-sheet__bar bg-tealSoft dark:bg-teal/50" />
-          <header class="mt-auto border-b border-ink/10 p-3 dark:border-white/10">
+        <div class="bottom-sheet__pan bg-sand/80 dark:bg-nightElevated" ref="pan">
+          <div class="bottom-sheet__bar bg-teal dark:bg-tealSoft" />
+          <header class="mt-auto border-b border-ink/10 bg-gradient-to-br from-sand via-surface to-tealSoft/40 p-4 dark:border-white/10 dark:from-nightElevated dark:via-nightSurface dark:to-teal/20">
             <div
               class="text-md text-muted dark:text-gray-300 sm:order-last sm:ml-auto"
             >
@@ -52,7 +52,7 @@
         </div>
         <div
           style="min-height: 40vh; min-height: 40svh"
-          class="bottom-sheet__content min-h-[40vh] lg:min-h-[70vh]"
+          class="bottom-sheet__content min-h-[40vh] lg:min-h-[70vh] bg-surface dark:bg-nightSurface"
           :style="{ height: contentH }"
           ref="content"
         >
@@ -243,7 +243,7 @@ onMounted(() => {
   transform: translate(-50%, 0);
 }
 .bottom-sheet__pan {
-  padding-bottom: 8px;
+  padding-bottom: 0;
   padding-top: 12px;
 }
 .bottom-sheet__bar {
@@ -251,20 +251,20 @@ onMounted(() => {
   width: 35px;
   height: 3px;
   border-radius: 14px;
-  margin: 0 auto;
+  margin: 0 auto 8px;
   cursor: grab;
 }
 .bottom-sheet__bar:active {
   cursor: grabbing;
 }
 .opened {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-.opened .bottom-sheet__backdrop {
   visibility: visible;
+}
+.closed {
+  visibility: hidden;
+  transition-delay: 0.45s;
+}
+.moving .bottom-sheet__card {
+  transition: none;
 }
 </style>
