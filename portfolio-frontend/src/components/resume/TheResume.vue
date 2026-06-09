@@ -1,12 +1,12 @@
 <template>
   <div class="relative min-h-screen w-full mx-auto my-[10vh]">
-    <div class="flex flex-wrap w-full mx-auto mb-10">
+    <div class="flex flex-wrap w-full mx-auto mb-10 px-5">
       <h2
-        class="text-center text-xl w-full font-bold mx-auto text-gray-600 dark:text-white"
+        class="text-center text-xl w-full font-bold mx-auto text-ink dark:text-white"
       >
         Here are a few things I've done.
       </h2>
-      <p class="text-center w-full text-gray-600 dark:text-gray-300">
+      <p class="text-center w-full text-muted dark:text-gray-300">
         Because I definitely needed a website to host my CV.
       </p>
     </div>
@@ -27,15 +27,15 @@
         <component :is="comp.component" v-bind="comp.props" />
       </div>
     </div>
-    <div v-if="isMobile">
+    <div v-if="isMobile" class="px-3">
       <ul
-        class="flex flex-wrap dark:text-white text-gray-600 capitalize border-b-2 dark:border-white border-gray-600 my-3"
+        class="my-3 flex flex-wrap border-b border-ink/10 text-ink dark:border-white/10 dark:text-white capitalize"
       >
         <li
           v-for="comp in resumeList"
           :key="comp.id"
           :class="[
-            'px-3 py-2 inline-flex items-center justify-center cursor-pointer mx-auto first:ml-0 last:mr-0',
+            'px-3 py-2 inline-flex items-center justify-center cursor-pointer mx-auto first:ml-0 last:mr-0 text-sm transition text-muted dark:text-gray-300',
             { active: currentTab === comp.id },
           ]"
           @click="switchTab(comp.id)"
@@ -112,8 +112,6 @@ const isMobile = breakpoints.smaller("md");
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .active {
-  border-bottom: 1mm solid;
-  font-weight: bold;
-  @dark (border-bottom: 1mm solid #fff;);
+  @apply border-b-2 border-coral font-bold text-coral dark:border-coralSoft dark:text-coralSoft;
 }
 </style>
