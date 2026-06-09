@@ -1,20 +1,21 @@
 <template>
   <section
-    class="container min-h-[50vh] relative flex w-screen mx-auto flex-wrap my-[20vh]"
+    class="container min-h-[50vh] relative flex w-screen mx-auto flex-wrap my-[20vh] text-ink dark:text-white"
     ref="root"
   >
-    <div class="class container flex flex-wrap mx-auto my-10">
+    <div class="container flex flex-wrap mx-auto my-10 px-5">
       <h2
-        class="text-center mt-auto text-xl w-full font-bold mx-auto text-gray-600 dark:text-white"
+        class="text-center mt-auto text-xl w-full font-bold mx-auto text-ink dark:text-white"
       >
         Get in touch!
       </h2>
-      <div
-        class="cursor-pointer bg-gray-600 dark:bg-gray-300 px-5 py-3 rounded-2xl font-semibold text-center mx-auto mb-auto mt-3 text-white dark:text-gray-900 shadow-md hover:scale-105 transition duration-300 ease-in"
+      <button
+        type="button"
+        class="mx-auto mb-auto mt-4 rounded-full bg-teal px-6 py-3 text-center font-semibold text-white shadow-md ring-1 ring-teal/20 transition duration-300 hover:-translate-y-0.5 hover:bg-teal/90 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-tealSoft dark:bg-tealSoft dark:text-night dark:ring-tealSoft/30 dark:hover:bg-tealSoft/90"
         @click="formVisible = true"
       >
         Click here to send me a message.
-      </div>
+      </button>
     </div>
     <detail-card
       ref="formCard"
@@ -30,9 +31,10 @@
       <template #extra-title-content>
         <button
           v-if="!isLoading"
-          class="absolute right-3 py-2 px-5 mx-auto mt-auto mb-2 rounded-2xl text-semibold bg-gray-500 dark:bg-gray-600 dark:text-gray-300 text-white transition duration-300 ease-in opacity-50"
+          class="absolute right-4 top-4 rounded-full px-5 py-2 text-sm font-semibold shadow-sm ring-1 transition duration-300 focus:outline-none focus:ring-2 focus:ring-tealSoft"
           :class="{
-            'hover:scale-105 shadow-md opacity-100': canSubmit,
+            'bg-teal text-white ring-teal/20 hover:-translate-y-0.5 hover:bg-teal/90 hover:shadow-lg dark:bg-tealSoft dark:text-night dark:ring-tealSoft/30 dark:hover:bg-tealSoft/90': canSubmit,
+            'cursor-not-allowed bg-muted/20 text-muted ring-ink/10 dark:bg-white/10 dark:text-gray-400 dark:ring-white/10': !canSubmit,
           }"
           type="submit"
           :disabled="!canSubmit"
@@ -42,11 +44,11 @@
         </button>
         <div
           v-else
-          class="absolute right-3 w-10 h-10 p-6 my-auto mr-5 flex bg-white dark:bg-gray-800 shadow-md container flex-none rounded-full"
+          class="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-surface shadow-md ring-1 ring-ink/10 dark:bg-nightSurface dark:ring-white/10"
         >
           <svg
             role="status"
-            class="absolute left-1 top-1 w-10 h-10 text-gray-100 animate-spin dark:text-gray-400 fill-gray-600"
+            class="h-6 w-6 animate-spin text-tealSoft fill-teal dark:text-teal/30 dark:fill-tealSoft"
             viewBox="0 0 100 101"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -64,16 +66,16 @@
       </template>
       <template #inner-content>
         <form
-          class="relative max-w-lg mx-auto grid grid-cols-1 sm:grid-cols-2"
+          class="relative mx-auto grid max-w-lg grid-cols-1 gap-4 px-4 sm:grid-cols-2"
           autocomplete="on"
         >
           <div
             v-for="(item, idx) in formItems"
             :key="item.id"
-            class="mb-3 mx-auto"
+            class="w-full"
           >
             <label
-              class="block mb-1 ml-1 text-base font-semibold text-gray-600 dark:text-gray-300"
+              class="mb-1 ml-1 block text-sm font-semibold text-ink dark:text-white"
               :for="item.id"
               >{{ item.label }}</label
             >
@@ -81,10 +83,9 @@
               v-if="item.type != 'textarea'"
               :id="item.id"
               v-model="item.value"
-              class="py-1 px-2 text-lg rounded-lg bg-gray-100 dark:bg-gray-300 text-gray-800 focus:shadow-inner placeholder:font-thin placeholder:dark:text-gray-500 caret-gray-800 outline-none"
+              class="w-full rounded-xl bg-sand/70 px-3 py-2 text-base text-ink caret-teal ring-1 ring-ink/10 outline-none transition placeholder:font-light placeholder:text-muted focus:bg-surface focus:ring-2 focus:ring-teal dark:bg-nightElevated dark:text-white dark:caret-tealSoft dark:ring-white/10 dark:placeholder:text-gray-400 dark:focus:bg-nightSurface dark:focus:ring-tealSoft"
               :class="{
-                'invalid:ring-red-500 invalid:focus:ring-0 invalid:ring-2':
-                  item.value,
+                'invalid:ring-red-500 invalid:focus:ring-red-500': item.value,
               }"
               :type="item.type"
               :name="item.id"
@@ -98,20 +99,20 @@
               v-else
               :id="item.id"
               v-model="item.value"
-              class="py-1 px-2 mx-auto text-lg rounded-lg bg-gray-100 dark:bg-gray-300 text-gray-800 placeholder:font-thin placeholder:dark:text-gray-500 caret-gray-800 outline-none focus:shadow-inner"
+              class="w-full rounded-xl bg-sand/70 px-3 py-2 text-base text-ink caret-teal ring-1 ring-ink/10 outline-none transition placeholder:font-light placeholder:text-muted focus:bg-surface focus:ring-2 focus:ring-teal dark:bg-nightElevated dark:text-white dark:caret-tealSoft dark:ring-white/10 dark:placeholder:text-gray-400 dark:focus:bg-nightSurface dark:focus:ring-tealSoft sm:col-span-2"
               :maxlength="item.maxLength"
-              rows="2"
+              rows="3"
               :placeholder="item.placeholder"
               :autocomplete="item.autocomplete ? 'on' : 'off'"
               required
             />
-            <span class="text-xs px-1 text-gray-400 block"
+            <span class="block px-1 pt-1 text-xs text-muted dark:text-gray-400"
               >{{ item?.help }}
             </span>
           </div>
           <p
             v-if="error"
-            class="absolute w-full text-center -top-3.5 left-1/2 -translate-x-1/2 text-red-700 text-xs"
+            class="absolute -top-4 left-1/2 w-full -translate-x-1/2 text-center text-xs text-red-700 dark:text-red-300"
             v-html="error"
           />
         </form>
@@ -215,8 +216,4 @@ async function submitMessage() {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-a {
-  @apply bg-white dark:bg-gray-400 p-3 m-auto  shadow-md rounded-xl;
-}
-</style>
+<style scoped></style>
