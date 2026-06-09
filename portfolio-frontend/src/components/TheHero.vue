@@ -19,7 +19,7 @@
         />
         <img
           id="heroPicture"
-          class="will-change-transform absolute left-1/2 top-1/2 z-30 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full object-cover shadow-2xl ring-4 ring-surface dark:ring-nightSurface md:h-56 md:w-56"
+          class="will-change-transform absolute left-1/2 top-1/2 z-30 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full object-cover shadow-2xl ring-4 ring-surface dark:ring-nightSurface md:h-56 md:w-56 z-30"
           src="@/assets/hero.webp"
           srcset="@/assets/hero.webp 886w, @/assets/hero-mobile.webp 320w"
           alt="High res picture"
