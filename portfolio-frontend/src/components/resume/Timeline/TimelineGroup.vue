@@ -1,18 +1,18 @@
 <template>
   <div
-    class="my-5 mx-5 lg:ml-10 justify-start bg-gray-50 rounded-lg shadow-md dark:bg-gray-600 dark:border-gray-500 dark:text-gray-300 z-1"
+    class="my-5 mx-5 lg:ml-10 justify-start rounded-2xl bg-surface shadow-sm ring-1 ring-ink/10 dark:bg-nightSurface dark:text-gray-300 dark:ring-white/10 z-1"
   >
     <span
-      class="flex absolute -translate-x-1/2 mt-3 left-0 justify-center items-center h-7 lg:w-10 aspect-square rounded-full ring-4 ring-white dark:ring-gray-900 dark:bg-gray-900"
+      class="flex absolute -translate-x-1/2 mt-3 left-0 justify-center items-center h-7 lg:w-10 aspect-square rounded-full bg-paper ring-4 ring-paper dark:bg-night dark:ring-night"
     >
       <img
-        class="object-contain rounded-full shadow-lg"
+        class="object-contain rounded-full shadow-lg ring-1 ring-ink/10 dark:ring-white/10"
         :src="entityPicture"
         :alt="entityName + 'logo'"
       />
     </span>
     <h3
-      class="flex items-center mx-5 pt-3 align-text-bottom text-lg font-semibold text-gray-900 dark:text-white"
+      class="flex items-center mx-5 pt-3 align-text-bottom text-lg font-semibold text-ink dark:text-white"
     >
       {{ entityName }}
     </h3>
