@@ -162,6 +162,8 @@ function scrollToElement(elem: MaybeRef<HTMLDivElement | null>) {
     return;
   }
 
+  scrollHorizontallyIntoView(elem);
+
   const navbarHeight = document.getElementById("the-navbar")?.offsetHeight ?? 0;
   const targetTop = elem.getBoundingClientRect().top + window.scrollY;
 
@@ -169,6 +171,38 @@ function scrollToElement(elem: MaybeRef<HTMLDivElement | null>) {
     top: Math.max(targetTop - navbarHeight, 0),
     behavior: "smooth",
   });
+}
+
+function scrollHorizontallyIntoView(elem: HTMLElement) {
+  const scrollParent = getHorizontalScrollParent(elem);
+  if (!scrollParent) {
+    return;
+  }
+
+  const parentBox = scrollParent.getBoundingClientRect();
+  const elemBox = elem.getBoundingClientRect();
+  const targetLeft =
+    scrollParent.scrollLeft +
+    elemBox.left -
+    parentBox.left -
+    parentBox.width / 2 +
+    elemBox.width / 2;
+
+  scrollParent.scrollTo({
+    left: targetLeft,
+    behavior: "smooth",
+  });
+}
+
+function getHorizontalScrollParent(elem: HTMLElement): HTMLElement | null {
+  let parent = elem.parentElement;
+  while (parent) {
+    if (parent.scrollWidth > parent.clientWidth + 2) {
+      return parent;
+    }
+    parent = parent.parentElement;
+  }
+  return null;
 }
 </script>
 
