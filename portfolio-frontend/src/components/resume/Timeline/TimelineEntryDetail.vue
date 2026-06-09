@@ -8,16 +8,16 @@
     </template>
     <template v-slot:subtitle>
       <div class="flex flex-wrap my-auto">
-        <div class="font-bold text-lg mr-auto">
+        <div class="font-bold text-lg mr-auto text-teal dark:text-tealSoft">
           {{ entity.name }}
         </div>
-        <div class="text-md">
+        <div class="text-md text-muted dark:text-gray-300">
           {{ department }}
         </div>
       </div>
     </template>
     <template v-slot:inner-content>
-      <div class="px-3 pb-5 prose dark:prose-invert">
+      <div class="px-3 pb-5 prose prose-slate dark:prose-invert prose-a:text-coral dark:prose-a:text-coralSoft">
         <h3 v-if="description" class="mb-3">Description:</h3>
         <p v-html="parse(description ?? '')" />
         <h3 v-if="key_achievements" class="my-3">Key Achievements:</h3>
@@ -25,7 +25,7 @@
         <h3 v-if="keywords && keywords.length > 0" class="my-3">Keywords:</h3>
         <div class="flex overflow-x-scroll overflow-y-hidden pb-1 no-scrollbar">
           <div
-            class="rounded-lg shadow-md mx-2 px-3 py-1 bg-gray-100 dark:bg-gray-700 whitespace-nowrap"
+            class="rounded-full shadow-sm mx-2 px-3 py-1 bg-tealSoft text-teal dark:bg-teal/20 dark:text-tealSoft whitespace-nowrap"
             v-for="keyword in keywords"
             :key="keyword.name"
           >
