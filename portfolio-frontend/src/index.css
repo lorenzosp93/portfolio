@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  html {
+    @apply scroll-smooth bg-paper text-ink antialiased dark:bg-night dark:text-white;
+  }
+
+  body {
+    @apply min-h-screen bg-paper dark:bg-night;
+  }
+
+  ::selection {
+    @apply bg-coralSoft text-ink;
+  }
+}
+
 @layer utilities {
   /* Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
