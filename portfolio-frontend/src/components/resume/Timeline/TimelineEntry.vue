@@ -1,30 +1,30 @@
 <template>
   <li @click="openDetails" class="mx-3 my-3 z-2">
     <span
-      class="absolute ring-4 ring-white dark:ring-gray-900 mt-5 left-0 -translate-x-1/2"
+      class="absolute mt-5 left-0 -translate-x-1/2 ring-4 ring-paper dark:ring-night"
     >
       <div
-        class="w-2 lg:w-3 aspect-square rounded-full bg-gray-200 dark:bg-gray-600 shadow-sm"
+        class="w-2 lg:w-3 aspect-square rounded-full bg-coral shadow-sm dark:bg-coralSoft"
       ></div>
     </span>
     <div
-      class="p-3 bg-white rounded-lg shadow-md dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
+      class="cursor-pointer rounded-2xl bg-surface p-3 shadow-sm ring-1 ring-ink/10 transition hover:ring-teal/30 dark:bg-nightSurface dark:ring-white/10"
     >
       <div class="justify-between items-center mb-3 w-full">
         <p
-          class="text-xs sm:text-sm font-normal text-gray-400 sm:order-last sm:mb-0 float-right pt-1"
+          class="text-xs sm:text-sm font-normal text-muted dark:text-gray-300 sm:order-last sm:mb-0 float-right pt-1"
         >
           {{ start_date__date }} — {{ end_date__date }}
         </p>
-        <p class="font-semibold text-gray-900 dark:text-gray-300">
+        <p class="font-semibold text-ink dark:text-white">
           {{ name }}
         </p>
-        <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-300">
+        <p class="text-xs sm:text-sm text-teal dark:text-tealSoft">
           {{ location }}
         </p>
       </div>
       <div
-        class="p-2 flex text-xs sm:text-sm font-normal text-ellipsis text-gray-500 bg-gray-50 rounded-lg shadow-sm dark:bg-gray-900 dark:text-gray-300 after:content-['_⏎'] after:ml-auto after:mt-auto after:text-gray-400"
+        class="p-2 flex text-xs sm:text-sm font-normal text-ellipsis text-muted bg-paper/70 rounded-xl shadow-sm dark:bg-night dark:text-gray-300 after:content-['_⏎'] after:ml-auto after:mt-auto after:text-coral"
         v-html="truncatedDescription"
       />
     </div>
