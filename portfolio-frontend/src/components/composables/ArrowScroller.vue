@@ -3,24 +3,28 @@
     class="z-10 absolute w-full top-1/2 hidden md:block mx-auto"
     ref="arrowContainer"
   >
-    <div
+    <button
       v-show="!begin"
+      type="button"
+      aria-label="Scroll resume carousel left"
       @click="scrollToSibling(false)"
-      class="absolute left-2 rounded-full h-10 w-10 shadow-md bg-gray-50 dark:bg-gray-500 hover:bg-gray-100 hover:dark:bg-gray-400 cursor-pointer select-none"
+      class="arrow-button left-2"
     >
       <chevron-left-icon
         class="w-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
       ></chevron-left-icon>
-    </div>
-    <div
+    </button>
+    <button
       v-show="!end"
+      type="button"
+      aria-label="Scroll resume carousel right"
       @click="scrollToSibling(true)"
-      class="absolute right-2 rounded-full h-10 w-10 shadow-md bg-gray-50 dark:bg-gray-500 hover:dark:bg-gray-400 hover:bg-gray-100 cursor-pointer select-none"
+      class="arrow-button right-2"
     >
       <chevron-right-icon
         class="w-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
       ></chevron-right-icon>
-    </div>
+    </button>
   </div>
 </template>
 
@@ -96,3 +100,9 @@ watch(
   }
 );
 </script>
+
+<style scoped>
+.arrow-button {
+  @apply absolute h-11 w-11 cursor-pointer select-none rounded-full bg-surface text-teal shadow-lg ring-1 ring-ink/10 transition hover:-translate-y-0.5 hover:bg-tealSoft hover:text-teal dark:bg-nightElevated dark:text-tealSoft dark:ring-white/10 dark:hover:bg-teal/30;
+}
+</style>
