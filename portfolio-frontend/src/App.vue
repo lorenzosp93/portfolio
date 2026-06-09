@@ -1,14 +1,14 @@
 <template>
   <div class="w-full bg-paper text-ink snap-y snap-proximity dark:bg-night" ref="root">
-    <the-hero class="snap-center" id="the-hero" @hero-loaded="setupAnimation" />
+    <the-hero class="snap-center scroll-mt-20" id="the-hero" @hero-loaded="setupAnimation" />
     <the-navbar
       class="snap-center"
       id="the-navbar"
       @image-loaded="setupAnimation"
     />
     <the-resume class="snap-center scroll-mt-20" id="the-resume" />
-    <the-blog class="snap-center" id="the-blog" />
-    <the-contacts class="snap-center" id="the-contacts" />
+    <the-blog class="snap-center scroll-mt-20" id="the-blog" />
+    <the-contacts class="snap-center scroll-mt-20" id="the-contacts" />
 
     <footer class="mx-auto max-w-6xl px-5 pb-6 text-sm text-muted dark:text-gray-300">
       <p>© Lorenzo Spinelli, 2023</p>
