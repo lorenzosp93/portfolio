@@ -56,7 +56,7 @@
             class="bottom-sheet__content min-h-[40vh] lg:min-h-[70vh] bg-surface dark:bg-nightSurface"
             :style="{ height: contentH }"
             ref="content"
-            @scroll="updateScrollAffordance"
+            @scroll="handleContentScroll"
           >
             <div
               class="container my-3 text-sm text-ink dark:text-gray-100 px-auto"
@@ -70,11 +70,6 @@
               </slot>
             </div>
           </div>
-          <div
-            v-if="showScrollAffordance"
-            class="bottom-sheet__scroll-affordance"
-            aria-hidden="true"
-          />
         </div>
       </article>
     </div>
@@ -107,7 +102,8 @@ const contentH = ref("auto");
 const paddingBottom = ref(12);
 const upwardDragLimit = -72;
 const closeThreshold = 150;
-const showScrollAffordance = ref(false);
+const hasNudgedContent = ref(false);
+const isNudgingContent = ref(false);
 
 function init() {
   if (card.value && pan.value) {
@@ -115,7 +111,7 @@ function init() {
     cardP.value = 0;
     cardH.value = card.value.clientHeight;
     contentH.value = `${cardH.value - pan.value.clientHeight}px`;
-    updateScrollAffordanceAfterRender();
+    maybeNudgeContentAfterRender();
     if (!initiated.value) {
       initiated.value = true;
       const tl = gsap.timeline();
@@ -171,6 +167,7 @@ function init() {
 const emit = defineEmits(["cardOpened", "cardClosed"]);
 
 function open() {
+  hasNudgedContent.value = false;
   init();
   opened.value = true;
   emit("cardOpened");
@@ -202,20 +199,42 @@ function handleClickOnBottomSheet(event: MouseEvent) {
   event.stopPropagation();
 }
 
-function updateScrollAffordance() {
+function prefersReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function hasOverflow(el: HTMLElement) {
+  return el.scrollHeight > el.clientHeight + 2;
+}
+
+function handleContentScroll() {
+  if (!isNudgingContent.value) {
+    hasNudgedContent.value = true;
+  }
+}
+
+function maybeNudgeContent() {
   const el = content.value;
-  if (!el) {
-    showScrollAffordance.value = false;
+  if (!el || hasNudgedContent.value || prefersReducedMotion() || !hasOverflow(el)) {
     return;
   }
 
-  const hasOverflow = el.scrollHeight > el.clientHeight + 2;
-  const canScrollFurther = el.scrollTop + el.clientHeight < el.scrollHeight - 8;
-  showScrollAffordance.value = hasOverflow && canScrollFurther;
+  hasNudgedContent.value = true;
+  isNudgingContent.value = true;
+  const startTop = el.scrollTop;
+  const nudgeTop = Math.min(startTop + 18, el.scrollHeight - el.clientHeight);
+
+  el.scrollTo({ top: nudgeTop, behavior: "smooth" });
+  window.setTimeout(() => {
+    el.scrollTo({ top: startTop, behavior: "smooth" });
+  }, 220);
+  window.setTimeout(() => {
+    isNudgingContent.value = false;
+  }, 700);
 }
 
-function updateScrollAffordanceAfterRender() {
-  nextTick(updateScrollAffordance);
+function maybeNudgeContentAfterRender() {
+  nextTick(maybeNudgeContent);
 }
 
 const props = defineProps<{
@@ -244,7 +263,7 @@ onMounted(() => {
       close(null);
     }
   });
-  useEventListener("resize", updateScrollAffordanceAfterRender);
+  useEventListener("resize", maybeNudgeContentAfterRender);
 });
 </script>
 
@@ -260,19 +279,6 @@ onMounted(() => {
 .bottom-sheet__content {
   overflow-y: scroll;
   overscroll-behavior: contain !important;
-}
-.bottom-sheet__scroll-affordance {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 6rem;
-  pointer-events: none;
-  border-radius: 0 0 1rem 1rem;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  mask-image: linear-gradient(to bottom, transparent, rgb(0 0 0 / 0.18) 20%, rgb(0 0 0 / 0.7) 58%, black 100%);
-  -webkit-mask-image: linear-gradient(to bottom, transparent, rgb(0 0 0 / 0.18) 20%, rgb(0 0 0 / 0.7) 58%, black 100%);
 }
 .bottom-sheet__backdrop {
   position: fixed;
