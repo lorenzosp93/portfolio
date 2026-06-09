@@ -11,7 +11,7 @@
       ref="bottomSheet"
     >
       <div
-        class="backdrop-blur-md bottom-sheet__backdrop"
+        class="bottom-sheet__backdrop bg-ink/10 backdrop-blur-md dark:bg-night/50"
         ref="backdrop"
         @click="handleClickOnBottomSheet"
         @scroll.prevent="() => {}"
@@ -241,12 +241,19 @@ onMounted(() => {
   opacity: 1;
   visibility: hidden;
 }
+.opened .bottom-sheet__backdrop {
+  visibility: visible;
+}
+.closed .bottom-sheet__backdrop {
+  visibility: hidden;
+  transition-delay: 0.45s;
+}
 .bottom-sheet__card {
   width: 100%;
   position: fixed;
   border-radius: 14px 14px 0 0;
   left: 50%;
-  z-index: 100;
+  z-index: 101;
   margin: 0 auto;
   box-sizing: border-box;
 }
