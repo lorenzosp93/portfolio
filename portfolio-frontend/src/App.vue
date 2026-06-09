@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full snap-y snap-proximity" ref="root">
+  <div class="w-full overflow-x-hidden bg-paper text-ink snap-y snap-proximity dark:bg-night" ref="root">
     <the-hero class="snap-center" id="the-hero" @hero-loaded="setupAnimation" />
     <the-navbar
       class="snap-center"
@@ -10,10 +10,8 @@
     <the-blog class="snap-center" id="the-blog" />
     <the-contacts class="snap-center" id="the-contacts" />
 
-    <footer>
-      <p class="px-5 pb-2 text-sm dark:text-white text-gray-700">
-        © Lorenzo Spinelli, 2023
-      </p>
+    <footer class="mx-auto max-w-6xl px-5 pb-6 text-sm text-muted dark:text-gray-300">
+      <p>© Lorenzo Spinelli, 2023</p>
     </footer>
   </div>
 </template>
@@ -31,6 +29,8 @@ import { registerSW } from "virtual:pwa-register";
 
 registerSW({ immediate: true });
 
+const root: Ref<HTMLDivElement | null> = ref(null);
+
 const truncationAmount = () => {
   let w = window.innerWidth;
   return w > 1024 ? 350 : w > 640 ? 200 : 75;
@@ -45,18 +45,20 @@ provide("entriesLimit", entriesLimit);
 
 onUnmounted(() => {
   cleanupAnimation();
+  clearTimeout(resizeTimer);
 });
 
 const innerWidth = ref(window.innerWidth);
+let resizeTimer: ReturnType<typeof setTimeout>;
 
 useEventListener("resize", resizeEventHandler);
 
 function resizeEventHandler(event: UIEvent) {
-  if (innerWidth.value != (event.target as Window).innerWidth) {
-    timeline.value?.restart();
-    // window.scrollTo({ top: 0 });
-    setupAnimation();
-    innerWidth.value = (event.target as Window).innerWidth;
+  const nextInnerWidth = (event.target as Window).innerWidth;
+  if (innerWidth.value != nextInnerWidth) {
+    innerWidth.value = nextInnerWidth;
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(setupAnimation, 150);
   }
 }
 
@@ -71,6 +73,7 @@ const timeline: Ref<GSAPTimeline | null> = ref(null);
 
 function cleanupAnimation() {
   timeline.value?.kill();
+  timeline.value = null;
 }
 
 type DOMCoordinates = {
@@ -87,6 +90,7 @@ function addHeroAnimation(coordinates: DOMCoordinates) {
       scrub: true,
       start: "top top",
       end: "bottom top",
+      invalidateOnRefresh: true,
     },
   });
   tl.to("#heroPicture", {
@@ -94,10 +98,10 @@ function addHeroAnimation(coordinates: DOMCoordinates) {
     y: coordinates.deltaY,
     scaleX: coordinates.scaleX,
     scaleY: coordinates.scaleY,
-    ease: "power2",
+    ease: "none",
     duration: 0.7,
   })
-    .to("#the-navbar", { opacity: 1, ease: "power1.in", duration: 0.3 }, 0.7)
+    .to("#the-navbar", { opacity: 1, ease: "none", duration: 0.3 }, 0.7)
     .set("#heroPicture", { opacity: 0 }, 1);
   timeline.value = tl;
 }
