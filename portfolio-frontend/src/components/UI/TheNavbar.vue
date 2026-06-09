@@ -45,7 +45,7 @@
                 <button
                   v-if="!isResumeActive"
                   class="nav-link"
-                  @click="scrollToElement(navStore.refs?.experience)"
+                  @click="scrollToResumeSection"
                 >
                   Resume
                 </button>
@@ -111,7 +111,7 @@
         <button class="mobile-link" :class="{ active: navStore.visible === 'theHero' }" @click="scrollMobile(navStore.refs?.theHero)">
           About
         </button>
-        <button class="mobile-link" :class="{ active: isResumeActive }" @click="scrollMobile(navStore.refs?.experience)">
+        <button class="mobile-link" :class="{ active: isResumeActive }" @click="scrollMobileToResumeSection">
           Resume
         </button>
         <button class="mobile-link" :class="{ active: navStore.visible === 'theBlog' }" @click="scrollMobile(navStore.refs?.theBlog)">
@@ -149,6 +149,15 @@ const toggleMenu = () => {
 function scrollMobile(elem: MaybeRef<HTMLDivElement | null>) {
   scrollToElement(elem);
   isMenuOpen.value = false;
+}
+
+function scrollMobileToResumeSection() {
+  scrollToResumeSection();
+  isMenuOpen.value = false;
+}
+
+function scrollToResumeSection() {
+  scrollToElement(document.getElementById("the-resume") as HTMLDivElement | null);
 }
 
 function scrollToElement(elem: MaybeRef<HTMLDivElement | null>) {
