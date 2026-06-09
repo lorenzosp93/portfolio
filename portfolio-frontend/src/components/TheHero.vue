@@ -1,7 +1,7 @@
 <template>
   <section
     ref="root"
-    class="mx-auto flex min-h-screen w-full flex-wrap text-ink dark:text-white"
+    class="relative mx-auto flex min-h-screen w-full flex-wrap text-ink dark:text-white"
   >
     <div class="relative m-auto flex-initial w-1/2 py-5 sm:w-1/3">
       <div class="relative mx-auto h-56 w-56 md:h-72 md:w-72">
@@ -19,7 +19,7 @@
         />
         <img
           id="heroPicture"
-          class="will-change-transform absolute left-1/2 top-1/2 z-30 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full object-cover shadow-2xl ring-4 ring-surface transition dark:ring-nightSurface md:h-56 md:w-56"
+          class="will-change-transform absolute left-1/2 top-1/2 z-30 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full object-cover shadow-2xl ring-4 ring-surface dark:ring-nightSurface md:h-56 md:w-56"
           src="@/assets/hero.webp"
           srcset="@/assets/hero.webp 886w, @/assets/hero-mobile.webp 320w"
           alt="High res picture"
@@ -100,19 +100,71 @@
         </p>
       </div>
     </div>
+    <button
+      v-if="showScrollCue"
+      class="hero-scroll-cue"
+      type="button"
+      aria-label="Scroll to resume"
+      @click="scrollToResume"
+    >
+      <span>Scroll</span>
+      <svg
+        class="h-4 w-4"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+          clip-rule="evenodd"
+        />
+      </svg>
+    </button>
   </section>
 </template>
 
 <script setup lang="ts">
 import { useVisibilityObserver } from "@/composables/visibilityObserver";
-import { Ref, ref } from "vue";
+import { Ref, computed, ref } from "vue";
 
+/**
+ * Use kebab-case event in the template: @hero-loaded.
+ */
 defineEmits(["heroLoaded"]);
 
 const root: Ref<HTMLDivElement | null> = ref(null);
+const { ratio } = useVisibilityObserver("theHero", root);
+const showScrollCue = computed(() => ratio.value > 0.75);
 
-useVisibilityObserver("theHero", root);
+function scrollToResume() {
+  document.getElementById("the-resume")?.scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+    inline: "nearest",
+  });
+}
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped></style>
+<style scoped>
+.hero-scroll-cue {
+  @apply absolute bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full bg-surface/80 px-3 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-muted shadow-sm ring-1 ring-ink/10 backdrop-blur-sm transition hover:-translate-y-0.5 hover:text-teal dark:bg-nightSurface/80 dark:text-gray-300 dark:ring-white/10 dark:hover:text-tealSoft;
+  animation: hero-scroll-cue-bob 1.6s ease-in-out infinite;
+}
+
+@keyframes hero-scroll-cue-bob {
+  0%,
+  100% {
+    transform: translate(-50%, 0);
+  }
+  50% {
+    transform: translate(-50%, 0.45rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-scroll-cue {
+    animation: none;
+  }
+}
+</style>
