@@ -1,16 +1,18 @@
 <template>
   <div
-    class="justify-start rounded-2xl bg-surface shadow-sm ring-1 ring-ink/10 dark:bg-nightSurface dark:text-gray-300 dark:ring-white/10 z-1 w-full"
+    class="justify-start rounded-2xl bg-sand shadow-sm ring-1 ring-ink/10 dark:bg-nightElevated dark:text-gray-300 dark:ring-white/10 z-1 w-full"
   >
-    <h3
-      class="items-center mx-3 pt-3 align-text-bottom text-lg font-semibold text-ink dark:text-white"
-    >
-      {{ name }}
-    </h3>
-    <p class="text-sm text-muted dark:text-gray-300 mx-3 pb-3">
-      {{ description }}
-    </p>
-    <ul class="pb-1">
+    <div class="rounded-t-2xl border-b border-ink/10 bg-surface/60 px-3 pt-3 pb-2 dark:border-white/10 dark:bg-nightSurface/60">
+      <h3
+        class="items-center align-text-bottom text-lg font-semibold text-ink dark:text-white"
+      >
+        {{ name }}
+      </h3>
+      <p class="text-sm text-muted dark:text-gray-300">
+        {{ description }}
+      </p>
+    </div>
+    <ul class="pb-1 pt-1">
       <skills-entry
         v-for="skill in skills"
         :key="skill.name"
