@@ -102,8 +102,11 @@ const contentH = ref("auto");
 const paddingBottom = ref(12);
 const upwardDragLimit = -72;
 const closeThreshold = 150;
+const openAnimationDurationMs = 400;
+const scrollNudgeBufferMs = 120;
 const hasNudgedContent = ref(false);
 const isNudgingContent = ref(false);
+let nudgeTimer: ReturnType<typeof window.setTimeout> | null = null;
 
 function init() {
   if (card.value && pan.value) {
@@ -111,14 +114,13 @@ function init() {
     cardP.value = 0;
     cardH.value = card.value.clientHeight;
     contentH.value = `${cardH.value - pan.value.clientHeight}px`;
-    maybeNudgeContentAfterRender();
     if (!initiated.value) {
       initiated.value = true;
       const tl = gsap.timeline();
       tl.from(card.value, {
         y: cardH.value,
         opacity: 0,
-        duration: 0.4,
+        duration: openAnimationDurationMs / 1000,
         ease: "power3",
       }).from(backdrop.value, { opacity: 0, duration: 0.3 }, 0);
       timeline.value = tl;
@@ -167,14 +169,17 @@ function init() {
 const emit = defineEmits(["cardOpened", "cardClosed"]);
 
 function open() {
+  clearNudgeTimer();
   hasNudgedContent.value = false;
   init();
   opened.value = true;
+  scheduleContentNudge();
   emit("cardOpened");
 }
 
 function close(deltaY: number | null) {
   if (opened.value) {
+    clearNudgeTimer();
     document.body.style.overflowY = "";
     if (deltaY != null) {
       const tl = gsap.timeline();
@@ -215,7 +220,7 @@ function handleContentScroll() {
 
 function maybeNudgeContent() {
   const el = content.value;
-  if (!el || hasNudgedContent.value || prefersReducedMotion() || !hasOverflow(el)) {
+  if (!opened.value || !el || hasNudgedContent.value || prefersReducedMotion() || !hasOverflow(el)) {
     return;
   }
 
@@ -233,8 +238,24 @@ function maybeNudgeContent() {
   }, 700);
 }
 
+function scheduleContentNudge() {
+  nudgeTimer = window.setTimeout(() => {
+    nextTick(maybeNudgeContent);
+  }, openAnimationDurationMs + scrollNudgeBufferMs);
+}
+
+function clearNudgeTimer() {
+  if (nudgeTimer) {
+    window.clearTimeout(nudgeTimer);
+    nudgeTimer = null;
+  }
+}
+
 function maybeNudgeContentAfterRender() {
-  nextTick(maybeNudgeContent);
+  if (opened.value && !hasNudgedContent.value) {
+    clearNudgeTimer();
+    scheduleContentNudge();
+  }
 }
 
 const props = defineProps<{
@@ -253,6 +274,7 @@ watch(
 );
 
 onBeforeUnmount(() => {
+  clearNudgeTimer();
   timeline.value?.kill();
   drag.value?.kill();
 });
