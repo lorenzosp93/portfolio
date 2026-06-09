@@ -2,13 +2,15 @@ name: frontend
 
 on:
   push:
-    branches: [ master ]
-    paths: 
+    branches: [master]
+    paths:
       - 'portfolio-frontend/**'
+      - '.github/workflows/frontend.yml'
   pull_request:
-    branches: [ master ]
-    paths: 
+    branches: [master]
+    paths:
       - 'portfolio-frontend/**'
+      - '.github/workflows/frontend.yml'
 
 jobs:
   test:
@@ -18,54 +20,58 @@ jobs:
         working-directory: ./portfolio-frontend
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Use Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '14'
-      - run: npm install
-      - run: npm run build --if-present
-      
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: portfolio-frontend/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Build frontend
+        run: npm run build --if-present
+
   build:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
     needs: test
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3
       - name: Login to DockerHub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Extract branch name
         shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        run: echo "branch=${GITHUB_REF#refs/heads/}" >> "$GITHUB_OUTPUT"
         id: extract_branch
       - name: Build and push Docker images
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v6
         with:
           context: ./portfolio-frontend
           platforms: linux/amd64,linux/arm64/v8
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/portfolio-frontend:${{ steps.extract_branch.outputs.branch }} 
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/portfolio-frontend:${{ steps.extract_branch.outputs.branch }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
   deploy:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
-    needs: 
+    needs:
       - build
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup Kubernetes
-        uses: Azure/k8s-set-context@v3
+        uses: Azure/k8s-set-context@v4
         with:
           method: kubeconfig
           kubeconfig: ${{ secrets.KUBECONFIG }}
