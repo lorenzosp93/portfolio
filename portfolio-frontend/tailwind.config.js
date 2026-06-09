@@ -6,6 +6,7 @@ module.exports = {
         ink: "#172026",
         paper: "#FFF8EF",
         surface: "#FFFFFF",
+        sand: "#F8EEDC",
         muted: "#64748B",
         teal: "#0F766E",
         tealSoft: "#CCFBF1",
@@ -15,6 +16,7 @@ module.exports = {
         amberSoft: "#FEF3C7",
         night: "#0B1120",
         nightSurface: "#111827",
+        nightElevated: "#1F2937",
       },
       scale: {
         102.5: "1.025",
