@@ -164,13 +164,10 @@ function scrollToElement(elem: MaybeRef<HTMLDivElement | null>) {
 
   scrollHorizontallyIntoView(elem);
 
-  const navbarHeight = document.getElementById("the-navbar")?.offsetHeight ?? 0;
-  const targetTop = elem.getBoundingClientRect().top + window.scrollY;
-  const breathingRoom = parseFloat(getComputedStyle(document.documentElement).fontSize);
-
-  window.scrollTo({
-    top: Math.max(targetTop - navbarHeight - breathingRoom, 0),
+  elem.scrollIntoView({
     behavior: "smooth",
+    block: "start",
+    inline: "nearest",
   });
 }
 
