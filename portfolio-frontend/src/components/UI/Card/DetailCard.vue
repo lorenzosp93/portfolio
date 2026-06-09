@@ -102,6 +102,8 @@ const contentH = ref("auto");
 const paddingBottom = ref(12);
 const upwardDragLimit = -72;
 const closeThreshold = 150;
+const minCloseDuration = 0.16;
+const maxCloseDuration = 0.42;
 const openAnimationDurationMs = 400;
 const scrollNudgeBufferMs = 120;
 const hasNudgedContent = ref(false);
@@ -114,6 +116,13 @@ function getDownwardDragLimit() {
 
 function updateDragBounds() {
   drag.value?.applyBounds({ maxY: getDownwardDragLimit(), minY: upwardDragLimit });
+}
+
+function getCloseDuration(deltaY: number) {
+  const remainingDistance = Math.max((cardH.value ?? 0) + deltaY, 0);
+  const totalDistance = Math.max(cardH.value ?? 0, 1);
+  const progress = 1 - Math.min(Math.max(remainingDistance / totalDistance, 0), 1);
+  return maxCloseDuration - (maxCloseDuration - minCloseDuration) * progress;
 }
 
 function init() {
@@ -195,7 +204,12 @@ function close(deltaY: number | null) {
       tl.fromTo(
         card.value,
         { y: -deltaY },
-        { y: (cardH?.value ?? 0) - deltaY, opacity: 0, duration: 0.4 }
+        {
+          y: (cardH?.value ?? 0) - deltaY,
+          opacity: 0,
+          duration: getCloseDuration(deltaY),
+          ease: "power2.in",
+        }
       ).to(backdrop.value, { opacity: 0, duration: 0.3 }, 0.1);
       tl.eventCallback("onComplete", function (this: typeof tl) {
         this.kill();
