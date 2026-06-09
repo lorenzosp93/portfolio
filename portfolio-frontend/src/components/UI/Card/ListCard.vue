@@ -1,23 +1,22 @@
 <template>
   <div
     @click="toggleDetails"
-    class="rounded-xl shadow-md dark:bg-gray-600 bg-white cursor-pointer"
-    :class="{ 'pointe-events-none': detailsVisible }"
+    class="group overflow-hidden rounded-2xl bg-surface shadow-sm ring-1 ring-ink/10 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:ring-teal/30 dark:bg-nightSurface dark:ring-white/10"
+    :class="{ 'pointer-events-none': detailsVisible }"
   >
     <img
-      class="object-cover aspect-video w-full overflow-hidden rounded-t-2xl pb-1 border-b-2 border-gray-300"
+      class="aspect-video w-full object-cover transition duration-300 group-hover:scale-102.5"
       :src="picture"
       :alt="'Picture for ' + name"
     />
-    <div class="flex flex-wrap p-3 w-full text-lg text-black dark:text-white">
-      <p class="text-xs w-full text-gray-400">{{ location }}{{ status }}</p>
-      <h2 class="font-semibold w-full text-gray-900 dark:text-white">
+    <div class="flex flex-wrap p-4 w-full text-lg text-ink dark:text-white">
+      <p class="text-xs font-medium uppercase tracking-wide text-coral dark:text-coralSoft">{{ location }}{{ status }}</p>
+      <h2 class="mt-1 w-full text-xl font-semibold tracking-tight text-ink dark:text-white">
         {{ name }}
       </h2>
-      <div
-        v-html="truncatedContent"
-        class="text-sm my-3 w-full text-ellipsis text-gray-500 dark:text-gray-300 after:content-['_⏎'] after:text-gray-400"
-      />
+      <p class="mt-3 w-full text-sm leading-relaxed text-muted dark:text-gray-300 after:content-['_⏎'] after:text-coral">
+        {{ truncatedContent }}
+      </p>
     </div>
     <blog-entry-detail
       v-if="type == 'blog' && isActive"
@@ -46,7 +45,6 @@
 </template>
 
 <script setup lang="ts">
-import { marked } from "marked";
 import BlogEntryDetail from "../../blog/BlogEntryDetail.vue";
 import ProjectEntryDetail from "../../resume/Projects/ProjectEntryDetail.vue";
 import { computed, inject, ref } from "vue";
@@ -70,11 +68,8 @@ const props = defineProps<{
 const truncationAmount: (() => number) | undefined = inject("truncationAmount");
 
 const truncatedContent = computed(() => {
-  if (truncationAmount)
-    return marked.parse(
-      props.content.slice(0, truncationAmount() ?? 0) +
-        (truncationAmount() < props.content.length ? "... " : " ")
-    );
+  const limit = truncationAmount?.() ?? 0;
+  return props.content.slice(0, limit) + (limit < props.content.length ? "..." : "");
 });
 
 function toggleDetails() {
