@@ -1,5 +1,16 @@
 self.addEventListener("push", function (event) {
-  let data = event?.data.json();
+  let data = {};
+
+  if (event.data) {
+    try {
+      data = event.data.json();
+    } catch (error) {
+      data = {
+        body: event.data.text(),
+      };
+    }
+  }
+
   const promiseChain = self.registration.showNotification(
     data?.title ?? "New message",
     {
@@ -20,8 +31,7 @@ self.addEventListener("notificationclick", (event) => {
   const clickedNotification = event.notification;
   clickedNotification.close();
 
-  // Do something as the result of the notification click
-  const urlToOpen = new URL(event.notification.data?.url, self.location.origin)
+  const urlToOpen = new URL(event.notification.data?.url ?? "/", self.location.origin)
     .href;
 
   const promiseChain = clients
