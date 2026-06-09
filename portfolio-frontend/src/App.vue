@@ -110,11 +110,11 @@ function addHeroAnimation(coordinates: DOMCoordinates) {
     y: coordinates.deltaY,
     scaleX: coordinates.scaleX,
     scaleY: coordinates.scaleY,
-    ease: "power2",
+    ease: "none",
     duration: 0.7,
     force3D: true,
   })
-    .to("#the-navbar", { opacity: 1, ease: "power1.in", duration: 0.3 }, 0.7)
+    .to("#the-navbar", { opacity: 1, ease: "none", duration: 0.3 }, 0.7)
     .set("#heroPicture", { opacity: 0 }, 1);
   timeline.value = tl;
 }
