@@ -97,10 +97,12 @@ const timeline: Ref<GSAPTimeline | null> = ref(null);
 
 const contentH = ref("auto");
 const paddingBottom = ref(12);
+const upwardDragLimit = -72;
+const closeThreshold = 150;
 
 function init() {
   if (card.value && pan.value) {
-    drag.value?.applyBounds({ maxY: 0, minY: 0 });
+    drag.value?.applyBounds({ maxY: 0, minY: upwardDragLimit });
     cardP.value = 0;
     cardH.value = card.value.clientHeight;
     contentH.value = `${cardH.value - pan.value.clientHeight}px`;
@@ -120,21 +122,33 @@ function init() {
         trigger: pan.value,
         bounds: {
           maxY: 0,
-          minY: 0,
+          minY: upwardDragLimit,
         },
         liveSnap: (value) => {
-          return value < 0 ? 0 : value;
+          return value < upwardDragLimit ? upwardDragLimit : value;
         },
-        edgeResistance: 0,
+        edgeResistance: 0.65,
         autoScroll: 0,
         onPress: () => {
           startY = drag.value?.pointerY ?? 0;
+          gsap.killTweensOf(card.value);
+        },
+        onDragStart: () => {
+          moving.value = true;
         },
         onDragEnd: () => {
-          let deltaY = startY - (drag.value?.pointerY ?? 0);
-          if (deltaY < -150) {
+          moving.value = false;
+          const endY = drag.value?.pointerY ?? startY;
+          const deltaY = startY - endY;
+          if (deltaY < -closeThreshold) {
             close(deltaY);
+            return;
           }
+          gsap.to(card.value, {
+            y: 0,
+            duration: 0.22,
+            ease: "power2.out",
+          });
         },
       });
       drag.value = dr[0];
