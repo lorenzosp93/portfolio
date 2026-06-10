@@ -10,8 +10,8 @@
     <the-blog class="snap-center scroll-mt-20" id="the-blog" />
     <the-contacts class="snap-center scroll-mt-20" id="the-contacts" />
 
-    <footer class="mx-auto max-w-6xl px-5 pb-6 text-sm text-muted dark:text-gray-300">
-      <p>© Lorenzo Spinelli, 2023</p>
+    <footer class="mx-auto w-full px-5 pb-6 text-sm text-muted dark:text-gray-300">
+      <p>© Lorenzo Spinelli, 2026</p>
     </footer>
   </div>
 </template>
