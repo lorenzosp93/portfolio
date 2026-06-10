@@ -269,9 +269,13 @@ function getHorizontalScrollParent(elem: HTMLElement): HTMLElement | null {
   @apply bg-surface dark:bg-nightSurface;
 }
 
-.nav-link,
-.resume-nav-link {
+.nav-link {
   @apply relative z-20 cursor-pointer rounded-full px-3 py-2 text-sm font-medium text-ink transition-colors duration-300 hover:text-teal focus:outline-none focus-visible:outline-none dark:text-gray-300 dark:hover:text-tealSoft;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.resume-nav-link {
+  @apply relative z-20 cursor-pointer rounded-full px-3 py-2 text-sm font-medium text-night transition-colors duration-300 hover:text-night focus:outline-none focus-visible:outline-none dark:text-night dark:hover:text-night;
   -webkit-tap-highlight-color: transparent;
 }
 
