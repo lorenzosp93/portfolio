@@ -76,24 +76,14 @@ function setupAnimation() {
 }
 
 function recalculateAnimation() {
-  const scrollX = window.scrollX;
-  const scrollY = window.scrollY;
-
   cleanupAnimation();
   resetHeroPictureTransform();
 
-  window.scrollTo(scrollX, 0);
-
   requestAnimationFrame(() => {
-    resetHeroPictureTransform();
     const coordinates = calculateCoordinatesAnimation("heroPicture", "heroLogo");
-    window.scrollTo(scrollX, scrollY);
-
-    requestAnimationFrame(() => {
-      if (coordinates?.scaleX && coordinates?.scaleY) {
-        addHeroAnimation(coordinates);
-      }
-    });
+    if (coordinates?.scaleX && coordinates?.scaleY) {
+      addHeroAnimation(coordinates);
+    }
   });
 }
 
@@ -167,24 +157,34 @@ function calculateCoordinatesAnimation(
   originTag: string,
   destinationTag: string
 ): DOMCoordinates {
-  const originBox = document.getElementById(originTag)?.getBoundingClientRect();
-  const destinationBox = document
-    .getElementById(destinationTag)
-    ?.getBoundingClientRect();
-  if (!originBox || !destinationBox) {
+  const originElement = document.getElementById(originTag);
+  const destinationElement = document.getElementById(destinationTag);
+  const triggerElement = document.getElementById("the-hero");
+
+  const originBox = originElement?.getBoundingClientRect();
+  const destinationBox = destinationElement?.getBoundingClientRect();
+  const triggerBox = triggerElement?.getBoundingClientRect();
+
+  if (!originBox || !destinationBox || !triggerBox) {
     return { deltaX: 0, deltaY: 0, scaleX: 1, scaleY: 1 };
   }
+
+  const scrollY = window.scrollY;
+  const triggerTop = triggerBox.top + scrollY;
+  const triggerEnd = triggerTop + triggerBox.height;
+  const destinationScrollY = Math.min(scrollY, triggerEnd);
+
+  const originCenterY = originBox.y + originBox.height / 2 + scrollY;
+  const destinationCenterY =
+    destinationBox.y + destinationBox.height / 2 + destinationScrollY;
+
   return {
     deltaX:
       destinationBox.x +
       destinationBox.width / 2 -
       originBox.x -
       originBox.width / 2,
-    deltaY:
-      destinationBox.y +
-      destinationBox.height / 2 -
-      originBox.y -
-      originBox.height / 2,
+    deltaY: destinationCenterY - originCenterY,
     scaleX: destinationBox.width / originBox.width,
     scaleY: destinationBox.height / originBox.height,
   };
