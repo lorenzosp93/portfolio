@@ -29,22 +29,43 @@ class ContactView(APIView):
 
     def post(self, request, *args, **kwargs):
         serializer_class = ContactSerializer(data=request.data)
-        if serializer_class.is_valid():
-            data = serializer_class.validated_data
-            try:
-                self.send_mail(
-                    subject="Contact from {first} {last} - {email}".format(
-                        first=data.get('first_name'),
-                        last=data.get('last_name'),
-                        email=data.get('email'),
-                    ),
-                    body=data.get('content'),
-                )
-            except Exception:
-                logger.exception("Failed to send contact form email")
-                return Response({"success": "Failed"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            return Response({"success": "Sent"}, status=status.HTTP_200_OK)
-        return Response({'success': "Failed"}, status=status.HTTP_400_BAD_REQUEST)
+        if not serializer_class.is_valid():
+            return Response(
+                {
+                    "success": False,
+                    "message": "Invalid contact form submission.",
+                    "errors": serializer_class.errors,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        data = serializer_class.validated_data
+        try:
+            self.send_mail(
+                subject="Contact from {first} {last} - {email}".format(
+                    first=data.get('first_name'),
+                    last=data.get('last_name'),
+                    email=data.get('email'),
+                ),
+                body=data.get('content'),
+            )
+        except Exception:
+            logger.exception("Failed to send contact form email")
+            return Response(
+                {
+                    "success": False,
+                    "message": "Unable to send the message right now. Please try again later.",
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+        return Response(
+            {
+                "success": True,
+                "message": "Message sent successfully.",
+            },
+            status=status.HTTP_200_OK,
+        )
 
     @staticmethod
     def send_mail(subject, body):
