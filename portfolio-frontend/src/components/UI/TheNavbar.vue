@@ -33,43 +33,48 @@
           <div class="my-auto hidden w-full justify-end sm:ml-6 sm:block">
             <div
               ref="desktopNav"
-              class="relative flex w-full items-center justify-end space-x-2 overflow-x-auto no-scrollbar"
+              class="relative isolate flex w-full items-center justify-end space-x-2 overflow-x-auto no-scrollbar"
             >
+              <div
+                class="nav-active-indicator"
+                :class="{ 'nav-active-indicator-resume': isResumeActive }"
+                :style="activeIndicatorStyle"
+              />
+
               <button
                 :ref="(el) => setNavItemRef('theHero', el)"
                 class="nav-link"
-                :class="{ active_outer: activeNavItem === 'theHero' }"
+                :class="{ active_top_text: activeNavItem === 'theHero' }"
                 aria-current="page"
                 @click="scrollToElement(navStore.refs?.theHero)"
               >
                 About
               </button>
 
-              <Transition name="resume-nav" @after-enter="updateInnerIndicator" @after-leave="updateInnerIndicator">
+              <Transition name="resume-nav" @after-enter="updateActiveIndicator" @after-leave="updateActiveIndicator">
                 <button
                   v-if="!isResumeActive"
                   key="resume"
                   :ref="(el) => setNavItemRef('theResume', el)"
                   class="nav-link"
-                  :class="{ active_outer: activeNavItem === 'theResume' }"
+                  :class="{ active_top_text: activeNavItem === 'theResume' }"
                   @click="scrollToResumeSection"
                 >
                   Resume
                 </button>
-                <div v-else key="resume-subnav" :ref="setResumeSubnavRef" class="resume-subnav">
-                  <div class="resume-inner-indicator" :style="innerIndicatorStyle" />
+                <div v-else key="resume-subnav" class="resume-subnav">
                   <button
                     :ref="(el) => setNavItemRef('experience', el)"
-                    class="nav-link-active-group"
-                    :class="{ active_inner_text: activeInnerNavItem === 'experience' }"
+                    class="resume-nav-link"
+                    :class="{ active_resume_text: activeNavItem === 'experience' }"
                     @click="scrollToElement(navStore.refs?.experience)"
                   >
                     Experience
                   </button>
                   <button
                     :ref="(el) => setNavItemRef('education', el)"
-                    class="nav-link-active-group"
-                    :class="{ active_inner_text: activeInnerNavItem === 'education' }"
+                    class="resume-nav-link"
+                    :class="{ active_resume_text: activeNavItem === 'education' }"
                     @click="scrollToElement(navStore.refs?.education)"
                   >
                     Education
@@ -77,16 +82,16 @@
                   <button
                     v-if="navStore.refs?.projects"
                     :ref="(el) => setNavItemRef('projects', el)"
-                    class="nav-link-active-group"
-                    :class="{ active_inner_text: activeInnerNavItem === 'projects' }"
+                    class="resume-nav-link"
+                    :class="{ active_resume_text: activeNavItem === 'projects' }"
                     @click="scrollToElement(navStore.refs?.projects)"
                   >
                     Projects
                   </button>
                   <button
                     :ref="(el) => setNavItemRef('skills', el)"
-                    class="nav-link-active-group"
-                    :class="{ active_inner_text: activeInnerNavItem === 'skills' }"
+                    class="resume-nav-link"
+                    :class="{ active_resume_text: activeNavItem === 'skills' }"
                     @click="scrollToElement(navStore.refs?.skills)"
                   >
                     Skills
@@ -97,7 +102,7 @@
               <button
                 :ref="(el) => setNavItemRef('theBlog', el)"
                 class="nav-link"
-                :class="{ active_outer: activeNavItem === 'theBlog' }"
+                :class="{ active_top_text: activeNavItem === 'theBlog' }"
                 @click="scrollToElement(navStore.refs?.theBlog)"
               >
                 Blog
@@ -105,7 +110,7 @@
               <button
                 :ref="(el) => setNavItemRef('theContacts', el)"
                 class="nav-link"
-                :class="{ active_outer: activeNavItem === 'theContacts' }"
+                :class="{ active_top_text: activeNavItem === 'theContacts' }"
                 @click="scrollToElement(navStore.refs?.theContacts)"
               >
                 Contacts
@@ -147,9 +152,9 @@ import { computed, nextTick, reactive, ref, watch } from "vue";
 
 const navStore = useNavStore();
 const isMenuOpen = ref(false);
-const resumeSubnav = ref<HTMLElement | null>(null);
+const desktopNav = ref<HTMLElement | null>(null);
 const navItemRefs = reactive<Record<string, HTMLElement | null>>({});
-const innerIndicator = reactive({ left: 0, width: 0, visible: false });
+const activeIndicator = reactive({ left: 0, width: 0, visible: false });
 const resumeSectionName = "theResume";
 const resumeSubnavItems = ["experience", "education", "projects", "skills"];
 
@@ -162,18 +167,18 @@ const isResumeActive = computed(
 );
 
 const activeNavItem = computed(() => {
+  if (isResumeActive.value && resumeSubnavItems.includes(navStore.visible)) {
+    return navStore.visible;
+  }
+
   if (navStore.visible === "theResume") return resumeSectionName;
   return navStore.visible || "theHero";
 });
 
-const activeInnerNavItem = computed(() =>
-  resumeSubnavItems.includes(navStore.visible) ? navStore.visible : "experience"
-);
-
-const innerIndicatorStyle = computed(() => ({
-  width: `${innerIndicator.width}px`,
-  transform: `translate3d(${innerIndicator.left}px, 0, 0)`,
-  opacity: innerIndicator.visible ? 1 : 0,
+const activeIndicatorStyle = computed(() => ({
+  width: `${activeIndicator.width}px`,
+  transform: `translate3d(${activeIndicator.left}px, -50%, 0)`,
+  opacity: activeIndicator.visible ? 1 : 0,
 }));
 
 const toggleMenu = () => {
@@ -182,34 +187,29 @@ const toggleMenu = () => {
 
 function setNavItemRef(name: string, el: Element | null) {
   navItemRefs[name] = el instanceof HTMLElement ? el : null;
-  nextTick(updateInnerIndicator);
+  nextTick(updateActiveIndicator);
 }
 
-function setResumeSubnavRef(el: Element | null) {
-  resumeSubnav.value = el instanceof HTMLElement ? el : null;
-  nextTick(updateInnerIndicator);
-}
-
-function updateInnerIndicator() {
-  const activeEl = navItemRefs[activeInnerNavItem.value];
-  const subnavEl = resumeSubnav.value;
-  if (!isResumeActive.value || !activeEl || !subnavEl) {
-    innerIndicator.visible = false;
+function updateActiveIndicator() {
+  const activeEl = navItemRefs[activeNavItem.value];
+  const navEl = desktopNav.value;
+  if (!activeEl || !navEl) {
+    activeIndicator.visible = false;
     return;
   }
 
-  const subnavBox = subnavEl.getBoundingClientRect();
+  const navBox = navEl.getBoundingClientRect();
   const activeBox = activeEl.getBoundingClientRect();
-  innerIndicator.left = activeBox.left - subnavBox.left + subnavEl.scrollLeft;
-  innerIndicator.width = activeBox.width;
-  innerIndicator.visible = true;
+  activeIndicator.left = activeBox.left - navBox.left + navEl.scrollLeft;
+  activeIndicator.width = activeBox.width;
+  activeIndicator.visible = true;
 }
 
-watch([activeInnerNavItem, isResumeActive], () => nextTick(updateInnerIndicator), {
+watch([activeNavItem, isResumeActive], () => nextTick(updateActiveIndicator), {
   immediate: true,
 });
 
-useEventListener(window, "resize", updateInnerIndicator);
+useEventListener(window, "resize", updateActiveIndicator);
 
 function scrollMobile(elem: MaybeRef<HTMLDivElement | null>) {
   scrollToElement(elem);
@@ -261,24 +261,30 @@ function getHorizontalScrollParent(elem: HTMLElement): HTMLElement | null {
 </script>
 
 <style scoped>
-.resume-inner-indicator {
-  @apply pointer-events-none absolute bottom-0.5 left-0 top-0.5 z-10 rounded-full bg-surface shadow-sm transition-all duration-300 ease-out dark:bg-nightSurface;
+.nav-active-indicator {
+  @apply pointer-events-none absolute top-1/2 z-10 h-9 rounded-full bg-teal shadow-sm transition-all duration-300 ease-out dark:bg-tealSoft;
 }
 
-.nav-link {
-  @apply cursor-pointer rounded-full px-3 py-2 text-sm font-medium text-ink transition-colors duration-300 hover:text-teal dark:text-gray-300 dark:hover:text-tealSoft;
+.nav-active-indicator-resume {
+  @apply bg-surface dark:bg-nightSurface;
 }
 
-.active_outer {
-  @apply bg-teal text-white shadow-sm hover:text-white dark:bg-tealSoft dark:text-night dark:hover:text-night;
+.nav-link,
+.resume-nav-link {
+  @apply relative z-20 cursor-pointer rounded-full px-3 py-2 text-sm font-medium text-ink transition-colors duration-300 hover:text-teal focus:outline-none dark:text-gray-300 dark:hover:text-tealSoft;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.nav-link-active-group {
-  @apply relative z-20 cursor-pointer rounded-full px-3 py-2 text-sm font-medium text-white transition-colors duration-300 hover:text-white dark:text-night dark:hover:text-night;
+.active_top_text {
+  @apply text-white hover:text-white dark:text-night dark:hover:text-night;
+}
+
+.active_resume_text {
+  @apply text-teal hover:text-teal dark:text-tealSoft dark:hover:text-tealSoft;
 }
 
 .resume-subnav {
-  @apply relative flex origin-center items-center overflow-hidden rounded-full bg-teal p-0.5 text-sm font-medium shadow-sm dark:bg-tealSoft;
+  @apply flex origin-center items-center text-sm font-medium;
 }
 
 .resume-nav-enter-active,
@@ -301,15 +307,12 @@ function getHorizontalScrollParent(elem: HTMLElement): HTMLElement | null {
 }
 
 .mobile-link {
-  @apply block w-full rounded-xl px-4 py-2 text-left text-sm font-medium text-ink transition hover:text-teal dark:text-gray-300 dark:hover:text-tealSoft;
+  @apply block w-full rounded-xl px-4 py-2 text-left text-sm font-medium text-ink transition hover:text-teal focus:outline-none dark:text-gray-300 dark:hover:text-tealSoft;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .active {
   @apply bg-teal text-white shadow-sm dark:bg-tealSoft dark:text-night;
-}
-
-.active_inner_text {
-  @apply text-teal dark:text-tealSoft;
 }
 
 .menu-closed {
