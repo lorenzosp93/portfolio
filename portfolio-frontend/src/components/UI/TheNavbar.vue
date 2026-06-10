@@ -275,7 +275,7 @@ function getHorizontalScrollParent(elem: HTMLElement): HTMLElement | null {
 }
 
 .resume-nav-link {
-  @apply relative z-20 cursor-pointer rounded-full px-3 py-2 text-sm font-medium text-night transition-colors duration-300 hover:text-night focus:outline-none focus-visible:outline-none dark:text-night dark:hover:text-night;
+  @apply relative z-20 cursor-pointer rounded-full px-3 py-2 text-sm font-medium text-white transition-colors duration-300 hover:text-white focus:outline-none focus-visible:outline-none dark:text-night dark:hover:text-night;
   -webkit-tap-highlight-color: transparent;
 }
 
