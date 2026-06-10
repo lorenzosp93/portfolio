@@ -76,14 +76,24 @@ function setupAnimation() {
 }
 
 function recalculateAnimation() {
+  const scrollX = window.scrollX;
+  const scrollY = window.scrollY;
+
   cleanupAnimation();
   resetHeroPictureTransform();
 
+  window.scrollTo(scrollX, 0);
+
   requestAnimationFrame(() => {
+    resetHeroPictureTransform();
     const coordinates = calculateCoordinatesAnimation("heroPicture", "heroLogo");
-    if (coordinates?.scaleX && coordinates?.scaleY) {
-      addHeroAnimation(coordinates);
-    }
+    window.scrollTo(scrollX, scrollY);
+
+    requestAnimationFrame(() => {
+      if (coordinates?.scaleX && coordinates?.scaleY) {
+        addHeroAnimation(coordinates);
+      }
+    });
   });
 }
 
