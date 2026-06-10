@@ -76,10 +76,15 @@ function setupAnimation() {
 }
 
 function recalculateAnimation() {
-  const coordinates = calculateCoordinatesAnimation("heroPicture", "heroLogo");
-  if (coordinates?.scaleX && coordinates?.scaleY) {
-    addHeroAnimation(coordinates);
-  }
+  cleanupAnimation();
+  resetHeroPictureTransform();
+
+  requestAnimationFrame(() => {
+    const coordinates = calculateCoordinatesAnimation("heroPicture", "heroLogo");
+    if (coordinates?.scaleX && coordinates?.scaleY) {
+      addHeroAnimation(coordinates);
+    }
+  });
 }
 
 const timeline: Ref<GSAPTimeline | null> = ref(null);
@@ -89,6 +94,21 @@ function cleanupAnimation() {
   timeline.value?.scrollTrigger?.kill();
   timeline.value?.kill();
   timeline.value = null;
+}
+
+function resetHeroPictureTransform() {
+  gsap.set("#heroPicture", {
+    xPercent: -50,
+    yPercent: -50,
+    x: 0,
+    y: 0,
+    scaleX: 1,
+    scaleY: 1,
+    opacity: 1,
+    transformOrigin: "50% 50%",
+    willChange: "transform, opacity",
+    force3D: true,
+  });
 }
 
 type DOMCoordinates = {
@@ -106,16 +126,7 @@ function addHeroAnimation(coordinates: DOMCoordinates) {
 
   cleanupAnimation();
   animationSignature = nextSignature;
-  gsap.set("#heroPicture", {
-    x: 0,
-    y: 0,
-    scaleX: 1,
-    scaleY: 1,
-    opacity: 1,
-    transformOrigin: "50% 50%",
-    willChange: "transform, opacity",
-    force3D: true,
-  });
+  resetHeroPictureTransform();
   gsap.set("#the-navbar", { opacity: 0 });
 
   const tl = gsap.timeline({
