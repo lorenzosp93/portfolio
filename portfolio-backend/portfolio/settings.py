@@ -3,10 +3,19 @@ Django settings for portfolio project.
 """
 
 import os
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
+
+
+def env_bool(name, default=False):
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    return value.strip().lower() in ('1', 'true', 'yes', 'on')
+
 
 LOGGING = {
     'version': 1,
@@ -31,14 +40,16 @@ LOGGING = {
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = '17cgw1@w%hm%a#2$z7v^$(e=+=8q)unx4!v_-q+&nd0omm$)9('
-SECRET_KEY = os.environ.get(
-    'DJANGO_SECRET_KEY',
-    '17cgw1@w%hm%a#2$z7v^$(e=+18q)unx4!v_-q+&nd0omm$)9(',
-)
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', '') != 'False'
+DEBUG = env_bool('DEBUG', False)
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+if not SECRET_KEY:
+    if DEBUG:
+        SECRET_KEY = 'dev-only-insecure-secret-key'
+    else:
+        raise ImproperlyConfigured('DJANGO_SECRET_KEY must be set when DEBUG=False')
 
 HOST = os.environ.get('DJANGO_HOST', None)
 
@@ -82,9 +93,9 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.gzip.GZipMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -171,7 +182,7 @@ STATICFILES_DIRS = [
     STATIC_DIR,
 ]
 
-USE_S3 = os.getenv('USE_S3') == 'True'
+USE_S3 = env_bool('USE_S3', False)
 
 # update for Django 5.2+
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
@@ -198,9 +209,9 @@ if USE_S3:
     }
 else:
     STORAGES = {
-    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
-    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
-}
+        "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+        "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+    }
 
     STATIC_URL = '/staticfiles/'
 #    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
@@ -215,7 +226,11 @@ REST_FRAMEWORK = {
     ]
 }
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-CORS_ALLOW_ALL_ORIGINS = True
+
+if DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = True
+else:
+    CORS_ALLOWED_ORIGINS = [FRONTEND_HOST]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_TO = os.environ.get('EMAIL_TO', 'me@lorenzosp.com')
@@ -223,7 +238,7 @@ EMAIL_HOST = os.environ.get('EMAIL_HOST')
 EMAIL_PORT = os.environ.get('EMAIL_PORT', 587)
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
-EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', "True") == "True"
+EMAIL_USE_TLS = env_bool('EMAIL_USE_TLS', True)
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
