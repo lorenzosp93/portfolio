@@ -94,6 +94,7 @@
               :autofocus="idx == 0"
               :autocomplete="item.autocomplete ? 'on' : 'off'"
               required
+              @input="error = null"
             />
             <textarea
               v-else
@@ -105,6 +106,7 @@
               :placeholder="item.placeholder"
               :autocomplete="item.autocomplete ? 'on' : 'off'"
               required
+              @input="error = null"
             />
             <span class="block px-1 pt-1 text-xs text-muted dark:text-gray-400"
               >{{ item?.help }}
@@ -113,8 +115,9 @@
           <p
             v-if="error"
             class="absolute -top-4 left-1/2 w-full -translate-x-1/2 text-center text-xs text-red-700 dark:text-red-300"
-            v-html="error"
-          />
+          >
+            {{ error }}
+          </p>
         </form>
       </template>
     </detail-card>
@@ -143,9 +146,17 @@ type FormItem = {
   autocomplete?: boolean;
 };
 
+type ApiErrorLike = {
+  message?: string;
+  data?: {
+    message?: string;
+    errors?: Record<string, string[] | string>;
+  };
+};
+
 const formVisible = ref(false);
 const isLoading = ref(false);
-const error = ref(null);
+const error = ref<string | null>(null);
 const formItems: Ref<FormItem[]> = ref([
   {
     id: "first_name",
@@ -201,16 +212,40 @@ function createFormPayload() {
   );
 }
 
+function formatApiError(err: unknown): string {
+  const apiError = err as ApiErrorLike;
+  const apiMessage = apiError?.data?.message || apiError?.message;
+  const apiErrors = apiError?.data?.errors;
+
+  if (apiErrors) {
+    const details = Object.entries(apiErrors)
+      .map(([field, messages]) => {
+        const message = Array.isArray(messages) ? messages.join(", ") : messages;
+        return `${field}: ${message}`;
+      })
+      .join(" ");
+    return [apiMessage, details].filter(Boolean).join(" ");
+  }
+
+  return apiMessage || "I couldn't send your message. Please try again later.";
+}
+
 async function submitMessage() {
-  if (canSubmit.value) {
-    isLoading.value = true;
-    backendService.postContactForm(createFormPayload()).then(() => {
-      isLoading.value = false;
-      formItems.value.forEach((item) => {
-        item.value = "";
-      });
-      DetailCard.close();
+  if (!canSubmit.value) return;
+
+  isLoading.value = true;
+  error.value = null;
+
+  try {
+    await backendService.postContactForm(createFormPayload());
+    formItems.value.forEach((item) => {
+      item.value = "";
     });
+    formVisible.value = false;
+  } catch (err) {
+    error.value = formatApiError(err);
+  } finally {
+    isLoading.value = false;
   }
 }
 </script>
