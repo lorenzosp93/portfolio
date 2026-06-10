@@ -262,7 +262,7 @@ function getHorizontalScrollParent(elem: HTMLElement): HTMLElement | null {
 
 <style scoped>
 .nav-active-indicator {
-  @apply pointer-events-none absolute top-1/2 z-10 h-9 rounded-full bg-teal shadow-sm transition-all duration-300 ease-out dark:bg-tealSoft;
+  @apply pointer-events-none absolute left-0 top-1/2 z-10 h-9 rounded-full bg-teal shadow-sm transition-all duration-300 ease-out dark:bg-tealSoft;
 }
 
 .nav-active-indicator-resume {
@@ -271,7 +271,7 @@ function getHorizontalScrollParent(elem: HTMLElement): HTMLElement | null {
 
 .nav-link,
 .resume-nav-link {
-  @apply relative z-20 cursor-pointer rounded-full px-3 py-2 text-sm font-medium text-ink transition-colors duration-300 hover:text-teal focus:outline-none dark:text-gray-300 dark:hover:text-tealSoft;
+  @apply relative z-20 cursor-pointer rounded-full px-3 py-2 text-sm font-medium text-ink transition-colors duration-300 hover:text-teal focus:outline-none focus-visible:outline-none dark:text-gray-300 dark:hover:text-tealSoft;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -284,7 +284,7 @@ function getHorizontalScrollParent(elem: HTMLElement): HTMLElement | null {
 }
 
 .resume-subnav {
-  @apply flex origin-center items-center text-sm font-medium;
+  @apply flex origin-center items-center rounded-full bg-teal p-0.5 text-sm font-medium shadow-sm dark:bg-tealSoft;
 }
 
 .resume-nav-enter-active,
@@ -307,7 +307,7 @@ function getHorizontalScrollParent(elem: HTMLElement): HTMLElement | null {
 }
 
 .mobile-link {
-  @apply block w-full rounded-xl px-4 py-2 text-left text-sm font-medium text-ink transition hover:text-teal focus:outline-none dark:text-gray-300 dark:hover:text-tealSoft;
+  @apply block w-full rounded-xl px-4 py-2 text-left text-sm font-medium text-ink transition hover:text-teal focus:outline-none focus-visible:outline-none dark:text-gray-300 dark:hover:text-tealSoft;
   -webkit-tap-highlight-color: transparent;
 }
 
