@@ -18,8 +18,8 @@
 
         <div class="flex flex-1 items-center justify-end sm:items-stretch sm:justify-start">
           <div
-            class="mx-3 my-2 flex flex-shrink-0 items-center"
-            @click="scrollToElement(navStore.refs?.theHero.value)"
+            class="mx-3 my-2 flex flex-shrink-0 items-center z-50"
+            @click="scrollToElement(navStore.refs?.theHero)"
           >
             <img
               id="heroLogo"
@@ -41,7 +41,7 @@
                 :style="activeIndicatorStyle"
               />
 
-              <button
+<!--              <button
                 :ref="(el) => setNavItemRef('theHero', el)"
                 class="nav-link"
                 :class="{ active_top_text: activeNavItem === 'theHero' }"
@@ -49,7 +49,7 @@
                 @click="scrollToElement(navStore.refs?.theHero)"
               >
                 About
-              </button>
+              </button> -->
 
               <Transition name="resume-nav" @after-enter="updateActiveIndicator" @after-leave="updateActiveIndicator">
                 <button
