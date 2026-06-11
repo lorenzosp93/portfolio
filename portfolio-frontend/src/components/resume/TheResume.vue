@@ -17,9 +17,10 @@
       <ArrowScroller :scroll-container="resumeContainer" />
       <div
         class="relative flex gap-6 overflow-x-scroll overflow-y-hidden no-scrollbar snap-x snap-mandatory scroll-smooth w-full"
-        :class="{ 'carousel-nudge': isActive }"
+        :class="{ 'carousel-nudge': shouldNudge }"
         id="resume-container"
         ref="resumeContainer"
+        @animationend="shouldNudge = false"
       >
         <div
           v-for="comp in resumeList"
@@ -60,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { Ref, ref, computed } from "vue";
+import { Ref, ref, computed, watch } from "vue";
 import ResumeProjects from "./Projects/ResumeProjects.vue";
 import ResumeSkills from "./Skills/ResumeSkills.vue";
 import ResumeTimeline from "./Timeline/ResumeTimeline.vue";
@@ -70,6 +71,15 @@ import { useVisibilityObserver } from "@/composables/visibilityObserver";
 
 const root: Ref<HTMLDivElement | null> = ref(null);
 const { isActive } = useVisibilityObserver("theResume", root);
+const hasNudged = ref(false);
+const shouldNudge = ref(false);
+
+watch(isActive, (val) => {
+  if (val && !hasNudged.value) {
+    hasNudged.value = true;
+    shouldNudge.value = true;
+  }
+});
 
 const resumeList = [
   {
@@ -125,7 +135,7 @@ const isMobile = breakpoints.smaller("md");
 }
 
 .carousel-nudge {
-  animation: carousel-nudge 1s ease-in-out 0.45s 2;
+  animation: carousel-nudge 1s ease-in-out 0.45s 1;
 }
 
 @keyframes carousel-nudge {
