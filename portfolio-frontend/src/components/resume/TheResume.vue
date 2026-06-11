@@ -9,25 +9,11 @@
       <p class="text-center w-full text-muted dark:text-gray-300">
         Because I definitely needed a website to host my CV.
       </p>
-      <p
-        v-if="!isMobile"
-        class="mx-auto mt-4 rounded-full bg-surface/80 px-4 py-1.5 text-xs font-semibold text-muted shadow-sm ring-1 ring-ink/10 dark:bg-nightSurface/80 dark:text-gray-300 dark:ring-white/10"
-      >
-        Scroll horizontally or use the arrows to explore
-      </p>
     </div>
     <div v-if="!isMobile" class="relative w-full">
       <ArrowScroller :scroll-container="resumeContainer" />
       <div
-        aria-hidden="true"
-        class="pointer-events-none absolute inset-y-0 left-0 z-[5] w-12 bg-gradient-to-r from-sand via-sand/80 to-transparent dark:from-night dark:via-night/80 md:w-20"
-      />
-      <div
-        aria-hidden="true"
-        class="pointer-events-none absolute inset-y-0 right-0 z-[5] w-12 bg-gradient-to-l from-sand via-sand/80 to-transparent dark:from-night dark:via-night/80 md:w-20"
-      />
-      <div
-        class="relative flex gap-6 overflow-x-scroll overflow-y-hidden no-scrollbar snap-x snap-mandatory scroll-smooth w-full"
+        class="relative flex gap-6 overflow-x-scroll overflow-y-hidden no-scrollbar snap-x snap-mandatory scroll-smooth w-full carousel-nudge"
         id="resume-container"
         ref="resumeContainer"
       >
@@ -128,5 +114,28 @@ const isMobile = breakpoints.smaller("md");
 <style scoped>
 .active {
   @apply border-b-2 border-coral font-bold text-coral dark:border-coralSoft dark:text-coralSoft;
+}
+
+.carousel-nudge {
+  animation: carousel-nudge 1.2s ease-in-out 1.1s 2;
+}
+
+@keyframes carousel-nudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  35% {
+    transform: translateX(-1.25rem);
+  }
+  65% {
+    transform: translateX(0.35rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carousel-nudge {
+    animation: none;
+  }
 }
 </style>
