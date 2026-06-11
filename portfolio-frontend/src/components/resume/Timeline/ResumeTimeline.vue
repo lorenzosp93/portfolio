@@ -17,12 +17,13 @@
             {{ kind }}
           </h1>
           <timeline-group
-            v-for="entity in store.entities"
+            v-for="(entity, groupIndex) in store.entities"
             :key="entity.uuid"
             :kind="kind"
             :groupKey="entity.uuid"
             :group="entity"
             :isActive="isActive"
+            :isFirstGroup="groupIndex === 0"
           />
           <div
             v-if="store.results.length < store.total && !isLoading"
