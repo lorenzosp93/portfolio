@@ -57,6 +57,21 @@ class TimeStampable(models.Model):
         ordering = ["-created_at"]
 
 
+class SystemLog(models.Model):
+    "Concrete model to store application warnings and errors for admin review"
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    level = models.CharField(max_length=20, db_index=True)
+    logger_name = models.CharField(max_length=255, db_index=True)
+    message = models.TextField()
+    traceback = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"{self.created_at:%Y-%m-%d %H:%M:%S} [{self.level}] {self.logger_name}"
+
+    class Meta:
+        ordering = ["-created_at"]
+
+
 class Datable(models.Model):
     "Abstract model to define dates for the entries"
     start_date = models.DateField(verbose_name="Start date")
@@ -218,50 +233,3 @@ class HasPicture(models.Model):
 
 
 class HasContent(models.Model):
-    "Abstract class to define content"
-    content = models.TextField()
-
-    class Meta:
-        abstract = True
-
-
-class SingletonBaseModel(models.Model):
-    "Abstract class to implement the singleton design pattern"
-
-    class Meta:
-        abstract = True
-
-    def save(self, *args, **kwargs):
-        self.pk = 1
-        super().save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        pass
-
-    @classmethod
-    def load(cls):
-        obj, created = cls.objects.get_or_create(pk=1)
-        return obj
-
-
-class SiteSettings(SingletonBaseModel):
-    "Concrete model for the settings for the website"
-    about_text = models.TextField()
-
-
-class Keys(models.Model):
-    p256dh = models.CharField(max_length=100)
-    auth = models.CharField(max_length=30)
-
-
-class Subscription(TimeStampable):
-    endpoint = models.URLField()
-    keys = models.OneToOneField(Keys, on_delete=models.CASCADE, null=True)
-    user_agent = models.TextField()
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["user_agent", "endpoint"], name="unique_subscription_per_device"
-            ),
-        ]
