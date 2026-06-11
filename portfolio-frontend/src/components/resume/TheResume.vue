@@ -9,22 +9,37 @@
       <p class="text-center w-full text-muted dark:text-gray-300">
         Because I definitely needed a website to host my CV.
       </p>
-    </div>
-    <ArrowScroller :scroll-container="resumeContainer" />
-    <div
-      class="relative flex gap-6 overflow-x-scroll overflow-y-hidden no-scrollbar snap-x snap-mandatory scroll-smooth w-full"
-      id="resume-container"
-      ref="resumeContainer"
-      v-if="!isMobile"
-    >
-      <div
-        v-for="comp in resumeList"
-        :key="comp.id"
-        :ref="comp.id"
-        :id="comp.id"
-        class="flex-none w-full snap-center"
+      <p
+        v-if="!isMobile"
+        class="mx-auto mt-4 rounded-full bg-surface/80 px-4 py-1.5 text-xs font-semibold text-muted shadow-sm ring-1 ring-ink/10 dark:bg-nightSurface/80 dark:text-gray-300 dark:ring-white/10"
       >
-        <component :is="comp.component" v-bind="comp.props" />
+        Scroll horizontally or use the arrows to explore
+      </p>
+    </div>
+    <div v-if="!isMobile" class="relative w-full">
+      <ArrowScroller :scroll-container="resumeContainer" />
+      <div
+        aria-hidden="true"
+        class="pointer-events-none absolute inset-y-0 left-0 z-[5] w-12 bg-gradient-to-r from-sand via-sand/80 to-transparent dark:from-night dark:via-night/80 md:w-20"
+      />
+      <div
+        aria-hidden="true"
+        class="pointer-events-none absolute inset-y-0 right-0 z-[5] w-12 bg-gradient-to-l from-sand via-sand/80 to-transparent dark:from-night dark:via-night/80 md:w-20"
+      />
+      <div
+        class="relative flex gap-6 overflow-x-scroll overflow-y-hidden no-scrollbar snap-x snap-mandatory scroll-smooth w-full"
+        id="resume-container"
+        ref="resumeContainer"
+      >
+        <div
+          v-for="comp in resumeList"
+          :key="comp.id"
+          :ref="comp.id"
+          :id="comp.id"
+          class="flex-none w-full snap-center"
+        >
+          <component :is="comp.component" v-bind="comp.props" />
+        </div>
       </div>
     </div>
     <div v-if="isMobile" class="px-3">
