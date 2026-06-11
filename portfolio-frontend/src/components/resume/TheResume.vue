@@ -33,7 +33,12 @@
         </div>
       </div>
     </div>
-    <div v-if="isMobile" class="px-3">
+    <div
+      v-if="isMobile"
+      class="px-3"
+      @touchstart.passive="onTouchStart"
+      @touchend.passive="onTouchEnd"
+    >
       <ul
         class="my-3 flex flex-wrap border-b border-ink/10 text-ink dark:border-white/10 dark:text-white capitalize"
       >
@@ -73,6 +78,10 @@ const root: Ref<HTMLDivElement | null> = ref(null);
 const { isActive } = useVisibilityObserver("theResume", root);
 const hasNudged = ref(false);
 const shouldNudge = ref(false);
+const touchStartX = ref(0);
+const touchStartY = ref(0);
+const minSwipeDistance = 45;
+const maxVerticalDrift = 60;
 
 watch(isActive, (val) => {
   if (val && !hasNudged.value) {
@@ -119,9 +128,36 @@ const currentComp = computed(() => {
   return resumeList.find((c) => c.id == currentTab.value);
 });
 
+const currentTabIndex = computed(() => {
+  return resumeList.findIndex((c) => c.id === currentTab.value);
+});
+
 const switchTab = (id: string) => {
   currentTab.value = id;
 };
+
+function switchTabByOffset(offset: number) {
+  const nextIndex = currentTabIndex.value + offset;
+  if (nextIndex < 0 || nextIndex >= resumeList.length) return;
+  switchTab(resumeList[nextIndex].id);
+}
+
+function onTouchStart(event: TouchEvent) {
+  const touch = event.changedTouches[0];
+  touchStartX.value = touch.clientX;
+  touchStartY.value = touch.clientY;
+}
+
+function onTouchEnd(event: TouchEvent) {
+  const touch = event.changedTouches[0];
+  const deltaX = touch.clientX - touchStartX.value;
+  const deltaY = touch.clientY - touchStartY.value;
+
+  if (Math.abs(deltaX) < minSwipeDistance) return;
+  if (Math.abs(deltaY) > maxVerticalDrift) return;
+
+  switchTabByOffset(deltaX < 0 ? 1 : -1);
+}
 
 const resumeContainer = ref(null);
 const breakpoints = useBreakpoints(breakpointsTailwind);
