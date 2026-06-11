@@ -19,9 +19,10 @@
       <ArrowScroller @end="loadEntries" :scroll-container="blogContainer" />
       <div
         class="relative flex overflow-x-scroll overflow-y-hidden no-scrollbar snap-x snap-proximity h-full w-full scroll-smooth px-[12.5%] md:px-[33.3%] lg:px-32 py-5 gap-x-5"
-        :class="{ 'carousel-nudge': isActive }"
+        :class="{ 'carousel-nudge': shouldNudge }"
         id="blog-container"
         ref="blogContainer"
+        @animationend="shouldNudge = false"
       >
         <list-card
           type="blog"
@@ -73,6 +74,8 @@ import PushSubscribe from "./PushSubscribe.vue";
 const blogContainer = ref(null);
 
 const isLoading = ref(false);
+const hasNudged = ref(false);
+const shouldNudge = ref(false);
 
 const root: Ref<HTMLDivElement | null> = ref(null);
 
@@ -83,6 +86,11 @@ const entriesLimit: () => number = inject("entriesLimit", () => 5);
 const blogStore = useBlogStore();
 
 watch(isActive, (val) => {
+  if (val && !hasNudged.value) {
+    hasNudged.value = true;
+    shouldNudge.value = true;
+  }
+
   if (val && blogStore.posts.length == 0 && !isLoading.value) {
     isLoading.value = true;
     loadEntries();
@@ -99,7 +107,7 @@ function loadEntries() {
 
 <style scoped>
 .carousel-nudge {
-  animation: carousel-nudge 1s ease-in-out 0.45s 2;
+  animation: carousel-nudge 1s ease-in-out 0.45s 1;
 }
 
 @keyframes carousel-nudge {
