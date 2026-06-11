@@ -33,7 +33,7 @@ const root: Ref<HTMLDivElement | null> = ref(null);
 
 const truncationAmount = () => {
   let w = window.innerWidth;
-  return w > 1024 ? 350 : w > 640 ? 200 : 75;
+  return w > 1024 ? 500 : w > 640 ? 350 : 150;
 };
 const entriesLimit = () => {
   let w = window.innerWidth;

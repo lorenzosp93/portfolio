@@ -26,7 +26,7 @@
           @load="$emit('heroLoaded')"
         />
       </div>
-      <h1 class="z-20 m-5 mt-8 text-center text-3xl font-bold md:mt-10">
+      <h1 class="z-20 m-5 mt-8 text-center text-2xl md:text-3xl lg:text-4xl font-bold md:mt-10">
         Hi, I'm <span class="text-coral dark:text-coralSoft">Lorenzo</span>
       </h1>
       <div class="container flex mt-5">
@@ -81,7 +81,7 @@
     <div></div>
     <div class="relative z-20 m-auto flex-initial w-4/5 sm:w-2/3">
       <div
-        class="m-2 max-sm:prose-sm prose prose-slate font-sans first-letter:text-2xl indent-3 dark:prose-invert prose-strong:text-coral dark:prose-strong:text-coralSoft lg:prose-lg xl:prose-xl"
+        class="m-2 prose-sm md:prose lg:prose-xl prose-slate font-sans first-letter:text-2xl indent-3 dark:prose-invert prose-strong:text-coral dark:prose-strong:text-coralSoft lg:prose-lg xl:prose-xl"
       >
         <p>
           I'm a Product leader deeply rooted in <strong>software</strong> and

@@ -2,7 +2,7 @@
   <div class="relative min-h-screen w-full mx-auto my-[10vh]">
     <div class="flex flex-wrap w-full mx-auto mb-10 px-5">
       <h2
-        class="text-center text-xl w-full font-bold mx-auto text-ink dark:text-white"
+        class="text-center text-xl md:text-2xl w-full font-bold mx-auto text-ink dark:text-white"
       >
         Here are a few things I've done.
       </h2>

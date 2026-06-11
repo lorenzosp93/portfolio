@@ -5,11 +5,11 @@
   >
     <div class="flex flex-wrap mx-auto my-10">
       <h2
-        class="w-full mt-auto text-center text-xl font-bold text-gray-600 dark:text-white"
+        class="w-full mt-auto text-center text-xl md:text-2xl font-bold text-ink dark:text-white"
       >
         Thoughts from the blog.
       </h2>
-      <p class="w-full mb-auto text-center text-gray-600 dark:text-gray-300">
+      <p class="w-full mb-auto px-2 text-center text-gray-600 dark:text-gray-300">
         Who needs MySpace when you can create your own blog and write whatever
         comes to mind on it, right?
       </p>

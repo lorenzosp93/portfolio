@@ -5,7 +5,7 @@
   >
     <div class="container flex flex-wrap mx-auto my-10 px-5">
       <h2
-        class="text-center mt-auto text-xl w-full font-bold mx-auto text-ink dark:text-white"
+        class="text-center mt-auto text-xl md:text-2xl w-full font-bold mx-auto text-ink dark:text-white"
       >
         Get in touch!
       </h2>
