@@ -18,7 +18,8 @@
     <div class="relative w-full">
       <ArrowScroller @end="loadEntries" :scroll-container="blogContainer" />
       <div
-        class="relative flex overflow-x-scroll overflow-y-hidden no-scrollbar snap-x snap-proximity h-full w-full scroll-smooth px-[12.5%] md:px-[33.3%] lg:px-32 py-5 gap-x-5 carousel-nudge"
+        class="relative flex overflow-x-scroll overflow-y-hidden no-scrollbar snap-x snap-proximity h-full w-full scroll-smooth px-[12.5%] md:px-[33.3%] lg:px-32 py-5 gap-x-5"
+        :class="{ 'carousel-nudge': isActive }"
         id="blog-container"
         ref="blogContainer"
       >
