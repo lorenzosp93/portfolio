@@ -18,7 +18,7 @@
     <div class="relative">
       <div
         v-html="truncatedContent"
-        class="list-card-content max-h-32 overflow-hidden w-full p-4 text-sm leading-relaxed text-muted dark:text-gray-300"
+        class="list-card-content max-h-64 md:max-h-72 lg:max-h-80 overflow-hidden w-full p-4 text-sm leading-relaxed text-muted dark:text-gray-300"
       />
       <div
         class="pointer-events-none absolute inset-x-0 bottom-0 flex justify-end bg-gradient-to-t from-surface via-surface/90 to-transparent p-4 pt-10 dark:from-nightSurface dark:via-nightSurface/90"
