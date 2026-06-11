@@ -114,7 +114,7 @@
           </div>
           <p
             v-if="error"
-            class="absolute py-2 -top-4 left-1/2 w-full -translate-x-1/2 text-center text-xs text-red-700 dark:text-red-300"
+            class="absolute pt-1 -top-4 left-1/2 w-full -translate-x-1/2 text-center text-xs text-red-700 dark:text-red-300"
           >
             {{ error }}
           </p>
