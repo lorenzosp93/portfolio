@@ -18,10 +18,11 @@
     </h3>
     <ol v-if="group" class="pb-0.5">
       <timeline-entry
-        v-for="entry in group.childs"
+        v-for="(entry, entryIndex) in group.childs"
         :key="entry.uuid"
         v-bind="entry"
         :isActive="isActive"
+        :isFirstEntry="isFirstGroup && entryIndex === 0"
       />
     </ol>
   </div>
@@ -50,6 +51,7 @@ export default defineComponent({
     group: Object,
     kind: { type: String, default: "" },
     isActive: Boolean,
+    isFirstGroup: Boolean,
   },
   mounted() {},
 });
