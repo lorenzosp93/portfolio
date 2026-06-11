@@ -23,10 +23,21 @@
           {{ location }}
         </p>
       </div>
-      <div
-        class="timeline-description max-h-24 overflow-hidden p-2 text-xs sm:text-sm font-normal text-muted bg-paper/70 rounded-xl shadow-sm dark:bg-night dark:text-gray-300"
-        v-html="renderedDescription"
-      />
+      <div class="relative rounded-xl bg-paper/70 shadow-sm dark:bg-night">
+        <div
+          class="timeline-description max-h-24 overflow-hidden p-2 text-xs sm:text-sm font-normal text-muted dark:text-gray-300"
+          v-html="renderedDescription"
+        />
+        <div
+          class="pointer-events-none absolute inset-x-0 bottom-0 flex justify-end rounded-b-xl bg-gradient-to-t from-paper via-paper/90 to-transparent p-2 pt-8 dark:from-night dark:via-night/90"
+        >
+          <span
+            class="rounded-full bg-surface/95 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-wide text-coral shadow-sm ring-1 ring-coral/20 dark:bg-nightSurface/95 dark:text-coralSoft dark:ring-coralSoft/20"
+          >
+            View more
+          </span>
+        </div>
+      </div>
     </div>
     <timeline-entry-detail
       v-if="isActive"
