@@ -24,8 +24,8 @@
         </p>
       </div>
       <div
-        class="timeline-description p-2 flex text-xs sm:text-sm font-normal text-ellipsis text-muted bg-paper/70 rounded-xl shadow-sm dark:bg-night dark:text-gray-300 after:content-['_⏎'] after:ml-auto after:mt-auto after:text-coral"
-        v-html="truncatedDescription"
+        class="timeline-description max-h-24 overflow-hidden p-2 text-xs sm:text-sm font-normal text-muted bg-paper/70 rounded-xl shadow-sm dark:bg-night dark:text-gray-300"
+        v-html="renderedDescription"
       />
     </div>
     <timeline-entry-detail
@@ -54,8 +54,8 @@ export default defineComponent({
     };
   },
   computed: {
-    truncatedDescription() {
-      return this.parse(this.truncateMarkdown(this.description ?? ""));
+    renderedDescription() {
+      return this.parse(this.description ?? "");
     },
     start_date__date() {
       let date = new Date(this.start_date);
@@ -90,16 +90,7 @@ export default defineComponent({
       setTimeout(() => (this.justClosed = false), 100);
     },
     parse(text: string) {
-      return marked.parse(text);
-    },
-    truncateMarkdown(text: string) {
-      const limit = this.truncationAmount();
-      if (limit >= text.length) {
-        return text;
-      }
-
-      const truncated = text.slice(0, limit).replace(/\s+\S*$/, "").trimEnd();
-      return `${truncated}...`;
+      return marked.parse(text, { breaks: true });
     },
   },
   props: {
@@ -146,10 +137,26 @@ export default defineComponent({
   margin: 0;
 }
 
+.timeline-description :deep(p + p) {
+  margin-top: 0.25rem;
+}
+
 .timeline-description :deep(ul),
 .timeline-description :deep(ol) {
-  margin: 0;
+  margin: 0.25rem 0 0;
   padding-left: 1rem;
+}
+
+.timeline-description :deep(ul) {
+  list-style: disc;
+}
+
+.timeline-description :deep(ol) {
+  list-style: decimal;
+}
+
+.timeline-description :deep(li) {
+  margin: 0.1rem 0;
 }
 
 .timeline-description :deep(a) {
