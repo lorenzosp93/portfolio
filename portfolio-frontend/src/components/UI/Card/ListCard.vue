@@ -15,10 +15,21 @@
         {{ name }}
       </h2>
     </div>
-    <div
-      v-html="truncatedContent"
-      class="w-full p-4 text-sm leading-relaxed text-muted dark:text-gray-300 after:content-['_⏎'] after:text-coral"
-    />
+    <div class="relative">
+      <div
+        v-html="truncatedContent"
+        class="list-card-content max-h-32 overflow-hidden w-full p-4 text-sm leading-relaxed text-muted dark:text-gray-300"
+      />
+      <div
+        class="pointer-events-none absolute inset-x-0 bottom-0 flex justify-end bg-gradient-to-t from-surface via-surface/90 to-transparent p-4 pt-10 dark:from-nightSurface dark:via-nightSurface/90"
+      >
+        <span
+          class="rounded-full bg-sand/95 px-2 py-0.5 text-sm font-bold leading-none text-coral shadow-sm ring-1 ring-coral/20 dark:bg-nightElevated/95 dark:text-coralSoft dark:ring-coralSoft/20"
+        >
+          …
+        </span>
+      </div>
+    </div>
     <blog-entry-detail
       v-if="type == 'blog' && isActive"
       :isOpen="detailsVisible"
@@ -70,11 +81,7 @@ const props = defineProps<{
 const truncationAmount: (() => number) | undefined = inject("truncationAmount");
 
 const truncatedContent = computed(() => {
-  if (truncationAmount)
-    return marked.parse(
-      props.content.slice(0, truncationAmount() ?? 0) +
-        (truncationAmount() < props.content.length ? "... " : " ")
-    );
+  return marked.parse(props.content ?? "", { breaks: true });
 });
 
 function toggleDetails() {
@@ -82,5 +89,34 @@ function toggleDetails() {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped></style>
+<style scoped>
+.list-card-content :deep(p) {
+  margin: 0;
+}
+
+.list-card-content :deep(p + p) {
+  margin-top: 0.5rem;
+}
+
+.list-card-content :deep(ul),
+.list-card-content :deep(ol) {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+}
+
+.list-card-content :deep(ul) {
+  list-style: disc;
+}
+
+.list-card-content :deep(ol) {
+  list-style: decimal;
+}
+
+.list-card-content :deep(li) {
+  margin: 0.15rem 0;
+}
+
+.list-card-content :deep(a) {
+  @apply text-coral dark:text-coralSoft;
+}
+</style>
