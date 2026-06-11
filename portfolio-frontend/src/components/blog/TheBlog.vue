@@ -13,25 +13,12 @@
         Who needs MySpace when you can create your own blog and write whatever
         comes to mind on it, right?
       </p>
-      <p
-        class="mx-auto mt-4 rounded-full bg-surface/80 px-4 py-1.5 text-xs font-semibold text-muted shadow-sm ring-1 ring-ink/10 dark:bg-nightSurface/80 dark:text-gray-300 dark:ring-white/10"
-      >
-        Scroll sideways for more posts
-      </p>
       <PushSubscribe class="mx-auto dark:fill-white" />
     </div>
     <div class="relative w-full">
       <ArrowScroller @end="loadEntries" :scroll-container="blogContainer" />
       <div
-        aria-hidden="true"
-        class="pointer-events-none absolute inset-y-0 left-0 z-[5] w-12 bg-gradient-to-r from-sand via-sand/80 to-transparent dark:from-night dark:via-night/80 md:w-24"
-      />
-      <div
-        aria-hidden="true"
-        class="pointer-events-none absolute inset-y-0 right-0 z-[5] w-12 bg-gradient-to-l from-sand via-sand/80 to-transparent dark:from-night dark:via-night/80 md:w-24"
-      />
-      <div
-        class="relative flex overflow-x-scroll overflow-y-hidden no-scrollbar snap-x snap-proximity h-full w-full scroll-smooth px-[12.5%] md:px-[33.3%] lg:px-32 py-5 gap-x-5"
+        class="relative flex overflow-x-scroll overflow-y-hidden no-scrollbar snap-x snap-proximity h-full w-full scroll-smooth px-[12.5%] md:px-[33.3%] lg:px-32 py-5 gap-x-5 carousel-nudge"
         id="blog-container"
         ref="blogContainer"
       >
@@ -55,7 +42,7 @@
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
-              d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+              d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.08144 27.4013 9.08144 50 9.08144Z"
               fill="currentColor"
             />
             <path
@@ -109,5 +96,27 @@ function loadEntries() {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped></style>
+<style scoped>
+.carousel-nudge {
+  animation: carousel-nudge 1.2s ease-in-out 1.1s 2;
+}
+
+@keyframes carousel-nudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  35% {
+    transform: translateX(-1.25rem);
+  }
+  65% {
+    transform: translateX(0.35rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carousel-nudge {
+    animation: none;
+  }
+}
+</style>
