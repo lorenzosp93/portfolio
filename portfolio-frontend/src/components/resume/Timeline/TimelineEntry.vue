@@ -11,11 +11,11 @@
       class="cursor-pointer rounded-2xl bg-surface p-3 shadow-sm ring-1 ring-ink/10 transition hover:ring-teal/30 dark:bg-nightSurface dark:ring-white/10"
     >
       <div class="justify-between items-center mb-3 w-full">
-        <p
-          class="text-xs sm:text-sm font-normal text-muted dark:text-gray-300 sm:order-last sm:mb-0 float-right pt-1"
+        <time
+          class="float-right ml-3 rounded-xl bg-paper/70 px-2.5 py-1 text-xs sm:text-sm font-normal text-muted shadow-sm dark:bg-night dark:text-gray-300 sm:order-last sm:mb-0"
         >
           {{ start_date__date }} — {{ end_date__date }}
-        </p>
+        </time>
         <p class="font-semibold text-ink dark:text-white">
           {{ name }}
         </p>
@@ -24,7 +24,7 @@
         </p>
       </div>
       <div
-        class="p-2 flex text-xs sm:text-sm font-normal text-ellipsis text-muted bg-paper/70 rounded-xl shadow-sm dark:bg-night dark:text-gray-300 after:content-['_⏎'] after:ml-auto after:mt-auto after:text-coral"
+        class="timeline-description p-2 flex text-xs sm:text-sm font-normal text-ellipsis text-muted bg-paper/70 rounded-xl shadow-sm dark:bg-night dark:text-gray-300 after:content-['_⏎'] after:ml-auto after:mt-auto after:text-coral"
         v-html="truncatedDescription"
       />
     </div>
@@ -55,10 +55,7 @@ export default defineComponent({
   },
   computed: {
     truncatedDescription() {
-      return marked.parse(
-        this.description.slice(0, this.truncationAmount()) +
-          (this.truncationAmount() < this.description.length ? "... " : " ")
-      );
+      return this.parse(this.truncateMarkdown(this.description ?? ""));
     },
     start_date__date() {
       let date = new Date(this.start_date);
@@ -91,6 +88,18 @@ export default defineComponent({
       this.justClosed = true;
       this.detailsVisible = false;
       setTimeout(() => (this.justClosed = false), 100);
+    },
+    parse(text: string) {
+      return marked.parse(text);
+    },
+    truncateMarkdown(text: string) {
+      const limit = this.truncationAmount();
+      if (limit >= text.length) {
+        return text;
+      }
+
+      const truncated = text.slice(0, limit).replace(/\s+\S*$/, "").trimEnd();
+      return `${truncated}...`;
     },
   },
   props: {
@@ -132,5 +141,18 @@ export default defineComponent({
 });
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped></style>
+<style scoped>
+.timeline-description :deep(p) {
+  margin: 0;
+}
+
+.timeline-description :deep(ul),
+.timeline-description :deep(ol) {
+  margin: 0;
+  padding-left: 1rem;
+}
+
+.timeline-description :deep(a) {
+  @apply text-coral dark:text-coralSoft;
+}
+</style>
