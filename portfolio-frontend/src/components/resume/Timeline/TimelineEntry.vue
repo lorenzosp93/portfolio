@@ -25,11 +25,13 @@
       </div>
       <div class="relative rounded-xl bg-paper/70 shadow-sm dark:bg-night">
         <div
+          ref="descriptionEl"
           class="timeline-description overflow-hidden p-2 text-xs sm:text-sm font-normal text-muted dark:text-gray-300"
           :class="descriptionHeightClass"
           v-html="renderedDescription"
         />
         <div
+          v-if="isDescriptionClipped"
           class="pointer-events-none absolute inset-x-0 bottom-0 flex justify-end rounded-b-xl bg-gradient-to-t from-paper via-paper/90 to-transparent p-2 pt-8 dark:from-night dark:via-night/90"
         >
           <span
@@ -54,7 +56,7 @@
 <script lang="ts">
 import { marked } from "marked";
 import TimelineEntryDetail from "./TimelineEntryDetail.vue";
-import { defineComponent } from "vue";
+import { defineComponent, nextTick } from "vue";
 
 export default defineComponent({
   name: "TimelineEntry",
@@ -63,6 +65,7 @@ export default defineComponent({
     return {
       detailsVisible: false,
       justClosed: false,
+      isDescriptionClipped: false,
     };
   },
   computed: {
@@ -109,6 +112,14 @@ export default defineComponent({
     parse(text: string) {
       return marked.parse(text, { breaks: true });
     },
+    updateDescriptionClipState() {
+      nextTick(() => {
+        const descriptionEl = this.$refs.descriptionEl as HTMLElement | undefined;
+        if (!descriptionEl) return;
+        this.isDescriptionClipped =
+          descriptionEl.scrollHeight > descriptionEl.clientHeight + 1;
+      });
+    },
   },
   props: {
     name: {
@@ -145,8 +156,16 @@ export default defineComponent({
     isActive: Boolean,
     isFirstEntry: Boolean,
   },
-  beforeUnmount() {},
-  mounted() {},
+  updated() {
+    this.updateDescriptionClipState();
+  },
+  beforeUnmount() {
+    window.removeEventListener("resize", this.updateDescriptionClipState);
+  },
+  mounted() {
+    this.updateDescriptionClipState();
+    window.addEventListener("resize", this.updateDescriptionClipState);
+  },
 });
 </script>
 
