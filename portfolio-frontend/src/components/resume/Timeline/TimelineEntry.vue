@@ -25,7 +25,8 @@
       </div>
       <div class="relative rounded-xl bg-paper/70 shadow-sm dark:bg-night">
         <div
-          class="timeline-description max-h-24 overflow-hidden p-2 text-xs sm:text-sm font-normal text-muted dark:text-gray-300"
+          class="timeline-description overflow-hidden p-2 text-xs sm:text-sm font-normal text-muted dark:text-gray-300"
+          :class="descriptionHeightClass"
           v-html="renderedDescription"
         />
         <div
@@ -67,6 +68,11 @@ export default defineComponent({
   computed: {
     renderedDescription() {
       return this.parse(this.description ?? "");
+    },
+    descriptionHeightClass() {
+      return this.isFirstEntry
+        ? "max-h-48 md:max-h-64 lg:max-h-72"
+        : "max-h-24 md:max-h-32 lg:max-h-36";
     },
     start_date__date() {
       let date = new Date(this.start_date);
@@ -137,6 +143,7 @@ export default defineComponent({
     keywords: Array,
     attachments: Object,
     isActive: Boolean,
+    isFirstEntry: Boolean,
   },
   beforeUnmount() {},
   mounted() {},
