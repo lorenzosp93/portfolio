@@ -99,7 +99,7 @@ function loadEntries() {
 
 <style scoped>
 .carousel-nudge {
-  animation: carousel-nudge 1.2s ease-in-out 1.1s 2;
+  animation: carousel-nudge 1s ease-in-out 0.45s 2;
 }
 
 @keyframes carousel-nudge {
@@ -108,10 +108,10 @@ function loadEntries() {
     transform: translateX(0);
   }
   35% {
-    transform: translateX(-1.25rem);
+    transform: translateX(-0.7rem);
   }
   65% {
-    transform: translateX(0.35rem);
+    transform: translateX(0.2rem);
   }
 }
 
