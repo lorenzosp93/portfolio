@@ -1,5 +1,8 @@
 <template>
-  <div class="relative min-h-screen w-full mx-auto my-[10vh]">
+  <div
+    ref="root"
+    class="relative min-h-screen w-full mx-auto my-[10vh]"
+  >
     <div class="flex flex-wrap w-full mx-auto mb-10 px-5">
       <h2
         class="text-center text-xl md:text-2xl w-full font-bold mx-auto text-ink dark:text-white"
@@ -13,7 +16,8 @@
     <div v-if="!isMobile" class="relative w-full">
       <ArrowScroller :scroll-container="resumeContainer" />
       <div
-        class="relative flex gap-6 overflow-x-scroll overflow-y-hidden no-scrollbar snap-x snap-mandatory scroll-smooth w-full carousel-nudge"
+        class="relative flex gap-6 overflow-x-scroll overflow-y-hidden no-scrollbar snap-x snap-mandatory scroll-smooth w-full"
+        :class="{ 'carousel-nudge': isActive }"
         id="resume-container"
         ref="resumeContainer"
       >
@@ -56,12 +60,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { Ref, ref, computed } from "vue";
 import ResumeProjects from "./Projects/ResumeProjects.vue";
 import ResumeSkills from "./Skills/ResumeSkills.vue";
 import ResumeTimeline from "./Timeline/ResumeTimeline.vue";
 import ArrowScroller from "../composables/ArrowScroller.vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { useVisibilityObserver } from "@/composables/visibilityObserver";
+
+const root: Ref<HTMLDivElement | null> = ref(null);
+const { isActive } = useVisibilityObserver("theResume", root);
 
 const resumeList = [
   {
@@ -117,7 +125,7 @@ const isMobile = breakpoints.smaller("md");
 }
 
 .carousel-nudge {
-  animation: carousel-nudge 1.2s ease-in-out 1.1s 2;
+  animation: carousel-nudge 1s ease-in-out 0.45s 2;
 }
 
 @keyframes carousel-nudge {
@@ -126,10 +134,10 @@ const isMobile = breakpoints.smaller("md");
     transform: translateX(0);
   }
   35% {
-    transform: translateX(-1.25rem);
+    transform: translateX(-0.7rem);
   }
   65% {
-    transform: translateX(0.35rem);
+    transform: translateX(0.2rem);
   }
 }
 
