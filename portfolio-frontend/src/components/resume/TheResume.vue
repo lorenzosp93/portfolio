@@ -1,12 +1,7 @@
 <template>
-  <div
-    ref="root"
-    class="relative w-full mx-auto my-[6vh] md:my-[10vh]"
-  >
+  <div ref="root" class="relative w-full mx-auto my-[6vh] md:my-[10vh]">
     <div class="flex flex-wrap w-full mx-auto mb-10 px-5">
-      <h2
-        class="text-center text-xl md:text-2xl w-full font-bold mx-auto text-ink dark:text-white"
-      >
+      <h2 class="text-center text-xl md:text-2xl w-full font-bold mx-auto text-ink dark:text-white">
         Here are a few things I've done.
       </h2>
       <p class="text-center w-full text-muted dark:text-gray-300">
@@ -26,7 +21,7 @@
         :ref="(el) => setMobileTabRef(comp.id, el)"
         :class="[
           'relative z-10 px-3 py-2 inline-flex items-center justify-center cursor-pointer mx-auto first:ml-0 last:mr-0 text-sm transition text-muted dark:text-gray-300',
-          { active: activeSlideId === comp.id },
+          { active: activeResumeSection === comp.id },
         ]"
         @click="scrollToSlide(comp.id)"
       >
@@ -41,10 +36,10 @@
         :style="resumeViewportStyle"
       >
         <div
-          class="relative flex items-start gap-6 overflow-x-scroll overflow-y-hidden no-scrollbar snap-x snap-mandatory scroll-smooth w-full"
-          :class="{ 'carousel-nudge': shouldNudge }"
           id="resume-container"
           ref="resumeContainer"
+          class="relative flex items-start gap-6 overflow-x-scroll overflow-y-hidden no-scrollbar snap-x snap-mandatory scroll-smooth w-full"
+          :class="{ 'carousel-nudge': shouldNudge }"
           @scroll.passive="scheduleActiveSlideUpdate"
           @animationend="shouldNudge = false"
         >
@@ -65,22 +60,22 @@
 
 <script setup lang="ts">
 import { Ref, ref, computed, watch, nextTick, onMounted, onBeforeUnmount, reactive } from "vue";
-import ResumeProjects from "./Projects/ResumeProjects.vue";
 import ResumeSkills from "./Skills/ResumeSkills.vue";
 import ResumeTimeline from "./Timeline/ResumeTimeline.vue";
 import ArrowScroller from "../composables/ArrowScroller.vue";
 import { breakpointsTailwind, useBreakpoints, useEventListener } from "@vueuse/core";
 import { useVisibilityObserver } from "@/composables/visibilityObserver";
+import { useNavStore } from "@/stores/nav.store";
 
 const root: Ref<HTMLDivElement | null> = ref(null);
 const { isActive } = useVisibilityObserver("theResume", root);
+const navStore = useNavStore();
 const hasNudged = ref(false);
 const shouldNudge = ref(false);
 const resumeContainer = ref<HTMLElement | null>(null);
 const mobileTabs = ref<HTMLElement | null>(null);
 const slideRefs = reactive<Record<string, HTMLElement | null>>({});
 const mobileTabRefs = reactive<Record<string, HTMLElement | null>>({});
-const activeSlideId = ref("experience");
 const activePanelHeight = ref(0);
 const mobileTabBar = reactive({ left: 0, width: 0, visible: false });
 const isCarouselSettling = ref(false);
@@ -99,38 +94,29 @@ watch(isActive, (val) => {
 const resumeList = [
   {
     component: ResumeTimeline,
-    props: {
-      ix: "first",
-      kind: "experience",
-    },
+    props: { ix: "first", kind: "experience" },
     id: "experience",
   },
   {
     component: ResumeTimeline,
-    props: {
-      ix: "center",
-      kind: "education",
-    },
+    props: { ix: "center", kind: "education" },
     id: "education",
   },
-//  {
-//    component: ResumeProjects,
-//    props: {
-//      ix: "center",
-//    },
-//    id: "projects",
-//  },
   {
     component: ResumeSkills,
-    props: {
-      ix: "last",
-    },
+    props: { ix: "last" },
     id: "skills",
   },
 ];
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
+
+const activeResumeSection = computed(() => {
+  return resumeList.some(({ id }) => id === navStore.visible)
+    ? navStore.visible
+    : "experience";
+});
 
 const resumeViewportStyle = computed(() => {
   if (!activePanelHeight.value) return {};
@@ -152,16 +138,10 @@ function getViewportHeight() {
 
 function setSlideRef(id: string, el: Element | null) {
   const previousEl = slideRefs[id];
-  if (previousEl && resizeObserver) {
-    resizeObserver.unobserve(previousEl);
-  }
-
+  if (previousEl && resizeObserver) resizeObserver.unobserve(previousEl);
   const slideEl = el instanceof HTMLElement ? el : null;
   slideRefs[id] = slideEl;
-
-  if (slideEl && resizeObserver) {
-    resizeObserver.observe(slideEl);
-  }
+  if (slideEl && resizeObserver) resizeObserver.observe(slideEl);
 }
 
 function setMobileTabRef(id: string, el: Element | null) {
@@ -171,7 +151,7 @@ function setMobileTabRef(id: string, el: Element | null) {
 
 function updateMobileTabBar() {
   const tabsEl = mobileTabs.value;
-  const activeEl = mobileTabRefs[activeSlideId.value];
+  const activeEl = mobileTabRefs[activeResumeSection.value];
   if (!tabsEl || !activeEl) {
     mobileTabBar.visible = false;
     return;
@@ -186,47 +166,16 @@ function updateMobileTabBar() {
 
 function updateActivePanelHeight() {
   nextTick(() => {
-    const activeSlide = slideRefs[activeSlideId.value];
+    const activeSlide = slideRefs[activeResumeSection.value];
     if (!activeSlide) return;
     activePanelHeight.value = activeSlide.scrollHeight;
   });
 }
 
-function updateActiveSlideFromScroll() {
-  const container = resumeContainer.value;
-  if (!container) return;
-
-  const containerBox = container.getBoundingClientRect();
-  const containerCenter = containerBox.left + containerBox.width / 2;
-  let closestId = activeSlideId.value;
-  let closestDistance = Number.POSITIVE_INFINITY;
-
-  resumeList.forEach(({ id }) => {
-    const slide = slideRefs[id];
-    if (!slide) return;
-
-    const slideBox = slide.getBoundingClientRect();
-    const slideCenter = slideBox.left + slideBox.width / 2;
-    const distance = Math.abs(slideCenter - containerCenter);
-
-    if (distance < closestDistance) {
-      closestDistance = distance;
-      closestId = id;
-    }
-  });
-
-  if (closestId !== activeSlideId.value) {
-    activeSlideId.value = closestId;
-  }
-}
-
 function markCarouselSettling() {
   isCarouselSettling.value = true;
-  if (scrollSettleTimer) {
-    window.clearTimeout(scrollSettleTimer);
-  }
+  if (scrollSettleTimer) window.clearTimeout(scrollSettleTimer);
   scrollSettleTimer = window.setTimeout(() => {
-    updateActiveSlideFromScroll();
     updateActivePanelHeight();
     isCarouselSettling.value = false;
     scrollSettleTimer = null;
@@ -237,7 +186,7 @@ function scheduleActiveSlideUpdate() {
   markCarouselSettling();
   if (scrollFrame) return;
   scrollFrame = window.requestAnimationFrame(() => {
-    updateActiveSlideFromScroll();
+    updateActivePanelHeight();
     scrollFrame = null;
   });
 }
@@ -245,16 +194,12 @@ function scheduleActiveSlideUpdate() {
 function scrollToSlide(id: string) {
   const slide = slideRefs[id];
   if (!slide) return;
-
   isCarouselSettling.value = true;
-  activeSlideId.value = id;
-  updateActivePanelHeight();
-  updateMobileTabBar();
   slide.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
   markCarouselSettling();
 }
 
-watch(activeSlideId, () => {
+watch(activeResumeSection, () => {
   updateActivePanelHeight();
   nextTick(updateMobileTabBar);
 }, { immediate: true });
@@ -265,7 +210,6 @@ onMounted(() => {
     if (slide) resizeObserver?.observe(slide);
   });
   nextTick(() => {
-    updateActiveSlideFromScroll();
     updateActivePanelHeight();
     updateMobileTabBar();
   });
@@ -273,16 +217,11 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   resizeObserver?.disconnect();
-  if (scrollFrame) {
-    window.cancelAnimationFrame(scrollFrame);
-  }
-  if (scrollSettleTimer) {
-    window.clearTimeout(scrollSettleTimer);
-  }
+  if (scrollFrame) window.cancelAnimationFrame(scrollFrame);
+  if (scrollSettleTimer) window.clearTimeout(scrollSettleTimer);
 });
 
 useEventListener(window, "resize", () => {
-  updateActiveSlideFromScroll();
   updateActivePanelHeight();
   updateMobileTabBar();
 });
