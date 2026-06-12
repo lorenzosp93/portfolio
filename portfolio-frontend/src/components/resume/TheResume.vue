@@ -1,7 +1,7 @@
 <template>
   <div
     ref="root"
-    class="relative min-h-screen w-full mx-auto my-[10vh]"
+    class="relative min-h-screen w-full mx-auto my-[6vh] md:my-[10vh]"
   >
     <div class="flex flex-wrap w-full mx-auto mb-10 px-5">
       <h2
@@ -34,7 +34,7 @@
     <div class="relative w-full">
       <ArrowScroller v-if="!isMobile" :scroll-container="resumeContainer" />
       <div
-        class="overflow-hidden transition-[height] duration-300 ease-out min-h-[100vh] min-h-[100svh]"
+        class="overflow-hidden transition-[height] duration-300 ease-out min-h-[1vh] min-h-[1svh]"
         :style="resumeViewportStyle"
       >
         <div
@@ -77,8 +77,11 @@ const resumeContainer = ref<HTMLElement | null>(null);
 const slideRefs = reactive<Record<string, HTMLElement | null>>({});
 const activeSlideId = ref("experience");
 const activePanelHeight = ref(0);
+const isCarouselSettling = ref(false);
+const scrollSettleDelayMs = 220;
 let resizeObserver: ResizeObserver | null = null;
 let scrollFrame: number | null = null;
+let scrollSettleTimer: ReturnType<typeof window.setTimeout> | null = null;
 
 watch(isActive, (val) => {
   if (val && !hasNudged.value) {
@@ -125,7 +128,10 @@ const isMobile = breakpoints.smaller("md");
 
 const resumeViewportStyle = computed(() => {
   if (!activePanelHeight.value) return {};
-  return { height: `${Math.max(activePanelHeight.value, getViewportHeight())}px` };
+  const targetHeight = isCarouselSettling.value
+    ? Math.max(activePanelHeight.value, getViewportHeight())
+    : activePanelHeight.value;
+  return { height: `${targetHeight}px` };
 });
 
 function getViewportHeight() {
@@ -182,7 +188,21 @@ function updateActiveSlideFromScroll() {
   }
 }
 
+function markCarouselSettling() {
+  isCarouselSettling.value = true;
+  if (scrollSettleTimer) {
+    window.clearTimeout(scrollSettleTimer);
+  }
+  scrollSettleTimer = window.setTimeout(() => {
+    updateActiveSlideFromScroll();
+    updateActivePanelHeight();
+    isCarouselSettling.value = false;
+    scrollSettleTimer = null;
+  }, scrollSettleDelayMs);
+}
+
 function scheduleActiveSlideUpdate() {
+  markCarouselSettling();
   if (scrollFrame) return;
   scrollFrame = window.requestAnimationFrame(() => {
     updateActiveSlideFromScroll();
@@ -194,9 +214,11 @@ function scrollToSlide(id: string) {
   const slide = slideRefs[id];
   if (!slide) return;
 
+  isCarouselSettling.value = true;
   activeSlideId.value = id;
   updateActivePanelHeight();
   slide.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+  markCarouselSettling();
 }
 
 watch(activeSlideId, updateActivePanelHeight, { immediate: true });
@@ -216,6 +238,9 @@ onBeforeUnmount(() => {
   resizeObserver?.disconnect();
   if (scrollFrame) {
     window.cancelAnimationFrame(scrollFrame);
+  }
+  if (scrollSettleTimer) {
+    window.clearTimeout(scrollSettleTimer);
   }
 });
 
