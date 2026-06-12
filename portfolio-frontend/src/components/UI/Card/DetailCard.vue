@@ -14,6 +14,7 @@
         class="bottom-sheet__backdrop bg-ink/10 backdrop-blur-md dark:bg-night/50"
         ref="backdrop"
         @click="handleClickOnBottomSheet"
+        @wheel.prevent="() => {}"
         @scroll.prevent="() => {}"
         @touchmove.prevent="() => {}"
       />
@@ -109,6 +110,29 @@ const scrollNudgeBufferMs = 120;
 const hasNudgedContent = ref(false);
 const isNudgingContent = ref(false);
 let nudgeTimer: ReturnType<typeof window.setTimeout> | null = null;
+let lockedScrollY = 0;
+
+function lockBodyScroll() {
+  if (document.body.style.position === "fixed") return;
+  lockedScrollY = window.scrollY;
+  document.body.style.position = "fixed";
+  document.body.style.top = `-${lockedScrollY}px`;
+  document.body.style.left = "0";
+  document.body.style.right = "0";
+  document.body.style.width = "100%";
+  document.body.style.overflow = "hidden";
+}
+
+function unlockBodyScroll() {
+  if (document.body.style.position !== "fixed") return;
+  document.body.style.position = "";
+  document.body.style.top = "";
+  document.body.style.left = "";
+  document.body.style.right = "";
+  document.body.style.width = "";
+  document.body.style.overflow = "";
+  window.scrollTo(0, lockedScrollY);
+}
 
 function getDownwardDragLimit() {
   return Math.max(closeThreshold * 1.5, (cardH.value ?? 0) * 0.75);
@@ -187,6 +211,7 @@ function init() {
 const emit = defineEmits(["cardOpened", "cardClosed"]);
 
 function open() {
+  lockBodyScroll();
   clearNudgeTimer();
   hasNudgedContent.value = false;
   init();
@@ -198,7 +223,7 @@ function open() {
 function close(deltaY: number | null) {
   if (opened.value) {
     clearNudgeTimer();
-    document.body.style.overflowY = "";
+    unlockBodyScroll();
     if (deltaY != null) {
       const tl = gsap.timeline();
       tl.fromTo(
@@ -298,6 +323,7 @@ watch(
 
 onBeforeUnmount(() => {
   clearNudgeTimer();
+  unlockBodyScroll();
   timeline.value?.kill();
   drag.value?.kill();
 });
