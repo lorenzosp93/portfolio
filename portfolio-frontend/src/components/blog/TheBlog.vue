@@ -1,7 +1,7 @@
 <template>
   <section
     ref="root"
-    class="min-h-[45vh] lg:min-h-[50vh] w-full relative flex flex-wrap mx-auto my-[25vh]"
+    class="min-h-[45vh] lg:min-h-[50vh] w-full relative flex flex-wrap mx-auto my-[12vh] md:my-[25vh]"
   >
     <div class="flex flex-wrap mx-auto my-10">
       <h2
