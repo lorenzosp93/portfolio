@@ -16,13 +16,16 @@
 
     <ul
       v-if="isMobile"
-      class="mx-3 my-3 flex flex-wrap border-b border-ink/10 text-ink dark:border-white/10 dark:text-white capitalize"
+      ref="mobileTabs"
+      class="relative mx-3 my-3 flex flex-wrap border-b border-ink/10 text-ink dark:border-white/10 dark:text-white capitalize"
     >
+      <span class="mobile-tab-bar" :style="mobileTabBarStyle" />
       <li
         v-for="comp in resumeList"
         :key="comp.id"
+        :ref="(el) => setMobileTabRef(comp.id, el)"
         :class="[
-          'px-3 py-2 inline-flex items-center justify-center cursor-pointer mx-auto first:ml-0 last:mr-0 text-sm transition text-muted dark:text-gray-300',
+          'relative z-10 px-3 py-2 inline-flex items-center justify-center cursor-pointer mx-auto first:ml-0 last:mr-0 text-sm transition text-muted dark:text-gray-300',
           { active: activeSlideId === comp.id },
         ]"
         @click="scrollToSlide(comp.id)"
@@ -74,9 +77,12 @@ const { isActive } = useVisibilityObserver("theResume", root);
 const hasNudged = ref(false);
 const shouldNudge = ref(false);
 const resumeContainer = ref<HTMLElement | null>(null);
+const mobileTabs = ref<HTMLElement | null>(null);
 const slideRefs = reactive<Record<string, HTMLElement | null>>({});
+const mobileTabRefs = reactive<Record<string, HTMLElement | null>>({});
 const activeSlideId = ref("experience");
 const activePanelHeight = ref(0);
+const mobileTabBar = reactive({ left: 0, width: 0, visible: false });
 const isCarouselSettling = ref(false);
 const scrollSettleDelayMs = 220;
 let resizeObserver: ResizeObserver | null = null;
@@ -134,6 +140,12 @@ const resumeViewportStyle = computed(() => {
   return { height: `${targetHeight}px` };
 });
 
+const mobileTabBarStyle = computed(() => ({
+  width: `${mobileTabBar.width}px`,
+  transform: `translate3d(${mobileTabBar.left}px, 0, 0)`,
+  opacity: mobileTabBar.visible ? 1 : 0,
+}));
+
 function getViewportHeight() {
   return window.visualViewport?.height ?? window.innerHeight;
 }
@@ -150,6 +162,26 @@ function setSlideRef(id: string, el: Element | null) {
   if (slideEl && resizeObserver) {
     resizeObserver.observe(slideEl);
   }
+}
+
+function setMobileTabRef(id: string, el: Element | null) {
+  mobileTabRefs[id] = el instanceof HTMLElement ? el : null;
+  nextTick(updateMobileTabBar);
+}
+
+function updateMobileTabBar() {
+  const tabsEl = mobileTabs.value;
+  const activeEl = mobileTabRefs[activeSlideId.value];
+  if (!tabsEl || !activeEl) {
+    mobileTabBar.visible = false;
+    return;
+  }
+
+  const tabsBox = tabsEl.getBoundingClientRect();
+  const activeBox = activeEl.getBoundingClientRect();
+  mobileTabBar.left = activeBox.left - tabsBox.left + tabsEl.scrollLeft;
+  mobileTabBar.width = activeBox.width;
+  mobileTabBar.visible = true;
 }
 
 function updateActivePanelHeight() {
@@ -217,11 +249,15 @@ function scrollToSlide(id: string) {
   isCarouselSettling.value = true;
   activeSlideId.value = id;
   updateActivePanelHeight();
+  updateMobileTabBar();
   slide.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
   markCarouselSettling();
 }
 
-watch(activeSlideId, updateActivePanelHeight, { immediate: true });
+watch(activeSlideId, () => {
+  updateActivePanelHeight();
+  nextTick(updateMobileTabBar);
+}, { immediate: true });
 
 onMounted(() => {
   resizeObserver = new ResizeObserver(updateActivePanelHeight);
@@ -231,6 +267,7 @@ onMounted(() => {
   nextTick(() => {
     updateActiveSlideFromScroll();
     updateActivePanelHeight();
+    updateMobileTabBar();
   });
 });
 
@@ -247,12 +284,17 @@ onBeforeUnmount(() => {
 useEventListener(window, "resize", () => {
   updateActiveSlideFromScroll();
   updateActivePanelHeight();
+  updateMobileTabBar();
 });
 </script>
 
 <style scoped>
 .active {
-  @apply border-b-2 border-coral font-bold text-coral dark:border-coralSoft dark:text-coralSoft;
+  @apply font-bold text-coral dark:text-coralSoft;
+}
+
+.mobile-tab-bar {
+  @apply pointer-events-none absolute bottom-0 left-0 z-0 h-0.5 rounded-full bg-coral transition-all duration-300 ease-out dark:bg-coralSoft;
 }
 
 .carousel-nudge {
