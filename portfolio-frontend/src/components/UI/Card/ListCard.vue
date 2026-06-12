@@ -24,9 +24,9 @@
         class="pointer-events-none absolute inset-x-0 bottom-0 flex justify-end bg-gradient-to-t from-surface via-surface/90 to-transparent p-4 pt-10 dark:from-nightSurface dark:via-nightSurface/90"
       >
         <span
-          class="rounded-full bg-sand/95 px-2 py-0.5 text-sm font-bold leading-none text-coral shadow-sm ring-1 ring-coral/20 dark:bg-nightElevated/95 dark:text-coralSoft dark:ring-coralSoft/20"
+          class="rounded-full bg-sand/95 px-2 py-0.5 text-sm font-bold leading-none tracking-wide text-coral shadow-sm ring-1 ring-coral/20 dark:bg-nightElevated/95 dark:text-coralSoft dark:ring-coralSoft/20"
         >
-          …
+          •••
         </span>
       </div>
     </div>
