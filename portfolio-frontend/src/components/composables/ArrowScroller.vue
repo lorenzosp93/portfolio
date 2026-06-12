@@ -1,6 +1,6 @@
 <template>
   <div
-    class="z-10 absolute w-full top-1/2 hidden md:block mx-auto"
+    class="pointer-events-none sticky top-1/2 z-10 hidden h-0 w-full -translate-y-1/2 md:block"
     ref="arrowContainer"
   >
     <button
@@ -103,6 +103,6 @@ watch(
 
 <style scoped>
 .arrow-button {
-  @apply absolute h-11 w-11 cursor-pointer select-none rounded-full bg-surface text-teal shadow-lg ring-1 ring-ink/10 transition hover:-translate-y-0.5 hover:bg-tealSoft hover:text-teal dark:bg-nightElevated dark:text-tealSoft dark:ring-white/10 dark:hover:bg-teal/30;
+  @apply pointer-events-auto absolute h-11 w-11 cursor-pointer select-none rounded-full bg-surface text-teal shadow-lg ring-1 ring-ink/10 transition hover:-translate-y-0.5 hover:bg-tealSoft hover:text-teal dark:bg-nightElevated dark:text-tealSoft dark:ring-white/10 dark:hover:bg-teal/30;
 }
 </style>
