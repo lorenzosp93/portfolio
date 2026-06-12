@@ -77,7 +77,6 @@ const mobileTabRefs = reactive<Record<string, HTMLElement | null>>({});
 const activeSlideId = ref("experience");
 const activePanelHeight = ref(0);
 const mobileTabBar = reactive({ left: 0, width: 0, visible: false });
-const isCarouselSettling = ref(false);
 const scrollSettleDelayMs = 220;
 let resizeObserver: ResizeObserver | null = null;
 let scrollFrame: number | null = null;
@@ -113,9 +112,7 @@ const isMobile = breakpoints.smaller("md");
 
 const resumeViewportStyle = computed(() => {
   if (!activePanelHeight.value) return {};
-  const targetHeight = isCarouselSettling.value
-    ? Math.max(activePanelHeight.value, getViewportHeight())
-    : activePanelHeight.value;
+  const targetHeight = Math.max(activePanelHeight.value, getViewportHeight());
   return { height: `${targetHeight}px` };
 });
 
@@ -193,19 +190,7 @@ function updateActiveSlideFromScroll() {
   }
 }
 
-function markCarouselSettling() {
-  isCarouselSettling.value = true;
-  if (scrollSettleTimer) window.clearTimeout(scrollSettleTimer);
-  scrollSettleTimer = window.setTimeout(() => {
-    updateActiveSlideFromScroll();
-    updateActivePanelHeight();
-    isCarouselSettling.value = false;
-    scrollSettleTimer = null;
-  }, scrollSettleDelayMs);
-}
-
 function scheduleActiveSlideUpdate() {
-  markCarouselSettling();
   if (scrollFrame) return;
   scrollFrame = window.requestAnimationFrame(() => {
     updateActiveSlideFromScroll();
@@ -216,12 +201,10 @@ function scheduleActiveSlideUpdate() {
 function scrollToSlide(id: string) {
   const slide = slideRefs[id];
   if (!slide) return;
-  isCarouselSettling.value = true;
   activeSlideId.value = id;
   updateActivePanelHeight();
   updateMobileTabBar();
   slide.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
-  markCarouselSettling();
 }
 
 watch(activeSlideId, () => {
@@ -244,7 +227,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   resizeObserver?.disconnect();
   if (scrollFrame) window.cancelAnimationFrame(scrollFrame);
-  if (scrollSettleTimer) window.clearTimeout(scrollSettleTimer);
 });
 
 useEventListener(window, "resize", () => {
