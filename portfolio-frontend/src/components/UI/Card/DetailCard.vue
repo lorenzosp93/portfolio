@@ -110,28 +110,28 @@ const scrollNudgeBufferMs = 120;
 const hasNudgedContent = ref(false);
 const isNudgingContent = ref(false);
 let nudgeTimer: ReturnType<typeof window.setTimeout> | null = null;
-let lockedScrollY = 0;
+let previousBodyOverflow = "";
+let previousBodyOverscrollBehavior = "";
+let previousDocumentOverflow = "";
+let isBodyScrollLocked = false;
 
 function lockBodyScroll() {
-  if (document.body.style.position === "fixed") return;
-  lockedScrollY = window.scrollY;
-  document.body.style.position = "fixed";
-  document.body.style.top = `-${lockedScrollY}px`;
-  document.body.style.left = "0";
-  document.body.style.right = "0";
-  document.body.style.width = "100%";
+  if (isBodyScrollLocked) return;
+  previousBodyOverflow = document.body.style.overflow;
+  previousBodyOverscrollBehavior = document.body.style.overscrollBehavior;
+  previousDocumentOverflow = document.documentElement.style.overflow;
   document.body.style.overflow = "hidden";
+  document.body.style.overscrollBehavior = "none";
+  document.documentElement.style.overflow = "hidden";
+  isBodyScrollLocked = true;
 }
 
 function unlockBodyScroll() {
-  if (document.body.style.position !== "fixed") return;
-  document.body.style.position = "";
-  document.body.style.top = "";
-  document.body.style.left = "";
-  document.body.style.right = "";
-  document.body.style.width = "";
-  document.body.style.overflow = "";
-  window.scrollTo(0, lockedScrollY);
+  if (!isBodyScrollLocked) return;
+  document.body.style.overflow = previousBodyOverflow;
+  document.body.style.overscrollBehavior = previousBodyOverscrollBehavior;
+  document.documentElement.style.overflow = previousDocumentOverflow;
+  isBodyScrollLocked = false;
 }
 
 function getDownwardDragLimit() {
