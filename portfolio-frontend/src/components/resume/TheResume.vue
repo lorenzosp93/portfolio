@@ -1,7 +1,7 @@
 <template>
   <div
     ref="root"
-    class="relative min-h-screen w-full mx-auto my-[6vh] md:my-[10vh]"
+    class="relative w-full mx-auto my-[6vh] md:my-[10vh]"
   >
     <div class="flex flex-wrap w-full mx-auto mb-10 px-5">
       <h2
@@ -38,7 +38,7 @@
         :style="resumeViewportStyle"
       >
         <div
-          class="relative flex gap-6 overflow-x-scroll overflow-y-hidden no-scrollbar snap-x snap-mandatory scroll-smooth w-full"
+          class="relative flex items-start gap-6 overflow-x-scroll overflow-y-hidden no-scrollbar snap-x snap-mandatory scroll-smooth w-full"
           :class="{ 'carousel-nudge': shouldNudge }"
           id="resume-container"
           ref="resumeContainer"
@@ -250,7 +250,6 @@ useEventListener(window, "resize", () => {
 });
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .active {
   @apply border-b-2 border-coral font-bold text-coral dark:border-coralSoft dark:text-coralSoft;
