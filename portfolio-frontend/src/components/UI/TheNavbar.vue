@@ -1,5 +1,5 @@
 <template>
-  <nav class="sticky top-0 z-20 w-full opacity-0">
+  <nav class="sticky top-0 z-[110] w-full opacity-0">
     <div class="navbar-surface w-full rounded-b-3xl bg-surface/95 shadow-sm ring-1 ring-ink/10 dark:bg-nightSurface/95 dark:ring-white/10">
       <div class="relative flex items-center justify-between px-4 sm:px-6 lg:px-8">
         <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
