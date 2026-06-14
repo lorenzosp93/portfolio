@@ -11,7 +11,7 @@
       ref="bottomSheet"
     >
       <div
-        class="bottom-sheet__backdrop bg-ink/10 backdrop-blur-md dark:bg-night/50"
+        class="bottom-sheet__backdrop bg-gradient-to-b from-ink/15 to-ink/35 dark:from-night/45 dark:to-night/75"
         ref="backdrop"
         @click="handleClickOnBottomSheet"
         @wheel.prevent="() => {}"
@@ -391,6 +391,12 @@ onMounted(() => {
   z-index: 100;
   opacity: 1;
   visibility: hidden;
+}
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .bottom-sheet__backdrop {
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+  }
 }
 .opened .bottom-sheet__backdrop {
   visibility: visible;
