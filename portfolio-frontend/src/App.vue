@@ -24,7 +24,7 @@ import TheBlog from "./components/blog/TheBlog.vue";
 import TheContacts from "./components/TheContacts.vue";
 import { Ref, provide, ref, onUnmounted } from "vue";
 import { useEventListener } from "@vueuse/core";
-import { gsap } from "gsap";
+import { gsap, type TweenVars } from "gsap";
 import { registerSW } from "virtual:pwa-register";
 
 registerSW({ immediate: true });
@@ -86,8 +86,8 @@ function recalculateAnimation() {
     animationMedia = gsap.matchMedia();
     animationMedia.add(
       {
+        all: "(min-width: 0px)",
         mobile: "(hover: none) and (pointer: coarse)",
-        desktop: "(hover: hover) and (pointer: fine)",
       },
       (context) => {
         addHeroAnimation(coordinates, context.conditions?.mobile === true);
@@ -142,7 +142,7 @@ function addHeroAnimation(coordinates: DOMCoordinates, isMobile: boolean) {
   resetHeroPictureTransform();
   gsap.set("#the-navbar", { opacity: 0 });
 
-  const imageTween: gsap.TweenVars = {
+  const imageTween: TweenVars = {
     x: coordinates.deltaX,
     y: coordinates.deltaY,
     ease: "none",
