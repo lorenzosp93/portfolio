@@ -118,8 +118,8 @@ function resetHeroPictureTransform() {
     scaleY: 1,
     opacity: 1,
     transformOrigin: "50% 50%",
-    willChange: "transform, opacity",
-    force3D: true,
+    willChange: "auto",
+    force3D: false,
   });
 }
 
@@ -147,8 +147,7 @@ function addHeroAnimation(coordinates: DOMCoordinates, isMobile: boolean) {
     y: coordinates.deltaY,
     ease: "none",
     duration: 0.7,
-    force3D: true,
-    autoRound: false,
+    force3D: !isMobile,
   };
 
   if (isMobile) {
@@ -161,11 +160,10 @@ function addHeroAnimation(coordinates: DOMCoordinates, isMobile: boolean) {
   const tl = gsap.timeline({
     scrollTrigger: {
       trigger: "#the-hero",
-      scrub: isMobile ? 0.15 : true,
+      scrub: true,
       start: "top top",
       end: "bottom top",
       invalidateOnRefresh: true,
-      fastScrollEnd: true,
     },
   });
 
