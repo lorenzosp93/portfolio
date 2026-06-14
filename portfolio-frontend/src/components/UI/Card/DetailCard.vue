@@ -247,14 +247,27 @@ function close(dragState: DragCloseState | null) {
     clearNudgeTimer();
     unlockBodyScroll();
     if (dragState != null) {
+      const closeDuration = getCloseDuration(
+        dragState.currentY,
+        dragState.velocityY
+      );
       const tl = gsap.timeline();
       tl.to(card.value, {
         y: cardH.value ?? 0,
         opacity: 0,
-        duration: getCloseDuration(dragState.currentY, dragState.velocityY),
+        duration: closeDuration,
         ease: "power1.out",
         overwrite: "auto",
-      }).to(backdrop.value, { opacity: 0, duration: 0.3 }, 0.1);
+      }).to(
+        backdrop.value,
+        {
+          opacity: 0,
+          duration: closeDuration,
+          ease: "power1.out",
+          overwrite: "auto",
+        },
+        0
+      );
       tl.eventCallback("onComplete", function (this: typeof tl) {
         this.kill();
       });
