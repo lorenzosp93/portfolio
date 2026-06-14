@@ -16,6 +16,24 @@
   }
 }
 
+@layer components {
+  .bottom-sheet__backdrop {
+    background: linear-gradient(
+      to bottom,
+      rgb(15 23 42 / 0.32),
+      rgb(15 23 42 / 0.58)
+    ) !important;
+  }
+
+  .dark .bottom-sheet__backdrop {
+    background: linear-gradient(
+      to bottom,
+      rgb(0 0 0 / 0.62),
+      rgb(0 0 0 / 0.86)
+    ) !important;
+  }
+}
+
 @layer utilities {
   /* Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
