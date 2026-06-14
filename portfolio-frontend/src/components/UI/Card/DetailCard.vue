@@ -222,7 +222,7 @@ function init() {
           gsap.to(card.value, {
             y: 0,
             duration: 0.22,
-            ease: "power2.out",
+            ease: "power3.out",
             overwrite: "auto",
           });
         },
@@ -261,7 +261,7 @@ function close(dragState: DragCloseState | null) {
         y: cardH.value ?? 0,
         opacity: 0,
         duration: getCloseDuration(dragState.currentY, dragState.velocityY),
-        ease: "power2.in",
+        ease: "power1.out",
         overwrite: "auto",
       }).to(backdrop.value, { opacity: 0, duration: 0.3 }, 0.1);
       tl.eventCallback("onComplete", function (this: typeof tl) {
