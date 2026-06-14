@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full bg-paper text-ink snap-y snap-proximity dark:bg-night" ref="root">
+  <div class="page-scroll-container w-full bg-paper text-ink snap-y snap-proximity dark:bg-night" ref="root">
     <the-hero class="snap-center scroll-mt-20" id="the-hero" @hero-loaded="setupAnimation" />
     <the-navbar
       class="snap-center"
@@ -81,16 +81,27 @@ function recalculateAnimation() {
 
   requestAnimationFrame(() => {
     const coordinates = calculateCoordinatesAnimation("heroPicture", "heroLogo");
-    if (coordinates?.scaleX && coordinates?.scaleY) {
-      addHeroAnimation(coordinates);
-    }
+    if (!coordinates?.scaleX || !coordinates?.scaleY) return;
+
+    animationMedia = gsap.matchMedia();
+    animationMedia.add(
+      {
+        mobile: "(hover: none) and (pointer: coarse)",
+        desktop: "(hover: hover) and (pointer: fine)",
+      },
+      (context) => {
+        addHeroAnimation(coordinates, context.conditions?.mobile === true);
+      }
+    );
   });
 }
 
 const timeline: Ref<GSAPTimeline | null> = ref(null);
 let animationSignature = "";
+let animationMedia = gsap.matchMedia();
 
 function cleanupAnimation() {
+  animationMedia.revert();
   timeline.value?.scrollTrigger?.kill();
   timeline.value?.kill();
   timeline.value = null;
@@ -102,6 +113,7 @@ function resetHeroPictureTransform() {
     yPercent: -50,
     x: 0,
     y: 0,
+    scale: 1,
     scaleX: 1,
     scaleY: 1,
     opacity: 1,
@@ -117,40 +129,58 @@ type DOMCoordinates = {
   scaleX: number;
   scaleY: number;
 };
-function addHeroAnimation(coordinates: DOMCoordinates) {
-  const nextSignature = JSON.stringify(coordinates);
+
+function addHeroAnimation(coordinates: DOMCoordinates, isMobile: boolean) {
+  const nextSignature = JSON.stringify({ ...coordinates, isMobile });
   if (timeline.value && animationSignature === nextSignature) {
     timeline.value.scrollTrigger?.refresh();
     return;
   }
 
-  cleanupAnimation();
+  cleanupTimelineOnly();
   animationSignature = nextSignature;
   resetHeroPictureTransform();
   gsap.set("#the-navbar", { opacity: 0 });
 
-  const tl = gsap.timeline({
-    scrollTrigger: {
-      trigger: "#the-hero",
-      scrub: true,
-      start: "top top",
-      end: "bottom top",
-      invalidateOnRefresh: true,
-    },
-  });
-  tl.to("#heroPicture", {
+  const imageTween: gsap.TweenVars = {
     x: coordinates.deltaX,
     y: coordinates.deltaY,
-    scaleX: coordinates.scaleX,
-    scaleY: coordinates.scaleY,
     ease: "none",
     duration: 0.7,
     force3D: true,
-  })
+    autoRound: false,
+  };
+
+  if (isMobile) {
+    imageTween.scale = Math.min(coordinates.scaleX, coordinates.scaleY);
+  } else {
+    imageTween.scaleX = coordinates.scaleX;
+    imageTween.scaleY = coordinates.scaleY;
+  }
+
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: "#the-hero",
+      scrub: isMobile ? 0.15 : true,
+      start: "top top",
+      end: "bottom top",
+      invalidateOnRefresh: true,
+      fastScrollEnd: true,
+    },
+  });
+
+  tl.to("#heroPicture", imageTween)
     .to("#the-navbar", { opacity: 1, ease: "none", duration: 0.3 }, 0.7)
     .set("#heroPicture", { opacity: 0 }, 1);
+
   timeline.value = tl;
   tl.scrollTrigger?.refresh();
+}
+
+function cleanupTimelineOnly() {
+  timeline.value?.scrollTrigger?.kill();
+  timeline.value?.kill();
+  timeline.value = null;
 }
 
 function calculateCoordinatesAnimation(
@@ -196,5 +226,15 @@ function calculateCoordinatesAnimation(
   font-family: Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .page-scroll-container {
+    scroll-snap-type: none;
+  }
+
+  .page-scroll-container > * {
+    scroll-snap-align: none;
+  }
 }
 </style>
