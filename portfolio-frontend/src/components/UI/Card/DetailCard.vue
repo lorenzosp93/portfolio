@@ -82,6 +82,9 @@ import { useEventListener } from "@vueuse/core";
 import { nextTick, onBeforeUnmount, onMounted, Ref, ref, watch } from "vue";
 import gsap from "gsap";
 import { Draggable } from "gsap/Draggable";
+import { InertiaPlugin } from "gsap/InertiaPlugin";
+
+gsap.registerPlugin(Draggable, InertiaPlugin);
 
 const card: Ref<HTMLElement | null> = ref(null);
 const content: Ref<HTMLElement | null> = ref(null);
@@ -98,6 +101,7 @@ const cardH: Ref<number | null> = ref(null);
 
 const drag: Ref<Draggable | null> = ref(null);
 const timeline: Ref<GSAPTimeline | null> = ref(null);
+let velocityTracker: { get: (property: string) => number } | null = null;
 
 const contentH = ref("auto");
 const paddingBottom = ref(12);
@@ -161,6 +165,11 @@ function init() {
     cardH.value = card.value.clientHeight;
     contentH.value = `${cardH.value - pan.value.clientHeight}px`;
     updateDragBounds();
+
+    if (!velocityTracker) {
+      velocityTracker = InertiaPlugin.track(card.value, "y")[0];
+    }
+
     if (!initiated.value) {
       initiated.value = true;
       const tl = gsap.timeline();
@@ -171,10 +180,6 @@ function init() {
         ease: "power3",
       }).from(backdrop.value, { opacity: 0, duration: 0.3 }, 0);
       timeline.value = tl;
-
-      let lastDragY = 0;
-      let lastDragTime = 0;
-      let trackedVelocityY = 0;
 
       const dr = Draggable.create(card.value, {
         type: "y",
@@ -188,31 +193,17 @@ function init() {
         },
         edgeResistance: 0.85,
         autoScroll: 0,
-        onPress: function (this: Draggable) {
+        onPress: () => {
           clearNudgeTimer();
           gsap.killTweensOf(card.value);
-          lastDragY = this.y;
-          lastDragTime = performance.now();
-          trackedVelocityY = 0;
         },
         onDragStart: () => {
           moving.value = true;
         },
-        onDrag: function (this: Draggable) {
-          const now = performance.now();
-          const elapsedMs = now - lastDragTime;
-
-          if (elapsedMs > 0) {
-            const instantaneousVelocity = ((this.y - lastDragY) / elapsedMs) * 1000;
-            trackedVelocityY = trackedVelocityY * 0.65 + instantaneousVelocity * 0.35;
-            lastDragY = this.y;
-            lastDragTime = now;
-          }
-        },
         onDragEnd: function (this: Draggable) {
           moving.value = false;
           const currentY = this.y;
-          const velocityY = performance.now() - lastDragTime <= 100 ? trackedVelocityY : 0;
+          const velocityY = velocityTracker?.get("y") ?? 0;
 
           if (currentY > closeThreshold) {
             close({ currentY, velocityY });
@@ -354,6 +345,10 @@ onBeforeUnmount(() => {
   unlockBodyScroll();
   timeline.value?.kill();
   drag.value?.kill();
+  if (card.value) {
+    InertiaPlugin.untrack(card.value, "y");
+  }
+  velocityTracker = null;
 });
 
 onMounted(() => {
