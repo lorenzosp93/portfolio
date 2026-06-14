@@ -142,11 +142,17 @@ function updateDragBounds() {
   drag.value?.applyBounds({ maxY: getDownwardDragLimit(), minY: upwardDragLimit });
 }
 
-function getCloseDuration(deltaY: number) {
-  const remainingDistance = Math.max((cardH.value ?? 0) + deltaY, 0);
-  const totalDistance = Math.max(cardH.value ?? 0, 1);
-  const progress = 1 - Math.min(Math.max(remainingDistance / totalDistance, 0), 1);
-  return maxCloseDuration - (maxCloseDuration - minCloseDuration) * progress;
+function getCloseDuration(currentY: number, velocityY: number) {
+  const remainingDistance = Math.max((cardH.value ?? 0) - currentY, 0);
+  const downwardVelocity = Math.max(velocityY, 0);
+  const fallbackVelocity = remainingDistance / maxCloseDuration;
+  const effectiveVelocity = Math.max(downwardVelocity, fallbackVelocity, 1);
+
+  return gsap.utils.clamp(
+    minCloseDuration,
+    maxCloseDuration,
+    remainingDistance / effectiveVelocity
+  );
 }
 
 function init() {
@@ -165,7 +171,6 @@ function init() {
         ease: "power3",
       }).from(backdrop.value, { opacity: 0, duration: 0.3 }, 0);
       timeline.value = tl;
-      let startY = 0;
       const dr = Draggable.create(card.value, {
         type: "y",
         trigger: pan.value,
@@ -180,24 +185,24 @@ function init() {
         autoScroll: 0,
         onPress: () => {
           clearNudgeTimer();
-          startY = drag.value?.pointerY ?? 0;
           gsap.killTweensOf(card.value);
         },
         onDragStart: () => {
           moving.value = true;
         },
-        onDragEnd: () => {
+        onDragEnd: function (this: Draggable) {
           moving.value = false;
-          const endY = drag.value?.pointerY ?? startY;
-          const deltaY = startY - endY;
-          if (deltaY < -closeThreshold) {
-            close(deltaY);
+          const currentY = this.y;
+          const velocityY = this.getVelocity("y");
+          if (currentY > closeThreshold) {
+            close({ currentY, velocityY });
             return;
           }
           gsap.to(card.value, {
             y: 0,
             duration: 0.22,
             ease: "power2.out",
+            overwrite: "auto",
           });
         },
       });
@@ -220,22 +225,24 @@ function open() {
   emit("cardOpened");
 }
 
-function close(deltaY: number | null) {
+type DragCloseState = {
+  currentY: number;
+  velocityY: number;
+};
+
+function close(dragState: DragCloseState | null) {
   if (opened.value) {
     clearNudgeTimer();
     unlockBodyScroll();
-    if (deltaY != null) {
+    if (dragState != null) {
       const tl = gsap.timeline();
-      tl.fromTo(
-        card.value,
-        { y: -deltaY },
-        {
-          y: (cardH?.value ?? 0) - deltaY,
-          opacity: 0,
-          duration: getCloseDuration(deltaY),
-          ease: "power2.in",
-        }
-      ).to(backdrop.value, { opacity: 0, duration: 0.3 }, 0.1);
+      tl.to(card.value, {
+        y: cardH.value ?? 0,
+        opacity: 0,
+        duration: getCloseDuration(dragState.currentY, dragState.velocityY),
+        ease: "power2.in",
+        overwrite: "auto",
+      }).to(backdrop.value, { opacity: 0, duration: 0.3 }, 0.1);
       tl.eventCallback("onComplete", function (this: typeof tl) {
         this.kill();
       });
