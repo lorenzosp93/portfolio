@@ -159,6 +159,10 @@ function getCloseDuration(currentY: number, velocityY: number) {
   );
 }
 
+function getBackdropCloseDuration(cardCloseDuration: number) {
+  return gsap.utils.clamp(0.1, 0.18, cardCloseDuration * 0.55);
+}
+
 function init() {
   if (card.value && pan.value) {
     cardP.value = 0;
@@ -251,6 +255,7 @@ function close(dragState: DragCloseState | null) {
         dragState.currentY,
         dragState.velocityY
       );
+      const backdropCloseDuration = getBackdropCloseDuration(closeDuration);
       const tl = gsap.timeline();
       tl.to(card.value, {
         y: cardH.value ?? 0,
@@ -262,8 +267,8 @@ function close(dragState: DragCloseState | null) {
         backdrop.value,
         {
           opacity: 0,
-          duration: closeDuration,
-          ease: "power1.out",
+          duration: backdropCloseDuration,
+          ease: "power2.out",
           overwrite: "auto",
         },
         0
