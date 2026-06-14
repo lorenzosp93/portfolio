@@ -171,6 +171,11 @@ function init() {
         ease: "power3",
       }).from(backdrop.value, { opacity: 0, duration: 0.3 }, 0);
       timeline.value = tl;
+
+      let lastDragY = 0;
+      let lastDragTime = 0;
+      let trackedVelocityY = 0;
+
       const dr = Draggable.create(card.value, {
         type: "y",
         trigger: pan.value,
@@ -183,21 +188,37 @@ function init() {
         },
         edgeResistance: 0.85,
         autoScroll: 0,
-        onPress: () => {
+        onPress: function (this: Draggable) {
           clearNudgeTimer();
           gsap.killTweensOf(card.value);
+          lastDragY = this.y;
+          lastDragTime = performance.now();
+          trackedVelocityY = 0;
         },
         onDragStart: () => {
           moving.value = true;
         },
+        onDrag: function (this: Draggable) {
+          const now = performance.now();
+          const elapsedMs = now - lastDragTime;
+
+          if (elapsedMs > 0) {
+            const instantaneousVelocity = ((this.y - lastDragY) / elapsedMs) * 1000;
+            trackedVelocityY = trackedVelocityY * 0.65 + instantaneousVelocity * 0.35;
+            lastDragY = this.y;
+            lastDragTime = now;
+          }
+        },
         onDragEnd: function (this: Draggable) {
           moving.value = false;
           const currentY = this.y;
-          const velocityY = this.getVelocity("y");
+          const velocityY = performance.now() - lastDragTime <= 100 ? trackedVelocityY : 0;
+
           if (currentY > closeThreshold) {
             close({ currentY, velocityY });
             return;
           }
+
           gsap.to(card.value, {
             y: 0,
             duration: 0.22,
