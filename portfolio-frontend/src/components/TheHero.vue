@@ -1,9 +1,12 @@
 <template>
   <section
     ref="root"
-    class="relative mx-auto flex min-h-screen w-full flex-wrap text-ink dark:text-white"
+    class="relative flex min-h-screen w-full items-center overflow-x-clip px-5 py-20 text-ink dark:text-white sm:px-8"
   >
-    <div class="relative m-auto flex-initial w-1/2 py-5 sm:w-1/3">
+    <div
+      class="mx-auto grid w-full max-w-7xl items-center gap-10 sm:grid-cols-[minmax(17rem,0.8fr)_minmax(0,1.2fr)] sm:gap-12 lg:gap-20"
+    >
+    <div class="relative min-w-0 py-5">
       <div class="relative mx-auto h-56 w-56 md:h-72 md:w-72">
         <div
           class="absolute z-10 left-1/2 top-1/2 h-44 w-56 -translate-x-1/2 -translate-y-1/2 rotate-[-9deg] rounded-[42%_58%_48%_52%/58%_39%_61%_42%] bg-tealSoft/80 shadow-xl ring-1 ring-teal/20 dark:bg-teal/25 dark:ring-tealSoft/20 md:h-56 md:w-72"
@@ -30,7 +33,7 @@
       <h1 class="z-20 m-5 mt-8 text-center text-2xl md:text-3xl lg:text-4xl font-bold md:mt-10">
         Hi, I'm <span class="text-coral dark:text-coralSoft">Lorenzo</span>
       </h1>
-      <div class="container flex mt-5">
+      <div class="flex mt-5">
         <!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
         <a
           class="ml-auto fill-muted transition hover:fill-coral dark:fill-gray-300 dark:hover:fill-coralSoft"
@@ -79,14 +82,27 @@
         </a>
       </div>
     </div>
-    <div></div>
-    <div class="relative z-20 m-auto flex-initial w-4/5 sm:w-2/3">
+    <div class="relative z-20 min-w-0 max-w-2xl justify-self-center sm:justify-self-start">
+      <p
+        class="mb-4 text-center text-xs font-bold uppercase tracking-[0.24em] text-teal dark:text-tealSoft sm:text-left"
+      >
+        Product · Software · Energy
+      </p>
       <div
-        class="m-2 prose-sm md:prose lg:prose-xl prose-slate font-sans first-letter:text-2xl indent-3 dark:prose-invert prose-strong:text-coral dark:prose-strong:text-coralSoft lg:prose-lg xl:prose-xl"
+        class="prose prose-slate max-w-none font-sans text-center leading-relaxed dark:prose-invert prose-p:my-4 prose-strong:text-coral dark:prose-strong:text-coralSoft sm:text-left lg:prose-lg"
       >
         <!-- VITE_HERO_COPY is trusted build-time configuration, rendered as Markdown. -->
         <p v-for="paragraph in heroParagraphs" :key="paragraph" v-html="paragraph"></p>
       </div>
+      <div class="mt-7 flex flex-wrap justify-center gap-3 sm:justify-start">
+        <button class="hero-primary-action" type="button" @click="scrollToResume">
+          Explore my work
+        </button>
+        <button class="hero-secondary-action" type="button" @click="scrollToContacts">
+          Start a conversation
+        </button>
+      </div>
+    </div>
     </div>
     <button
       v-if="showScrollCue"
@@ -142,9 +158,25 @@ function scrollToResume() {
     inline: "nearest",
   });
 }
+
+function scrollToContacts() {
+  document.getElementById("the-contacts")?.scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+    inline: "nearest",
+  });
+}
 </script>
 
 <style scoped>
+.hero-primary-action {
+  @apply rounded-full bg-teal px-5 py-2.5 text-sm font-semibold text-white shadow-md ring-1 ring-teal/20 transition hover:-translate-y-0.5 hover:bg-teal/90 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-tealSoft dark:bg-tealSoft dark:text-night;
+}
+
+.hero-secondary-action {
+  @apply rounded-full bg-transparent px-5 py-2.5 text-sm font-semibold text-ink ring-1 ring-ink/20 transition hover:-translate-y-0.5 hover:bg-surface/70 hover:ring-teal/40 focus:outline-none focus:ring-2 focus:ring-teal dark:text-white dark:ring-white/20 dark:hover:bg-white/10;
+}
+
 .hero-scroll-cue {
   @apply fixed bottom-5 left-1/2 z-30 flex -translate-x-1/2 items-center gap-1 rounded-full bg-ink/90 px-3 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-white shadow-lg ring-1 ring-white/20 backdrop-blur-md transition hover:-translate-y-0.5 hover:bg-teal hover:text-white dark:bg-white/90 dark:text-night dark:ring-night/20 dark:hover:bg-tealSoft;
   animation: hero-scroll-cue-bob 1.6s ease-in-out infinite;

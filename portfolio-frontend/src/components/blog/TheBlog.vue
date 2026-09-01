@@ -1,9 +1,9 @@
 <template>
   <section
     ref="root"
-    class="min-h-[45vh] lg:min-h-[50vh] w-full relative flex flex-wrap mx-auto my-[12vh] md:my-[25vh]"
+    class="min-h-[45vh] lg:min-h-[50vh] w-full relative flex flex-wrap mx-auto bg-paper py-20 dark:bg-night md:py-28"
   >
-    <div class="flex flex-wrap mx-auto my-10">
+    <div class="flex w-full max-w-7xl flex-wrap mx-auto mb-8 px-5 md:mb-12">
       <h2
         class="w-full mt-auto text-center text-xl md:text-2xl font-bold text-ink dark:text-white"
       >
@@ -18,7 +18,7 @@
     <div class="relative w-full">
       <ArrowScroller @end="loadEntries" :scroll-container="blogContainer" />
       <div
-        class="relative flex overflow-x-scroll overflow-y-hidden no-scrollbar snap-x snap-proximity h-full w-full scroll-smooth px-[12.5%] md:px-[33.3%] lg:px-32 py-5 gap-x-5"
+        class="relative flex overflow-x-scroll overflow-y-hidden no-scrollbar snap-x snap-proximity h-full w-full scroll-smooth px-[12.5%] md:px-[25%] lg:px-16 xl:px-24 py-5 gap-x-5"
         :class="{ 'carousel-nudge': shouldNudge }"
         id="blog-container"
         ref="blogContainer"

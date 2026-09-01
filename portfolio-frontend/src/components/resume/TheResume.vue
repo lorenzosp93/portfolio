@@ -1,6 +1,7 @@
 <template>
-  <div ref="root" class="relative w-full mx-auto my-[6vh] md:my-[10vh]">
-    <div class="flex flex-wrap w-full mx-auto mb-10 px-5">
+  <section ref="root" class="relative w-full bg-sand/45 py-16 dark:bg-nightSurface/35 md:py-24">
+    <div class="mx-auto flex w-full max-w-7xl flex-wrap px-5">
+    <div class="flex flex-wrap w-full mx-auto mb-8 md:mb-12">
       <h2 class="text-center text-xl md:text-2xl w-full font-bold mx-auto text-ink dark:text-white">
         Here are a few things I've done.
       </h2>
@@ -13,7 +14,7 @@
       v-if="isMobile"
       ref="mobileTabs"
       data-testid="resume-mobile-tabs"
-      class="relative mx-3 my-3 flex flex-wrap border-b border-ink/10 text-ink dark:border-white/10 dark:text-white capitalize sm:hidden"
+      class="relative mb-4 flex w-full flex-wrap border-b border-ink/10 text-ink dark:border-white/10 dark:text-white capitalize sm:hidden"
     >
       <span class="mobile-tab-bar" :style="mobileTabBarStyle" />
       <li
@@ -30,7 +31,7 @@
       </li>
     </ul>
 
-    <div class="relative w-full">
+    <div class="relative min-w-0 w-full">
       <ArrowScroller
         v-if="!isMobile"
         data-testid="resume-desktop-controls"
@@ -61,7 +62,8 @@
         </div>
       </div>
     </div>
-  </div>
+    </div>
+  </section>
 </template>
 
 <script setup lang="ts">

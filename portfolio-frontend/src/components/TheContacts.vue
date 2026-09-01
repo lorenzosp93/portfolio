@@ -1,14 +1,17 @@
 <template>
   <section
-    class="container min-h-[50vh] relative flex w-screen mx-auto flex-wrap my-[20vh] text-ink dark:text-white"
+    class="relative flex min-h-[50vh] w-full flex-wrap bg-sand/45 py-20 text-ink dark:bg-nightSurface/35 dark:text-white md:py-28"
     ref="root"
   >
-    <div class="container flex flex-wrap mx-auto my-10 px-5">
+    <div class="mx-auto flex w-full max-w-7xl flex-wrap px-5">
       <h2
         class="text-center mt-auto text-xl md:text-2xl w-full font-bold mx-auto text-ink dark:text-white"
       >
         Get in touch!
       </h2>
+      <p class="mx-auto mt-2 w-full max-w-xl text-center text-sm text-muted dark:text-gray-300 md:text-base">
+        Have an interesting product, technical challenge, or idea in mind? I'd be glad to hear about it.
+      </p>
       <button
         type="button"
         class="mx-auto mb-auto mt-4 rounded-full bg-teal px-6 py-3 text-center font-semibold text-white shadow-md ring-1 ring-teal/20 transition duration-300 hover:-translate-y-0.5 hover:bg-teal/90 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-tealSoft dark:bg-tealSoft dark:text-night dark:ring-tealSoft/30 dark:hover:bg-tealSoft/90"
