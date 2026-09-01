@@ -27,6 +27,18 @@ test("keeps mobile and desktop resume controls mutually exclusive", async ({ pag
   ).toBeVisible();
 });
 
+test("returns to the hero from the mobile About menu", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 800 });
+  await page.goto("/");
+  await page.locator("#the-resume").scrollIntoViewIfNeeded();
+  await page.waitForFunction(() => window.scrollY > 100);
+
+  await page.getByRole("button", { name: "Open main menu" }).click();
+  await page.getByRole("button", { name: "About", exact: true }).click();
+
+  await page.waitForFunction(() => window.scrollY < 2);
+});
+
 test("recalculates the hero animation from its natural position after resize", async ({
   page,
 }) => {

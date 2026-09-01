@@ -4,7 +4,7 @@
     class="relative flex min-h-screen w-full items-center overflow-x-clip px-5 py-20 text-ink dark:text-white sm:px-8"
   >
     <div
-      class="mx-auto grid w-full max-w-7xl items-center gap-10 sm:grid-cols-[minmax(17rem,0.8fr)_minmax(0,1.2fr)] sm:gap-12 lg:gap-20"
+      class="hero-layout mx-auto grid w-full max-w-7xl items-center gap-10 sm:grid-cols-[minmax(17rem,0.8fr)_minmax(0,1.2fr)] sm:gap-12 lg:gap-20"
     >
     <div class="relative min-w-0 py-5">
       <div class="relative mx-auto h-56 w-56 md:h-72 md:w-72">
@@ -89,41 +89,21 @@
         Product · Software · Energy
       </p>
       <div
-        class="prose prose-slate max-w-none font-sans text-center leading-relaxed dark:prose-invert prose-p:my-4 prose-strong:text-coral dark:prose-strong:text-coralSoft sm:text-left lg:prose-lg"
+        class="hero-copy prose prose-slate max-w-none font-sans text-center leading-relaxed dark:prose-invert prose-p:my-4 prose-strong:text-coral dark:prose-strong:text-coralSoft sm:text-left lg:prose-lg"
       >
         <!-- VITE_HERO_COPY is trusted build-time configuration, rendered as Markdown. -->
         <p v-for="paragraph in heroParagraphs" :key="paragraph" v-html="paragraph"></p>
       </div>
-      <div class="mt-7 flex flex-wrap justify-center gap-3 sm:justify-start">
-        <button class="hero-primary-action" type="button" @click="scrollToResume">
-          Explore my work
-        </button>
-        <button class="hero-secondary-action" type="button" @click="scrollToContacts">
-          Start a conversation
-        </button>
-      </div>
     </div>
     </div>
     <button
-      v-if="showScrollCue"
-      class="hero-scroll-cue"
+      class="hero-scroll-indicator"
       type="button"
-      aria-label="Scroll to resume"
+      aria-label="Scroll to explore the portfolio"
       @click="scrollToResume"
     >
-      <span>Scroll</span>
-      <svg
-        class="h-4 w-4"
-        viewBox="0 0 20 20"
-        fill="currentColor"
-        aria-hidden="true"
-      >
-        <path
-          fill-rule="evenodd"
-          d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-          clip-rule="evenodd"
-        />
-      </svg>
+      <span>Scroll to explore</span>
+      <span class="hero-scroll-line" aria-hidden="true" />
     </button>
   </section>
 </template>
@@ -139,11 +119,8 @@ import { Ref, computed, ref } from "vue";
 defineEmits(["heroLoaded"]);
 
 const root: Ref<HTMLDivElement | null> = ref(null);
-const { ratio } = useVisibilityObserver("theHero", root);
-const showScrollCue = computed(() => ratio.value > 0.75);
-const defaultHeroCopy = `I'm a Product leader deeply rooted in **software** and **energy engineering**. Throughout my career, I've immersed myself in various roles, thriving in both scrappy and established environments. My approach is defined by a constant drive for **innovation** and an ability to decipher complex problems.
-
-Actively working on refining and expanding my skillset, I have a clear vision: to lay the groundwork for my own **venture** in the near future. I'm always on the lookout for collaboration with **forward-thinkers**. Ready for the next adventure in innovation? Let's dive in together.`;
+useVisibilityObserver("theHero", root);
+const defaultHeroCopy = `I'm a **product leader** with a background in **software** and **energy engineering**. I turn complex problems into focused products, bringing technical depth and pragmatic execution to teams at every stage.`;
 const heroParagraphs = computed(() =>
   (import.meta.env.VITE_HERO_COPY?.trim() || defaultHeroCopy)
     .split(/\n\s*\n/)
@@ -159,41 +136,48 @@ function scrollToResume() {
   });
 }
 
-function scrollToContacts() {
-  document.getElementById("the-contacts")?.scrollIntoView({
-    behavior: "smooth",
-    block: "start",
-    inline: "nearest",
-  });
-}
 </script>
 
 <style scoped>
-.hero-primary-action {
-  @apply rounded-full bg-teal px-5 py-2.5 text-sm font-semibold text-white shadow-md ring-1 ring-teal/20 transition hover:-translate-y-0.5 hover:bg-teal/90 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-tealSoft dark:bg-tealSoft dark:text-night;
+.hero-scroll-indicator {
+  @apply absolute bottom-5 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2 bg-transparent px-3 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-muted transition hover:text-teal focus:outline-none focus-visible:ring-2 focus-visible:ring-teal dark:text-gray-400 dark:hover:text-tealSoft;
 }
 
-.hero-secondary-action {
-  @apply rounded-full bg-transparent px-5 py-2.5 text-sm font-semibold text-ink ring-1 ring-ink/20 transition hover:-translate-y-0.5 hover:bg-surface/70 hover:ring-teal/40 focus:outline-none focus:ring-2 focus:ring-teal dark:text-white dark:ring-white/20 dark:hover:bg-white/10;
+.hero-scroll-line {
+  @apply block h-8 w-px origin-top bg-current;
+  animation: hero-scroll-line-pulse 1.8s ease-in-out infinite;
 }
 
-.hero-scroll-cue {
-  @apply fixed bottom-5 left-1/2 z-30 flex -translate-x-1/2 items-center gap-1 rounded-full bg-ink/90 px-3 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-white shadow-lg ring-1 ring-white/20 backdrop-blur-md transition hover:-translate-y-0.5 hover:bg-teal hover:text-white dark:bg-white/90 dark:text-night dark:ring-night/20 dark:hover:bg-tealSoft;
-  animation: hero-scroll-cue-bob 1.6s ease-in-out infinite;
+@media (max-width: 420px) {
+  .hero-layout {
+    row-gap: 0.75rem;
+  }
+
+  .hero-copy {
+    font-size: 0.875rem;
+    line-height: 1.55;
+  }
+
+  .hero-copy :deep(p) {
+    margin-bottom: 0.75rem;
+    margin-top: 0.75rem;
+  }
 }
 
-@keyframes hero-scroll-cue-bob {
+@keyframes hero-scroll-line-pulse {
   0%,
   100% {
-    transform: translate(-50%, 0);
+    opacity: 0.35;
+    transform: scaleY(0.45);
   }
   50% {
-    transform: translate(-50%, 0.45rem);
+    opacity: 1;
+    transform: scaleY(1);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-scroll-cue {
+  .hero-scroll-line {
     animation: none;
   }
 }
