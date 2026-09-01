@@ -12,6 +12,9 @@ on:
       - 'portfolio-frontend/**'
       - '.github/workflows/frontend.yml'
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
