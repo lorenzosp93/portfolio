@@ -92,16 +92,20 @@ watch(isActive, (val) => {
   }
 
   if (val && blogStore.posts.length == 0 && !isLoading.value) {
-    isLoading.value = true;
-    loadEntries();
+    void loadEntries();
   }
 });
 
-function loadEntries() {
+async function loadEntries() {
+  if (isLoading.value) return;
   isLoading.value = true;
-  blogStore.getBlogEntries(entriesLimit()).then(() => {
+  try {
+    await blogStore.getBlogEntries(entriesLimit());
+  } catch {
+    // The empty state exposes the retry control once loading is cleared.
+  } finally {
     isLoading.value = false;
-  });
+  }
 }
 </script>
 

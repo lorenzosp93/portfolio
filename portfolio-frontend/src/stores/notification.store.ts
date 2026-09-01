@@ -16,48 +16,35 @@ export const useNotificationStore = defineStore({
   }),
   actions: {
     async askPermission() {
-      return new Promise((resolve, reject) => {
-        const permissionResult = Notification.requestPermission(function (
-          result
-        ) {
-          resolve(result);
-        });
-
-        if (permissionResult) {
-          permissionResult.then(resolve, reject);
-        }
-      }).then((permissionResult) => {
-        if (permissionResult !== "granted") {
-          throw new Error("We weren't granted permission.");
-        }
-        this.subscribeUserToPush();
-      });
+      const permissionResult = await Notification.requestPermission();
+      if (permissionResult !== "granted") {
+        throw new Error("We weren't granted permission.");
+      }
+      return this.subscribeUserToPush();
     },
     async subscribeUserToPush() {
-      return navigator.serviceWorker
-        .getRegistration()
-        .then((registration: ServiceWorkerRegistration | undefined) => {
-          const subscribeOptions = {
-            userVisibleOnly: true,
-            applicationServerKey: this.urlBase64ToUint8Array(
-              import.meta.env.VITE_APP_KEY
-            ),
-          };
-          return registration?.pushManager.subscribe(subscribeOptions);
-        })
-        .then((pushSubscription: PushSubscription | undefined) => {
-          this.pushSubscription = pushSubscription;
-          this.publishSubscription();
-        });
+      const registration = await navigator.serviceWorker.getRegistration();
+      if (!registration) {
+        throw new Error("No service worker registration is available.");
+      }
+
+      const subscribeOptions = {
+        userVisibleOnly: true,
+        applicationServerKey: this.urlBase64ToUint8Array(
+          import.meta.env.VITE_APP_KEY
+        ),
+      };
+      this.pushSubscription = await registration.pushManager.subscribe(
+        subscribeOptions
+      );
+      return this.publishSubscription();
     },
     async publishSubscription() {
-      if (this.pushSubscription)
-        backendService
-          .postSubscription(this.pushSubscription.toJSON())
-          .then(() => {
-            this.isSubscribed = true;
-            localStorage.setItem("notificationSubscribed", "true");
-          });
+      if (!this.pushSubscription) return;
+
+      await backendService.postSubscription(this.pushSubscription.toJSON());
+      this.isSubscribed = true;
+      localStorage.setItem("notificationSubscribed", "true");
     },
     urlBase64ToUint8Array(base64String: string): Uint8Array {
       const padding = "=".repeat((4 - (base64String.length % 4)) % 4);

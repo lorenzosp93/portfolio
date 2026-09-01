@@ -12,6 +12,7 @@
     <ul
       v-if="isMobile"
       ref="mobileTabs"
+      data-testid="resume-mobile-tabs"
       class="relative mx-3 my-3 flex flex-wrap border-b border-ink/10 text-ink dark:border-white/10 dark:text-white capitalize sm:hidden"
     >
       <span class="mobile-tab-bar" :style="mobileTabBarStyle" />
@@ -30,7 +31,12 @@
     </ul>
 
     <div class="relative w-full">
-      <ArrowScroller v-if="!isMobile" class="hidden sm:block" :scroll-container="resumeContainer" />
+      <ArrowScroller
+        v-if="!isMobile"
+        data-testid="resume-desktop-controls"
+        class="hidden sm:block"
+        :scroll-container="resumeContainer"
+      />
       <div
         class="overflow-hidden transition-[height] duration-300 ease-out min-h-[1vh] min-h-[1svh]"
         :style="resumeViewportStyle"

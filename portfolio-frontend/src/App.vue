@@ -44,6 +44,7 @@ provide("truncationAmount", truncationAmount);
 provide("entriesLimit", entriesLimit);
 
 onUnmounted(() => {
+  animationRevision += 1;
   cleanupAnimation();
   clearTimeout(resizeTimer);
 });
@@ -76,35 +77,33 @@ function setupAnimation() {
 }
 
 function recalculateAnimation() {
+  const revision = ++animationRevision;
   requestAnimationFrame(() => {
+    if (revision !== animationRevision) return;
+
+    // Measurements must be taken from the picture's untransformed layout
+    // position. Otherwise a resize partway through the scroll animation uses
+    // the previous tween as its new origin and compounds the translation.
+    cleanupAnimation();
+    resetHeroPictureTransform();
+
     const coordinates = calculateCoordinatesAnimation("heroPicture", "heroLogo");
     if (!coordinates?.scaleX || !coordinates?.scaleY) {
-      cleanupAnimation();
       return;
     }
 
     const isMobile = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
-    const nextSignature = JSON.stringify({ ...coordinates, isMobile });
-    if (timeline.value && animationSignature === nextSignature) {
-      timeline.value.scrollTrigger?.refresh();
-      return;
-    }
-
-    cleanupAnimation();
-    animationSignature = nextSignature;
-    resetHeroPictureTransform();
     addHeroAnimation(coordinates, isMobile);
   });
 }
 
 const timeline: Ref<GSAPTimeline | null> = ref(null);
-let animationSignature = "";
+let animationRevision = 0;
 
 function cleanupAnimation() {
   timeline.value?.scrollTrigger?.kill();
   timeline.value?.kill();
   timeline.value = null;
-  animationSignature = "";
 }
 
 function resetHeroPictureTransform() {
@@ -177,19 +176,27 @@ function calculateCoordinatesAnimation(
   const originBox = originElement?.getBoundingClientRect();
   const destinationBox = destinationElement?.getBoundingClientRect();
   const triggerBox = triggerElement?.getBoundingClientRect();
+  const stickyContainer = destinationElement?.closest<HTMLElement>("nav");
+  const stickyContainerBox = stickyContainer?.getBoundingClientRect();
 
-  if (!originBox || !destinationBox || !triggerBox) {
+  if (
+    !originBox ||
+    !destinationBox ||
+    !triggerBox ||
+    !stickyContainer ||
+    !stickyContainerBox
+  ) {
     return { deltaX: 0, deltaY: 0, scaleX: 1, scaleY: 1 };
   }
 
   const scrollY = window.scrollY;
   const triggerTop = triggerBox.top + scrollY;
   const triggerEnd = triggerTop + triggerBox.height;
-  const destinationScrollY = Math.min(scrollY, triggerEnd);
-
-  const originCenterY = originBox.y + originBox.height / 2 + scrollY;
-  const destinationCenterY =
-    destinationBox.y + destinationBox.height / 2 + destinationScrollY;
+  const originCenterY = originBox.top + originBox.height / 2 + scrollY;
+  const stickyTop = Number.parseFloat(getComputedStyle(stickyContainer).top) || 0;
+  const destinationOffsetY = destinationBox.top - stickyContainerBox.top;
+  const destinationEndCenterY =
+    triggerEnd + stickyTop + destinationOffsetY + destinationBox.height / 2;
 
   return {
     deltaX:
@@ -197,7 +204,7 @@ function calculateCoordinatesAnimation(
       destinationBox.width / 2 -
       originBox.x -
       originBox.width / 2,
-    deltaY: destinationCenterY - originCenterY,
+    deltaY: destinationEndCenterY - originCenterY,
     scaleX: destinationBox.width / originBox.width,
     scaleY: destinationBox.height / originBox.height,
   };

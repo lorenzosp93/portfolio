@@ -9,13 +9,12 @@ export function cacheInvalidation<T>(
   data: RemovableRef<T[] | LimitOffsetResult<T>>,
   expiry: RemovableRef<number>
 ) {
-  return () => {
-    if (Date.now() > expiry.value) {
-      if (isLimitOffsetResult<T>(data.value)) {
-        data.value.results = [];
-      } else {
-        data.value = [];
-      }
+  if (Date.now() > expiry.value) {
+    if (isLimitOffsetResult<T>(data.value)) {
+      data.value.results = [];
+      data.value.next = null;
+    } else {
+      data.value = [];
     }
-  };
+  }
 }

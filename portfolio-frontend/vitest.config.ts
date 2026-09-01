@@ -1,5 +1,5 @@
 import { fileURLToPath } from "url";
-import { defineConfig } from "vitest/config";
+import { configDefaults, defineConfig } from "vitest/config";
 import vue from "@vitejs/plugin-vue";
 
 export default defineConfig({
@@ -13,5 +13,6 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./src/test/setup.ts"],
     clearMocks: true,
+    exclude: [...configDefaults.exclude, "tests/e2e/**"],
   },
 });

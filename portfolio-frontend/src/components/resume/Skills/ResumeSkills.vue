@@ -4,6 +4,7 @@
       :dataLoaded="skillStore.data.length > 0"
       :isLoading="isLoading"
       :ix="ix"
+      @load-entries="loadEntries"
     >
       <template v-slot:content>
         <ol
@@ -60,13 +61,22 @@ defineProps<{
 }>();
 
 watch(isActive, (val) => {
-  if (val && !skillStore.data.length && !isLoading.value) {
-    isLoading.value = true;
-    skillStore.getEntries().then(() => {
-      isLoading.value = false;
-    });
+  if (val && !skillStore.data.length) {
+    void loadEntries();
   }
 });
+
+async function loadEntries() {
+  if (isLoading.value) return;
+  isLoading.value = true;
+  try {
+    await skillStore.getEntries();
+  } catch {
+    // ResumePanel exposes its retry control after loading is cleared.
+  } finally {
+    isLoading.value = false;
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

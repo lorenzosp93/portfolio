@@ -61,6 +61,8 @@ set it in production. Production also needs a real allowed host via
 # frontend
 cd portfolio-frontend
 npm test
+npm run test:e2e:install # first run only
+npm run test:e2e
 npm run build
 npm run lint:check
 
@@ -71,10 +73,12 @@ python3 manage.py check
 ```
 
 Frontend tests use Vitest, Vue Test Utils, and JSDOM. Run `npm test` once in
-CI or `npm run test:watch` while developing. GitHub Actions runs non-mutating
-frontend tests, lint/build checks, Django checks/tests, and both container
-builds. `npm run lint` still mutates source files; use it only when such a
-change is acceptable and inspect its diff afterward.
+CI or `npm run test:watch` while developing. Browser smoke tests use Playwright
+and Chromium; install the browser once with `npm run test:e2e:install`, then run
+them with `npm run test:e2e`. GitHub Actions runs unit/component and browser
+tests, lint/build checks, Django checks/tests, and both container builds.
+`npm run lint` still mutates source files; use it only when such a change is
+acceptable and inspect its diff afterward.
 
 ## Data, migrations, and public API
 
