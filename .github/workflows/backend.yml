@@ -56,26 +56,34 @@ jobs:
           pip install -r requirements.txt
       - name: Run migrations and checks
         env:
-          DATABASE_URL: postgres://${{ matrix.database-user }}:${{ matrix.database-password }}@${{ matrix.database-host }}:${{ matrix.database-port }}/${{ matrix.database-name }}
-          SECRET_KEY: test-secret-key
-          DEBUG: 1
-          ALLOWED_HOSTS: localhost
-          GITHUB_WORKFLOW: True
-          MODE: workflow
+          DB_ENGINE: django.db.backends.postgresql
+          DATABASE_NAME: ${{ matrix.database-name }}
+          DATABASE_USERNAME: ${{ matrix.database-user }}
+          DATABASE_PASSWORD: ${{ matrix.database-password }}
+          DATABASE_HOST: ${{ matrix.database-host }}
+          DATABASE_PORT: ${{ matrix.database-port }}
+          DJANGO_SECRET_KEY: test-secret-key
+          DEBUG: 'true'
         run: |
-          python manage.py makemigrations
-          python manage.py migrate
-          python manage.py migrate --run-syncdb
+          python manage.py makemigrations --check --dry-run
           python manage.py check
       - name: Run Tests
         env:
-          DATABASE_URL: postgres://${{ matrix.database-user }}:${{ matrix.database-password }}@${{ matrix.database-host }}:${{ matrix.database-port }}/${{ matrix.database-name }}
-          SECRET_KEY: test-secret-key
-          DEBUG: 1
-          ALLOWED_HOSTS: localhost
-          GITHUB_WORKFLOW: True
-          MODE: workflow
+          DB_ENGINE: django.db.backends.postgresql
+          DATABASE_NAME: ${{ matrix.database-name }}
+          DATABASE_USERNAME: ${{ matrix.database-user }}
+          DATABASE_PASSWORD: ${{ matrix.database-password }}
+          DATABASE_HOST: ${{ matrix.database-host }}
+          DATABASE_PORT: ${{ matrix.database-port }}
+          DJANGO_SECRET_KEY: test-secret-key
+          DEBUG: 'true'
         run: python manage.py test
+
+  container-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t portfolio-backend:test ./portfolio-backend
 
   build:
     runs-on: ubuntu-latest

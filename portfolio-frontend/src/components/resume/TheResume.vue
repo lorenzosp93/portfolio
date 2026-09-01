@@ -12,7 +12,7 @@
     <ul
       v-if="isMobile"
       ref="mobileTabs"
-      class="relative mx-3 my-3 flex flex-wrap border-b border-ink/10 text-ink dark:border-white/10 dark:text-white capitalize"
+      class="relative mx-3 my-3 flex flex-wrap border-b border-ink/10 text-ink dark:border-white/10 dark:text-white capitalize sm:hidden"
     >
       <span class="mobile-tab-bar" :style="mobileTabBarStyle" />
       <li
@@ -30,7 +30,7 @@
     </ul>
 
     <div class="relative w-full">
-      <ArrowScroller v-if="!isMobile" :scroll-container="resumeContainer" />
+      <ArrowScroller v-if="!isMobile" class="hidden sm:block" :scroll-container="resumeContainer" />
       <div
         class="overflow-hidden transition-[height] duration-300 ease-out min-h-[1vh] min-h-[1svh]"
         :style="resumeViewportStyle"
@@ -63,7 +63,7 @@ import { Ref, ref, computed, watch, nextTick, onMounted, onBeforeUnmount, reacti
 import ResumeSkills from "./Skills/ResumeSkills.vue";
 import ResumeTimeline from "./Timeline/ResumeTimeline.vue";
 import ArrowScroller from "../composables/ArrowScroller.vue";
-import { breakpointsTailwind, useBreakpoints, useEventListener } from "@vueuse/core";
+import { useEventListener, useMediaQuery } from "@vueuse/core";
 import { useVisibilityObserver } from "@/composables/visibilityObserver";
 
 const root: Ref<HTMLDivElement | null> = ref(null);
@@ -107,8 +107,8 @@ const resumeList = [
   },
 ];
 
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller("md");
+// Keep this boundary aligned with TheNavbar: its desktop navigation starts at `sm`.
+const isMobile = useMediaQuery("(max-width: 639px)");
 
 const resumeViewportStyle = computed(() => {
   if (!activePanelHeight.value) return {};

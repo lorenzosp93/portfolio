@@ -45,7 +45,6 @@ export default defineComponent({
       return this.group?.picture;
     },
   },
-  methods: {},
   props: {
     groupKey: String,
     group: Object,
@@ -53,7 +52,6 @@ export default defineComponent({
     isActive: Boolean,
     isFirstGroup: Boolean,
   },
-  mounted() {},
 });
 </script>
 

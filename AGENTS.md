@@ -1,15 +1,14 @@
 # Working in this repository
 
 This repository contains the code for a personal portfolio website. It has two
-independently runnable applications and Kubernetes deployment manifests:
+independently runnable applications:
 
 - `portfolio-frontend/`: Vue 3 + TypeScript single-page application, built with
   Vite and styled with Tailwind.
 - `portfolio-backend/`: Django 5 + Django REST Framework API.
-- `kubernetes/`: Helm charts, values, and Helmfile configuration for deployment.
 
 Read [the architecture guide](docs/ARCHITECTURE.md) before changing a boundary
-between the frontend, API, or deployment configuration. Read
+between the frontend and API. Read
 [the development guide](docs/DEVELOPMENT.md) before running or validating work.
 
 ## Guardrails
@@ -42,10 +41,11 @@ not. The currently committed checks are:
 
 ```sh
 cd portfolio-frontend && npm run build
-cd portfolio-frontend && npm run lint
-cd portfolio-backend && python manage.py test
+cd portfolio-frontend && npm run lint:check
+cd portfolio-backend && python3 manage.py test
 ```
 
-The frontend lint script applies fixes (`--fix`), so do not run it for a
-read-only inspection. There is no committed CI workflow or container-compose
-development stack; do not imply that either exists.
+`npm run lint` applies fixes (`--fix`); use `npm run lint:check` for validation.
+CI checks builds, linting, Django checks/tests, and both container builds. There
+is no committed container-compose development stack; do not imply that one
+exists.

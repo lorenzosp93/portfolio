@@ -7,22 +7,23 @@
 - PostgreSQL is required only when choosing the production-style database;
   Django otherwise uses a local SQLite database by default.
 
-Use local virtual environments and local environment-variable files as needed,
-but do not commit credentials, VAPID keys, SMTP credentials, or cloud-storage
-keys.
+Copy `portfolio-backend/.env.example` and `portfolio-frontend/.env.example` to
+local, ignored environment files as needed. The templates contain only safe
+development defaults; do not commit credentials, VAPID keys, SMTP credentials,
+or cloud-storage keys.
 
 ## Run locally
 
 Backend, from `portfolio-backend/`:
 
 ```sh
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 export DEBUG=true
 export DJANGO_SECRET_KEY=development-only-secret
-python manage.py migrate
-python manage.py runserver 8000
+python3 manage.py migrate
+python3 manage.py runserver 8000
 ```
 
 Frontend, from `portfolio-frontend/`:
@@ -45,6 +46,7 @@ variables; it can be left unconfigured for work unrelated to push notifications.
 | Django core | `DEBUG`, `DJANGO_SECRET_KEY` (or `SECRET_KEY`), `DJANGO_HOST` |
 | Database | `DB_ENGINE`, `DATABASE_NAME`, `DATABASE_USERNAME`, `DATABASE_PASSWORD`, `DATABASE_HOST`, `DATABASE_PORT` |
 | Browser/API origin | `FRONTEND_HOST`, `BACKEND_HOST`, `VITE_APP_BACKEND_URL` |
+| Frontend content | `VITE_HERO_COPY` (trusted Markdown hero copy; separate paragraphs with a blank line) |
 | Email | `EMAIL_TO`, `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `EMAIL_USE_TLS` |
 | Push | `VITE_APP_KEY`, `WEB_PUSH_PUBLIC_KEY`, `WEB_PUSH_PRIVATE_KEY`, `WEB_PUSH_ADMIN_EMAIL` |
 | Optional S3 storage | `USE_S3`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_STORAGE_BUCKET_NAME` |
@@ -58,18 +60,21 @@ set it in production. Production also needs a real allowed host via
 ```sh
 # frontend
 cd portfolio-frontend
+npm test
 npm run build
-npm run lint  # applies ESLint fixes because the script includes --fix
+npm run lint:check
 
 # backend
 cd portfolio-backend
-python manage.py test
-python manage.py check
+python3 manage.py test
+python3 manage.py check
 ```
 
-The repository has Django model and view tests, but no committed frontend test
-files or CI configuration. `npm run lint` mutates source files; use it only when
-such a change is acceptable and inspect its diff afterward.
+Frontend tests use Vitest, Vue Test Utils, and JSDOM. Run `npm test` once in
+CI or `npm run test:watch` while developing. GitHub Actions runs non-mutating
+frontend tests, lint/build checks, Django checks/tests, and both container
+builds. `npm run lint` still mutates source files; use it only when such a
+change is acceptable and inspect its diff afterward.
 
 ## Data, migrations, and public API
 
@@ -82,9 +87,9 @@ such a change is acceptable and inspect its diff afterward.
 - Contact delivery relies on SMTP configuration. Tests and local development
   should avoid sending real mail unless explicitly configured to do so.
 
-## Deployment notes
+## Container notes
 
-The backend container startup sequence assumes PostgreSQL and runs migrations
-automatically. Review a migration for production safety before building or
-deploying that image. Kubernetes configuration requires externally supplied
-secrets; the current Helmfile has only the PostgreSQL release enabled.
+The backend container startup runs migrations automatically and waits for
+PostgreSQL only when that database engine is configured. Review a migration for
+production safety before deploying the image. Infrastructure configuration is
+maintained outside this repository.

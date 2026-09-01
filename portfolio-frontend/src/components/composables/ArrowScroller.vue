@@ -43,13 +43,14 @@ let end = ref(false);
 
 function scrollToSibling(next: boolean) {
   let scrollWidth = 0;
-  if (props.scrollContainer) {
-    scrollWidth = props.scrollContainer.children[0].clientWidth ?? 0;
+  const container = props.scrollContainer;
+  if (container) {
+    scrollWidth = container.children[0].clientWidth ?? 0;
 
     if (next) {
-      props.scrollContainer.scrollLeft += scrollWidth;
+      container.scrollLeft += scrollWidth;
     } else {
-      props.scrollContainer.scrollLeft -= scrollWidth;
+      container.scrollLeft -= scrollWidth;
     }
   }
 }

@@ -18,7 +18,6 @@ Browser
        ├─ contacts: contact-email POST and CSRF token
        └─ shared: site settings and push subscriptions
 
-Kubernetes/Helm deploys the API, frontend, and PostgreSQL as separate concerns.
 ```
 
 ## Frontend
@@ -81,17 +80,16 @@ The backend defaults to SQLite when `DB_ENGINE` is unset and accepts PostgreSQL
 settings through environment variables. In non-debug mode it requires
 `DJANGO_SECRET_KEY` (or `SECRET_KEY`) and restricts CORS to `FRONTEND_HOST`.
 
-## Deployment
+## Containers
 
 The frontend Docker image builds static Vite assets and serves them through
-Nginx. The backend image runs Gunicorn; its entrypoint waits for PostgreSQL,
-collects static files, and applies migrations before starting.
+Nginx. The backend image runs Gunicorn; its entrypoint collects static files and
+applies migrations before starting. It waits for PostgreSQL only when
+`DB_ENGINE=django.db.backends.postgresql`.
 
-`kubernetes/helmfile.yaml` currently enables only the local PostgreSQL chart.
-The portfolio API, frontend, and ingress releases are present but commented out.
-Treat the values files as deployment intent, not proof of an active complete
-environment. Secrets are referenced by name and must be provisioned outside
-this repository.
+Deployment infrastructure is intentionally maintained outside this repository.
+Do not add or infer an authoritative Kubernetes configuration here without an
+explicit decision to bring infrastructure ownership back into the repository.
 
 ## High-impact change checklist
 
