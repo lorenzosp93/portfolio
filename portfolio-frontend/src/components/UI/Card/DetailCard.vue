@@ -4,7 +4,8 @@
       class="bottom-sheet shadow-xl"
       :class="{
         opened: opened,
-        closed: opened === false,
+        closing: closing,
+        closed: opened === false && closing === false,
         moving: moving,
       }"
       style="pointer-events: all"
@@ -25,7 +26,7 @@
             bottom: cardP + 'px',
             maxHeight: maxHeight + '%',
           },
-          { height: 'auto' },
+          { height: expandedCardHeight ? `${expandedCardHeight}px` : 'auto' },
           { 'padding-bottom': paddingBottom + 'px' },
         ]"
         id="detail-card"
@@ -94,7 +95,9 @@ const backdrop: Ref<HTMLElement | null> = ref(null);
 
 const initiated = ref(false);
 const maxHeight = ref(85);
+const expandedCardHeight = ref<number | null>(null);
 const opened = ref(false);
+const closing = ref(false);
 const moving = ref(false);
 const cardP: Ref<number | null> = ref(null);
 const cardH: Ref<number | null> = ref(null);
@@ -146,6 +149,62 @@ function updateDragBounds() {
   drag.value?.applyBounds({ maxY: getDownwardDragLimit(), minY: upwardDragLimit });
 }
 
+function getExpandedCardHeight(dragY: number) {
+  const initialHeight = cardH.value ?? 0;
+  const availableHeight = Math.max(getViewportHeight() - initialHeight, 0);
+  const pullDistance = Math.max(-dragY, 0);
+  const resistedPull = pullDistance * 0.55;
+  return Math.min(initialHeight + resistedPull, initialHeight + availableHeight);
+}
+
+function getContentHeight(cardHeight: number) {
+  return Math.max(cardHeight - (pan.value?.clientHeight ?? 0), 0);
+}
+
+function setContentHeight(cardHeight: number) {
+  contentH.value = `${getContentHeight(cardHeight)}px`;
+}
+
+function getViewportHeight() {
+  return window.visualViewport?.height ?? window.innerHeight;
+}
+
+function resetExpansion(animate = false) {
+  if (!expandedCardHeight.value || !card.value || !cardH.value) return;
+
+  const cardElement = card.value;
+  maxHeight.value = 100;
+  gsap.set(cardElement, { y: 0 });
+
+  if (!animate) {
+    gsap.set(cardElement, { height: cardH.value });
+    setContentHeight(cardH.value);
+    expandedCardHeight.value = null;
+    maxHeight.value = 85;
+    return;
+  }
+
+  gsap.to(cardElement, {
+    height: cardH.value,
+    duration: 0.34,
+    ease: "elastic.out(1, 0.65)",
+    overwrite: "auto",
+    onComplete: () => {
+      expandedCardHeight.value = null;
+      setContentHeight(cardH.value ?? 0);
+      maxHeight.value = 85;
+    },
+  });
+  if (content.value) {
+    gsap.to(content.value, {
+      height: getContentHeight(cardH.value),
+      duration: 0.34,
+      ease: "elastic.out(1, 0.65)",
+      overwrite: "auto",
+    });
+  }
+}
+
 function getCloseDuration(currentY: number, velocityY: number) {
   const remainingDistance = Math.max((cardH.value ?? 0) - currentY, 0);
   const downwardVelocity = Math.max(velocityY, 0);
@@ -167,7 +226,7 @@ function init() {
   if (card.value && pan.value) {
     cardP.value = 0;
     cardH.value = card.value.clientHeight;
-    contentH.value = `${cardH.value - pan.value.clientHeight}px`;
+    setContentHeight(cardH.value);
     updateDragBounds();
 
     if (!velocityTracker) {
@@ -204,10 +263,29 @@ function init() {
         onDragStart: () => {
           moving.value = true;
         },
+        onDrag: function (this: Draggable) {
+          if (this.y < 0) {
+            maxHeight.value = 100;
+            const nextCardHeight = getExpandedCardHeight(this.y);
+            expandedCardHeight.value = nextCardHeight;
+            setContentHeight(nextCardHeight);
+            gsap.set(card.value, { y: 0 });
+            return;
+          }
+
+          resetExpansion();
+          const opacity = gsap.utils.clamp(0, 1, 1 - Math.max(this.y, 0) / closeThreshold);
+          gsap.set(backdrop.value, { opacity });
+        },
         onDragEnd: function (this: Draggable) {
           moving.value = false;
           const currentY = this.y;
           const velocityY = velocityTracker?.get("y") ?? 0;
+
+          if (expandedCardHeight.value) {
+            resetExpansion(true);
+            return;
+          }
 
           if (currentY > closeThreshold) {
             close({ currentY, velocityY });
@@ -218,6 +296,12 @@ function init() {
             y: 0,
             duration: 0.22,
             ease: "power3.out",
+            overwrite: "auto",
+          });
+          gsap.to(backdrop.value, {
+            opacity: 1,
+            duration: 0.18,
+            ease: "power2.out",
             overwrite: "auto",
           });
         },
@@ -233,6 +317,7 @@ const emit = defineEmits(["cardOpened", "cardClosed"]);
 
 function open() {
   lockBodyScroll();
+  closing.value = false;
   clearNudgeTimer();
   hasNudgedContent.value = false;
   init();
@@ -248,8 +333,10 @@ type DragCloseState = {
 
 function close(dragState: DragCloseState | null) {
   if (opened.value) {
-    clearNudgeTimer();
-    unlockBodyScroll();
+  clearNudgeTimer();
+  unlockBodyScroll();
+  closing.value = true;
+    resetExpansion();
     if (dragState != null) {
       const closeDuration = getCloseDuration(
         dragState.currentY,
@@ -274,9 +361,13 @@ function close(dragState: DragCloseState | null) {
         0
       );
       tl.eventCallback("onComplete", function (this: typeof tl) {
+        closing.value = false;
         this.kill();
       });
     } else {
+      timeline.value?.eventCallback("onReverseComplete", () => {
+        closing.value = false;
+      });
       timeline.value?.reverse();
     }
     opened.value = false;
@@ -287,6 +378,22 @@ function close(dragState: DragCloseState | null) {
 function handleClickOnBottomSheet(event: MouseEvent) {
   close(null);
   event.stopPropagation();
+}
+
+function releaseActiveDrag() {
+  if (!drag.value?.isPressed) return;
+
+  // Let Draggable run its normal onDragEnd callback so the card either closes
+  // or returns to its resting position.
+  drag.value.endDrag();
+}
+
+function handleWindowMouseOut(event: MouseEvent) {
+  // A null related target means the pointer left the browser window, rather
+  // than simply moving between elements within the page.
+  if (event.relatedTarget === null) {
+    releaseActiveDrag();
+  }
 }
 
 function prefersReducedMotion() {
@@ -379,6 +486,13 @@ onMounted(() => {
     updateDragBounds();
     maybeNudgeContentAfterRender();
   });
+  useEventListener(window, "mouseout", handleWindowMouseOut);
+  useEventListener(window, "blur", releaseActiveDrag);
+  useEventListener(document, "visibilitychange", () => {
+    if (document.hidden) {
+      releaseActiveDrag();
+    }
+  });
 });
 </script>
 
@@ -411,12 +525,12 @@ onMounted(() => {
     backdrop-filter: blur(3px);
   }
 }
-.opened .bottom-sheet__backdrop {
+.opened .bottom-sheet__backdrop,
+.closing .bottom-sheet__backdrop {
   visibility: visible;
 }
 .closed .bottom-sheet__backdrop {
   visibility: hidden;
-  transition-delay: 0.45s;
 }
 .bottom-sheet__card {
   width: 100%;

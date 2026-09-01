@@ -6,7 +6,12 @@
     "dev": "vite --port 8080",
     "build": "vite build",
     "serve": "vite preview",
+    "test": "vitest run --config vitest.config.ts",
+    "test:watch": "vitest --config vitest.config.ts",
+    "test:e2e": "playwright test",
+    "test:e2e:install": "playwright install chromium",
     "lint": "eslint --ext .ts,.vue,.js --ignore-path .gitignore --fix src",
+    "lint:check": "eslint --ext .ts,.vue,.js --ignore-path .gitignore src",
     "format": "prettier .  --write"
   },
   "dependencies": {
@@ -24,6 +29,7 @@
     "vue-axios": "^3.5.2"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@tailwindcss/typography": "^0.5.9",
     "@types/marked": "^4.0.8",
     "@typescript-eslint/eslint-plugin": "^5.52.0",
@@ -32,6 +38,7 @@
     "eslint": "^8.34.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-vue": "^8.7.1",
+    "jsdom": "^30.0.1",
     "katex": "^0.16.10",
     "postcss": "^8.4.21",
     "prettier": "^3.3.0",
@@ -47,6 +54,11 @@
     "env": {
       "node": true
     },
+    "globals": {
+      "defineProps": "readonly",
+      "defineEmits": "readonly",
+      "GSAPTimeline": "readonly"
+    },
     "parser": "vue-eslint-parser",
     "extends": [
       "plugin:vue/base",
@@ -54,11 +66,18 @@
       "plugin:vue/vue3-essential",
       "plugin:vue/vue3-recommended",
       "plugin:@typescript-eslint/recommended",
-      "plugin:prettier-recommended",
+      "prettier",
       "eslint-config-prettier"
     ],
     "rules": {},
-    "parserOptions": {},
+    "parserOptions": {
+      "parser": "@typescript-eslint/parser",
+      "ecmaVersion": "latest",
+      "sourceType": "module",
+      "extraFileExtensions": [
+        ".vue"
+      ]
+    },
     "plugins": [
       "@typescript-eslint"
     ]

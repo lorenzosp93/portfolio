@@ -84,21 +84,8 @@
       <div
         class="m-2 prose-sm md:prose lg:prose-xl prose-slate font-sans first-letter:text-2xl indent-3 dark:prose-invert prose-strong:text-coral dark:prose-strong:text-coralSoft lg:prose-lg xl:prose-xl"
       >
-        <p>
-          I'm a Product leader deeply rooted in <strong>software</strong> and
-          <strong>energy engineering</strong>. Throughout my career, I've
-          immersed myself in various roles, thriving in both scrappy and
-          established environments. My approach is defined by a constant drive
-          for <strong>innovation</strong> and an ability to decipher complex
-          problems.
-        </p>
-        <p>
-          Actively working on refining and expanding my skillset, I have a clear
-          vision: to lay the groundwork for my own <strong>venture</strong> in
-          the near future. I'm always on the lookout for collaboration with
-          <strong>forward-thinkers</strong>. Ready for the next adventure in
-          innovation? Let's dive in together.
-        </p>
+        <!-- VITE_HERO_COPY is trusted build-time configuration, rendered as Markdown. -->
+        <p v-for="paragraph in heroParagraphs" :key="paragraph" v-html="paragraph"></p>
       </div>
     </div>
     <button
@@ -127,6 +114,7 @@
 
 <script setup lang="ts">
 import { useVisibilityObserver } from "@/composables/visibilityObserver";
+import { marked } from "marked";
 import { Ref, computed, ref } from "vue";
 
 /**
@@ -137,6 +125,15 @@ defineEmits(["heroLoaded"]);
 const root: Ref<HTMLDivElement | null> = ref(null);
 const { ratio } = useVisibilityObserver("theHero", root);
 const showScrollCue = computed(() => ratio.value > 0.75);
+const defaultHeroCopy = `I'm a Product leader deeply rooted in **software** and **energy engineering**. Throughout my career, I've immersed myself in various roles, thriving in both scrappy and established environments. My approach is defined by a constant drive for **innovation** and an ability to decipher complex problems.
+
+Actively working on refining and expanding my skillset, I have a clear vision: to lay the groundwork for my own **venture** in the near future. I'm always on the lookout for collaboration with **forward-thinkers**. Ready for the next adventure in innovation? Let's dive in together.`;
+const heroParagraphs = computed(() =>
+  (import.meta.env.VITE_HERO_COPY?.trim() || defaultHeroCopy)
+    .split(/\n\s*\n/)
+    .filter(Boolean)
+    .map((paragraph) => marked.parseInline(paragraph) as string)
+);
 
 function scrollToResume() {
   document.getElementById("the-resume")?.scrollIntoView({

@@ -54,6 +54,11 @@ Temporary Items
 .history
 .ionide
 
+# Local environment configuration (the safe templates remain versioned)
+.env
+.env.*
+!.env.example
+
 # Support for Project snippet scope
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,visualstudiocode

@@ -48,11 +48,11 @@ export function useResumeLimitOffset<T extends ResumeLimitOffsetType>(
 
   async function getLimitOffsetEntries(limit: number) {
     cacheInvalidation<T>(data, expiry);
-    if (!data.value.results.length || data.value.next?.length) {
+    if (!data.value.results.length || data.value.next) {
       return backendService
         .loadResumeEntries<T>(resource, {
           limit,
-          overrideLink: data.value.next.length ? data.value.next : undefined,
+          overrideLink: data.value.next || undefined,
         })
         .then((response: AxiosResponse<LimitOffsetResult<T>>) => {
           data.value.count = response.data.count;
@@ -76,13 +76,14 @@ export function useBlogLimitOffset(resource: string) {
 
   async function getLimitOffsetEntries(limit: number, ttlInMinutes: number) {
     cacheInvalidation(data, expiry);
-    if (!data.value.results.length || data.value.next?.length)
+    if (!data.value.results.length || data.value.next)
       return backendService
         .loadBlogEntries({
           limit,
-          overrideLink: data.value.next.length ? data.value.next : undefined,
+          overrideLink: data.value.next || undefined,
         })
         .then((response: AxiosResponse<LimitOffsetResult<BlogPost>>) => {
+          data.value.count = response.data.count;
           data.value.results = [
             ...data.value.results,
             ...response.data.results,

@@ -75,22 +75,22 @@ const store = computed(() => {
 });
 
 watch(isActive, (val) => {
-  if (val) {
-    if (!store.value.entities.length && !isLoading.value) {
-      isLoading.value = true;
-      store.value.getLimitOffsetEntries(entriesLimit()).then(() => {
-        isLoading.value = false;
-      });
-    }
+  if (val && !store.value.entities.length) {
+    void loadEntries();
   }
 });
 
-function loadEntries() {
+async function loadEntries() {
+  if (isLoading.value) return;
   isLoading.value = true;
-  store.value.getLimitOffsetEntries(entriesLimit()).then(() => {
-    isLoading.value = false;
+  try {
+    await store.value.getLimitOffsetEntries(entriesLimit());
     emit("loadComplete");
-  });
+  } catch {
+    // ResumePanel exposes its retry control after loading is cleared.
+  } finally {
+    isLoading.value = false;
+  }
 }
 </script>
 

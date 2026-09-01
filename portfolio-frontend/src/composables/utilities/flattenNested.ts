@@ -2,7 +2,7 @@ function checkDeepEquality(
   a: any,
   b: any,
   maxRecursion: number,
-  counter: number = 0
+  counter = 0
 ): boolean {
   if (!(a instanceof Object)) {
     return a == b;

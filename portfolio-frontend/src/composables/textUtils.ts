@@ -14,17 +14,19 @@ export function useTextUtils(props: {
     if (props.created_by?.first_name || props.created_by?.last_name) {
       return `${props.created_by?.first_name} ${props.created_by?.last_name}`;
     }
+    return "";
   });
 
   const created_at__date = computed(() => {
     if (props.created_at) {
-      let date = new Date(props.created_at);
+      const date = new Date(props.created_at);
       return date.toLocaleDateString(undefined, {
         year: "numeric",
         month: "short",
         day: "numeric",
       });
     }
+    return "";
   });
 
   const html_content = computed(() => {

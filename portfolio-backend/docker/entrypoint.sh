@@ -8,7 +8,7 @@ set -o errexit
 set -o pipefail  
 set -o nounset
 
-# Section 2: Health of dependent services  
+# Section 2: Health of dependent services
 postgres_ready() {  
     python << END  
 import sys
@@ -54,11 +54,13 @@ END
 # END
 # }
 
-until postgres_ready; do  
-  >&2 echo "Waiting for PostgreSQL to become available..."  
-  sleep 10  
-done  
->&2 echo "PostgreSQL is available"
+if [ "${DB_ENGINE:-django.db.backends.sqlite3}" = "django.db.backends.postgresql" ]; then
+  until postgres_ready; do
+    >&2 echo "Waiting for PostgreSQL to become available..."
+    sleep 10
+  done
+  >&2 echo "PostgreSQL is available"
+fi
 
 # until redis_ready; do  
 #   >&2 echo "Waiting for Redis to become available..."  

@@ -12,8 +12,15 @@ def send_notifications_for_subscriptions(
 
     for subscription in subscriptions:
         try:
+            subscription_info = {
+                'endpoint': subscription.endpoint,
+                'keys': {
+                    'p256dh': subscription.keys.p256dh,
+                    'auth': subscription.keys.auth,
+                },
+            }
             webpush(
-                apps.get_model('shared', 'Subscription')(subscription).data,
+                subscription_info,
                 json.dumps(payload),
                 vapid_private_key=WEBPUSH_SETTINGS.get('VAPID_PRIVATE_KEY'),
                 vapid_claims={

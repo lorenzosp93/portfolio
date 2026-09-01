@@ -4,6 +4,7 @@
       :dataLoaded="projectStore.projects.length > 0"
       :ix="ix"
       :isLoading="isLoading"
+      @load-entries="loadEntries"
     >
       <template v-slot:content>
         <ol
@@ -75,20 +76,22 @@ const emit = defineEmits(["loadComplete"]);
 const projectStore = useProjectStore();
 
 watch(isActive, (val) => {
-  if (val && !projectStore.projects.length && !isLoading.value) {
-    isLoading.value = true;
-    projectStore.getLimitOffsetEntries(entriesLimit()).then(() => {
-      isLoading.value = false;
-    });
+  if (val && !projectStore.projects.length) {
+    void loadEntries();
   }
 });
 
-function loadEntries() {
+async function loadEntries() {
+  if (isLoading.value) return;
   isLoading.value = true;
-  projectStore.getLimitOffsetEntries(entriesLimit()).then(() => {
-    isLoading.value = false;
+  try {
+    await projectStore.getLimitOffsetEntries(entriesLimit());
     emit("loadComplete");
-  });
+  } catch {
+    // ResumePanel exposes its retry control after loading is cleared.
+  } finally {
+    isLoading.value = false;
+  }
 }
 </script>
 

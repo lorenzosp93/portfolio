@@ -9,6 +9,6 @@ app_name = 'contacts'
 
 
 urlpatterns = [
-    path('get-token/', get_csrf_token),
-    path('', ContactView.as_view())
+    path('get-token/', get_csrf_token, name='get-token'),
+    path('', ContactView.as_view(), name='contacts'),
 ]

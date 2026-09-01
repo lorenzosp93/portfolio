@@ -44,6 +44,7 @@ provide("truncationAmount", truncationAmount);
 provide("entriesLimit", entriesLimit);
 
 onUnmounted(() => {
+  animationRevision += 1;
   cleanupAnimation();
   clearTimeout(resizeTimer);
 });
@@ -76,32 +77,30 @@ function setupAnimation() {
 }
 
 function recalculateAnimation() {
-  cleanupAnimation();
-  resetHeroPictureTransform();
-
+  const revision = ++animationRevision;
   requestAnimationFrame(() => {
-    const coordinates = calculateCoordinatesAnimation("heroPicture", "heroLogo");
-    if (!coordinates?.scaleX || !coordinates?.scaleY) return;
+    if (revision !== animationRevision) return;
 
-    animationMedia = gsap.matchMedia();
-    animationMedia.add(
-      {
-        all: "(min-width: 0px)",
-        mobile: "(hover: none) and (pointer: coarse)",
-      },
-      (context) => {
-        addHeroAnimation(coordinates, context.conditions?.mobile === true);
-      }
-    );
+    // Measurements must be taken from the picture's untransformed layout
+    // position. Otherwise a resize partway through the scroll animation uses
+    // the previous tween as its new origin and compounds the translation.
+    cleanupAnimation();
+    resetHeroPictureTransform();
+
+    const coordinates = calculateCoordinatesAnimation("heroPicture", "heroLogo");
+    if (!coordinates?.scaleX || !coordinates?.scaleY) {
+      return;
+    }
+
+    const isMobile = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+    addHeroAnimation(coordinates, isMobile);
   });
 }
 
 const timeline: Ref<GSAPTimeline | null> = ref(null);
-let animationSignature = "";
-let animationMedia = gsap.matchMedia();
+let animationRevision = 0;
 
 function cleanupAnimation() {
-  animationMedia.revert();
   timeline.value?.scrollTrigger?.kill();
   timeline.value?.kill();
   timeline.value = null;
@@ -118,8 +117,8 @@ function resetHeroPictureTransform() {
     scaleY: 1,
     opacity: 1,
     transformOrigin: "50% 50%",
-    willChange: "auto",
-    force3D: false,
+    willChange: "transform",
+    force3D: true,
   });
 }
 
@@ -131,15 +130,6 @@ type DOMCoordinates = {
 };
 
 function addHeroAnimation(coordinates: DOMCoordinates, isMobile: boolean) {
-  const nextSignature = JSON.stringify({ ...coordinates, isMobile });
-  if (timeline.value && animationSignature === nextSignature) {
-    timeline.value.scrollTrigger?.refresh();
-    return;
-  }
-
-  cleanupTimelineOnly();
-  animationSignature = nextSignature;
-  resetHeroPictureTransform();
   gsap.set("#the-navbar", { opacity: 0 });
 
   const imageTween: TweenVars = {
@@ -175,12 +165,6 @@ function addHeroAnimation(coordinates: DOMCoordinates, isMobile: boolean) {
   tl.scrollTrigger?.refresh();
 }
 
-function cleanupTimelineOnly() {
-  timeline.value?.scrollTrigger?.kill();
-  timeline.value?.kill();
-  timeline.value = null;
-}
-
 function calculateCoordinatesAnimation(
   originTag: string,
   destinationTag: string
@@ -192,19 +176,27 @@ function calculateCoordinatesAnimation(
   const originBox = originElement?.getBoundingClientRect();
   const destinationBox = destinationElement?.getBoundingClientRect();
   const triggerBox = triggerElement?.getBoundingClientRect();
+  const stickyContainer = destinationElement?.closest<HTMLElement>("nav");
+  const stickyContainerBox = stickyContainer?.getBoundingClientRect();
 
-  if (!originBox || !destinationBox || !triggerBox) {
+  if (
+    !originBox ||
+    !destinationBox ||
+    !triggerBox ||
+    !stickyContainer ||
+    !stickyContainerBox
+  ) {
     return { deltaX: 0, deltaY: 0, scaleX: 1, scaleY: 1 };
   }
 
   const scrollY = window.scrollY;
   const triggerTop = triggerBox.top + scrollY;
   const triggerEnd = triggerTop + triggerBox.height;
-  const destinationScrollY = Math.min(scrollY, triggerEnd);
-
-  const originCenterY = originBox.y + originBox.height / 2 + scrollY;
-  const destinationCenterY =
-    destinationBox.y + destinationBox.height / 2 + destinationScrollY;
+  const originCenterY = originBox.top + originBox.height / 2 + scrollY;
+  const stickyTop = Number.parseFloat(getComputedStyle(stickyContainer).top) || 0;
+  const destinationOffsetY = destinationBox.top - stickyContainerBox.top;
+  const destinationEndCenterY =
+    triggerEnd + stickyTop + destinationOffsetY + destinationBox.height / 2;
 
   return {
     deltaX:
@@ -212,7 +204,7 @@ function calculateCoordinatesAnimation(
       destinationBox.width / 2 -
       originBox.x -
       originBox.width / 2,
-    deltaY: destinationCenterY - originCenterY,
+    deltaY: destinationEndCenterY - originCenterY,
     scaleX: destinationBox.width / originBox.width,
     scaleY: destinationBox.height / originBox.height,
   };
