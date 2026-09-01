@@ -83,7 +83,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: docker build -t portfolio-backend:test ./portfolio-backend
+      - run: docker build -f ./portfolio-backend/docker/Dockerfile -t portfolio-backend:test ./portfolio-backend
 
   build:
     runs-on: ubuntu-latest
