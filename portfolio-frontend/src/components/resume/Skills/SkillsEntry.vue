@@ -1,6 +1,6 @@
 <template>
   <div class="py-3 px-5 flex">
-    <p class="text-md text-ink dark:text-white">
+    <p class="text-base text-ink dark:text-white lg:text-lg">
       {{ name }}
     </p>
     <div

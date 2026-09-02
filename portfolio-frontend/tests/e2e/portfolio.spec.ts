@@ -120,7 +120,7 @@ test("expands and restores the detail card while keeping its bottom anchored", a
   await openButton.scrollIntoViewIfNeeded();
   await openButton.click();
 
-  const card = page.locator("#detail-card");
+  const card = page.locator(".bottom-sheet.opened #detail-card");
   const pan = card.locator(".bottom-sheet__pan");
   await expect(card).toBeVisible();
   await page.waitForTimeout(450);

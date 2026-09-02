@@ -67,7 +67,7 @@
             @scroll.passive="updateScrollAffordances"
           >
             <div
-              class="container my-3 text-sm text-ink dark:text-gray-100 px-auto"
+              class="container my-3 text-sm leading-relaxed text-ink dark:text-gray-100 px-auto lg:text-base"
             >
               <slot name="inner-content">
                 Here goes the main content of the card. Lorem ipsum dolor sit,
