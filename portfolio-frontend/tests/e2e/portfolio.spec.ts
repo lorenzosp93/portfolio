@@ -27,6 +27,18 @@ test("keeps mobile and desktop resume controls mutually exclusive", async ({ pag
   ).toBeVisible();
 });
 
+test("returns to the hero from the mobile About menu", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 800 });
+  await page.goto("/");
+  await page.locator("#the-resume").scrollIntoViewIfNeeded();
+  await page.waitForFunction(() => window.scrollY > 100);
+
+  await page.getByRole("button", { name: "Open main menu" }).click();
+  await page.getByRole("button", { name: "About", exact: true }).click();
+
+  await page.waitForFunction(() => window.scrollY < 2);
+});
+
 test("recalculates the hero animation from its natural position after resize", async ({
   page,
 }) => {
@@ -47,12 +59,15 @@ test("recalculates the hero animation from its natural position after resize", a
     const box = element.getBoundingClientRect();
     return box.top + window.scrollY + box.height;
   });
-  await page.evaluate((scrollY) => window.scrollTo(0, scrollY), heroEnd);
-  await page.waitForFunction(
-    (scrollY) => Math.abs(window.scrollY - scrollY) < 2,
-    heroEnd
-  );
-  await page.waitForTimeout(100);
+  await page.evaluate((scrollY) => {
+    const root = document.documentElement;
+    const pageContainer = document.querySelector<HTMLElement>(".page-scroll-container");
+    root.style.scrollBehavior = "auto";
+    root.style.scrollSnapType = "none";
+    if (pageContainer) pageContainer.style.scrollSnapType = "none";
+    window.scrollTo(0, scrollY);
+  }, heroEnd);
+  await page.waitForTimeout(250);
 
   const endpoint = await page.evaluate(() => {
     const hero = document.querySelector<HTMLElement>("#heroPicture")!.getBoundingClientRect();

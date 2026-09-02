@@ -43,17 +43,18 @@ variables; it can be left unconfigured for work unrelated to push notifications.
 
 | Area | Variables |
 | --- | --- |
-| Django core | `DEBUG`, `DJANGO_SECRET_KEY` (or `SECRET_KEY`), `DJANGO_HOST` |
+| Django core | `DEBUG`, `DJANGO_SECRET_KEY` (or `SECRET_KEY`), `DJANGO_ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS`; legacy: `DJANGO_HOST` |
 | Database | `DB_ENGINE`, `DATABASE_NAME`, `DATABASE_USERNAME`, `DATABASE_PASSWORD`, `DATABASE_HOST`, `DATABASE_PORT` |
 | Browser/API origin | `FRONTEND_HOST`, `BACKEND_HOST`, `VITE_APP_BACKEND_URL` |
 | Frontend content | `VITE_HERO_COPY` (trusted Markdown hero copy; separate paragraphs with a blank line) |
 | Email | `EMAIL_TO`, `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `EMAIL_USE_TLS` |
 | Push | `VITE_APP_KEY`, `WEB_PUSH_PUBLIC_KEY`, `WEB_PUSH_PRIVATE_KEY`, `WEB_PUSH_ADMIN_EMAIL` |
-| Optional S3 storage | `USE_S3`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_STORAGE_BUCKET_NAME` |
+| Optional S3 storage | `USE_S3`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_STORAGE_BUCKET_NAME`, `AWS_S3_CUSTOM_DOMAIN` |
 
 `DEBUG` is parsed as a boolean (`1`, `true`, `yes`, or `on` are truthy). Do not
-set it in production. Production also needs a real allowed host via
-`DJANGO_HOST`.
+set it in production. Production needs comma-separated allowed hosts in
+`DJANGO_ALLOWED_HOSTS` and full origins (including scheme) in
+`CSRF_TRUSTED_ORIGINS`. `DJANGO_HOST` remains supported for older deployments.
 
 ## Checks
 

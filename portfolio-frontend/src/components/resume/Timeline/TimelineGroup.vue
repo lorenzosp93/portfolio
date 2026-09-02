@@ -1,6 +1,6 @@
 <template>
   <div
-    class="my-5 mx-5 lg:ml-10 justify-start rounded-2xl bg-sand shadow-sm ring-1 ring-ink/10 dark:bg-nightElevated dark:text-gray-300 dark:ring-white/10 z-1"
+    class="my-4 mx-3 justify-start rounded-2xl bg-surface/70 shadow-sm ring-1 ring-ink/10 dark:bg-nightElevated/70 dark:text-gray-300 dark:ring-white/10 sm:mx-5 lg:ml-10 z-1"
   >
     <span
       class="flex absolute -translate-x-1/2 mt-3 left-0 justify-center items-center h-7 lg:w-10 aspect-square rounded-full bg-paper ring-4 ring-paper dark:bg-night dark:ring-night"
@@ -12,7 +12,7 @@
       />
     </span>
     <h3
-      class="flex items-center mx-5 pt-3 align-text-bottom text-lg font-semibold text-ink dark:text-white"
+      class="flex items-center mx-4 pt-4 align-text-bottom text-base font-semibold text-ink dark:text-white sm:mx-5 sm:text-lg"
     >
       {{ entityName }}
     </h3>

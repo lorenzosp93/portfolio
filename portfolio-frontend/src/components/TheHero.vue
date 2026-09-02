@@ -1,9 +1,12 @@
 <template>
   <section
     ref="root"
-    class="relative mx-auto flex min-h-screen w-full flex-wrap text-ink dark:text-white"
+    class="relative flex min-h-screen w-full items-center overflow-x-clip px-5 py-20 text-ink dark:text-white sm:px-8"
   >
-    <div class="relative m-auto flex-initial w-1/2 py-5 sm:w-1/3">
+    <div
+      class="hero-layout mx-auto grid w-full max-w-7xl items-center gap-10 sm:grid-cols-[minmax(17rem,0.8fr)_minmax(0,1.2fr)] sm:gap-12 lg:gap-20"
+    >
+    <div class="relative min-w-0 py-5">
       <div class="relative mx-auto h-56 w-56 md:h-72 md:w-72">
         <div
           class="absolute z-10 left-1/2 top-1/2 h-44 w-56 -translate-x-1/2 -translate-y-1/2 rotate-[-9deg] rounded-[42%_58%_48%_52%/58%_39%_61%_42%] bg-tealSoft/80 shadow-xl ring-1 ring-teal/20 dark:bg-teal/25 dark:ring-tealSoft/20 md:h-56 md:w-72"
@@ -30,7 +33,7 @@
       <h1 class="z-20 m-5 mt-8 text-center text-2xl md:text-3xl lg:text-4xl font-bold md:mt-10">
         Hi, I'm <span class="text-coral dark:text-coralSoft">Lorenzo</span>
       </h1>
-      <div class="container flex mt-5">
+      <div class="flex mt-5">
         <!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
         <a
           class="ml-auto fill-muted transition hover:fill-coral dark:fill-gray-300 dark:hover:fill-coralSoft"
@@ -79,35 +82,28 @@
         </a>
       </div>
     </div>
-    <div></div>
-    <div class="relative z-20 m-auto flex-initial w-4/5 sm:w-2/3">
+    <div class="relative z-20 min-w-0 max-w-2xl justify-self-center sm:justify-self-start">
+      <p
+        class="mb-4 text-center text-xs font-bold uppercase tracking-[0.24em] text-teal dark:text-tealSoft sm:text-left"
+      >
+        Product · Software · Energy
+      </p>
       <div
-        class="m-2 prose-sm md:prose lg:prose-xl prose-slate font-sans first-letter:text-2xl indent-3 dark:prose-invert prose-strong:text-coral dark:prose-strong:text-coralSoft lg:prose-lg xl:prose-xl"
+        class="hero-copy prose prose-slate max-w-none font-sans text-center leading-relaxed dark:prose-invert prose-p:my-4 prose-strong:text-coral dark:prose-strong:text-coralSoft sm:text-left lg:prose-lg"
       >
         <!-- VITE_HERO_COPY is trusted build-time configuration, rendered as Markdown. -->
         <p v-for="paragraph in heroParagraphs" :key="paragraph" v-html="paragraph"></p>
       </div>
     </div>
+    </div>
     <button
-      v-if="showScrollCue"
-      class="hero-scroll-cue"
+      class="hero-scroll-indicator"
       type="button"
-      aria-label="Scroll to resume"
+      aria-label="Scroll to explore the portfolio"
       @click="scrollToResume"
     >
-      <span>Scroll</span>
-      <svg
-        class="h-4 w-4"
-        viewBox="0 0 20 20"
-        fill="currentColor"
-        aria-hidden="true"
-      >
-        <path
-          fill-rule="evenodd"
-          d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-          clip-rule="evenodd"
-        />
-      </svg>
+      <span>Scroll to explore</span>
+      <span class="hero-scroll-line" aria-hidden="true" />
     </button>
   </section>
 </template>
@@ -123,11 +119,8 @@ import { Ref, computed, ref } from "vue";
 defineEmits(["heroLoaded"]);
 
 const root: Ref<HTMLDivElement | null> = ref(null);
-const { ratio } = useVisibilityObserver("theHero", root);
-const showScrollCue = computed(() => ratio.value > 0.75);
-const defaultHeroCopy = `I'm a Product leader deeply rooted in **software** and **energy engineering**. Throughout my career, I've immersed myself in various roles, thriving in both scrappy and established environments. My approach is defined by a constant drive for **innovation** and an ability to decipher complex problems.
-
-Actively working on refining and expanding my skillset, I have a clear vision: to lay the groundwork for my own **venture** in the near future. I'm always on the lookout for collaboration with **forward-thinkers**. Ready for the next adventure in innovation? Let's dive in together.`;
+useVisibilityObserver("theHero", root);
+const defaultHeroCopy = `I'm a **product leader** with a background in **software** and **energy engineering**. I turn complex problems into focused products, bringing technical depth and pragmatic execution to teams at every stage.`;
 const heroParagraphs = computed(() =>
   (import.meta.env.VITE_HERO_COPY?.trim() || defaultHeroCopy)
     .split(/\n\s*\n/)
@@ -142,26 +135,49 @@ function scrollToResume() {
     inline: "nearest",
   });
 }
+
 </script>
 
 <style scoped>
-.hero-scroll-cue {
-  @apply fixed bottom-5 left-1/2 z-30 flex -translate-x-1/2 items-center gap-1 rounded-full bg-ink/90 px-3 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-white shadow-lg ring-1 ring-white/20 backdrop-blur-md transition hover:-translate-y-0.5 hover:bg-teal hover:text-white dark:bg-white/90 dark:text-night dark:ring-night/20 dark:hover:bg-tealSoft;
-  animation: hero-scroll-cue-bob 1.6s ease-in-out infinite;
+.hero-scroll-indicator {
+  @apply absolute bottom-5 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2 bg-transparent px-3 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-muted transition hover:text-teal focus:outline-none focus-visible:ring-2 focus-visible:ring-teal dark:text-gray-400 dark:hover:text-tealSoft;
 }
 
-@keyframes hero-scroll-cue-bob {
+.hero-scroll-line {
+  @apply block h-8 w-px origin-top bg-current;
+  animation: hero-scroll-line-pulse 1.8s ease-in-out infinite;
+}
+
+@media (max-width: 420px) {
+  .hero-layout {
+    row-gap: 0.75rem;
+  }
+
+  .hero-copy {
+    font-size: 0.875rem;
+    line-height: 1.55;
+  }
+
+  .hero-copy :deep(p) {
+    margin-bottom: 0.75rem;
+    margin-top: 0.75rem;
+  }
+}
+
+@keyframes hero-scroll-line-pulse {
   0%,
   100% {
-    transform: translate(-50%, 0);
+    opacity: 0.35;
+    transform: scaleY(0.45);
   }
   50% {
-    transform: translate(-50%, 0.45rem);
+    opacity: 1;
+    transform: scaleY(1);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-scroll-cue {
+  .hero-scroll-line {
     animation: none;
   }
 }

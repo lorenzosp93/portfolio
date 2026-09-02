@@ -1,5 +1,5 @@
 <template>
-  <li @click="openDetails" class="mx-3 my-3 z-2">
+  <li @click="openDetails" class="mx-2 my-2 z-2 sm:mx-3 sm:my-3">
     <span
       class="absolute mt-5 left-0 -translate-x-1/2 ring-4 ring-paper dark:ring-night"
     >
@@ -8,31 +8,31 @@
       ></div>
     </span>
     <div
-      class="cursor-pointer rounded-2xl bg-surface p-3 shadow-sm ring-1 ring-ink/10 transition hover:ring-teal/30 dark:bg-nightSurface dark:ring-white/10"
+      class="cursor-pointer rounded-xl bg-paper/45 p-3 ring-1 ring-transparent transition hover:bg-paper/75 hover:ring-teal/30 dark:bg-night/45 dark:hover:bg-night/70 dark:hover:ring-tealSoft/30 sm:p-4"
     >
-      <div class="justify-between items-center mb-3 w-full">
+      <div class="mb-2 flex w-full flex-wrap items-start justify-between gap-x-3 gap-y-1">
         <time
-          class="float-right ml-3 rounded-xl bg-paper/70 px-2.5 py-1 text-xs sm:text-sm font-normal text-muted shadow-sm dark:bg-night dark:text-gray-300 sm:order-last sm:mb-0"
+          class="order-2 rounded-full bg-surface/80 px-2.5 py-1 text-[0.68rem] font-normal text-muted ring-1 ring-ink/5 dark:bg-nightSurface dark:text-gray-300 dark:ring-white/10 sm:text-xs"
         >
           {{ start_date__date }} — {{ end_date__date }}
         </time>
-        <p class="font-semibold text-ink dark:text-white">
+        <p class="order-1 min-w-0 flex-1 font-semibold text-ink dark:text-white">
           {{ name }}
         </p>
-        <p class="text-xs sm:text-sm text-teal dark:text-tealSoft">
+        <p class="order-3 w-full text-xs text-teal dark:text-tealSoft sm:text-sm">
           {{ location }}
         </p>
       </div>
-      <div class="relative rounded-xl bg-paper/70 shadow-sm dark:bg-night">
+      <div class="relative border-t border-ink/5 pt-2 dark:border-white/10">
         <div
           ref="descriptionEl"
-          class="timeline-description overflow-hidden p-2 text-xs sm:text-sm font-normal text-muted dark:text-gray-300"
+          class="timeline-description overflow-hidden text-xs font-normal leading-relaxed text-muted dark:text-gray-300 sm:text-sm"
           :class="descriptionHeightClass"
           v-html="renderedDescription"
         />
         <div
           v-if="isDescriptionClipped"
-          class="pointer-events-none absolute inset-x-0 bottom-0 flex justify-end rounded-b-xl bg-gradient-to-t from-paper via-paper/90 to-transparent p-2 pt-8 dark:from-night dark:via-night/90"
+          class="pointer-events-none absolute inset-x-0 bottom-0 flex justify-end bg-gradient-to-t from-paper via-paper/90 to-transparent pt-8 dark:from-night dark:via-night/90"
         >
           <span
             class="rounded-full bg-surface/95 px-2 py-0.5 text-sm font-bold leading-none tracking-wide text-coral shadow-sm ring-1 ring-coral/20 dark:bg-nightSurface/95 dark:text-coralSoft dark:ring-coralSoft/20"
@@ -74,8 +74,8 @@ export default defineComponent({
     },
     descriptionHeightClass() {
       return this.isFirstEntry
-        ? "max-h-48 md:max-h-64 lg:max-h-72"
-        : "max-h-24 md:max-h-32 lg:max-h-36";
+        ? "max-h-32 sm:max-h-40 md:max-h-48"
+        : "max-h-20 sm:max-h-24 md:max-h-28";
     },
     start_date__date() {
       let date = new Date(this.start_date);

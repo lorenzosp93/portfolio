@@ -17,6 +17,13 @@ def env_bool(name, default=False):
     return value.strip().lower() in ('1', 'true', 'yes', 'on')
 
 
+def env_list(name, default=()):
+    value = os.environ.get(name)
+    if value is None:
+        return list(default)
+    return [item.strip() for item in value.split(',') if item.strip()]
+
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -61,14 +68,20 @@ HOST = os.environ.get('DJANGO_HOST', None)
 if DEBUG:
     ALLOWED_HOSTS = ['*']
 else:
-    ALLOWED_HOSTS = [
-        'localhost',
-        '127.0.0.1',  # local debugging
-    ]
+    ALLOWED_HOSTS = env_list(
+        'DJANGO_ALLOWED_HOSTS',
+        ('localhost', '127.0.0.1'),
+    )
+
+CSRF_TRUSTED_ORIGINS = env_list('CSRF_TRUSTED_ORIGINS')
 
 if HOST:
-    ALLOWED_HOSTS.append('.' + HOST)
-    CSRF_TRUSTED_ORIGINS = ['https://' + HOST]
+    legacy_host = HOST if HOST.startswith('.') else '.' + HOST
+    if legacy_host not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(legacy_host)
+    legacy_origin = 'https://' + HOST.lstrip('.')
+    if legacy_origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(legacy_origin)
 
 FRONTEND_HOST = os.environ.get('FRONTEND_HOST', 'http://localhost:8080')
 BACKEND_HOST = os.environ.get('BACKEND_HOST', 'http://localhost:8080')
@@ -198,7 +211,10 @@ if USE_S3:
     AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
     AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
     AWS_DEFAULT_ACL = None
-    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+    AWS_S3_CUSTOM_DOMAIN = os.getenv(
+        'AWS_S3_CUSTOM_DOMAIN',
+        f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com',
+    ).rstrip('/')
     AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
     # s3 static settings
     STATIC_LOCATION = 'static'
@@ -252,6 +268,5 @@ WEBPUSH_SETTINGS = {
     "VAPID_PRIVATE_KEY": os.environ.get('WEB_PUSH_PRIVATE_KEY'),
     "VAPID_ADMIN_EMAIL": os.environ.get('WEB_PUSH_ADMIN_EMAIL', "me@lorenzosp.com"),
 }
-
 
 
