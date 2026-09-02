@@ -9,6 +9,30 @@ test("renders the main portfolio sections", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Get in touch!" })).toBeAttached();
 });
 
+test("stacks the contact call to action on laptop screens", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+
+  const heading = page.getByRole("heading", { name: "Get in touch!" });
+  const paragraph = page.getByText(
+    "Have an interesting product, technical challenge, or idea in mind? I'd be glad to hear about it."
+  );
+  const button = page.getByRole("button", {
+    name: "Click here to send me a message.",
+  });
+  await button.scrollIntoViewIfNeeded();
+
+  const headingBox = await heading.boundingBox();
+  const paragraphBox = await paragraph.boundingBox();
+  const buttonBox = await button.boundingBox();
+
+  expect(headingBox).not.toBeNull();
+  expect(paragraphBox).not.toBeNull();
+  expect(buttonBox).not.toBeNull();
+  expect(paragraphBox!.y).toBeGreaterThan(headingBox!.y + headingBox!.height);
+  expect(buttonBox!.y).toBeGreaterThan(paragraphBox!.y + paragraphBox!.height);
+});
+
 test("keeps mobile and desktop resume controls mutually exclusive", async ({ page }) => {
   await page.setViewportSize({ width: 639, height: 800 });
   await page.goto("/");
