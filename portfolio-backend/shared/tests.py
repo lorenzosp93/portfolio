@@ -1,5 +1,6 @@
 from unittest.mock import patch
 
+from django.contrib import admin
 from django.test import TestCase
 
 from .advanced_models import send_notifications_for_subscriptions
@@ -15,6 +16,20 @@ class SiteSettingsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn('hero_picture', response.json())
         self.assertIsNone(response.json()['hero_picture'])
+
+    def test_admin_form_exposes_hero_picture(self):
+        model_admin = admin.site._registry[SiteSettings]
+
+        self.assertIn('hero_picture', model_admin.get_form(None).base_fields)
+
+
+class SubscriptionAdminTests(TestCase):
+    def test_subscription_is_registered_as_read_only(self):
+        model_admin = admin.site._registry[Subscription]
+
+        self.assertFalse(model_admin.has_add_permission(None))
+        self.assertFalse(model_admin.has_change_permission(None))
+        self.assertIn('endpoint', model_admin.get_readonly_fields(None))
 
 
 class PushNotificationTests(TestCase):

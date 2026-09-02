@@ -52,13 +52,19 @@
             </div>
           </header>
         </div>
-        <div class="bottom-sheet__content-wrap bg-surface dark:bg-nightSurface">
+        <div
+          class="bottom-sheet__content-wrap bg-surface dark:bg-nightSurface"
+          :class="{
+            'can-scroll-up': canScrollUp,
+            'can-scroll-down': canScrollDown,
+          }"
+        >
           <div
             style="min-height: 40vh; min-height: 40svh"
             class="bottom-sheet__content min-h-[40vh] lg:min-h-[70vh] bg-surface dark:bg-nightSurface"
             :style="{ height: contentH }"
             ref="content"
-            @scroll="handleContentScroll"
+            @scroll.passive="updateScrollAffordances"
           >
             <div
               class="container my-3 text-sm text-ink dark:text-gray-100 px-auto"
@@ -100,6 +106,8 @@ const isExpanded = ref(false);
 const opened = ref(false);
 const closing = ref(false);
 const moving = ref(false);
+const canScrollUp = ref(false);
+const canScrollDown = ref(false);
 const cardP: Ref<number | null> = ref(null);
 const cardH: Ref<number | null> = ref(null);
 
@@ -114,31 +122,19 @@ const closeThreshold = 150;
 const minCloseDuration = 0.16;
 const maxCloseDuration = 0.42;
 const openAnimationDurationMs = 400;
-const scrollNudgeBufferMs = 120;
-const hasNudgedContent = ref(false);
-const isNudgingContent = ref(false);
-let nudgeTimer: ReturnType<typeof window.setTimeout> | null = null;
-let previousBodyOverflow = "";
 let previousBodyOverscrollBehavior = "";
-let previousDocumentOverflow = "";
 let isBodyScrollLocked = false;
 
 function lockBodyScroll() {
   if (isBodyScrollLocked) return;
-  previousBodyOverflow = document.body.style.overflow;
   previousBodyOverscrollBehavior = document.body.style.overscrollBehavior;
-  previousDocumentOverflow = document.documentElement.style.overflow;
-  document.body.style.overflow = "hidden";
   document.body.style.overscrollBehavior = "none";
-  document.documentElement.style.overflow = "hidden";
   isBodyScrollLocked = true;
 }
 
 function unlockBodyScroll() {
   if (!isBodyScrollLocked) return;
-  document.body.style.overflow = previousBodyOverflow;
   document.body.style.overscrollBehavior = previousBodyOverscrollBehavior;
-  document.documentElement.style.overflow = previousDocumentOverflow;
   isBodyScrollLocked = false;
 }
 
@@ -164,6 +160,20 @@ function getContentHeight(cardHeight: number) {
 
 function setContentHeight(cardHeight: number) {
   contentH.value = `${getContentHeight(cardHeight)}px`;
+  nextTick(updateScrollAffordances);
+}
+
+function updateScrollAffordances() {
+  const el = content.value;
+  if (!el) {
+    canScrollUp.value = false;
+    canScrollDown.value = false;
+    return;
+  }
+
+  const maxScrollTop = Math.max(el.scrollHeight - el.clientHeight, 0);
+  canScrollUp.value = el.scrollTop > 1;
+  canScrollDown.value = el.scrollTop < maxScrollTop - 1;
 }
 
 function getViewportHeight() {
@@ -262,7 +272,6 @@ function init() {
         edgeResistance: 0.85,
         autoScroll: 0,
         onPress: () => {
-          clearNudgeTimer();
           gsap.killTweensOf(card.value);
         },
         onDragStart: () => {
@@ -324,11 +333,9 @@ const emit = defineEmits(["cardOpened", "cardClosed"]);
 function open() {
   lockBodyScroll();
   closing.value = false;
-  clearNudgeTimer();
-  hasNudgedContent.value = false;
   init();
   opened.value = true;
-  scheduleContentNudge();
+  nextTick(updateScrollAffordances);
   emit("cardOpened");
 }
 
@@ -339,7 +346,6 @@ type DragCloseState = {
 
 function close(dragState: DragCloseState | null) {
   if (opened.value) {
-  clearNudgeTimer();
   unlockBodyScroll();
   closing.value = true;
     resetExpansion();
@@ -402,60 +408,6 @@ function handleWindowMouseOut(event: MouseEvent) {
   }
 }
 
-function prefersReducedMotion() {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
-function hasOverflow(el: HTMLElement) {
-  return el.scrollHeight > el.clientHeight + 2;
-}
-
-function handleContentScroll() {
-  if (!isNudgingContent.value) {
-    hasNudgedContent.value = true;
-  }
-}
-
-function maybeNudgeContent() {
-  const el = content.value;
-  if (!opened.value || !el || hasNudgedContent.value || prefersReducedMotion() || !hasOverflow(el)) {
-    return;
-  }
-
-  hasNudgedContent.value = true;
-  isNudgingContent.value = true;
-  const startTop = el.scrollTop;
-  const nudgeTop = Math.min(startTop + 18, el.scrollHeight - el.clientHeight);
-
-  el.scrollTo({ top: nudgeTop, behavior: "smooth" });
-  window.setTimeout(() => {
-    el.scrollTo({ top: startTop, behavior: "smooth" });
-  }, 220);
-  window.setTimeout(() => {
-    isNudgingContent.value = false;
-  }, 700);
-}
-
-function scheduleContentNudge() {
-  nudgeTimer = window.setTimeout(() => {
-    nextTick(maybeNudgeContent);
-  }, openAnimationDurationMs + scrollNudgeBufferMs);
-}
-
-function clearNudgeTimer() {
-  if (nudgeTimer) {
-    window.clearTimeout(nudgeTimer);
-    nudgeTimer = null;
-  }
-}
-
-function maybeNudgeContentAfterRender() {
-  if (opened.value && !hasNudgedContent.value) {
-    clearNudgeTimer();
-    scheduleContentNudge();
-  }
-}
-
 const props = defineProps<{
   isOpen: boolean;
 }>();
@@ -472,7 +424,6 @@ watch(
 );
 
 onBeforeUnmount(() => {
-  clearNudgeTimer();
   unlockBodyScroll();
   timeline.value?.kill();
   drag.value?.kill();
@@ -490,7 +441,7 @@ onMounted(() => {
   });
   useEventListener("resize", () => {
     updateDragBounds();
-    maybeNudgeContentAfterRender();
+    nextTick(updateScrollAffordances);
   });
   useEventListener(window, "mouseout", handleWindowMouseOut);
   useEventListener(window, "blur", releaseActiveDrag);
@@ -510,6 +461,35 @@ onMounted(() => {
 }
 .bottom-sheet__content-wrap {
   position: relative;
+  overflow: hidden;
+}
+.bottom-sheet__content-wrap::before,
+.bottom-sheet__content-wrap::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  left: 0;
+  height: 18px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 140ms ease-out;
+}
+.bottom-sheet__content-wrap::before {
+  top: 0;
+  background: linear-gradient(to bottom, rgb(15 23 42 / 0.14), transparent);
+}
+.bottom-sheet__content-wrap::after {
+  bottom: 0;
+  background: linear-gradient(to top, rgb(15 23 42 / 0.18), transparent);
+}
+.bottom-sheet__content-wrap.can-scroll-up::before,
+.bottom-sheet__content-wrap.can-scroll-down::after {
+  opacity: 1;
+}
+.dark .bottom-sheet__content-wrap::before,
+.dark .bottom-sheet__content-wrap::after {
+  filter: opacity(0.55);
 }
 .bottom-sheet__content {
   overflow-y: scroll;

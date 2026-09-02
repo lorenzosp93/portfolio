@@ -19,10 +19,8 @@
       <ArrowScroller @end="loadEntries" :scroll-container="blogContainer" />
       <div
         class="relative flex overflow-x-scroll overflow-y-hidden no-scrollbar snap-x snap-proximity h-full w-full scroll-smooth px-[12.5%] md:px-[25%] lg:px-16 xl:px-24 py-5 gap-x-5"
-        :class="{ 'carousel-nudge': shouldNudge }"
         id="blog-container"
         ref="blogContainer"
-        @animationend="shouldNudge = false"
       >
         <list-card
           type="blog"
@@ -74,8 +72,6 @@ import PushSubscribe from "./PushSubscribe.vue";
 const blogContainer = ref(null);
 
 const isLoading = ref(false);
-const hasNudged = ref(false);
-const shouldNudge = ref(false);
 
 const root: Ref<HTMLDivElement | null> = ref(null);
 
@@ -86,11 +82,6 @@ const entriesLimit: () => number = inject("entriesLimit", () => 5);
 const blogStore = useBlogStore();
 
 watch(isActive, (val) => {
-  if (val && !hasNudged.value) {
-    hasNudged.value = true;
-    shouldNudge.value = true;
-  }
-
   if (val && blogStore.posts.length == 0 && !isLoading.value) {
     void loadEntries();
   }
@@ -108,28 +99,3 @@ async function loadEntries() {
   }
 }
 </script>
-
-<style scoped>
-.carousel-nudge {
-  animation: carousel-nudge 1s ease-in-out 0.45s 1;
-}
-
-@keyframes carousel-nudge {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  35% {
-    transform: translateX(-0.7rem);
-  }
-  65% {
-    transform: translateX(0.2rem);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .carousel-nudge {
-    animation: none;
-  }
-}
-</style>

@@ -1,5 +1,5 @@
 <template>
-  <section ref="root" class="relative w-full bg-sand/45 py-16 dark:bg-nightSurface/35 md:py-24">
+  <section class="relative w-full bg-sand/45 py-16 dark:bg-nightSurface/35 md:py-24">
     <div class="mx-auto flex w-full max-w-7xl flex-wrap px-5">
     <div class="flex flex-wrap w-full mx-auto mb-8 md:mb-12">
       <h2 class="text-center text-xl md:text-2xl w-full font-bold mx-auto text-ink dark:text-white">
@@ -46,9 +46,7 @@
           id="resume-container"
           ref="resumeContainer"
           class="relative flex items-start gap-6 overflow-x-scroll overflow-y-hidden no-scrollbar snap-x snap-mandatory scroll-smooth w-full"
-          :class="{ 'carousel-nudge': shouldNudge }"
           @scroll.passive="scheduleActiveSlideUpdate"
-          @animationend="shouldNudge = false"
         >
           <div
             v-for="comp in resumeList"
@@ -72,12 +70,6 @@ import ResumeSkills from "./Skills/ResumeSkills.vue";
 import ResumeTimeline from "./Timeline/ResumeTimeline.vue";
 import ArrowScroller from "../composables/ArrowScroller.vue";
 import { useEventListener, useMediaQuery } from "@vueuse/core";
-import { useVisibilityObserver } from "@/composables/visibilityObserver";
-
-const root: Ref<HTMLDivElement | null> = ref(null);
-const { isActive } = useVisibilityObserver("theResume", root);
-const hasNudged = ref(false);
-const shouldNudge = ref(false);
 const resumeContainer = ref<HTMLElement | null>(null);
 const mobileTabs = ref<HTMLElement | null>(null);
 const slideRefs = reactive<Record<string, HTMLElement | null>>({});
@@ -89,13 +81,6 @@ const scrollSettleDelayMs = 220;
 let resizeObserver: ResizeObserver | null = null;
 let scrollFrame: number | null = null;
 let scrollSettleTimer: ReturnType<typeof window.setTimeout> | null = null;
-
-watch(isActive, (val) => {
-  if (val && !hasNudged.value) {
-    hasNudged.value = true;
-    shouldNudge.value = true;
-  }
-});
 
 const resumeList = [
   {
@@ -253,26 +238,4 @@ useEventListener(window, "resize", () => {
   @apply pointer-events-none absolute bottom-0 left-0 z-0 h-0.5 rounded-full bg-coral transition-all duration-300 ease-out dark:bg-coralSoft;
 }
 
-.carousel-nudge {
-  animation: carousel-nudge 1s ease-in-out 0.45s 1;
-}
-
-@keyframes carousel-nudge {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  35% {
-    transform: translateX(-0.7rem);
-  }
-  65% {
-    transform: translateX(0.2rem);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .carousel-nudge {
-    animation: none;
-  }
-}
 </style>

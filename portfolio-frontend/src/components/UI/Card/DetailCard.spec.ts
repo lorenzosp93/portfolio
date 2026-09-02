@@ -55,6 +55,21 @@ vi.mock("gsap/InertiaPlugin", () => ({
 import DetailCard from "./DetailCard.vue";
 
 describe("DetailCard", () => {
+  it("does not change the document scroll position when opened", async () => {
+    const wrapper = mount(DetailCard, { props: { isOpen: false } });
+    const initialBodyOverflow = document.body.style.overflow;
+    const initialDocumentOverflow = document.documentElement.style.overflow;
+
+    await wrapper.setProps({ isOpen: true });
+    expect(document.body.style.overflow).toBe(initialBodyOverflow);
+    expect(document.documentElement.style.overflow).toBe(initialDocumentOverflow);
+
+    await wrapper.setProps({ isOpen: false });
+    expect(document.body.style.overflow).toBe(initialBodyOverflow);
+    expect(document.documentElement.style.overflow).toBe(initialDocumentOverflow);
+    wrapper.unmount();
+  });
+
   it("releases an active drag when the pointer leaves the browser window", async () => {
     const wrapper = mount(DetailCard, { props: { isOpen: false } });
     await wrapper.setProps({ isOpen: true });
@@ -87,6 +102,32 @@ describe("DetailCard", () => {
       "600px"
     );
     heightSpy.mockRestore();
+    wrapper.unmount();
+  });
+
+  it("only shows edge affordances where more content can be scrolled", async () => {
+    const wrapper = mount(DetailCard, { props: { isOpen: false } });
+    await wrapper.setProps({ isOpen: true });
+    const content = document.querySelector<HTMLElement>(".bottom-sheet.opened .bottom-sheet__content")!;
+    const contentWrap = document.querySelector<HTMLElement>(
+      ".bottom-sheet.opened .bottom-sheet__content-wrap"
+    )!;
+    Object.defineProperties(content, {
+      clientHeight: { configurable: true, value: 300 },
+      scrollHeight: { configurable: true, value: 900 },
+      scrollTop: { configurable: true, writable: true, value: 0 },
+    });
+
+    content.dispatchEvent(new Event("scroll"));
+    await wrapper.vm.$nextTick();
+    expect(contentWrap.classList.contains("can-scroll-up")).toBe(false);
+    expect(contentWrap.classList.contains("can-scroll-down")).toBe(true);
+
+    content.scrollTop = 600;
+    content.dispatchEvent(new Event("scroll"));
+    await wrapper.vm.$nextTick();
+    expect(contentWrap.classList.contains("can-scroll-up")).toBe(true);
+    expect(contentWrap.classList.contains("can-scroll-down")).toBe(false);
     wrapper.unmount();
   });
 });
