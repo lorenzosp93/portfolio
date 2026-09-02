@@ -4,7 +4,7 @@
     class="relative flex min-h-screen w-full items-center overflow-x-clip px-5 py-20 text-ink dark:text-white sm:px-8"
   >
     <div
-      class="hero-layout mx-auto grid w-full max-w-7xl items-center gap-10 sm:grid-cols-[minmax(17rem,0.8fr)_minmax(0,1.2fr)] sm:gap-12 lg:gap-20"
+      class="hero-layout mx-auto grid w-full max-w-7xl -translate-y-8 items-center gap-10 sm:translate-y-0 sm:grid-cols-[minmax(17rem,0.8fr)_minmax(0,1.2fr)] sm:gap-12 lg:gap-20"
     >
     <div class="relative min-w-0 py-5">
       <div class="relative mx-auto h-56 w-56 md:h-72 md:w-72">
