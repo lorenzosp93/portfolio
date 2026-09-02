@@ -9,6 +9,19 @@ test("renders the main portfolio sections", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Get in touch!" })).toBeAttached();
 });
 
+test("uses night gradients for tinted sections in dark mode", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "dark" });
+  await page.goto("/");
+
+  for (const selector of ["#the-resume", "#the-contacts"]) {
+    const background = await page.locator(selector).evaluate(
+      (element) => getComputedStyle(element).backgroundImage
+    );
+    expect(background).toContain("rgb(11, 17, 32)");
+    expect(background).not.toContain("rgb(255, 248, 239)");
+  }
+});
+
 test("stacks the contact call to action on laptop screens", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/");
