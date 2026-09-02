@@ -1,5 +1,6 @@
 import { mount } from "@vue/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { createPinia, setActivePinia } from "pinia";
 
 vi.mock("@/composables/visibilityObserver", async () => {
   const { ref } = await import("vue");
@@ -7,8 +8,11 @@ vi.mock("@/composables/visibilityObserver", async () => {
 });
 
 import TheHero from "./TheHero.vue";
+import { useSiteStore } from "@/stores/site.store";
 
 describe("TheHero", () => {
+  setActivePinia(createPinia());
+
   afterEach(() => {
     vi.unstubAllEnvs();
   });
@@ -25,5 +29,19 @@ describe("TheHero", () => {
     expect(paragraphs).toHaveLength(2);
     expect(paragraphs[0].html()).toContain("<strong>thoughtful software</strong>");
     expect(paragraphs[1].html()).toContain("<em>curious people</em>");
+  });
+
+  it("uses a configured hero picture when site settings provide one", () => {
+    const pinia = createPinia();
+    setActivePinia(pinia);
+    const siteStore = useSiteStore();
+    siteStore.heroPicture = "https://media.example.test/hero.webp";
+
+    const wrapper = mount(TheHero, { global: { plugins: [pinia] } });
+
+    expect(wrapper.get("#heroPicture").attributes("src")).toBe(
+      "https://media.example.test/hero.webp"
+    );
+    expect(wrapper.get("#heroPicture").attributes("srcset")).toBeUndefined();
   });
 });

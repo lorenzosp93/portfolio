@@ -3,7 +3,18 @@ from unittest.mock import patch
 from django.test import TestCase
 
 from .advanced_models import send_notifications_for_subscriptions
-from .models import Keys, Subscription
+from .models import Keys, SiteSettings, Subscription
+
+
+class SiteSettingsTests(TestCase):
+    def test_settings_api_exposes_configurable_hero_picture(self):
+        SiteSettings.objects.create(about_text="About")
+
+        response = self.client.get('/api/settings/1/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('hero_picture', response.json())
+        self.assertIsNone(response.json()['hero_picture'])
 
 
 class PushNotificationTests(TestCase):

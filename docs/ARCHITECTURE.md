@@ -37,6 +37,10 @@ handles cached, paginated list loading; resume and blog stores use it. Frontend
 types are in `src/models/models.interface.ts`. Keep them aligned with DRF
 serializer fields.
 
+Runtime presentation settings are loaded once through `src/stores/site.store.ts`.
+The hero and navbar share the configured `SiteSettings.hero_picture`; bundled
+WebP assets remain the offline/error fallback.
+
 The service worker is generated through `vite-plugin-pwa`; API GET requests
 receive a NetworkFirst cache policy. Be deliberate when changing an API route
 or response: users may see a cached response for up to its configured lifetime.
@@ -59,6 +63,10 @@ content and cross-cutting models:
 | `blog` | Published posts and comments; posts can trigger push notifications. |
 | `contacts` | Validates contact submissions and sends email. |
 | `shared` | Reusable abstract models, media attachments, site settings, subscriptions, and logging. |
+
+`SiteSettings` is a singleton edited through Django admin. Use it for small,
+site-wide runtime content such as the hero picture instead of adding hard-coded
+asset references to multiple frontend components.
 
 Routes are rooted at `portfolio/urls.py`:
 

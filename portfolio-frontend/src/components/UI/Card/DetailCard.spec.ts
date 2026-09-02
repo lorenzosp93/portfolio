@@ -35,7 +35,9 @@ vi.mock("gsap", () => {
       registerPlugin: vi.fn(),
       timeline: vi.fn(() => timeline),
       set: vi.fn(),
-      to: vi.fn(),
+      to: vi.fn((_element, options) => {
+        options?.onComplete?.();
+      }),
       killTweensOf: vi.fn(),
       utils: { clamp: (_min: number, _max: number, value: number) => value },
     },
@@ -66,5 +68,25 @@ describe("DetailCard", () => {
 
     expect(draggableMocks.instance.endDrag).toHaveBeenCalledOnce();
     expect(document.querySelector(".bottom-sheet")?.classList.contains("moving")).toBe(false);
+    wrapper.unmount();
+  });
+
+  it("keeps its measured resting height after an upward-drag bounce", async () => {
+    const heightSpy = vi
+      .spyOn(HTMLElement.prototype, "clientHeight", "get")
+      .mockReturnValue(600);
+    const wrapper = mount(DetailCard, { props: { isOpen: false } });
+    await wrapper.setProps({ isOpen: true });
+
+    draggableMocks.instance.y = -60;
+    draggableMocks.getOptions()?.onDrag?.call(draggableMocks.instance);
+    draggableMocks.getOptions()?.onDragEnd?.call(draggableMocks.instance);
+    await wrapper.vm.$nextTick();
+
+    expect(document.querySelector<HTMLElement>(".bottom-sheet__card")?.style.height).toBe(
+      "600px"
+    );
+    heightSpy.mockRestore();
+    wrapper.unmount();
   });
 });

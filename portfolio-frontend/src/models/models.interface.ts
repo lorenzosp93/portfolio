@@ -10,6 +10,11 @@ export interface ContactForm {
   content: string;
 }
 
+export interface SiteSettings {
+  about_text: string;
+  hero_picture: string | null;
+}
+
 export interface Attachment {
   name: string;
   url: string;

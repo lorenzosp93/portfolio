@@ -262,6 +262,12 @@ class SingletonBaseModel(models.Model):
 class SiteSettings(SingletonBaseModel):
     "Concrete model for the settings for the website"
     about_text = models.TextField()
+    hero_picture = models.ImageField(
+        upload_to="site/hero/",
+        blank=True,
+        null=True,
+        help_text="Square WebP recommended; 640×640 is sufficient for retina displays.",
+    )
 
 
 class Keys(models.Model):

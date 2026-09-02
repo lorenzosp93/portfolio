@@ -6,6 +6,7 @@ import type {
   SkillCategory,
   BlogPost,
   ContactForm,
+  SiteSettings,
 } from "@/models/models.interface";
 
 const API_URL: string = import.meta.env.VITE_APP_BACKEND_URL;
@@ -41,6 +42,10 @@ class BackendService extends ApiClient {
     options: LimitOffsetOptions
   ): Promise<AxiosResponse<LimitOffsetResult<BlogPost>>> {
     return this.getLimitOffset<BlogPost>(`/api/blog/post/`, options);
+  }
+
+  async loadSiteSettings(): Promise<AxiosResponse<SiteSettings>> {
+    return this.instance.get("/api/settings/1/");
   }
 
   async postSubscription(

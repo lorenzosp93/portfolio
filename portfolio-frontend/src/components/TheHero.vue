@@ -23,10 +23,12 @@
         <img
           id="heroPicture"
           class="will-change-transform absolute z-30 left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full object-cover shadow-2xl ring-4 ring-surface dark:ring-nightSurface md:h-56 md:w-56 z-30"
-          src="@/assets/hero.webp"
-          srcset="@/assets/hero.webp 886w, @/assets/hero-mobile.webp 320w"
+          :src="heroPicture"
+          :srcset="heroSrcset"
           sizes="(min-width: 768px) 224px, 160px"
           alt="High res picture"
+          decoding="async"
+          fetchpriority="high"
           @load="$emit('heroLoaded')"
         />
       </div>
@@ -112,6 +114,9 @@
 import { useVisibilityObserver } from "@/composables/visibilityObserver";
 import { marked } from "marked";
 import { Ref, computed, ref } from "vue";
+import { useSiteStore } from "@/stores/site.store";
+import fallbackHero from "@/assets/hero.webp";
+import fallbackHeroMobile from "@/assets/hero-mobile.webp";
 
 /**
  * Use kebab-case event in the template: @hero-loaded.
@@ -120,6 +125,11 @@ defineEmits(["heroLoaded"]);
 
 const root: Ref<HTMLDivElement | null> = ref(null);
 useVisibilityObserver("theHero", root);
+const siteStore = useSiteStore();
+const heroPicture = computed(() => siteStore.heroPicture || fallbackHero);
+const heroSrcset = computed(() =>
+  siteStore.heroPicture ? undefined : `${fallbackHeroMobile} 320w, ${fallbackHero} 886w`
+);
 const defaultHeroCopy = `I'm a **product leader** with a background in **software** and **energy engineering**. I turn complex problems into focused products, bringing technical depth and pragmatic execution to teams at every stage.`;
 const heroParagraphs = computed(() =>
   (import.meta.env.VITE_HERO_COPY?.trim() || defaultHeroCopy)

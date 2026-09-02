@@ -24,8 +24,9 @@
             <img
               id="heroLogo"
               class="h-10 w-10 cursor-pointer rounded-full opacity-100 ring-2 ring-coralSoft transition duration-300 ease-in-out hover:scale-105 dark:ring-teal/40"
-              src="@/assets/hero-logo.webp"
+              :src="heroLogo"
               alt="Hero image logo"
+              decoding="async"
               @load="$emit('imageLoaded')"
             />
           </div>
@@ -149,8 +150,12 @@ import { useNavStore } from "@/stores/nav.store";
 import { Bars3Icon, XMarkIcon } from "@heroicons/vue/24/outline";
 import { MaybeRef, useEventListener } from "@vueuse/core";
 import { computed, nextTick, reactive, ref, watch } from "vue";
+import { useSiteStore } from "@/stores/site.store";
+import fallbackHeroLogo from "@/assets/hero-logo.webp";
 
 const navStore = useNavStore();
+const siteStore = useSiteStore();
+const heroLogo = computed(() => siteStore.heroPicture || fallbackHeroLogo);
 const isMenuOpen = ref(false);
 const desktopNav = ref<HTMLElement | null>(null);
 const navItemRefs = reactive<Record<string, HTMLElement | null>>({});

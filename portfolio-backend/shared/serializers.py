@@ -20,7 +20,8 @@ class SettingsSerializer(ModelSerializer):
     class Meta:
         model = SiteSettings
         fields = [
-            'about_text'
+            'about_text',
+            'hero_picture',
         ]
 
 class KeysSerializer(ModelSerializer):

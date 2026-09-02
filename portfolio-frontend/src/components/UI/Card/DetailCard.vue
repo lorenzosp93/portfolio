@@ -96,6 +96,7 @@ const backdrop: Ref<HTMLElement | null> = ref(null);
 const initiated = ref(false);
 const maxHeight = ref(85);
 const expandedCardHeight = ref<number | null>(null);
+const isExpanded = ref(false);
 const opened = ref(false);
 const closing = ref(false);
 const moving = ref(false);
@@ -170,7 +171,7 @@ function getViewportHeight() {
 }
 
 function resetExpansion(animate = false) {
-  if (!expandedCardHeight.value || !card.value || !cardH.value) return;
+  if (!isExpanded.value || !card.value || !cardH.value) return;
 
   const cardElement = card.value;
   maxHeight.value = 100;
@@ -179,7 +180,8 @@ function resetExpansion(animate = false) {
   if (!animate) {
     gsap.set(cardElement, { height: cardH.value });
     setContentHeight(cardH.value);
-    expandedCardHeight.value = null;
+    expandedCardHeight.value = cardH.value;
+    isExpanded.value = false;
     maxHeight.value = 85;
     return;
   }
@@ -190,7 +192,8 @@ function resetExpansion(animate = false) {
     ease: "elastic.out(1, 0.65)",
     overwrite: "auto",
     onComplete: () => {
-      expandedCardHeight.value = null;
+      expandedCardHeight.value = cardH.value;
+      isExpanded.value = false;
       setContentHeight(cardH.value ?? 0);
       maxHeight.value = 85;
     },
@@ -226,6 +229,8 @@ function init() {
   if (card.value && pan.value) {
     cardP.value = 0;
     cardH.value = card.value.clientHeight;
+    expandedCardHeight.value = cardH.value;
+    isExpanded.value = false;
     setContentHeight(cardH.value);
     updateDragBounds();
 
@@ -267,6 +272,7 @@ function init() {
           if (this.y < 0) {
             maxHeight.value = 100;
             const nextCardHeight = getExpandedCardHeight(this.y);
+            isExpanded.value = true;
             expandedCardHeight.value = nextCardHeight;
             setContentHeight(nextCardHeight);
             gsap.set(card.value, { y: 0 });
@@ -282,7 +288,7 @@ function init() {
           const currentY = this.y;
           const velocityY = velocityTracker?.get("y") ?? 0;
 
-          if (expandedCardHeight.value) {
+          if (isExpanded.value) {
             resetExpansion(true);
             return;
           }

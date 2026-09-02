@@ -22,12 +22,16 @@ import TheNavbar from "./components/UI/TheNavbar.vue";
 import TheResume from "./components/resume/TheResume.vue";
 import TheBlog from "./components/blog/TheBlog.vue";
 import TheContacts from "./components/TheContacts.vue";
-import { Ref, provide, ref, onUnmounted } from "vue";
+import { Ref, provide, ref, onMounted, onUnmounted } from "vue";
 import { useEventListener } from "@vueuse/core";
 import { gsap, type TweenVars } from "gsap";
 import { registerSW } from "virtual:pwa-register";
+import { useSiteStore } from "@/stores/site.store";
 
 registerSW({ immediate: true });
+
+const siteStore = useSiteStore();
+onMounted(() => siteStore.loadSettings());
 
 const root: Ref<HTMLDivElement | null> = ref(null);
 

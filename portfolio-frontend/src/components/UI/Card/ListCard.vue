@@ -8,6 +8,8 @@
       class="aspect-video w-full object-cover transition duration-300 group-hover:scale-102.5"
       :src="picture"
       :alt="'Picture for ' + name"
+      loading="lazy"
+      decoding="async"
     />
     <div class="w-full border-b border-ink/10 bg-sand/70 p-4 text-lg text-ink dark:border-white/10 dark:bg-nightElevated dark:text-white">
       <p class="text-xs font-medium uppercase tracking-wide text-coral dark:text-coralSoft">{{ location }}{{ status }}</p>
