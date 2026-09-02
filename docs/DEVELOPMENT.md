@@ -39,6 +39,23 @@ allows all CORS origins. The browser-facing push feature also needs
 `VITE_APP_KEY`, while server-side push delivery needs the `WEB_PUSH_*`
 variables; it can be left unconfigured for work unrelated to push notifications.
 
+### Run and debug in VS Code
+
+After creating `portfolio-backend/.venv` and installing both applications'
+dependencies, open the repository root in VS Code and choose one of these from
+the **Run and Debug** panel:
+
+- **Backend: Django** starts Django under the Python debugger on port 8000.
+- **Frontend: Vite + Chrome** starts Vite on port 8080 and opens a browser debug
+  session with Vue/TypeScript source maps.
+- **Full stack: Django + Vite** starts both and stops both when the compound
+  debug session ends.
+
+The configurations provide safe development defaults. Optional local settings
+are loaded through the ignored backend and frontend `.env` files described
+above. Useful migration and test commands are also available under
+**Tasks: Run Task**.
+
 ## Environment reference
 
 | Area | Variables |

@@ -8,7 +8,7 @@
       >
         {{ name }}
       </h3>
-      <p class="text-sm text-muted dark:text-gray-300">
+      <p class="text-sm leading-relaxed text-muted dark:text-gray-300 lg:text-base">
         {{ description }}
       </p>
     </div>

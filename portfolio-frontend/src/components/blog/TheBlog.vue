@@ -4,12 +4,10 @@
     class="min-h-[45vh] lg:min-h-[50vh] w-full relative flex flex-wrap mx-auto bg-paper py-20 dark:bg-night md:py-28"
   >
     <div class="flex w-full max-w-7xl flex-wrap mx-auto mb-8 px-5 md:mb-12">
-      <h2
-        class="w-full mt-auto text-center text-xl md:text-2xl font-bold text-ink dark:text-white"
-      >
+      <h2 class="section-heading mt-auto">
         Thoughts from the blog.
       </h2>
-      <p class="w-full mb-auto px-2 text-center text-gray-600 dark:text-gray-300">
+      <p class="section-lede mb-auto px-2">
         Who needs MySpace when you can create your own blog and write whatever
         comes to mind on it, right?
       </p>

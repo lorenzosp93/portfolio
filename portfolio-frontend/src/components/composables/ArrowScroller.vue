@@ -104,6 +104,6 @@ watch(
 
 <style scoped>
 .arrow-button {
-  @apply pointer-events-auto absolute h-11 w-11 cursor-pointer select-none rounded-full bg-surface text-teal shadow-lg ring-1 ring-ink/10 transition hover:-translate-y-0.5 hover:bg-tealSoft hover:text-teal dark:bg-nightElevated dark:text-tealSoft dark:ring-white/10 dark:hover:bg-teal/30;
+  @apply pointer-events-auto absolute h-11 w-11 cursor-pointer select-none rounded-full bg-surface text-teal shadow-lg ring-1 ring-ink/10 transition hover:-translate-y-0.5 hover:bg-tealSoft hover:text-teal focus:outline-none focus-visible:ring-2 focus-visible:ring-teal dark:bg-nightElevated dark:text-tealSoft dark:ring-white/10 dark:hover:bg-teal/30 dark:focus-visible:ring-tealSoft;
 }
 </style>

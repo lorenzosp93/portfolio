@@ -1,21 +1,12 @@
 {
-    "python.testing.unittestArgs": [
-        "-v",
-        "-s",
-        "./mainpage",
-        "-p",
-        "test*.py"
-    ],
-    "python.testing.pytestEnabled": false,
-    "python.testing.unittestEnabled": false,
-    "python.testing.promptToConfigure": false,
-    "python.linting.pylintArgs": [
-     "--load-plugins=pylint_django"
-    ],
-    "typescript.tsdk": "node_modules/typescript/lib",
-    "vite.base": "./portfolio-frontend",
-    "vite.browserType": "embedded",
-    "vite.devCommand": "npm run dev",
-    "vite.port": 8080,
-    "python.envFile": "${workspaceFolder}/portfolio-backend/.env"
+  "python.defaultInterpreterPath": "${workspaceFolder}/portfolio-backend/.venv/bin/python",
+  "python.envFile": "${workspaceFolder}/portfolio-backend/.env",
+  "python.testing.pytestEnabled": false,
+  "python.testing.unittestEnabled": false,
+  "python.testing.promptToConfigure": false,
+  "typescript.tsdk": "${workspaceFolder}/portfolio-frontend/node_modules/typescript/lib",
+  "vite.base": "${workspaceFolder}/portfolio-frontend",
+  "vite.browserType": "embedded",
+  "vite.devCommand": "npm run dev",
+  "vite.port": 8080
 }

@@ -26,7 +26,7 @@
       <div class="relative border-t border-ink/5 pt-2 dark:border-white/10">
         <div
           ref="descriptionEl"
-          class="timeline-description overflow-hidden text-xs font-normal leading-relaxed text-muted dark:text-gray-300 sm:text-sm"
+          class="timeline-description overflow-hidden text-xs font-normal leading-relaxed text-muted dark:text-gray-300 sm:text-sm lg:text-base"
           :class="descriptionHeightClass"
           v-html="renderedDescription"
         />

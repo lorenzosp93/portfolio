@@ -1,51 +1,45 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-
-        {
-            "name": "vuejs: chrome",
-            "request": "launch",
-            "type": "chrome",
-            "url": "http://localhost:8080",
-            "webRoot": "${workspaceFolder}/portfolio-frontend/src",
-            "preLaunchTask": "npm: serve - portfolio-frontend"
-        },
-        {
-            "name": "Python: Django",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/portfolio-backend/manage.py",
-            "cwd": "${workspaceFolder}/portfolio-backend",
-            "args": ["runserver"],
-            "django": true,
-            "justMyCode": true
-        },
-        {
-            "name": "Docker: Python - Django",
-            "type": "docker",
-            "request": "launch",
-            "preLaunchTask": "docker-run: debug",
-            "python": {
-                "pathMappings": [{
-                    "localRoot": "${workspaceFolder}/portfolio-backend",
-                    "remoteRoot": "/app"
-                }],
-                "projectType": "django"
-            }
-        },
-        {
-            "name": "Docker Node.js Launch",
-            "type": "docker",
-            "request": "launch",
-            "preLaunchTask": "docker-run: debug",
-            "platform": "node",
-            "node": {
-                "package": "${workspaceFolder}/portfolio-frontend/package.json",
-                "localRoot": "${workspaceFolder}/portfolio-frontend"
-            }
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Backend: Django",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/portfolio-backend/manage.py",
+      "cwd": "${workspaceFolder}/portfolio-backend",
+      "args": ["runserver", "127.0.0.1:8000"],
+      "django": true,
+      "justMyCode": true,
+      "envFile": "${workspaceFolder}/portfolio-backend/.env",
+      "env": {
+        "DEBUG": "true",
+        "FRONTEND_HOST": "http://127.0.0.1:8080",
+        "BACKEND_HOST": "http://127.0.0.1:8000"
+      },
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Frontend: Vite + Chrome",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/portfolio-frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--", "--host", "127.0.0.1"],
+      "autoAttachChildProcesses": true,
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"],
+      "serverReadyAction": {
+        "pattern": "Local:\\s+(https?://\\S+)",
+        "uriFormat": "%s",
+        "action": "debugWithChrome"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Full stack: Django + Vite",
+      "configurations": ["Backend: Django", "Frontend: Vite + Chrome"],
+      "stopAll": true
+    }
+  ]
 }

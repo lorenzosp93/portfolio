@@ -17,6 +17,14 @@
 }
 
 @layer components {
+  .section-heading {
+    @apply w-full text-center text-xl font-bold text-ink dark:text-white md:text-2xl;
+  }
+
+  .section-lede {
+    @apply mx-auto mt-2 w-full max-w-xl text-center text-sm leading-relaxed text-muted dark:text-gray-300 md:text-base;
+  }
+
   .bottom-sheet__backdrop {
     background: linear-gradient(
       to bottom,

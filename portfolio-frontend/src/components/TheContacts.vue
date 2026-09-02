@@ -4,12 +4,10 @@
     ref="root"
   >
     <div class="mx-auto flex w-full max-w-7xl flex-col items-center justify-center px-5">
-      <h2
-        class="w-full text-center text-xl font-bold text-ink dark:text-white md:text-2xl"
-      >
+      <h2 class="section-heading">
         Get in touch!
       </h2>
-      <p class="mx-auto mt-2 w-full max-w-xl text-center text-sm text-muted dark:text-gray-300 md:text-base">
+      <p class="section-lede">
         Have an interesting product, technical challenge, or idea in mind? I'd be glad to hear about it.
       </p>
       <button
