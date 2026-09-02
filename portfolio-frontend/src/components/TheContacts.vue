@@ -3,9 +3,9 @@
     class="relative flex min-h-[50vh] w-full flex-wrap bg-sand/45 py-20 text-ink dark:bg-nightSurface/35 dark:text-white md:py-28"
     ref="root"
   >
-    <div class="mx-auto flex w-full max-w-7xl flex-wrap px-5">
+    <div class="mx-auto flex w-full max-w-7xl flex-col items-center justify-center px-5">
       <h2
-        class="text-center mt-auto text-xl md:text-2xl w-full font-bold mx-auto text-ink dark:text-white"
+        class="w-full text-center text-xl font-bold text-ink dark:text-white md:text-2xl"
       >
         Get in touch!
       </h2>
@@ -14,7 +14,7 @@
       </p>
       <button
         type="button"
-        class="mx-auto mb-auto mt-4 rounded-full bg-teal px-6 py-3 text-center font-semibold text-white shadow-md ring-1 ring-teal/20 transition duration-300 hover:-translate-y-0.5 hover:bg-teal/90 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-tealSoft dark:bg-tealSoft dark:text-night dark:ring-tealSoft/30 dark:hover:bg-tealSoft/90"
+        class="mt-5 rounded-full bg-teal px-6 py-3 text-center font-semibold text-white shadow-md ring-1 ring-teal/20 transition duration-300 hover:-translate-y-0.5 hover:bg-teal/90 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-tealSoft dark:bg-tealSoft dark:text-night dark:ring-tealSoft/30 dark:hover:bg-tealSoft/90"
         @click="formVisible = true"
       >
         Click here to send me a message.
