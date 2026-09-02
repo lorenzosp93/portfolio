@@ -1,6 +1,6 @@
 <template>
   <section
-    class="relative flex min-h-[50vh] w-full flex-wrap bg-sand/45 py-20 text-ink dark:bg-nightSurface/35 dark:text-white md:py-28"
+    class="section-tint relative flex min-h-[50vh] w-full flex-wrap py-20 text-ink dark:text-white md:py-28"
     ref="root"
   >
     <div class="mx-auto flex w-full max-w-7xl flex-col items-center justify-center px-5">

@@ -1,5 +1,5 @@
 <template>
-  <section class="relative w-full bg-sand/45 py-20 dark:bg-nightSurface/35 md:py-28">
+  <section class="section-tint relative w-full py-20 md:py-28">
     <div class="mx-auto flex w-full max-w-7xl flex-wrap px-5">
     <div class="flex flex-wrap w-full mx-auto mb-8 md:mb-12">
       <h2 class="section-heading">

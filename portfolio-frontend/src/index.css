@@ -25,6 +25,28 @@
     @apply mx-auto mt-2 w-full max-w-xl text-center text-sm leading-relaxed text-muted dark:text-gray-300 md:text-base;
   }
 
+  .section-tint {
+    background: linear-gradient(
+      to bottom,
+      #fff8ef 0%,
+      #f8eedc 18%,
+      #f8eedc 82%,
+      #fff8ef 100%
+    );
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .section-tint {
+      background: linear-gradient(
+        to bottom,
+        #0b1120 0%,
+        #111827 18%,
+        #111827 82%,
+        #0b1120 100%
+      );
+    }
+  }
+
   .bottom-sheet__backdrop {
     background: linear-gradient(
       to bottom,
