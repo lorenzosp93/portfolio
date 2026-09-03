@@ -22,16 +22,18 @@ import TheNavbar from "./components/UI/TheNavbar.vue";
 import TheResume from "./components/resume/TheResume.vue";
 import TheBlog from "./components/blog/TheBlog.vue";
 import TheContacts from "./components/TheContacts.vue";
-import { Ref, provide, ref, onMounted, onUnmounted } from "vue";
-import { useEventListener } from "@vueuse/core";
-import { gsap, type TweenVars } from "gsap";
+import { Ref, provide, ref, shallowRef, onMounted, onUnmounted } from "vue";
+import { gsap } from "gsap";
 import { registerSW } from "virtual:pwa-register";
 import { useSiteStore } from "@/stores/site.store";
 
 registerSW({ immediate: true });
 
 const siteStore = useSiteStore();
-onMounted(() => siteStore.loadSettings());
+onMounted(() => {
+  siteStore.loadSettings();
+  setupAnimation();
+});
 
 const root: Ref<HTMLDivElement | null> = ref(null);
 
@@ -48,82 +50,29 @@ provide("truncationAmount", truncationAmount);
 provide("entriesLimit", entriesLimit);
 
 onUnmounted(() => {
-  animationRevision += 1;
+  cancelAnimationFrame(animationFrame);
   cleanupAnimation();
-  clearTimeout(resizeTimer);
 });
 
-const viewport = ref({ width: window.innerWidth, height: window.innerHeight });
-let resizeTimer: ReturnType<typeof setTimeout>;
-const safariChromeResizeThreshold = 120;
-
-useEventListener("resize", resizeEventHandler);
-
-function resizeEventHandler(event: UIEvent) {
-  const nextViewport = {
-    width: (event.target as Window).innerWidth,
-    height: (event.target as Window).innerHeight,
-  };
-  const widthChanged = viewport.value.width !== nextViewport.width;
-  const heightDelta = Math.abs(viewport.value.height - nextViewport.height);
-  const significantHeightChange = heightDelta > safariChromeResizeThreshold;
-
-  viewport.value = nextViewport;
-
-  if (widthChanged || significantHeightChange) {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(recalculateAnimation, 150);
-  }
-}
-
 function setupAnimation() {
-  recalculateAnimation();
-}
-
-function recalculateAnimation() {
-  const revision = ++animationRevision;
-  requestAnimationFrame(() => {
-    if (revision !== animationRevision) return;
-
-    // Measurements must be taken from the picture's untransformed layout
-    // position. Otherwise a resize partway through the scroll animation uses
-    // the previous tween as its new origin and compounds the translation.
-    cleanupAnimation();
-    resetHeroPictureTransform();
-
-    const coordinates = calculateCoordinatesAnimation("heroPicture", "heroLogo");
-    if (!coordinates?.scaleX || !coordinates?.scaleY) {
-      return;
+  cancelAnimationFrame(animationFrame);
+  animationFrame = requestAnimationFrame(() => {
+    if (timeline.value) {
+      // Image changes do not require destroying the active animation.
+      timeline.value.scrollTrigger?.refresh();
+    } else {
+      addHeroAnimation();
     }
-
-    const isMobile = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
-    addHeroAnimation(coordinates, isMobile);
   });
 }
 
-const timeline: Ref<GSAPTimeline | null> = ref(null);
-let animationRevision = 0;
+const timeline = shallowRef<GSAPTimeline | null>(null);
+let animationFrame = 0;
 
 function cleanupAnimation() {
   timeline.value?.scrollTrigger?.kill();
   timeline.value?.kill();
   timeline.value = null;
-}
-
-function resetHeroPictureTransform() {
-  gsap.set("#heroPicture", {
-    xPercent: -50,
-    yPercent: -50,
-    x: 0,
-    y: 0,
-    scale: 1,
-    scaleX: 1,
-    scaleY: 1,
-    opacity: 1,
-    transformOrigin: "50% 50%",
-    willChange: "transform",
-    force3D: true,
-  });
 }
 
 type DOMCoordinates = {
@@ -133,23 +82,9 @@ type DOMCoordinates = {
   scaleY: number;
 };
 
-function addHeroAnimation(coordinates: DOMCoordinates, isMobile: boolean) {
-  gsap.set("#the-navbar", { opacity: 0 });
-
-  const imageTween: TweenVars = {
-    x: coordinates.deltaX,
-    y: coordinates.deltaY,
-    ease: "none",
-    duration: 0.7,
-    force3D: !isMobile,
-  };
-
-  if (isMobile) {
-    imageTween.scale = Math.min(coordinates.scaleX, coordinates.scaleY);
-  } else {
-    imageTween.scaleX = coordinates.scaleX;
-    imageTween.scaleY = coordinates.scaleY;
-  }
+function addHeroAnimation() {
+  let coordinates = calculateCoordinatesAnimation("heroPictureAnchor", "heroLogo");
+  const isMobile = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
 
   const tl = gsap.timeline({
     scrollTrigger: {
@@ -158,11 +93,43 @@ function addHeroAnimation(coordinates: DOMCoordinates, isMobile: boolean) {
       start: "top top",
       end: "bottom top",
       invalidateOnRefresh: true,
+      // ScrollTrigger owns resize handling (including ignoreMobileResize).
+      // Read an unanimated anchor, never reset the visible image to measure it.
+      onRefreshInit: () => {
+        coordinates = calculateCoordinatesAnimation("heroPictureAnchor", "heroLogo");
+      },
+      onRefresh: (trigger) => {
+        // Complete refresh in the current frame, even when scrollY did not
+        // change. Do not leave an invalidated fromTo at its starting values
+        // until the next scroll event (e.g. repeated image-load refreshes).
+        trigger.update();
+        const progress = gsap.utils.clamp(0, 1,
+          (trigger.scroll() - trigger.start) / (trigger.end - trigger.start));
+        trigger.animation?.totalProgress(progress, true);
+      },
     },
   });
 
-  tl.to("#heroPicture", imageTween)
-    .to("#the-navbar", { opacity: 1, ease: "none", duration: 0.3 }, 0.7)
+  tl.fromTo("#heroPicture", {
+    xPercent: -50,
+    yPercent: -50,
+    x: 0,
+    y: 0,
+    scaleX: 1,
+    scaleY: 1,
+    opacity: 1,
+    transformOrigin: "50% 50%",
+    force3D: !isMobile,
+  }, {
+    x: () => coordinates.deltaX,
+    y: () => coordinates.deltaY,
+    scaleX: () => isMobile ? Math.min(coordinates.scaleX, coordinates.scaleY) : coordinates.scaleX,
+    scaleY: () => isMobile ? Math.min(coordinates.scaleX, coordinates.scaleY) : coordinates.scaleY,
+    ease: "none",
+    duration: 0.7,
+    force3D: !isMobile,
+  })
+    .fromTo("#the-navbar", { opacity: 0 }, { opacity: 1, ease: "none", duration: 0.3 }, 0.7)
     .set("#heroPicture", { opacity: 0 }, 1);
 
   timeline.value = tl;

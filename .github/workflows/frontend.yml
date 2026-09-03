@@ -38,8 +38,8 @@ jobs:
         run: npm test
       - name: Build frontend
         run: npm run build --if-present
-      - name: Install browser for smoke tests
-        run: npx playwright install --with-deps chromium
+      - name: Install browsers for smoke tests
+        run: npx playwright install --with-deps chromium webkit
       - name: Run browser smoke tests
         run: npm run test:e2e
 
