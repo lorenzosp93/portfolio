@@ -4,7 +4,7 @@
     class="relative flex min-h-screen w-full items-center overflow-x-clip px-5 py-20 text-ink dark:text-white sm:px-8"
   >
     <div
-      class="hero-layout mx-auto grid w-full max-w-7xl -translate-y-8 items-center gap-10 sm:translate-y-0 sm:grid-cols-[minmax(17rem,0.8fr)_minmax(0,1.2fr)] sm:gap-12 lg:gap-20"
+      class="hero-layout relative -top-8 mx-auto grid w-full max-w-7xl items-center gap-10 sm:top-0 sm:grid-cols-[minmax(17rem,0.8fr)_minmax(0,1.2fr)] sm:gap-12 lg:gap-20"
     >
     <div class="relative min-w-0 py-5">
       <div class="relative mx-auto h-56 w-56 md:h-72 md:w-72">
@@ -18,7 +18,8 @@
           class="absolute z-10 left-1/2 top-1/2 h-28 w-28 translate-x-6 translate-y-5 rounded-full bg-amberSoft/90 blur-[1px] ring-1 ring-amber/20 dark:bg-amber/25 dark:ring-amberSoft/20 md:h-36 md:w-36"
         />
         <div
-          class="absolute z-10 left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full bg-surface/70 shadow-2xl ring-1 ring-ink/10 backdrop-blur-sm dark:bg-nightSurface/70 dark:ring-white/10 md:h-56 md:w-56"
+          id="heroPictureAnchor"
+          class="absolute z-10 left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full bg-surface/90 shadow-2xl ring-1 ring-ink/10 dark:bg-nightSurface/90 dark:ring-white/10 md:h-56 md:w-56"
         />
         <img
           id="heroPicture"

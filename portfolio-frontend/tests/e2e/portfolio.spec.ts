@@ -9,6 +9,18 @@ test("renders the main portfolio sections", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Get in touch!" })).toBeAttached();
 });
 
+test("does not place the animated portrait inside a transformed hero layout", async ({ page }) => {
+  await page.goto("/");
+
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    const layout = page.locator(".hero-layout");
+    await expect(layout).toHaveCSS("transform", "none");
+    await expect(layout).toHaveCSS("top", width < 640 ? "-32px" : "0px");
+    await expect(page.locator(".navbar-surface")).toHaveCSS("backdrop-filter", "none");
+  }
+});
+
 test("uses night gradients for tinted sections in dark mode", async ({ page }) => {
   await page.emulateMedia({ colorScheme: "dark" });
   await page.goto("/");

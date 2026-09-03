@@ -271,13 +271,6 @@ function getHorizontalScrollParent(elem: HTMLElement): HTMLElement | null {
   backdrop-filter: none;
 }
 
-@media (min-width: 1024px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .navbar-surface {
-    -webkit-backdrop-filter: blur(6px);
-    backdrop-filter: blur(6px);
-  }
-}
-
 .nav-active-indicator {
   @apply pointer-events-none absolute left-0 top-1/2 z-10 h-9 rounded-full bg-teal shadow-sm transition-all duration-300 ease-out dark:bg-tealSoft;
 }
