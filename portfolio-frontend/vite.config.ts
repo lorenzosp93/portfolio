@@ -16,29 +16,17 @@ export default defineConfig({
     VitePWA({
       strategies: "generateSW",
       registerType: "autoUpdate",
+      // Registration/reload policy lives in serviceWorkerUpdates.ts.
+      injectRegister: false,
       workbox: {
         importScripts: ["/push-sw.js"],
-        navigateFallbackDenylist: [/\/api\//],
-        runtimeCaching: [
-          {
-            urlPattern: ({ url }) => {
-              return url.pathname.startsWith("/api");
-            },
-            handler: "NetworkFirst" as const,
-            method: "GET",
-            options: {
-              cacheName: "api-cache",
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 7,
-              },
-              networkTimeoutSeconds: 5,
-            },
-          },
-        ],
+        cleanupOutdatedCaches: true,
+        clientsClaim: true,
+        skipWaiting: true,
+        navigateFallbackDenylist: [/^\/api(?:\/|$)/],
+        // API/admin responses must never silently fall back to stale data.
+        // Keep precaching versioned application assets for offline navigation.
+        runtimeCaching: [],
       },
       devOptions: {
         enabled: false,

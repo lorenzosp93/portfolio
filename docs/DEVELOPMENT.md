@@ -81,6 +81,7 @@ cd portfolio-frontend
 npm test
 npm run test:e2e:install # first run only
 npm run test:e2e
+npm run test:pwa # two production builds; tests real worker upgrade/offline behavior
 npm run build
 npm run lint:check
 
@@ -97,6 +98,30 @@ them with `npm run test:e2e`. GitHub Actions runs unit/component and browser
 tests, lint/build checks, Django checks/tests, and both container builds.
 `npm run lint` still mutates source files; use it only when such a change is
 acceptable and inspect its diff afterward.
+
+### Service worker updates
+
+The worker precaches the versioned application shell, but does not intercept or
+cache API/admin responses. Offline navigation can load the shell; API content
+requires a connection and uses the existing error/fallback UI when unavailable.
+Activation deletes only the obsolete `api-cache`, leaving unrelated caches and
+push subscriptions untouched.
+
+Production registration checks for updates on startup, every five minutes while
+visible, and on returning to the tab or reconnecting (throttled to 30 seconds).
+The new worker activates immediately; existing tabs show a Refresh notice rather
+than automatically reloading and losing unsent text. First installation is silent.
+An old tab running the previous auto-reload implementation may reload once during
+the transition to this version. Development mode does not register a worker.
+
+`npm run test:pwa` builds two releases in a temporary directory and serves them on
+an isolated local port. It checks real browser update activation, explicit page
+refresh, API freshness, legacy-cache cleanup, and offline-shell behavior.
+
+The nginx config serves stable worker URLs with `Cache-Control: no-store` and
+does not fall back to HTML for missing worker scripts. In CloudFront, the behavior
+covering `/sw.js` and `/push-sw.js` must use a zero minimum TTL (or disabled caching)
+to honor origin headers. Frontend changes cannot override a CDN minimum TTL.
 
 ## Data, migrations, and public API
 

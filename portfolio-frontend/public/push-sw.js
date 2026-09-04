@@ -1,3 +1,8 @@
+self.addEventListener("activate", (event) => {
+  // Remove only the legacy API cache owned by this app, not other caches.
+  event.waitUntil(caches.delete("api-cache"));
+});
+
 self.addEventListener("push", function (event) {
   let data = {};
 

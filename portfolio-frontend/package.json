@@ -9,6 +9,7 @@
     "test": "vitest run --config vitest.config.ts",
     "test:watch": "vitest --config vitest.config.ts",
     "test:e2e": "playwright test",
+    "test:pwa": "node --test tests/pwa/*.test.mjs",
     "test:e2e:install": "playwright install chromium webkit",
     "lint": "eslint --ext .ts,.vue,.js --ignore-path .gitignore --fix src",
     "lint:check": "eslint --ext .ts,.vue,.js --ignore-path .gitignore src",

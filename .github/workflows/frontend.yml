@@ -42,6 +42,8 @@ jobs:
         run: npx playwright install --with-deps chromium webkit
       - name: Run browser smoke tests
         run: npm run test:e2e
+      - name: Test production service worker upgrades
+        run: npm run test:pwa
 
   container-check:
     runs-on: ubuntu-latest

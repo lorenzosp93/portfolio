@@ -9,6 +9,7 @@
     <the-resume class="snap-center scroll-mt-20" id="the-resume" />
     <the-blog class="snap-center scroll-mt-20" id="the-blog" />
     <the-contacts class="snap-center scroll-mt-20" id="the-contacts" />
+    <service-worker-update />
 
     <footer class="mx-auto w-full px-5 pb-6 text-sm text-muted dark:text-gray-300">
       <p>© Lorenzo Spinelli, 2026</p>
@@ -24,10 +25,8 @@ import TheBlog from "./components/blog/TheBlog.vue";
 import TheContacts from "./components/TheContacts.vue";
 import { Ref, provide, ref, shallowRef, onMounted, onUnmounted } from "vue";
 import { gsap } from "gsap";
-import { registerSW } from "virtual:pwa-register";
+import ServiceWorkerUpdate from "./components/UI/ServiceWorkerUpdate.vue";
 import { useSiteStore } from "@/stores/site.store";
-
-registerSW({ immediate: true });
 
 const siteStore = useSiteStore();
 onMounted(() => {
