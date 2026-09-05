@@ -25,6 +25,20 @@
       "problemMatcher": []
     },
     {
+      "label": "Backend: process queued contact emails",
+      "type": "process",
+      "command": "${workspaceFolder}/portfolio-backend/.venv/bin/python",
+      "args": ["manage.py", "process_contact_submissions", "--once"],
+      "options": {
+        "cwd": "${workspaceFolder}/portfolio-backend",
+        "env": {
+          "DEBUG": "true",
+          "EMAIL_BACKEND": "django.core.mail.backends.console.EmailBackend"
+        }
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "Frontend: test",
       "type": "npm",
       "script": "test",

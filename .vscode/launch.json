@@ -33,12 +33,32 @@
         "uriFormat": "%s",
         "action": "debugWithChrome"
       }
+    },
+    {
+      "name": "Backend: Contact email worker",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/portfolio-backend/manage.py",
+      "cwd": "${workspaceFolder}/portfolio-backend",
+      "args": ["process_contact_submissions"],
+      "justMyCode": true,
+      "envFile": "${workspaceFolder}/portfolio-backend/.env",
+      "env": {
+        "DEBUG": "true",
+        "EMAIL_BACKEND": "django.core.mail.backends.console.EmailBackend",
+        "CONTACT_EMAIL_POLL_SECONDS": "1"
+      },
+      "console": "integratedTerminal"
     }
   ],
   "compounds": [
     {
       "name": "Full stack: Django + Vite",
-      "configurations": ["Backend: Django", "Frontend: Vite + Chrome"],
+      "configurations": [
+        "Backend: Django",
+        "Backend: Contact email worker",
+        "Frontend: Vite + Chrome"
+      ],
       "stopAll": true
     }
   ]

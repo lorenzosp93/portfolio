@@ -15,7 +15,7 @@ Browser
   └─ Django REST API (portfolio-backend/api/)
        ├─ resume: experience, education, projects, skills
        ├─ blog: posts and comments
-       ├─ contacts: contact-email POST and CSRF token
+       ├─ contacts: durable contact outbox, email worker, and CSRF token
        └─ shared: site settings and push subscriptions
 
 ```
@@ -61,7 +61,7 @@ content and cross-cutting models:
 | --- | --- |
 | `resume` | Experience, education, projects, entities, keywords, and skills. |
 | `blog` | Published posts and comments; posts can trigger push notifications. |
-| `contacts` | Validates contact submissions and sends email. |
+| `contacts` | Validates and stores contact submissions; a separate worker delivers email. |
 | `shared` | Reusable abstract models, media attachments, site settings, subscriptions, and logging. |
 
 `SiteSettings` is a singleton edited through Django admin. Use it for small,
@@ -87,6 +87,14 @@ model changes can affect several serializers and admin behavior.
 The backend defaults to SQLite when `DB_ENGINE` is unset and accepts PostgreSQL
 settings through environment variables. In non-debug mode it requires
 `DJANGO_SECRET_KEY` (or `SECRET_KEY`) and restricts CORS to `FRONTEND_HOST`.
+
+Contact delivery uses `ContactSubmission` as a transactional outbox. The API
+only persists a `pending` row and returns HTTP 202. A separate
+`process_contact_submissions` worker claims rows with a short database lease,
+sends SMTP outside the transaction, and records delivery or schedules bounded
+exponential retries. A stale `processing` lease can be reclaimed after a worker
+crash. This provides at-least-once processing; SMTP itself cannot make the final
+send and database update atomic.
 
 ## Containers
 

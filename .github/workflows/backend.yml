@@ -118,19 +118,3 @@ jobs:
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/portfolio:${{ steps.extract_branch.outputs.branch }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-  deploy:
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
-    needs:
-      - build
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Kubernetes
-        uses: Azure/k8s-set-context@v4
-        with:
-          method: kubeconfig
-          kubeconfig: ${{ secrets.KUBECONFIG }}
-      - name: Rollout deploy
-        run: kubectl rollout restart deploy portfolio-backend -n portfolio

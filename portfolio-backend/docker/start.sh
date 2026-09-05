@@ -3,7 +3,7 @@
 cd /app
 
 if [ $# -eq 0 ]; then
-    echo "Usage: start.sh [PROCESS_TYPE](server/beat/worker/flower)"
+    echo "Usage: start.sh [PROCESS_TYPE](server/worker)"
     exit 1
 fi
 
@@ -28,7 +28,9 @@ if [ "$PROCESS_TYPE" = "server" ]; then
             --error-logfile "-" \
             portfolio.wsgi
     fi
+elif [ "$PROCESS_TYPE" = "worker" ]; then
+    exec python manage.py process_contact_submissions
 else
-    echo "Unsupported process type: $PROCESS_TYPE. Only 'server' is supported."
+    echo "Unsupported process type: $PROCESS_TYPE. Supported: server, worker."
     exit 1
 fi
