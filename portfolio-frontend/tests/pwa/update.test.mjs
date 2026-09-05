@@ -56,7 +56,20 @@ test("production worker upgrades without forced reload, removes old API cache an
     apiRevision = 2;
     assert.equal((await fetchSettings()).revision, 2);
     release = "B";
-    await page.evaluate(async () => (await navigator.serviceWorker.getRegistration()).update());
+    await page.evaluate(async () => {
+      const initialController = navigator.serviceWorker.controller;
+      const registration = await navigator.serviceWorker.getRegistration();
+      const deadline = Date.now() + 30_000;
+
+      while (navigator.serviceWorker.controller === initialController && Date.now() < deadline) {
+        await registration.update();
+        await new Promise((resolve) => setTimeout(resolve, 250));
+      }
+
+      if (navigator.serviceWorker.controller === initialController) {
+        throw new Error("Service worker controller did not update to release B");
+      }
+    });
     await page.getByRole("button", { name: "Refresh", exact: true }).waitFor();
     await otherTab.getByRole("button", { name: "Refresh", exact: true }).waitFor();
     assert.match(await page.locator(".hero-copy").innerText(), /Release A/);
