@@ -39,6 +39,7 @@
         :scroll-container="resumeContainer"
       />
       <div
+        ref="resumeViewport"
         class="overflow-hidden transition-[height] duration-300 ease-out min-h-[1vh] min-h-[1svh]"
         :style="resumeViewportStyle"
       >
@@ -71,6 +72,7 @@ import ResumeTimeline from "./Timeline/ResumeTimeline.vue";
 import ArrowScroller from "../composables/ArrowScroller.vue";
 import { useEventListener, useMediaQuery } from "@vueuse/core";
 const resumeContainer = ref<HTMLElement | null>(null);
+const resumeViewport = ref<HTMLElement | null>(null);
 const mobileTabs = ref<HTMLElement | null>(null);
 const slideRefs = reactive<Record<string, HTMLElement | null>>({});
 const mobileTabRefs = reactive<Record<string, HTMLElement | null>>({});
@@ -151,7 +153,24 @@ function updateActivePanelHeight() {
   nextTick(() => {
     const activeSlide = slideRefs[activeSlideId.value];
     if (!activeSlide) return;
-    activePanelHeight.value = activeSlide.scrollHeight;
+    const nextPanelHeight = activeSlide.scrollHeight;
+    if (nextPanelHeight === activePanelHeight.value) return;
+    const viewportHeight = getViewportHeight();
+    const previousTargetHeight = Math.max(activePanelHeight.value, viewportHeight);
+    const nextTargetHeight = Math.max(nextPanelHeight, viewportHeight);
+    const shrinkAmount = previousTargetHeight - nextTargetHeight;
+
+    if (
+      shrinkAmount > 0 &&
+      resumeViewport.value &&
+      resumeViewport.value.getBoundingClientRect().bottom <= viewportHeight + 1
+    ) {
+      window.scrollBy({
+        top: -Math.min(shrinkAmount, window.scrollY),
+        behavior: "smooth",
+      });
+    }
+    activePanelHeight.value = nextPanelHeight;
   });
 }
 
@@ -215,6 +234,7 @@ onMounted(() => {
     updateActivePanelHeight();
     updateMobileTabBar();
   });
+
 });
 
 onBeforeUnmount(() => {

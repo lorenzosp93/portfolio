@@ -37,4 +37,51 @@ describe("TheResume", () => {
 
     expect(wrapper.find("ul").exists()).toBe(false);
   });
+
+  it("keeps the shorter panel in view when switching at the bottom of resume", async () => {
+    const observers: Array<{
+      callback: ResizeObserverCallback;
+      observe: ReturnType<typeof vi.fn>;
+    }> = [];
+    class ResizeObserverStub {
+      callback: ResizeObserverCallback;
+      observe = vi.fn();
+      unobserve = vi.fn();
+      disconnect = vi.fn();
+
+      constructor(callback: ResizeObserverCallback) {
+        this.callback = callback;
+        observers.push(this);
+      }
+    }
+    const originalResizeObserver = window.ResizeObserver;
+    window.ResizeObserver = ResizeObserverStub;
+    vi.spyOn(window, "innerHeight", "get").mockReturnValue(400);
+    const scrollBy = vi.spyOn(window, "scrollBy").mockImplementation(() => undefined);
+    vi.spyOn(window, "scrollY", "get").mockReturnValue(1000);
+
+    const wrapper = shallowMount(TheResume);
+    await wrapper.vm.$nextTick();
+    const viewport = wrapper.find(".overflow-hidden").element;
+    vi.spyOn(viewport, "getBoundingClientRect").mockReturnValue({
+      bottom: 400,
+      height: 800,
+    } as DOMRect);
+    const panelObserver = observers.find(({ observe }) =>
+      observe.mock.calls.some(([element]) => element.id === "experience")
+    );
+    const experience = wrapper.find("#experience").element;
+
+    Object.defineProperty(experience, "scrollHeight", { configurable: true, value: 800 });
+    panelObserver?.callback([], panelObserver as unknown as ResizeObserver);
+    await wrapper.vm.$nextTick();
+
+    Object.defineProperty(experience, "scrollHeight", { configurable: true, value: 600 });
+    panelObserver?.callback([], panelObserver as unknown as ResizeObserver);
+    await wrapper.vm.$nextTick();
+
+    expect(scrollBy).toHaveBeenCalledWith({ top: -200, behavior: "smooth" });
+    wrapper.unmount();
+    window.ResizeObserver = originalResizeObserver;
+  });
 });

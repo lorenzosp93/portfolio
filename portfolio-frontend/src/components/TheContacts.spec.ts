@@ -32,6 +32,7 @@ async function openAndFillForm(wrapper: ReturnType<typeof mount>) {
 describe("TheContacts", () => {
   beforeEach(() => {
     backend.postContactForm.mockReset();
+    window.sessionStorage.clear();
   });
 
   it("keeps submission disabled until every field has a value", async () => {
@@ -47,7 +48,7 @@ describe("TheContacts", () => {
     expect(wrapper.get('button[type="submit"]').attributes("disabled")).toBeUndefined();
   });
 
-  it("posts the form and resets it after success", async () => {
+  it("posts the form and replaces the button with a session-persistent confirmation", async () => {
     backend.postContactForm.mockResolvedValue({});
     const wrapper = mount(TheContacts, {
       global: { stubs: { DetailCard: DetailCardStub } },
@@ -64,6 +65,18 @@ describe("TheContacts", () => {
       content: "Hello from the test suite",
     });
     expect(wrapper.find('[data-test="detail-card"]').exists()).toBe(false);
+    expect(wrapper.find('button[type="button"]').exists()).toBe(false);
+    expect(wrapper.get('[data-test="contact-success"]').text()).toContain(
+      "Message received — thank you!"
+    );
+    expect(window.sessionStorage.getItem("contactMessageSent")).toBe("true");
+
+    wrapper.unmount();
+    const reloadedWrapper = mount(TheContacts, {
+      global: { stubs: { DetailCard: DetailCardStub } },
+    });
+    expect(reloadedWrapper.find('button[type="button"]').exists()).toBe(false);
+    expect(reloadedWrapper.get('[data-test="contact-success"]').exists()).toBe(true);
   });
 
   it("shows field-level API errors and becomes retryable", async () => {

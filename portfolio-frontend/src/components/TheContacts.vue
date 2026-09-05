@@ -11,12 +11,33 @@
         Have an interesting product, technical challenge, or idea in mind? I'd be glad to hear about it.
       </p>
       <button
+        v-if="!hasSentMessage"
         type="button"
         class="mt-5 rounded-full bg-teal px-6 py-3 text-center font-semibold text-white shadow-md ring-1 ring-teal/20 transition duration-300 hover:-translate-y-0.5 hover:bg-teal/90 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-tealSoft dark:bg-tealSoft dark:text-night dark:ring-tealSoft/30 dark:hover:bg-tealSoft/90"
         @click="formVisible = true"
       >
         Click here to send me a message.
       </button>
+      <p
+        v-else
+        data-test="contact-success"
+        role="status"
+        class="mt-5 inline-flex items-center gap-2 rounded-full bg-teal/10 px-6 py-3 font-semibold text-teal ring-1 ring-teal/20 dark:bg-tealSoft/10 dark:text-tealSoft dark:ring-tealSoft/30"
+      >
+        <svg
+          class="h-5 w-5"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M16.704 5.292a1 1 0 0 1 .004 1.416l-7.5 7.543a1 1 0 0 1-1.42 0l-3.5-3.52a1 1 0 1 1 1.42-1.41l2.79 2.806 6.79-6.831a1 1 0 0 1 1.416-.004Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        Message received — thank you!
+      </p>
     </div>
     <detail-card
       ref="formCard"
@@ -158,6 +179,10 @@ type ApiErrorLike = {
 const formVisible = ref(false);
 const isLoading = ref(false);
 const error = ref<string | null>(null);
+const contactSentStorageKey = "contactMessageSent";
+const hasSentMessage = ref(
+  window.sessionStorage.getItem(contactSentStorageKey) === "true"
+);
 const formItems: Ref<FormItem[]> = ref([
   {
     id: "first_name",
@@ -232,7 +257,7 @@ function formatApiError(err: unknown): string {
 }
 
 async function submitMessage() {
-  if (!canSubmit.value) return;
+  if (!canSubmit.value || hasSentMessage.value) return;
 
   isLoading.value = true;
   error.value = null;
@@ -242,6 +267,8 @@ async function submitMessage() {
     formItems.value.forEach((item) => {
       item.value = "";
     });
+    window.sessionStorage.setItem(contactSentStorageKey, "true");
+    hasSentMessage.value = true;
     formVisible.value = false;
   } catch (err) {
     error.value = formatApiError(err);
