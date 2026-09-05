@@ -99,9 +99,17 @@ send and database update atomic.
 ## Containers
 
 The frontend Docker image builds static Vite assets and serves them through
-Nginx. The backend image runs Gunicorn; its entrypoint collects static files and
-applies migrations before starting. It waits for PostgreSQL only when
-`DB_ENGINE=django.db.backends.postgresql`.
+Nginx. The backend image runs Gunicorn; its entrypoint waits for PostgreSQL,
+collects static files, and currently applies migrations before starting. A
+Kubernetes `command` overrides the image `ENTRYPOINT`, so a deployment using
+one bypasses all three initialization steps.
+
+For HA production, prefer one explicit migration Job using the release image,
+wait for it to succeed, and then roll out API and worker Deployments. Do not run
+`makemigrations` in CI or production: migrations are reviewed schema history.
+CI instead uses `makemigrations --check --dry-run` to fail when model changes do
+not have a committed migration, then applies those committed migrations to its
+temporary PostgreSQL database.
 
 Deployment infrastructure is intentionally maintained outside this repository.
 Do not add or infer an authoritative Kubernetes configuration here without an

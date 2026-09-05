@@ -95,6 +95,8 @@ npm run lint:check
 
 # backend
 cd portfolio-backend
+python3 manage.py makemigrations --check --dry-run
+python3 manage.py migrate --noinput
 python3 manage.py test
 python3 manage.py check
 ```
@@ -151,10 +153,21 @@ to honor origin headers. Frontend changes cannot override a CDN minimum TTL.
 
 ## Container notes
 
-The backend container startup runs migrations automatically and waits for
-PostgreSQL only when that database engine is configured. Review a migration for
-production safety before deploying the image. Infrastructure configuration is
-maintained outside this repository.
+The backend container entrypoint currently runs migrations automatically and
+waits for PostgreSQL when that database engine is configured. This only happens
+when the runtime preserves the image entrypoint: Kubernetes `command` replaces
+`ENTRYPOINT`, while Kubernetes `args` replaces only the image command.
+
+For production, review migrations and apply them exactly once with a Kubernetes
+Job using the new release image before rolling out the HA API and worker
+Deployments. Running migrations independently in every application replica can
+race during rollout and couples application readiness to schema changes. Never
+run `makemigrations` in a container or deployment; generate and review migration
+files during development. CI checks that none are missing and applies all
+committed migrations to temporary PostgreSQL before running tests.
+
+Infrastructure configuration is maintained outside this repository, so the
+migration Job belongs with the authoritative cluster deployment configuration.
 
 The image supports two process types:
 
