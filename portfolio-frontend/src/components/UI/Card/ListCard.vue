@@ -60,10 +60,15 @@
 
 <script setup lang="ts">
 import { marked } from "marked";
-import BlogEntryDetail from "../../blog/BlogEntryDetail.vue";
-import ProjectEntryDetail from "../../resume/Projects/ProjectEntryDetail.vue";
-import { computed, inject, ref } from "vue";
+import { computed, defineAsyncComponent, inject, ref } from "vue";
 import type { Attachment, CreatedBy } from "@/models/models.interface";
+
+const BlogEntryDetail = defineAsyncComponent(
+  () => import("../../blog/BlogEntryDetail.vue")
+);
+const ProjectEntryDetail = defineAsyncComponent(
+  () => import("../../resume/Projects/ProjectEntryDetail.vue")
+);
 
 const detailsVisible = ref(false);
 

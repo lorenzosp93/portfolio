@@ -1,0 +1,8 @@
+# Lorenzo Spinelli's Portfolio
+
+This website presents Lorenzo Spinelli's experience, projects, skills, writing, and contact information.
+
+- [Portfolio homepage](https://lorenzosp.com/)
+- [Résumé](https://lorenzosp.com/#the-resume)
+- [Blog](https://lorenzosp.com/#the-blog)
+- [Contact](https://lorenzosp.com/#the-contacts)

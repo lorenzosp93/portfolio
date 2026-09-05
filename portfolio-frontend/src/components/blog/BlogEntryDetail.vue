@@ -26,6 +26,7 @@
 import { useTextUtils } from "@/composables/textUtils";
 import { Attachment, CreatedBy } from "@/models/models.interface";
 import DetailCard from "../UI/Card/DetailCard.vue";
+import "katex/dist/katex.min.css";
 
 const props = defineProps<{
   name: string;
@@ -47,8 +48,3 @@ function cardClosed() {
   emit("cardClosed");
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-@import url("https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css");
-</style>

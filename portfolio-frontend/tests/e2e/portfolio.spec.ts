@@ -3,6 +3,9 @@ import { expect, test } from "@playwright/test";
 test("renders the main portfolio sections", async ({ page }) => {
   await page.goto("/");
 
+  await expect(page.getByRole("main")).toHaveCount(1);
+  await expect(page.getByRole("main").locator("footer")).toHaveCount(0);
+  await expect(page.locator("body > footer, #app > footer")).toHaveCount(1);
   await expect(page.getByRole("heading", { name: /Hi, I'm Lorenzo/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Here are a few things I've done." })).toBeAttached();
   await expect(page.getByRole("heading", { name: "Thoughts from the blog." })).toBeAttached();

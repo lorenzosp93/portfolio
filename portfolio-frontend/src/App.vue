@@ -1,5 +1,5 @@
 <template>
-  <div class="page-scroll-container w-full bg-paper text-ink snap-y snap-proximity dark:bg-night" ref="root">
+  <main class="page-scroll-container w-full bg-paper text-ink snap-y snap-proximity dark:bg-night" ref="root">
     <the-hero class="snap-center scroll-mt-20" id="the-hero" @hero-loaded="setupAnimation" />
     <the-navbar
       class="snap-center"
@@ -10,11 +10,11 @@
     <the-blog class="snap-center scroll-mt-20" id="the-blog" />
     <the-contacts class="snap-center scroll-mt-20" id="the-contacts" />
     <service-worker-update />
+  </main>
 
-    <footer class="mx-auto w-full px-5 pb-6 text-sm text-muted dark:text-gray-300">
-      <p>© Lorenzo Spinelli, 2026</p>
-    </footer>
-  </div>
+  <footer class="mx-auto w-full bg-paper px-5 pb-6 text-sm text-muted dark:bg-night dark:text-gray-300">
+    <p>© Lorenzo Spinelli, 2026</p>
+  </footer>
 </template>
 
 <script setup lang="ts">
@@ -34,7 +34,7 @@ onMounted(() => {
   setupAnimation();
 });
 
-const root: Ref<HTMLDivElement | null> = ref(null);
+const root: Ref<HTMLElement | null> = ref(null);
 
 const truncationAmount = () => {
   let w = window.innerWidth;

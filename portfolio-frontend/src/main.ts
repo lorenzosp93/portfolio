@@ -4,18 +4,15 @@ import App from "./App.vue";
 import "./index.css";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Draggable } from "gsap/Draggable";
 
 const myApp = createApp(App);
 const pinia = createPinia();
 
-gsap.registerPlugin(ScrollTrigger, Draggable);
+gsap.registerPlugin(ScrollTrigger);
 ScrollTrigger.config({
   ignoreMobileResize: true,
 });
-myApp.config.globalProperties.$gsap = gsap;
-myApp.config.globalProperties.$drag = Draggable;
+// Expose the registered instance for the browser-level animation regression tests.
 myApp.config.globalProperties.$str = ScrollTrigger;
-
 myApp.use(pinia);
 myApp.mount("#app");
