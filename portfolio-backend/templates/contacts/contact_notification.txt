@@ -1,0 +1,13 @@
+{% autoescape off %}NEW PORTFOLIO MESSAGE
+
+From: {{ submission.first_name }} {{ submission.last_name }}
+Email: {{ submission.email }}
+Received: {{ submission.submitted_at|date:"j F Y, H:i T" }}
+
+MESSAGE
+
+{{ submission.content }}
+
+---
+Reply to this email to respond directly to {{ submission.first_name }}.
+{% endautoescape %}

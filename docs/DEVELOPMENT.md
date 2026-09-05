@@ -64,7 +64,7 @@ above. Useful migration and test commands are also available under
 | Database | `DB_ENGINE`, `DATABASE_NAME`, `DATABASE_USERNAME`, `DATABASE_PASSWORD`, `DATABASE_HOST`, `DATABASE_PORT` |
 | Browser/API origin | `FRONTEND_HOST`, `BACKEND_HOST`, `VITE_APP_BACKEND_URL` |
 | Frontend content | `VITE_HERO_COPY` (trusted Markdown hero copy; separate paragraphs with a blank line) |
-| Email | `EMAIL_TO`, `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `EMAIL_USE_TLS` |
+| Email | `EMAIL_TO`, `EMAIL_FROM`, `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `EMAIL_USE_TLS`, `EMAIL_TIMEOUT` |
 | Push | `VITE_APP_KEY`, `WEB_PUSH_PUBLIC_KEY`, `WEB_PUSH_PRIVATE_KEY`, `WEB_PUSH_ADMIN_EMAIL` |
 | Optional S3 storage | `USE_S3`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_STORAGE_BUCKET_NAME`, `AWS_S3_CUSTOM_DOMAIN` |
 
@@ -133,6 +133,9 @@ to honor origin headers. Frontend changes cannot override a CDN minimum TTL.
   types and consumers with API changes.
 - Contact delivery relies on SMTP configuration. Tests and local development
   should avoid sending real mail unless explicitly configured to do so.
+- Valid contact submissions are stored before SMTP delivery. Administrators can
+  review sent and failed submissions under Contact submissions; delivery errors
+  return HTTP 202 because the visitor's message has still been captured.
 
 ## Container notes
 
@@ -140,3 +143,18 @@ The backend container startup runs migrations automatically and waits for
 PostgreSQL only when that database engine is configured. Review a migration for
 production safety before deploying the image. Infrastructure configuration is
 maintained outside this repository.
+
+For the current iCloud SMTP deployment, configure or rotate credentials with:
+
+```sh
+scripts/configure-production-email.sh <icloud-login-address> [recipient] [sender]
+scripts/verify-production-email.sh
+scripts/verify-production-email.sh --send
+```
+
+The first command prompts for the app-specific password without echoing it,
+stores the values in the `portfolio-email` Kubernetes Secret, injects them into
+`portfolio-backend`, and waits for rollout completion. Verification authenticates
+without sending by default; `--send` sends one message to `EMAIL_TO`.
+`KUBE_NAMESPACE`, `KUBE_DEPLOYMENT`, and `KUBE_EMAIL_SECRET` override their
+defaults. These are operational helpers, not authoritative cluster manifests.

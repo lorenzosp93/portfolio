@@ -255,11 +255,13 @@ else:
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_TO = os.environ.get('EMAIL_TO', 'me@lorenzosp.com')
+EMAIL_FROM = os.environ.get('EMAIL_FROM', EMAIL_TO)
 EMAIL_HOST = os.environ.get('EMAIL_HOST')
-EMAIL_PORT = os.environ.get('EMAIL_PORT', 587)
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = env_bool('EMAIL_USE_TLS', True)
+EMAIL_TIMEOUT = float(os.environ.get('EMAIL_TIMEOUT', '10'))
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
@@ -268,5 +270,4 @@ WEBPUSH_SETTINGS = {
     "VAPID_PRIVATE_KEY": os.environ.get('WEB_PUSH_PRIVATE_KEY'),
     "VAPID_ADMIN_EMAIL": os.environ.get('WEB_PUSH_ADMIN_EMAIL', "me@lorenzosp.com"),
 }
-
 
