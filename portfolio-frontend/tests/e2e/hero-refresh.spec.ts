@@ -11,33 +11,41 @@ test.beforeEach(async ({ page }) => {
 
 test("pointer offsets work during the entrance and survive its completion", async ({ page }) => {
   await page.goto("/");
-  const result = await page.evaluate(async () => {
-    const hero = document.querySelector<HTMLElement>("#the-hero")!;
-    const entrance = document.querySelector<HTMLElement>(".hero-shape-entrance")!;
-    const layer = document.querySelector<HTMLElement>(".hero-pointer-layer")!;
-    const animation = entrance.getAnimations()[0];
+  const entrance = page.locator(".hero-shape-entrance").first();
+  const layer = page.locator(".hero-pointer-layer").first();
+  await entrance.evaluate(async (element) => {
+    const animation = element.getAnimations()[0];
     animation.pause();
+    await animation.ready;
     animation.currentTime = 150;
-    const bounds = hero.getBoundingClientRect();
-    hero.dispatchEvent(new PointerEvent("pointermove", {
-      clientX: bounds.left + bounds.width * .8,
-      clientY: bounds.top + bounds.height * .3,
-      pointerType: "mouse",
-    }));
-    await new Promise(resolve => setTimeout(resolve, 180));
-    const early = getComputedStyle(layer).transform;
-    const enteringOpacity = Number(getComputedStyle(entrance).opacity);
-    animation.finish();
-    await new Promise(requestAnimationFrame);
-    const late = getComputedStyle(layer).transform;
-    hero.dispatchEvent(new PointerEvent("pointerleave"));
-    await new Promise(resolve => setTimeout(resolve, 180));
-    return { early, late, enteringOpacity, reset: getComputedStyle(layer).transform };
   });
-  expect(result.enteringOpacity).toBeLessThan(1);
-  expect(result.early).not.toBe("matrix(1, 0, 0, 1, 0, 0)");
-  expect(result.late).toBe(result.early);
-  expect(result.reset).toBe("matrix(1, 0, 0, 1, 0, 0)");
+
+  // Use the browser's actual pointer so native enter/leave events agree with
+  // its location. A synthetic move can be undone by a real boundary event.
+  const bounds = (await page.locator("#the-hero").boundingBox())!;
+  const x = Math.round(bounds.x + bounds.width * .8);
+  const y = Math.round(bounds.y + bounds.height * .3);
+  const expectedX = ((x - bounds.x) / bounds.width - .5) * 24;
+  const expectedY = ((y - bounds.y) / bounds.height - .5) * 24;
+  const position = () => layer.evaluate(element => {
+    const matrix = new DOMMatrixReadOnly(getComputedStyle(element).transform);
+    return { x: matrix.m41, y: matrix.m42 };
+  });
+  await page.mouse.move(x, y);
+  // Wait for the real transition to settle, rather than assuming a wall-clock
+  // delay guarantees a rendered frame on every browser/CI runner.
+  await expect.poll(async () => (await position()).x).toBeCloseTo(expectedX, 2);
+  await expect.poll(async () => (await position()).y).toBeCloseTo(expectedY, 2);
+  expect(Number(await entrance.evaluate(el => getComputedStyle(el).opacity))).toBeLessThan(1);
+
+  await entrance.evaluate(element => element.getAnimations()[0].finish());
+  await expect(entrance).toHaveCSS("opacity", "1");
+  expect((await position()).x).toBeCloseTo(expectedX, 2);
+  expect((await position()).y).toBeCloseTo(expectedY, 2);
+
+  await page.mouse.move(0, bounds.y + bounds.height + 10);
+  await expect.poll(async () => (await position()).x).toBeCloseTo(0, 2);
+  await expect.poll(async () => (await position()).y).toBeCloseTo(0, 2);
 });
 
 for (const width of [390, 1280]) {
