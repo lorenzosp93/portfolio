@@ -2,6 +2,12 @@ from django.db import models
 from django.utils import timezone
 
 
+class ContactAdmissionLock(models.Model):
+    """One shared row serializes queue admission across API processes."""
+    id = models.PositiveSmallIntegerField(primary_key=True, default=1, editable=False)
+    locked = models.BooleanField(default=False)
+
+
 class ContactSubmission(models.Model):
     class DeliveryStatus(models.TextChoices):
         PENDING = 'pending', 'Pending'
@@ -13,6 +19,8 @@ class ContactSubmission(models.Model):
     last_name = models.CharField(max_length=50)
     email = models.EmailField()
     content = models.CharField(max_length=280)
+    source_key = models.CharField(max_length=64, default='', editable=False)
+    payload_key = models.CharField(max_length=64, default='', editable=False)
     submitted_at = models.DateTimeField(auto_now_add=True, db_index=True)
     delivery_status = models.CharField(
         max_length=12,
@@ -33,6 +41,10 @@ class ContactSubmission(models.Model):
 
     class Meta:
         ordering = ('-submitted_at',)
+        indexes = [
+            models.Index(fields=['source_key', 'submitted_at'], name='contact_source_time'),
+            models.Index(fields=['payload_key', 'submitted_at'], name='contact_payload_time'),
+        ]
 
     def __str__(self):
         return f'{self.first_name} {self.last_name} <{self.email}>'

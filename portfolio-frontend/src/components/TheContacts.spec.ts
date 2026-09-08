@@ -99,4 +99,26 @@ describe("TheContacts", () => {
     );
     expect(wrapper.get('button[type="submit"]').exists()).toBe(true);
   });
+  it("preserves the message and allows retry after an admission limit", async () => {
+    backend.postContactForm.mockRejectedValue({
+      status: 429,
+      data: { success: false, message: "Too many messages. Please try again later." },
+    });
+    const wrapper = mount(TheContacts, {
+      global: { stubs: { DetailCard: DetailCardStub } },
+    });
+    await openAndFillForm(wrapper);
+    await wrapper.get('button[type="submit"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.text()).toContain("Too many messages. Please try again later.");
+    expect((wrapper.get("#content").element as HTMLTextAreaElement).value).toBe(
+      "Hello from the test suite"
+    );
+    expect(window.sessionStorage.getItem("contactMessageSent")).toBeNull();
+    backend.postContactForm.mockResolvedValue({});
+    await wrapper.get('button[type="submit"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.get('[data-test="contact-success"]').exists()).toBe(true);
+  });
+
 });

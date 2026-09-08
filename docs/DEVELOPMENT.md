@@ -151,6 +151,34 @@ to honor origin headers. Frontend changes cannot override a CDN minimum TTL.
   replicas cannot claim the same row concurrently. Terminal failures remain in
   Django admin and can be requeued with the **Retry delivery** action.
 
+### Contact submission limits
+
+Admission is serialized in the database across API replicas, on both PostgreSQL
+and SQLite. Apply the new contacts migration before deploying the API change.
+Accepted requests keep the existing HTTP 202 response. A submission exceeding a
+budget, the backlog cap, or the duplicate window returns HTTP 429 with a readable
+`message` and `Retry-After`; database contention/unavailability returns HTTP 503.
+Both leave the browser form available for retry without creating a submission.
+
+| Variable | Default | Meaning |
+| --- | --- | --- |
+| `CONTACT_SOURCE_HOURLY_LIMIT` | 3 | Accepted submissions per direct peer in a rolling hour |
+| `CONTACT_GLOBAL_HOURLY_LIMIT` | 20 | Accepted submissions across all sources in a rolling hour |
+| `CONTACT_GLOBAL_DAILY_LIMIT` | 100 | Accepted submissions across all sources in a rolling day |
+| `CONTACT_MAX_PENDING` | 100 | Maximum pending plus processing rows, including old backlog |
+| `CONTACT_DUPLICATE_SECONDS` | 600 | Suppress the same validated payload across sources |
+
+All values must be positive integers. Sent and failed submissions still count
+against admission budgets until their submission timestamps leave the window.
+The source is a keyed hash of `REMOTE_ADDR` (IPv6 addresses grouped by /64;
+IPv4-mapped addresses normalized); no raw address is added to contact records.
+Forwarding headers are not trusted. Behind a reverse proxy, callers sharing the
+same direct peer share its source budget. Configure trusted client-address
+restoration at the ingress/application-server boundary if needed; do not simply
+pass through client-supplied forwarding headers. Global budgets remain enforced.
+The worker's existing bounded retries and privileged admin requeue behavior are
+unchanged; these are admission budgets, not an SMTP send-rate limiter.
+
 ## Container notes
 
 The backend container entrypoint currently runs migrations automatically and

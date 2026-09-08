@@ -1,11 +1,12 @@
 from django.middleware.csrf import get_token
+from django.db import OperationalError
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import ContactSubmission
+from .admission import AdmissionLimited, enqueue_contact
 from .serializers import ContactSerializer
 
 
@@ -34,8 +35,21 @@ class ContactView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        data = serializer_class.validated_data
-        ContactSubmission.objects.create(**data)
+        try:
+            enqueue_contact(serializer_class.validated_data, request.META.get('REMOTE_ADDR', ''))
+        except AdmissionLimited:
+            return Response(
+                {'success': False, 'message': 'Too many messages. Please try again later.'},
+                status=status.HTTP_429_TOO_MANY_REQUESTS,
+                headers={'Retry-After': '60'},
+            )
+        except OperationalError:
+            # A busy/unavailable database must never bypass admission checks.
+            return Response(
+                {'success': False, 'message': 'Messages are temporarily unavailable. Please try again later.'},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+                headers={'Retry-After': '60'},
+            )
 
         return Response(
             {

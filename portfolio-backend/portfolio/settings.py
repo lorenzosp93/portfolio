@@ -283,3 +283,21 @@ WEBPUSH_SETTINGS = {
     "VAPID_PRIVATE_KEY": os.environ.get('WEB_PUSH_PRIVATE_KEY'),
     "VAPID_ADMIN_EMAIL": os.environ.get('WEB_PUSH_ADMIN_EMAIL', "me@lorenzosp.com"),
 }
+
+
+# Queue admission is shared through the database, including across API replicas.
+def positive_env_int(name, default):
+    try:
+        value = int(os.environ.get(name, str(default)))
+    except ValueError as exc:
+        raise ImproperlyConfigured(f'{name} must be a positive integer') from exc
+    if value <= 0:
+        raise ImproperlyConfigured(f'{name} must be a positive integer')
+    return value
+
+
+CONTACT_SOURCE_HOURLY_LIMIT = positive_env_int('CONTACT_SOURCE_HOURLY_LIMIT', 3)
+CONTACT_GLOBAL_HOURLY_LIMIT = positive_env_int('CONTACT_GLOBAL_HOURLY_LIMIT', 20)
+CONTACT_GLOBAL_DAILY_LIMIT = positive_env_int('CONTACT_GLOBAL_DAILY_LIMIT', 100)
+CONTACT_MAX_PENDING = positive_env_int('CONTACT_MAX_PENDING', 100)
+CONTACT_DUPLICATE_SECONDS = positive_env_int('CONTACT_DUPLICATE_SECONDS', 600)
