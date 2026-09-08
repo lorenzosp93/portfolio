@@ -1,6 +1,6 @@
 <template>
-  <nav class="sticky top-0 z-20 w-full opacity-0">
-    <div class="navbar-surface w-full rounded-b-3xl bg-surface/95 shadow-sm ring-1 ring-ink/10 dark:bg-nightSurface/95 dark:ring-white/10">
+  <nav ref="navbar" class="sticky top-0 z-20 w-full">
+    <div :inert="revealed ? undefined : ''" :aria-hidden="!revealed" :class="{ 'navbar-revealed': revealed }" :style="{ opacity: fadeProgress }" class="navbar-surface w-full rounded-b-3xl bg-surface/95 shadow-sm ring-1 ring-ink/10 dark:bg-nightSurface/95 dark:ring-white/10">
       <div class="relative flex items-center justify-between px-4 sm:px-6 lg:px-8">
         <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
           <button
@@ -23,11 +23,11 @@
           >
             <img
               id="heroLogo"
+              :style="{ visibility: revealed ? 'visible' : 'hidden' }"
               class="h-10 w-10 cursor-pointer rounded-full opacity-100 ring-2 ring-coralSoft transition duration-300 ease-in-out hover:scale-105 dark:ring-teal/40"
               :src="heroLogo"
               alt="Hero image logo"
               decoding="async"
-              @load="$emit('imageLoaded')"
             />
           </div>
 
@@ -149,9 +149,46 @@
 import { useNavStore } from "@/stores/nav.store";
 import { Bars3Icon, XMarkIcon } from "@heroicons/vue/24/outline";
 import { MaybeRef, useEventListener } from "@vueuse/core";
-import { computed, nextTick, reactive, ref, watch } from "vue";
+import { computed, nextTick, reactive, ref, watch, onMounted, onUnmounted } from "vue";
 import { useSiteStore } from "@/stores/site.store";
 import fallbackHeroLogo from "@/assets/hero-logo.webp";
+
+const navbar = ref<HTMLElement | null>(null);
+const fadeProgress = ref(0);
+const revealed = computed(() => fadeProgress.value > 0);
+let fadeFrame = 0;
+let layoutObserver: ResizeObserver | null = null;
+function updateFade() {
+  fadeFrame = 0;
+  const portrait = document.getElementById("heroPicture");
+  const hero = document.getElementById("the-hero");
+  if (!portrait || !hero || !navbar.value) return;
+  // Both endpoints use document content, not the changing mobile viewport height.
+  // The hero's bottom is the navbar's natural top even after the navbar sticks.
+  const portraitBottom = portrait.getBoundingClientRect().bottom;
+  const stickyTop = parseFloat(getComputedStyle(navbar.value).top) || 0;
+  const remainingToStick = hero.getBoundingClientRect().bottom - stickyTop;
+  const distance = remainingToStick - portraitBottom;
+  fadeProgress.value = distance > 0
+    ? Math.max(0, Math.min(1, -portraitBottom / distance))
+    : remainingToStick <= 0 ? 1 : 0;
+}
+function scheduleFade() {
+  if (!fadeFrame) fadeFrame = requestAnimationFrame(updateFade);
+}
+useEventListener(window, "scroll", scheduleFade, { passive: true });
+useEventListener(window, "resize", scheduleFade);
+useEventListener(window.visualViewport, "resize", scheduleFade);
+onMounted(() => {
+  updateFade();
+  layoutObserver = new ResizeObserver(scheduleFade);
+  const hero = document.getElementById("the-hero");
+  if (hero) layoutObserver.observe(hero);
+});
+onUnmounted(() => {
+  cancelAnimationFrame(fadeFrame);
+  layoutObserver?.disconnect();
+});
 
 const navStore = useNavStore();
 const siteStore = useSiteStore();
@@ -266,6 +303,17 @@ function getHorizontalScrollParent(elem: HTMLElement): HTMLElement | null {
 </script>
 
 <style scoped>
+.navbar-surface {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.navbar-revealed {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
 .navbar-surface {
   -webkit-backdrop-filter: none;
   backdrop-filter: none;

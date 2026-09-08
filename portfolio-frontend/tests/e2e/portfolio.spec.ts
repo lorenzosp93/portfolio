@@ -91,52 +91,6 @@ test("returns to the hero from the mobile About menu", async ({ page }) => {
   await page.waitForFunction(() => window.scrollY < 2);
 });
 
-test("recalculates the hero animation from its natural position after resize", async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 1280, height: 800 });
-  await page.goto("/");
-  await page.evaluate(() => window.scrollTo(0, 400));
-  await page.waitForTimeout(250);
-
-  const centerBeforeResize = await heroCenter(page);
-
-  await page.setViewportSize({ width: 1000, height: 800 });
-  await page.waitForTimeout(400);
-
-  const centerAfterResize = await heroCenter(page);
-  expect(Math.abs(centerAfterResize.y - centerBeforeResize.y)).toBeLessThan(30);
-
-  const heroEnd = await page.locator("#the-hero").evaluate((element) => {
-    const box = element.getBoundingClientRect();
-    return box.top + window.scrollY + box.height;
-  });
-  await page.evaluate((scrollY) => {
-    const root = document.documentElement;
-    const pageContainer = document.querySelector<HTMLElement>(".page-scroll-container");
-    root.style.scrollBehavior = "auto";
-    root.style.scrollSnapType = "none";
-    if (pageContainer) pageContainer.style.scrollSnapType = "none";
-    window.scrollTo(0, scrollY);
-  }, heroEnd);
-  await page.waitForTimeout(250);
-
-  const endpoint = await page.evaluate(() => {
-    const hero = document.querySelector<HTMLElement>("#heroPicture")!.getBoundingClientRect();
-    const logo = document.querySelector<HTMLElement>("#heroLogo")!.getBoundingClientRect();
-    return {
-      heroX: hero.left + hero.width / 2,
-      logoX: logo.left + logo.width / 2,
-      navbarOpacity: Number.parseFloat(
-        getComputedStyle(document.querySelector<HTMLElement>("#the-navbar")!).opacity
-      ),
-    };
-  });
-
-  expect(Math.abs(endpoint.heroX - endpoint.logoX)).toBeLessThan(2);
-  expect(endpoint.navbarOpacity).toBeGreaterThan(0.95);
-});
-
 test("expands and restores the detail card while keeping its bottom anchored", async ({
   page,
 }) => {
@@ -176,10 +130,3 @@ test("expands and restores the detail card while keeping its bottom anchored", a
   await page.keyboard.press("Escape");
   await expect(card).toBeHidden();
 });
-
-async function heroCenter(page: import("@playwright/test").Page) {
-  return page.locator("#heroPicture").evaluate((element) => {
-    const box = element.getBoundingClientRect();
-    return { x: box.left + box.width / 2, y: box.top + box.height / 2 };
-  });
-}

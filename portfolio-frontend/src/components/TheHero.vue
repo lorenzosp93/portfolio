@@ -1,42 +1,56 @@
 <template>
   <section
     ref="root"
-    class="relative flex min-h-screen w-full items-center overflow-x-clip px-5 py-20 text-ink dark:text-white sm:px-8"
+    class="hero-section relative flex min-h-screen w-full items-center overflow-x-clip px-5 py-20 text-ink dark:text-white sm:px-8"
+    @pointermove="followPointer"
+    @pointerdown="followPointer"
+    @pointerleave="resetPointer"
+    @pointercancel="resetPointer"
+    @pointerup="releasePointer"
   >
     <div
       class="hero-layout relative -top-8 mx-auto grid w-full max-w-7xl items-center gap-10 sm:top-0 sm:grid-cols-[minmax(17rem,0.8fr)_minmax(0,1.2fr)] sm:gap-12 lg:gap-20"
     >
     <div class="relative min-w-0 py-5">
       <div class="relative mx-auto h-56 w-56 md:h-72 md:w-72">
-        <div
-          class="absolute z-10 left-1/2 top-1/2 h-44 w-56 -translate-x-1/2 -translate-y-1/2 rotate-[-9deg] rounded-[42%_58%_48%_52%/58%_39%_61%_42%] bg-tealSoft/80 shadow-xl ring-1 ring-teal/20 dark:bg-teal/25 dark:ring-tealSoft/20 md:h-56 md:w-72"
-        />
-        <div
-          class="absolute z-10 left-1/2 top-1/2 h-48 w-48 -translate-x-[42%] -translate-y-[56%] rotate-12 rounded-[55%_45%_63%_37%/45%_62%_38%_55%] bg-coralSoft/90 shadow-lg ring-1 ring-coral/20 dark:bg-coral/25 dark:ring-coralSoft/20 md:h-60 md:w-60"
-        />
-        <div
-          class="absolute z-10 left-1/2 top-1/2 h-28 w-28 translate-x-6 translate-y-5 rounded-full bg-amberSoft/90 blur-[1px] ring-1 ring-amber/20 dark:bg-amber/25 dark:ring-amberSoft/20 md:h-36 md:w-36"
-        />
-        <div
-          id="heroPictureAnchor"
-          class="absolute z-10 left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full bg-surface/90 shadow-2xl ring-1 ring-ink/10 dark:bg-nightSurface/90 dark:ring-white/10 md:h-56 md:w-56"
-        />
-        <img
-          id="heroPicture"
-          class="will-change-transform absolute z-30 left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full object-cover shadow-2xl ring-4 ring-surface dark:ring-nightSurface md:h-56 md:w-56 z-30"
-          :src="heroPicture"
-          :srcset="heroSrcset"
-          sizes="(min-width: 768px) 224px, 160px"
-          alt="High res picture"
-          decoding="async"
-          fetchpriority="high"
-          @load="$emit('heroLoaded')"
-        />
+        <div class="hero-pointer-layer hero-pointer-layer--teal" aria-hidden="true">
+          <div class="hero-shape-entrance hero-shape-entrance--teal">
+            <div
+              class="absolute z-10 left-1/2 top-1/2 h-44 w-56 -translate-x-1/2 -translate-y-1/2 rotate-[-9deg] rounded-[42%_58%_48%_52%/58%_39%_61%_42%] bg-tealSoft/80 shadow-xl ring-1 ring-teal/20 dark:bg-teal/25 dark:ring-tealSoft/20 md:h-56 md:w-72"
+            />
+          </div>
+        </div>
+        <div class="hero-pointer-layer hero-pointer-layer--coral" aria-hidden="true">
+          <div class="hero-shape-entrance hero-shape-entrance--coral">
+            <div
+              class="absolute z-10 left-1/2 top-1/2 h-48 w-48 -translate-x-[42%] -translate-y-[56%] rotate-12 rounded-[55%_45%_63%_37%/45%_62%_38%_55%] bg-coralSoft/90 shadow-lg ring-1 ring-coral/20 dark:bg-coral/25 dark:ring-coralSoft/20 md:h-60 md:w-60"
+            />
+          </div>
+        </div>
+        <div class="hero-pointer-layer hero-pointer-layer--amber" aria-hidden="true">
+          <div class="hero-shape-entrance hero-shape-entrance--amber">
+            <div
+              class="absolute z-10 left-1/2 top-1/2 h-28 w-28 translate-x-6 translate-y-5 rounded-full bg-amberSoft/90 blur-[1px] ring-1 ring-amber/20 dark:bg-amber/25 dark:ring-amberSoft/20 md:h-36 md:w-36"
+            />
+          </div>
+        </div>
+        <div class="hero-portrait-entrance absolute inset-0 z-30">
+          <img
+            id="heroPicture"
+            class="absolute left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full object-cover shadow-2xl ring-4 ring-surface dark:ring-nightSurface md:h-56 md:w-56"
+            :src="heroPicture"
+            :srcset="heroSrcset"
+            sizes="(min-width: 768px) 224px, 160px"
+            alt="Lorenzo Spinelli"
+            decoding="async"
+            fetchpriority="high"
+          />
+        </div>
       </div>
-      <h1 class="z-20 m-5 mt-8 text-center text-2xl md:text-3xl lg:text-4xl font-bold md:mt-10">
+      <h1 class="hero-text-entrance z-20 m-5 mt-8 text-center text-2xl md:text-3xl lg:text-4xl font-bold md:mt-10">
         Hi, I'm <span class="text-coral dark:text-coralSoft">Lorenzo</span>
       </h1>
-      <div class="flex mt-5">
+      <div class="hero-text-entrance flex mt-5">
         <!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
         <a
           class="ml-auto fill-muted transition hover:fill-coral dark:fill-gray-300 dark:hover:fill-coralSoft"
@@ -85,7 +99,7 @@
         </a>
       </div>
     </div>
-    <div class="relative z-20 min-w-0 max-w-2xl justify-self-center sm:justify-self-start">
+    <div class="hero-text-entrance relative z-20 min-w-0 max-w-2xl justify-self-center sm:justify-self-start">
       <p
         class="mb-4 text-center text-xs font-bold uppercase tracking-[0.24em] text-teal dark:text-tealSoft sm:text-left"
       >
@@ -113,23 +127,21 @@
 
 <script setup lang="ts">
 import { useVisibilityObserver } from "@/composables/visibilityObserver";
+import { useEventListener, usePreferredReducedMotion } from "@vueuse/core";
 import { marked } from "marked";
-import { Ref, computed, ref } from "vue";
+import { Ref, computed, ref, onMounted, onUnmounted } from "vue";
 import { useSiteStore } from "@/stores/site.store";
 import fallbackHero from "@/assets/hero.webp";
 import fallbackHeroMobile from "@/assets/hero-mobile.webp";
 
-/**
- * Use kebab-case event in the template: @hero-loaded.
- */
-defineEmits(["heroLoaded"]);
+const reducedMotion = usePreferredReducedMotion();
 
 const root: Ref<HTMLDivElement | null> = ref(null);
 useVisibilityObserver("theHero", root);
 const siteStore = useSiteStore();
 const heroPicture = computed(() => siteStore.heroPicture || fallbackHero);
 const heroSrcset = computed(() =>
-  siteStore.heroPicture ? undefined : `${fallbackHeroMobile} 320w, ${fallbackHero} 886w`
+  siteStore.heroPicture ? undefined : `${fallbackHeroMobile} 320w, ${fallbackHero} 600w`
 );
 const defaultHeroCopy = `I'm a **product leader** with a background in **software** and **energy engineering**. I turn complex problems into focused products, bringing technical depth and pragmatic execution to teams at every stage.`;
 const heroParagraphs = computed(() =>
@@ -139,9 +151,62 @@ const heroParagraphs = computed(() =>
     .map((paragraph) => marked.parseInline(paragraph) as string)
 );
 
+// Pointer offsets belong to an outer layer, so they remain live throughout
+// the inner layer's entrance animation without a transform handoff.
+let pointerFrame = 0;
+function followPointer(event: PointerEvent) {
+  if (!root.value) return;
+  const bounds = root.value.getBoundingClientRect();
+  const x = Math.max(-0.5, Math.min(0.5, (event.clientX - bounds.left) / bounds.width - 0.5));
+  const y = Math.max(-0.5, Math.min(0.5, (event.clientY - bounds.top) / bounds.height - 0.5));
+  cancelAnimationFrame(pointerFrame);
+  pointerFrame = requestAnimationFrame(() => {
+    root.value?.style.setProperty("--hero-pointer-x", String(x));
+    root.value?.style.setProperty("--hero-pointer-y", String(y));
+  });
+}
+function resetPointer() {
+  cancelAnimationFrame(pointerFrame);
+  root.value?.style.setProperty("--hero-pointer-x", "0");
+  root.value?.style.setProperty("--hero-pointer-y", "0");
+}
+function releasePointer(event: PointerEvent) {
+  if (event.pointerType !== "mouse") resetPointer();
+}
+// A bounded scroll impulse gives the decorative shapes a little weight.
+// Decay is time-based; the loop stops at rest and never drives page scrolling.
+let scrollFrame = 0;
+let scrollOffset = 0;
+let lastScrollY = 0;
+let lastFrameTime = 0;
+onMounted(() => { lastScrollY = window.scrollY; });
+function settleScroll(time: number) {
+  const elapsed = Math.max(0, Math.min(64, time - lastFrameTime));
+  lastFrameTime = time;
+  scrollOffset *= Math.exp(-elapsed / 150);
+  if (Math.abs(scrollOffset) < 0.05 || reducedMotion.value === "reduce") scrollOffset = 0;
+  root.value?.style.setProperty("--hero-scroll-offset", `${scrollOffset}px`);
+  scrollFrame = scrollOffset ? requestAnimationFrame(settleScroll) : 0;
+}
+useEventListener(window, "scroll", () => {
+  const delta = window.scrollY - lastScrollY;
+  lastScrollY = window.scrollY;
+  const bounds = root.value?.getBoundingClientRect();
+  if (!bounds || bounds.bottom <= 0 || bounds.top >= window.innerHeight || reducedMotion.value === "reduce") return;
+  scrollOffset = Math.max(-14, Math.min(14, scrollOffset + delta * 0.18));
+  if (!scrollFrame) {
+    lastFrameTime = performance.now();
+    scrollFrame = requestAnimationFrame(settleScroll);
+  }
+}, { passive: true });
+onUnmounted(() => {
+  cancelAnimationFrame(pointerFrame);
+  cancelAnimationFrame(scrollFrame);
+});
+
 function scrollToResume() {
   document.getElementById("the-resume")?.scrollIntoView({
-    behavior: "smooth",
+    behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
     block: "start",
     inline: "nearest",
   });
@@ -150,6 +215,50 @@ function scrollToResume() {
 </script>
 
 <style scoped>
+.hero-section {
+  min-height: 100svh;
+  --hero-pointer-x: 0;
+  --hero-pointer-y: 0;
+  --hero-scroll-offset: 0px;
+}
+.hero-pointer-layer,
+.hero-shape-entrance {
+  position: absolute;
+  inset: 0;
+}
+.hero-pointer-layer {
+  z-index: 10;
+  pointer-events: none;
+  transform: translate(calc(var(--hero-pointer-x) * var(--hero-depth)), calc(var(--hero-pointer-y) * var(--hero-depth) + var(--hero-scroll-offset) * var(--hero-scroll-depth)));
+  transition: transform 100ms ease-out;
+}
+.hero-pointer-layer--teal { --hero-depth: 24px; --hero-scroll-depth: 1; }
+.hero-pointer-layer--coral { --hero-depth: -18px; --hero-scroll-depth: -0.65; }
+.hero-pointer-layer--amber { --hero-depth: 34px; --hero-scroll-depth: 1.35; }
+.hero-shape-entrance {
+  animation: hero-shape-enter 550ms cubic-bezier(.2,.7,.2,1) both;
+}
+.hero-shape-entrance--coral { animation-delay: 70ms; }
+.hero-shape-entrance--amber { animation-delay: 140ms; }
+.hero-portrait-entrance {
+  animation: hero-portrait-enter 450ms cubic-bezier(.2,.7,.2,1) 150ms both;
+}
+.hero-text-entrance {
+  animation: hero-text-enter 450ms cubic-bezier(.2,.7,.2,1) 250ms both;
+}
+@keyframes hero-shape-enter {
+  from { opacity: 0; transform: translateY(16px) scale(.85) rotate(-9deg); }
+  to { opacity: 1; transform: translateY(0) scale(1) rotate(0); }
+}
+@keyframes hero-portrait-enter {
+  from { opacity: 0; transform: translateY(8px) scale(.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes hero-text-enter {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .hero-scroll-indicator {
   @apply absolute bottom-5 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2 bg-transparent px-3 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-muted transition hover:text-teal focus:outline-none focus-visible:ring-2 focus-visible:ring-teal dark:text-gray-400 dark:hover:text-tealSoft;
 }
@@ -188,6 +297,13 @@ function scrollToResume() {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .hero-pointer-layer {
+    transform: none;
+    transition: none;
+  }
+  .hero-shape-entrance,
+  .hero-portrait-entrance,
+  .hero-text-entrance,
   .hero-scroll-line {
     animation: none;
   }

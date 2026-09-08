@@ -1,133 +1,165 @@
 import { expect, test } from "@playwright/test";
 
+// Keep geometry checks independent of network timing and live résumé content.
+test.beforeEach(async ({ page }) => {
+  await page.route("**/api/**", (route) => route.fulfill({
+    json: route.request().url().includes("/settings/") ? { hero_picture: null }
+      : route.request().url().includes("skillcategory") ? []
+      : { count: 0, results: [], next: null, previous: null },
+  }));
+});
+
+test("pointer offsets work during the entrance and survive its completion", async ({ page }) => {
+  await page.goto("/");
+  const result = await page.evaluate(async () => {
+    const hero = document.querySelector<HTMLElement>("#the-hero")!;
+    const entrance = document.querySelector<HTMLElement>(".hero-shape-entrance")!;
+    const layer = document.querySelector<HTMLElement>(".hero-pointer-layer")!;
+    const animation = entrance.getAnimations()[0];
+    animation.pause();
+    animation.currentTime = 150;
+    const bounds = hero.getBoundingClientRect();
+    hero.dispatchEvent(new PointerEvent("pointermove", {
+      clientX: bounds.left + bounds.width * .8,
+      clientY: bounds.top + bounds.height * .3,
+      pointerType: "mouse",
+    }));
+    await new Promise(resolve => setTimeout(resolve, 180));
+    const early = getComputedStyle(layer).transform;
+    const enteringOpacity = Number(getComputedStyle(entrance).opacity);
+    animation.finish();
+    await new Promise(requestAnimationFrame);
+    const late = getComputedStyle(layer).transform;
+    hero.dispatchEvent(new PointerEvent("pointerleave"));
+    await new Promise(resolve => setTimeout(resolve, 180));
+    return { early, late, enteringOpacity, reset: getComputedStyle(layer).transform };
+  });
+  expect(result.enteringOpacity).toBeLessThan(1);
+  expect(result.early).not.toBe("matrix(1, 0, 0, 1, 0, 0)");
+  expect(result.late).toBe(result.early);
+  expect(result.reset).toBe("matrix(1, 0, 0, 1, 0, 0)");
+});
+
 for (const width of [390, 1280]) {
-  test(`keeps the portrait stable across image refreshes at ${width}px`, async ({ page }) => {
+  test(`portrait stays in the hero through scrolling and image loads at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 844 });
     await page.goto("/");
-    await page.locator("#heroPicture").evaluate(async (element) => {
-      await (element as HTMLImageElement).decode();
+    await page.waitForTimeout(750);
+    const measurements = await page.evaluate(async () => {
       document.documentElement.style.scrollBehavior = "auto";
-      window.scrollTo(0, 350);
-    });
-    await page.waitForTimeout(500);
-
-    const samples = await page.evaluate(async () => {
       const image = document.querySelector<HTMLElement>("#heroPicture")!;
-      const sample = () => {
+      const measure = () => {
         const box = image.getBoundingClientRect();
-        return { x: box.x, y: box.y, width: box.width };
+        return { x: box.x, y: box.y + scrollY, width: box.width };
       };
-      const result = [sample()];
-      for (let frame = 0; frame < 60; frame++) {
-        // Reproduce late src/srcset loads while partway through the animation.
-        if (frame % 10 === 0) image.dispatchEvent(new Event("load"));
-        await new Promise(requestAnimationFrame);
-        result.push(sample());
+      const samples = [measure()];
+      for (const y of [200, 500, 200, 0]) {
+        window.scrollTo(0, y);
+        image.dispatchEvent(new Event("load"));
+        await new Promise(resolve => setTimeout(resolve, 50));
+        samples.push(measure());
       }
-      return result;
+      return samples;
     });
-    for (const sample of samples) {
-      expect(Math.abs(sample.x - samples[0].x)).toBeLessThan(1);
-      expect(Math.abs(sample.y - samples[0].y)).toBeLessThan(1);
-      expect(Math.abs(sample.width - samples[0].width)).toBeLessThan(1);
+    for (const sample of measurements) {
+      expect(Math.abs(sample.x - measurements[0].x)).toBeLessThan(1);
+      expect(Math.abs(sample.y - measurements[0].y)).toBeLessThan(1);
+      expect(sample.width).toBe(measurements[0].width);
     }
   });
 }
 
-test("image refresh preserves the timeline and uses a separate layout anchor", async ({ page }) => {
+test("navbar stays visible and sticky through toolbar and orientation changes", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  await page.waitForTimeout(500);
-  const result = await page.evaluate(async () => {
-    // Inspect the same GSAP instance the application registers, without a test-only production API.
-    const app = document.querySelector("#app") as Element & {
-      __vue_app__: { config: { globalProperties: { $str: {
-        getAll: () => Array<{ trigger: Element; animation: unknown }>;
-      } } } };
-    };
-    const triggers = app.__vue_app__.config.globalProperties.$str;
-    const original = triggers.getAll().find((item) => item.trigger.id === "the-hero");
-    const image = document.querySelector<HTMLElement>("#heroPicture")!;
-    const anchor = document.querySelector<HTMLElement>("#heroPictureAnchor");
-    image.dispatchEvent(new Event("load"));
-    await new Promise(requestAnimationFrame);
-    const current = triggers.getAll().find((item) => item.trigger.id === "the-hero");
-    return {
-      hasAnchor: Boolean(anchor),
-      sameTrigger: original === current,
-      sameAnimation: original?.animation === current?.animation,
-    };
+  await page.evaluate(() => {
+    document.documentElement.style.scrollBehavior = "auto";
+    window.scrollTo(0, document.querySelector<HTMLElement>("#the-hero")!.offsetHeight + 80);
   });
-  expect(result).toEqual({ hasAnchor: true, sameTrigger: true, sameAnimation: true });
+  const surface = page.locator(".navbar-surface");
+  await expect(surface).toHaveClass(/navbar-revealed/);
+  await expect(surface).toHaveCSS("opacity", "1");
+  for (const viewport of [{ width: 390, height: 704 }, { width: 844, height: 390 }]) {
+    await page.setViewportSize(viewport);
+    await expect(surface).toHaveCSS("opacity", "1");
+    await expect.poll(async () => (await page.locator("#the-navbar").boundingBox())!.y).toBe(0);
+  }
+  await expect(page.getByRole("button", { name: "Blog", exact: true })).toBeVisible();
 });
 
-test.describe("mobile viewport changes", () => {
-  test.use({ isMobile: true, hasTouch: true, viewport: { width: 390, height: 844 } });
+test("touch follows immediately and resets on cancellation without blocking scrolling", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  const hero = page.locator("#the-hero");
+  await hero.dispatchEvent("pointerdown", { clientX: 300, clientY: 200, pointerType: "touch" });
+  await expect.poll(() => hero.evaluate(el => el.style.getPropertyValue("--hero-pointer-x"))).not.toBe("0");
+  await hero.dispatchEvent("pointercancel", { pointerType: "touch" });
+  await expect.poll(() => hero.evaluate(el => el.style.getPropertyValue("--hero-pointer-x"))).toBe("0");
+  await expect(hero).toHaveCSS("touch-action", "auto");
+});
 
-  test("ignores toolbar-sized height changes but refreshes on orientation changes", async ({ page }) => {
-    await page.goto("/");
-    await page.waitForTimeout(700);
-    await page.evaluate(() => {
-      const app = document.querySelector("#app") as Element & {
-        __vue_app__: { config: { globalProperties: { $str: {
-          getAll: () => Array<{ trigger: Element; vars: { onRefresh?: () => void } }>;
-        } } } };
-      };
-      const trigger = app.__vue_app__.config.globalProperties.$str.getAll()
-        .find((item) => item.trigger.id === "the-hero")!;
-      const refresh = trigger.vars.onRefresh;
-      document.body.dataset.heroRefreshCount = "0";
-      trigger.vars.onRefresh = function (...args) {
-        document.body.dataset.heroRefreshCount = String(Number(document.body.dataset.heroRefreshCount) + 1);
-        return refresh?.apply(this, args);
-      };
-    });
+test("reduced motion keeps the portrait and navigation static and available", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  await expect(page.locator(".hero-portrait-entrance")).toHaveCSS("animation-name", "none");
+  await expect(page.locator(".hero-shape-entrance").first()).toHaveCSS("animation-name", "none");
+  await page.locator("#the-hero").dispatchEvent("pointermove", { clientX: 300, clientY: 100 });
+  await expect(page.locator(".hero-pointer-layer").first()).toHaveCSS("transform", "none");
+  await page.evaluate(() => window.scrollTo(0, document.querySelector<HTMLElement>("#the-hero")!.offsetHeight));
+  await expect(page.locator(".navbar-surface")).toHaveCSS("animation-name", "none");
+  await expect(page.locator(".navbar-surface")).toHaveCSS("opacity", "1");
+});
 
-    // Above our former 120px threshold, below GSAP's 25% mobile threshold.
-    await page.setViewportSize({ width: 390, height: 704 });
-    await page.waitForTimeout(500);
-    await expect(page.locator("body")).toHaveAttribute("data-hero-refresh-count", "0");
-
-    await page.setViewportSize({ width: 844, height: 390 });
-    await expect.poll(() => page.locator("body").getAttribute("data-hero-refresh-count"))
-      .not.toBe("0");
+test("navbar waits for the portrait to exit, fades in, and never duplicates it on return", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/");
+  await page.waitForTimeout(750);
+  await page.evaluate(() => {
+    document.documentElement.style.scrollBehavior = "auto";
+    window.scrollTo(0, 100);
   });
+  await expect(page.locator("#heroPicture")).toBeInViewport();
+  await expect(page.locator("#the-navbar")).toBeInViewport();
+  await expect(page.locator(".navbar-surface")).toHaveCSS("opacity", "0");
+  await expect(page.locator("#heroLogo")).toHaveCSS("visibility", "hidden");
+  const endpoints = await page.evaluate(() => ({
+    start: scrollY + document.querySelector("#heroPicture")!.getBoundingClientRect().bottom,
+    end: scrollY + document.querySelector("#the-hero")!.getBoundingClientRect().bottom,
+  }));
+  for (const progress of [0, .25, .5, .75, 1, .75, .5, .25, 0]) {
+    await page.evaluate(({ start, end, progress }) => {
+      window.scrollTo(0, start + (end - start) * progress);
+    }, { ...endpoints, progress });
+    await expect.poll(async () => Number(await page.locator(".navbar-surface").evaluate(
+      el => getComputedStyle(el).opacity))).toBeCloseTo(progress, 2);
+  }
+  await page.evaluate(() => window.scrollTo(0, 100));
+  await expect(page.locator("#heroLogo")).toHaveCSS("visibility", "hidden");
+  await expect(page.locator(".navbar-surface")).toHaveCSS("opacity", "0");
+});
 
-  test("follows the same path forwards and backwards through refreshes", async ({ page }) => {
-    await page.goto("/");
-    await page.waitForTimeout(700);
-    const errors = await page.evaluate(async () => {
-      document.documentElement.style.scrollBehavior = "auto";
-      const image = document.querySelector<HTMLElement>("#heroPicture")!;
-      const anchor = document.querySelector<HTMLElement>("#heroPictureAnchor")!;
-      const hero = document.querySelector<HTMLElement>("#the-hero")!;
-      const logo = document.querySelector<HTMLElement>("#heroLogo")!;
-      const nav = logo.closest("nav")!;
-      const errors: number[] = [];
-      const frame = () => new Promise(requestAnimationFrame);
-      for (const fraction of [0.1, 0.2, 0.4, 0.6, 0.4, 0.2, 0.1]) {
-        window.scrollTo(0, hero.offsetHeight * fraction);
-        await frame();
-        await frame();
-        image.dispatchEvent(new Event("load"));
-        for (let tick = 0; tick < 8; tick++) {
-          await frame();
-          const start = anchor.getBoundingClientRect();
-          const target = logo.getBoundingClientRect();
-          const bounds = hero.getBoundingClientRect();
-          const progress = Math.min(1, -bounds.top / bounds.height / 0.7);
-          const expectedX = start.x + start.width / 2 +
-            (target.x + target.width / 2 - start.x - start.width / 2) * progress;
-          const endY = bounds.bottom + (parseFloat(getComputedStyle(nav).top) || 0) +
-            target.y - nav.getBoundingClientRect().y + target.height / 2;
-          const expectedY = start.y + start.height / 2 +
-            (endY - start.y - start.height / 2) * progress;
-          const actual = image.getBoundingClientRect();
-          errors.push(Math.hypot(actual.x + actual.width / 2 - expectedX,
-            actual.y + actual.height / 2 - expectedY));
-        }
-      }
-      return errors;
-    });
-    expect(Math.max(...errors)).toBeLessThan(2);
+test("scroll inertia moves only the shapes and settles at rest", async ({ page }) => {
+  await page.goto("/");
+  await page.waitForTimeout(750);
+  const result = await page.evaluate(async () => {
+    document.documentElement.style.scrollBehavior = "auto";
+    const hero = document.querySelector<HTMLElement>("#the-hero")!;
+    const image = document.querySelector("#heroPicture")!;
+    const y = image.getBoundingClientRect().top + scrollY;
+    const offsets: number[] = [];
+    window.scrollTo(0, 100);
+    for (let i = 0; i < 24; i++) {
+      await new Promise(requestAnimationFrame);
+      offsets.push(parseFloat(hero.style.getPropertyValue("--hero-scroll-offset")) || 0);
+    }
+    return { offsets, drift: image.getBoundingClientRect().top + scrollY - y };
   });
+  expect(Math.max(...result.offsets)).toBeGreaterThan(1);
+  expect(Math.max(...result.offsets)).toBeLessThanOrEqual(14);
+  expect(Math.abs(result.drift)).toBeLessThan(1);
+  await expect.poll(() => page.locator("#the-hero").evaluate(el =>
+    el.style.getPropertyValue("--hero-scroll-offset"))).toBe("0px");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.evaluate(() => window.scrollTo(0, 200));
+  await expect(page.locator(".hero-pointer-layer").first()).toHaveCSS("transform", "none");
 });
