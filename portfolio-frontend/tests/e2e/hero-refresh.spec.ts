@@ -95,14 +95,20 @@ test("navbar stays visible and sticky through toolbar and orientation changes", 
   await expect(page.getByRole("button", { name: "Blog", exact: true })).toBeVisible();
 });
 
-test("touch follows immediately and resets on cancellation without blocking scrolling", async ({ page }) => {
+test("touch and pen input never move the pointer layers or block scrolling", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
   const hero = page.locator("#the-hero");
-  await hero.dispatchEvent("pointerdown", { clientX: 300, clientY: 200, pointerType: "touch" });
-  await expect.poll(() => hero.evaluate(el => el.style.getPropertyValue("--hero-pointer-x"))).not.toBe("0");
-  await hero.dispatchEvent("pointercancel", { pointerType: "touch" });
-  await expect.poll(() => hero.evaluate(el => el.style.getPropertyValue("--hero-pointer-x"))).toBe("0");
+  await page.mouse.move(300, 200);
+  await expect.poll(() => hero.evaluate(el =>
+    Number(getComputedStyle(el).getPropertyValue("--hero-pointer-x")))).toBeGreaterThan(0);
+  for (const pointerType of ["touch", "pen"]) {
+    await hero.dispatchEvent("pointerdown", { clientX: 300, clientY: 200, pointerType });
+    await hero.dispatchEvent("pointermove", { clientX: 350, clientY: 300, pointerType });
+    await hero.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    expect(await hero.evaluate(el => getComputedStyle(el).getPropertyValue("--hero-pointer-x").trim())).toBe("0");
+    expect(await hero.evaluate(el => getComputedStyle(el).getPropertyValue("--hero-pointer-y").trim())).toBe("0");
+  }
   await expect(hero).toHaveCSS("touch-action", "auto");
 });
 
@@ -146,6 +152,9 @@ test("navbar waits for the portrait to exit, fades in, and never duplicates it o
   await expect(page.locator(".navbar-surface")).toHaveCSS("opacity", "0");
 });
 
+for (const mobile of [false, true]) {
+  test.describe(mobile ? "mobile inertia" : "desktop inertia", () => {
+    test.use({ isMobile: mobile, hasTouch: mobile, viewport: mobile ? { width: 390, height: 844 } : { width: 1280, height: 720 } });
 test("scroll inertia moves only the shapes and settles at rest", async ({ page }) => {
   await page.goto("/");
   await page.waitForTimeout(750);
@@ -162,8 +171,8 @@ test("scroll inertia moves only the shapes and settles at rest", async ({ page }
     }
     return { offsets, drift: image.getBoundingClientRect().top + scrollY - y };
   });
-  expect(Math.max(...result.offsets)).toBeGreaterThan(1);
-  expect(Math.max(...result.offsets)).toBeLessThanOrEqual(14);
+  expect(Math.max(...result.offsets)).toBeGreaterThan(mobile ? 24 : 1);
+  expect(Math.max(...result.offsets)).toBeLessThanOrEqual(mobile ? 40 : 14);
   expect(Math.abs(result.drift)).toBeLessThan(1);
   await expect.poll(() => page.locator("#the-hero").evaluate(el =>
     el.style.getPropertyValue("--hero-scroll-offset"))).toBe("0px");
@@ -171,3 +180,5 @@ test("scroll inertia moves only the shapes and settles at rest", async ({ page }
   await page.evaluate(() => window.scrollTo(0, 200));
   await expect(page.locator(".hero-pointer-layer").first()).toHaveCSS("transform", "none");
 });
+  });
+}

@@ -127,7 +127,7 @@
 
 <script setup lang="ts">
 import { useVisibilityObserver } from "@/composables/visibilityObserver";
-import { useEventListener, usePreferredReducedMotion } from "@vueuse/core";
+import { useEventListener, useMediaQuery, usePreferredReducedMotion } from "@vueuse/core";
 import { marked } from "marked";
 import { Ref, computed, ref, onMounted, onUnmounted } from "vue";
 import { useSiteStore } from "@/stores/site.store";
@@ -135,6 +135,11 @@ import fallbackHero from "@/assets/hero.webp";
 import fallbackHeroMobile from "@/assets/hero-mobile.webp";
 
 const reducedMotion = usePreferredReducedMotion();
+const isCoarsePointer = useMediaQuery("(pointer: coarse)");
+// Touch scrolling supplies the motion on phones; keep desktop motion restrained.
+const scrollMotion = computed(() => isCoarsePointer.value
+  ? { gain: 0.55, limit: 40, decay: 300 }
+  : { gain: 0.18, limit: 14, decay: 150 });
 
 const root: Ref<HTMLDivElement | null> = ref(null);
 useVisibilityObserver("theHero", root);
@@ -155,6 +160,10 @@ const heroParagraphs = computed(() =>
 // the inner layer's entrance animation without a transform handoff.
 let pointerFrame = 0;
 function followPointer(event: PointerEvent) {
+  if (event.pointerType !== "mouse" || reducedMotion.value === "reduce") {
+    resetPointer();
+    return;
+  }
   if (!root.value) return;
   const bounds = root.value.getBoundingClientRect();
   const x = Math.max(-0.5, Math.min(0.5, (event.clientX - bounds.left) / bounds.width - 0.5));
@@ -183,7 +192,7 @@ onMounted(() => { lastScrollY = window.scrollY; });
 function settleScroll(time: number) {
   const elapsed = Math.max(0, Math.min(64, time - lastFrameTime));
   lastFrameTime = time;
-  scrollOffset *= Math.exp(-elapsed / 150);
+  scrollOffset *= Math.exp(-elapsed / scrollMotion.value.decay);
   if (Math.abs(scrollOffset) < 0.05 || reducedMotion.value === "reduce") scrollOffset = 0;
   root.value?.style.setProperty("--hero-scroll-offset", `${scrollOffset}px`);
   scrollFrame = scrollOffset ? requestAnimationFrame(settleScroll) : 0;
@@ -193,7 +202,8 @@ useEventListener(window, "scroll", () => {
   lastScrollY = window.scrollY;
   const bounds = root.value?.getBoundingClientRect();
   if (!bounds || bounds.bottom <= 0 || bounds.top >= window.innerHeight || reducedMotion.value === "reduce") return;
-  scrollOffset = Math.max(-14, Math.min(14, scrollOffset + delta * 0.18));
+  const { gain, limit } = scrollMotion.value;
+  scrollOffset = Math.max(-limit, Math.min(limit, scrollOffset + delta * gain));
   if (!scrollFrame) {
     lastFrameTime = performance.now();
     scrollFrame = requestAnimationFrame(settleScroll);
