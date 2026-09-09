@@ -194,8 +194,10 @@ run `makemigrations` in a container or deployment; generate and review migration
 files during development. CI checks that none are missing and applies all
 committed migrations to temporary PostgreSQL before running tests.
 
-Infrastructure configuration is maintained outside this repository, so the
-migration Job belongs with the authoritative cluster deployment configuration.
+Application infrastructure configuration is maintained outside this repository.
+The deployment runner setup in [deploy/github-runner](../deploy/github-runner/README.md)
+creates a migration Job from the live backend configuration before each backend
+rollout; it does not replace the authoritative application manifests.
 
 The image supports two process types:
 

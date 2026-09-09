@@ -1,0 +1,19 @@
+# Official ARC chart 0.14.2. Keep controller permissions in the runner namespace.
+serviceAccount:
+  name: portfolio-arc-controller
+flags:
+  logLevel: info
+  watchSingleNamespace: arc-runners
+  updateStrategy: eventual
+nodeSelector:
+  kubernetes.io/arch: amd64
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    memory: 256Mi
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop: [ALL]

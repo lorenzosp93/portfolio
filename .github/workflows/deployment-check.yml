@@ -1,0 +1,29 @@
+name: deployment-check
+on:
+  push:
+    branches: [master]
+    paths: ['scripts/deploy-production.py', 'scripts/test_deploy_production.py', 'deploy/github-runner/**', '.github/workflows/deployment-check.yml']
+  pull_request:
+    paths: ['scripts/deploy-production.py', 'scripts/test_deploy_production.py', 'deploy/github-runner/**', '.github/workflows/deployment-check.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 -m unittest discover -s scripts -p 'test_deploy_production.py'
+  runner-check:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master' && github.repository == 'lorenzosp93/portfolio'
+    needs: test
+    runs-on: portfolio-deploy
+    timeout-minutes: 5
+    steps:
+      - name: Verify cluster access without modifying production
+        run: |
+          /opt/kubectl/kubectl -n portfolio get deployment/portfolio-frontend deployment/portfolio-backend deployment/portfolio-contact-worker
+          /opt/kubectl/kubectl -n portfolio auth can-i patch deployment/portfolio-frontend
+          /opt/kubectl/kubectl -n portfolio auth can-i create jobs
+          if /opt/kubectl/kubectl -n portfolio auth can-i get secrets; then exit 1; fi
+          if /opt/kubectl/kubectl auth can-i get nodes; then exit 1; fi

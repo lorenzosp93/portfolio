@@ -1,0 +1,81 @@
+githubConfigUrl: https://github.com/lorenzosp93/portfolio
+githubConfigSecret: portfolio-runner-github-app
+runnerScaleSetName: portfolio-deploy
+minRunners: 0
+maxRunners: 1
+controllerServiceAccount:
+  namespace: arc-systems
+  name: portfolio-arc-controller
+listenerTemplate:
+  spec:
+    nodeSelector:
+      kubernetes.io/arch: amd64
+    containers:
+      - name: listener
+        resources:
+          requests:
+            cpu: 20m
+            memory: 64Mi
+          limits:
+            memory: 128Mi
+# Shell-only deploy jobs: no Docker socket, privileged container, or host mounts.
+template:
+  spec:
+    serviceAccountName: portfolio-deployer
+    nodeSelector:
+      kubernetes.io/arch: amd64
+    securityContext:
+      runAsUser: 1001
+      runAsGroup: 1001
+      fsGroup: 1001
+      seccompProfile:
+        type: RuntimeDefault
+    initContainers:
+      - name: install-kubectl
+        image: ghcr.io/actions/actions-runner:2.337.0
+        command: [/bin/bash, -euc]
+        args:
+          - |
+            cd /opt/kubectl
+            curl --fail --silent --show-error --location --retry 3 -o kubectl https://dl.k8s.io/release/v1.36.3/bin/linux/amd64/kubectl
+            curl --fail --silent --show-error --location --retry 3 -o kubectl.sha256 https://dl.k8s.io/release/v1.36.3/bin/linux/amd64/kubectl.sha256
+            printf '%s  kubectl\n' "$(cat kubectl.sha256)" | sha256sum --check
+            chmod 755 kubectl
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: [ALL]
+        volumeMounts:
+          - name: kubectl
+            mountPath: /opt/kubectl
+    containers:
+      - name: runner
+        image: ghcr.io/actions/actions-runner:2.337.0
+        command: [/home/runner/run.sh]
+        env:
+          - name: KUBECONFIG
+            value: /etc/portfolio-kubeconfig/config
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: [ALL]
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: '1'
+            memory: 1Gi
+        volumeMounts:
+          - name: kubectl
+            mountPath: /opt/kubectl
+            readOnly: true
+          - name: kubeconfig
+            mountPath: /etc/portfolio-kubeconfig
+            readOnly: true
+    volumes:
+      - name: kubectl
+        emptyDir: {}
+      - name: kubeconfig
+        configMap:
+          name: portfolio-deployer-kubeconfig

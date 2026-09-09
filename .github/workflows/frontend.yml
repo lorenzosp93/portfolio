@@ -6,11 +6,13 @@ on:
     paths:
       - 'portfolio-frontend/**'
       - '.github/workflows/frontend.yml'
+      - 'scripts/deploy-production.py'
   pull_request:
     branches: [master]
     paths:
       - 'portfolio-frontend/**'
       - '.github/workflows/frontend.yml'
+      - 'scripts/deploy-production.py'
 
 permissions:
   contents: read
@@ -54,7 +56,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
-    needs: test
+    needs: [test, container-check]
+    outputs:
+      digest: ${{ steps.publish.outputs.digest }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -72,6 +76,7 @@ jobs:
         run: echo "branch=${GITHUB_REF#refs/heads/}" >> "$GITHUB_OUTPUT"
         id: extract_branch
       - name: Build and push Docker images
+        id: publish
         uses: docker/build-push-action@v6
         with:
           context: ./portfolio-frontend
@@ -80,3 +85,20 @@ jobs:
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/portfolio-frontend:${{ steps.extract_branch.outputs.branch }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == 'lorenzosp93/portfolio'
+    needs: build
+    runs-on: portfolio-deploy
+    timeout-minutes: 25
+    concurrency:
+      group: portfolio-production-frontend
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Deploy frontend
+        env:
+          IMAGE_DIGEST: ${{ needs.build.outputs.digest }}
+        run: python3 scripts/deploy-production.py frontend "$IMAGE_DIGEST"

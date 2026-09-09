@@ -1,0 +1,117 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: arc-systems
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: arc-runners
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: portfolio-deployer
+  namespace: arc-runners
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: portfolio-deployer-kubeconfig
+  namespace: arc-runners
+data:
+  config: |
+    apiVersion: v1
+    kind: Config
+    clusters:
+      - name: in-cluster
+        cluster:
+          server: https://kubernetes.default.svc
+          certificate-authority: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    users:
+      - name: deployment-runner
+        user:
+          tokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+    contexts:
+      - name: portfolio
+        context:
+          cluster: in-cluster
+          user: deployment-runner
+          namespace: portfolio
+    current-context: portfolio
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: github-deployer
+  namespace: portfolio
+rules:
+  - apiGroups: [apps]
+    resources: [deployments]
+    resourceNames: [portfolio-frontend, portfolio-backend, portfolio-contact-worker]
+    verbs: [get, list, patch, watch]
+  # Migration jobs use the backend's existing secret references. This is
+  # deployment authority within portfolio, not cluster administration.
+  - apiGroups: [batch]
+    resources: [jobs]
+    verbs: [create, get, watch]
+  - apiGroups: ['']
+    resources: [pods]
+    verbs: [get, list]
+  - apiGroups: ['']
+    resources: [pods/log]
+    verbs: [get]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: github-deployer
+  namespace: portfolio
+subjects:
+  - kind: ServiceAccount
+    name: portfolio-deployer
+    namespace: arc-runners
+roleRef:
+  kind: Role
+  name: github-deployer
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deployment-runner-egress
+  namespace: arc-runners
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+  ingress: []
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - {protocol: UDP, port: 53}
+        - {protocol: TCP, port: 53}
+    - to:
+        - ipBlock: {cidr: 10.43.0.1/32}
+        - ipBlock: {cidr: 192.168.176.111/32}
+        - ipBlock: {cidr: 192.168.176.95/32}
+        - ipBlock: {cidr: 192.168.176.69/32}
+      ports:
+        - {protocol: TCP, port: 443}
+        - {protocol: TCP, port: 6443}
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              - 10.0.0.0/8
+              - 172.16.0.0/12
+              - 192.168.0.0/16
+              - 169.254.0.0/16
+              - 127.0.0.0/8
+      ports:
+        - {protocol: TCP, port: 443}
