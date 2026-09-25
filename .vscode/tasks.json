@@ -5,10 +5,27 @@
       "label": "Backend: migrate",
       "type": "process",
       "command": "${workspaceFolder}/portfolio-backend/.venv/bin/python",
-      "args": ["manage.py", "migrate"],
+      "args": [
+        "manage.py",
+        "migrate"
+      ],
       "options": {
         "cwd": "${workspaceFolder}/portfolio-backend",
-        "env": { "DEBUG": "true" }
+        "env": {
+          "DEBUG": "true"
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Backend: prepare database",
+      "type": "shell",
+      "command": "${workspaceFolder}/portfolio-backend/.venv/bin/python manage.py migrate && ${workspaceFolder}/portfolio-backend/.venv/bin/python manage.py createcachetable",
+      "options": {
+        "cwd": "${workspaceFolder}/portfolio-backend",
+        "env": {
+          "DEBUG": "true"
+        }
       },
       "problemMatcher": []
     },
@@ -16,10 +33,15 @@
       "label": "Backend: test",
       "type": "process",
       "command": "${workspaceFolder}/portfolio-backend/.venv/bin/python",
-      "args": ["manage.py", "test"],
+      "args": [
+        "manage.py",
+        "test"
+      ],
       "options": {
         "cwd": "${workspaceFolder}/portfolio-backend",
-        "env": { "DEBUG": "true" }
+        "env": {
+          "DEBUG": "true"
+        }
       },
       "group": "test",
       "problemMatcher": []
@@ -28,7 +50,11 @@
       "label": "Backend: process queued contact emails",
       "type": "process",
       "command": "${workspaceFolder}/portfolio-backend/.venv/bin/python",
-      "args": ["manage.py", "process_contact_submissions", "--once"],
+      "args": [
+        "manage.py",
+        "process_contact_submissions",
+        "--once"
+      ],
       "options": {
         "cwd": "${workspaceFolder}/portfolio-backend",
         "env": {

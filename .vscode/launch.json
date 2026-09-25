@@ -7,7 +7,10 @@
       "request": "launch",
       "program": "${workspaceFolder}/portfolio-backend/manage.py",
       "cwd": "${workspaceFolder}/portfolio-backend",
-      "args": ["runserver", "127.0.0.1:8000"],
+      "args": [
+        "runserver",
+        "127.0.0.1:8000"
+      ],
       "django": true,
       "justMyCode": true,
       "envFile": "${workspaceFolder}/portfolio-backend/.env",
@@ -16,7 +19,8 @@
         "FRONTEND_HOST": "http://127.0.0.1:8080",
         "BACKEND_HOST": "http://127.0.0.1:8000"
       },
-      "console": "integratedTerminal"
+      "console": "integratedTerminal",
+      "preLaunchTask": "Backend: prepare database"
     },
     {
       "name": "Frontend: Vite + Chrome",
@@ -24,10 +28,18 @@
       "request": "launch",
       "cwd": "${workspaceFolder}/portfolio-frontend",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--", "--host", "127.0.0.1"],
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--host",
+        "127.0.0.1"
+      ],
       "autoAttachChildProcesses": true,
       "console": "integratedTerminal",
-      "skipFiles": ["<node_internals>/**"],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
       "serverReadyAction": {
         "pattern": "Local:\\s+(https?://\\S+)",
         "uriFormat": "%s",
@@ -40,7 +52,9 @@
       "request": "launch",
       "program": "${workspaceFolder}/portfolio-backend/manage.py",
       "cwd": "${workspaceFolder}/portfolio-backend",
-      "args": ["process_contact_submissions"],
+      "args": [
+        "process_contact_submissions"
+      ],
       "justMyCode": true,
       "envFile": "${workspaceFolder}/portfolio-backend/.env",
       "env": {
@@ -59,7 +73,8 @@
         "Backend: Contact email worker",
         "Frontend: Vite + Chrome"
       ],
-      "stopAll": true
+      "stopAll": true,
+      "preLaunchTask": "Backend: prepare database"
     }
   ]
 }
