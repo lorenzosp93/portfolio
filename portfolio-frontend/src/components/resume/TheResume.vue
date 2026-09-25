@@ -1,5 +1,23 @@
 <template>
-  <section class="section-tint relative w-full py-20 md:py-28">
+  <section ref="resumeSection" class="section-tint relative w-full py-20 md:py-28">
+    <Teleport to="body">
+      <Transition
+        enter-active-class="motion-safe:transition duration-300 ease-out"
+        enter-from-class="translate-y-4 opacity-0"
+        leave-active-class="motion-safe:transition duration-200 ease-in"
+        leave-to-class="translate-y-4 opacity-0"
+      >
+        <a
+          v-if="isResumeInView"
+          :href="cvUrl"
+          data-testid="cv-fab"
+          class="cv-fab fixed bottom-5 right-5 z-30 inline-flex items-center gap-2 rounded-full bg-teal px-5 py-3 text-sm font-semibold text-white shadow-lg ring-1 ring-teal/20 transition hover:-translate-y-0.5 hover:bg-teal/90 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-tealSoft dark:bg-tealSoft dark:text-night"
+        >
+          <document-arrow-down-icon class="h-5 w-5" aria-hidden="true" />
+          <span>My CV</span>
+        </a>
+      </Transition>
+    </Teleport>
     <div class="mx-auto flex w-full max-w-7xl flex-wrap px-5">
     <div class="flex flex-wrap w-full mx-auto mb-8 md:mb-12">
       <h2 class="section-heading">
@@ -8,13 +26,6 @@
       <p class="section-lede">
         Because I definitely needed a website to host my CV.
       </p>
-      <a
-        :href="cvUrl"
-        class="mx-auto mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-teal ring-1 ring-teal/30 transition hover:bg-teal/10 dark:text-tealSoft dark:ring-tealSoft/30"
-      >
-        <document-arrow-down-icon class="h-4 w-4" aria-hidden="true" />
-        View or download my CV
-      </a>
     </div>
 
     <ul
@@ -80,7 +91,17 @@ import ArrowScroller from "../composables/ArrowScroller.vue";
 import { DocumentArrowDownIcon } from "@heroicons/vue/24/outline";
 
 const cvUrl = `${import.meta.env.VITE_APP_BACKEND_URL ?? ""}/api/resume/cv/`;
-import { useEventListener, useMediaQuery } from "@vueuse/core";
+// Float the CV shortcut only while the résumé section is on screen.
+const resumeSection = ref<HTMLElement | null>(null);
+const isResumeInView = ref(false);
+useIntersectionObserver(
+  resumeSection,
+  ([entry]) => {
+    isResumeInView.value = entry?.isIntersecting ?? false;
+  },
+  { threshold: 0.15 }
+);
+import { useEventListener, useIntersectionObserver, useMediaQuery } from "@vueuse/core";
 const resumeContainer = ref<HTMLElement | null>(null);
 const resumeViewport = ref<HTMLElement | null>(null);
 const mobileTabs = ref<HTMLElement | null>(null);
@@ -268,4 +289,7 @@ useEventListener(window, "resize", () => {
   @apply pointer-events-none absolute bottom-0 left-0 z-0 h-0.5 rounded-full bg-coral transition-all duration-300 ease-out dark:bg-coralSoft;
 }
 
+.cv-fab {
+  bottom: max(1.25rem, env(safe-area-inset-bottom));
+}
 </style>
