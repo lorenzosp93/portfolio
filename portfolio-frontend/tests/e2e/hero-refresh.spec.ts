@@ -31,10 +31,14 @@ test("mouse tilt follows the pointer during the entrance and resets on leave", a
   const stage = (await page.locator(".hero-stage").boundingBox())!;
   await page.mouse.move(stage.x + stage.width * .9, stage.y + stage.height * .5);
   await expect.poll(() => tiltY(page)).toBeGreaterThan(5);
-  expect(Number(await shape.evaluate(el => getComputedStyle(el).opacity))).toBeLessThan(1);
+  // The spring overshoots opacity to 1 within ~60 ms, so assert on scale:
+  // the shape is still growing at 150 ms (≈0.76 of full size).
+  const scale = () => shape.evaluate(el => new DOMMatrixReadOnly(getComputedStyle(el).transform).a);
+  expect(await scale()).toBeLessThan(0.95);
 
   await settleEntrance(page);
   await expect(shape).toHaveCSS("opacity", "1");
+  expect(await scale()).toBeCloseTo(1, 3);
   expect(await tiltY(page)).toBeGreaterThan(5);
 
   await page.mouse.move(0, stage.y + stage.height + 200);
