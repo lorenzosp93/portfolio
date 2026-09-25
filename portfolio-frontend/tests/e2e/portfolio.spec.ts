@@ -61,6 +61,17 @@ test("stacks the contact call to action on laptop screens", async ({ page }) => 
   expect(buttonBox!.y).toBeGreaterThan(paragraphBox!.y + paragraphBox!.height);
 });
 
+test("scrolls resume slides across the full viewport on mobile", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.locator("#the-resume").scrollIntoViewIfNeeded();
+
+  const box = (await page.locator("#resume-container").boundingBox())!;
+  expect(box.x).toBe(0);
+  expect(box.width).toBe(390);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390);
+});
+
 test("keeps mobile and desktop resume controls mutually exclusive", async ({ page }) => {
   await page.setViewportSize({ width: 639, height: 800 });
   await page.goto("/");

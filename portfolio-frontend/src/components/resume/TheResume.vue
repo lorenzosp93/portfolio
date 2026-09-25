@@ -49,7 +49,8 @@
       </li>
     </ul>
 
-    <div class="relative min-w-0 w-full">
+    <!-- On mobile the slides span the viewport; each slide restores the inset. -->
+    <div class="relative min-w-0 -mx-5 w-[calc(100%+2.5rem)] sm:mx-0 sm:w-full">
       <ArrowScroller
         v-if="!isMobile"
         data-testid="resume-desktop-controls"
@@ -72,7 +73,7 @@
             :key="comp.id"
             :ref="(el) => setSlideRef(comp.id, el)"
             :id="comp.id"
-            class="flex-none w-full snap-center"
+            class="flex-none w-full snap-center px-5 sm:px-0"
           >
             <component :is="comp.component" v-bind="comp.props" />
           </div>
