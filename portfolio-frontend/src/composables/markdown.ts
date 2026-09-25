@@ -36,7 +36,12 @@ export function sanitizeRawHtml(html: string): string {
 export function safeUrl(href: string | null | undefined): string | null {
   if (!href) return null;
   // Strip control/whitespace characters browsers ignore inside schemes.
-  const normalized = href.replace(/[\u0000- \u007f]/g, "");
+  const normalized = Array.from(href)
+    .filter((char) => {
+      const code = char.charCodeAt(0);
+      return code > 0x20 && code !== 0x7f;
+    })
+    .join("");
   return SAFE_URL.test(normalized) ? href : null;
 }
 

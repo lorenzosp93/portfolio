@@ -109,10 +109,11 @@ describe("DetailCard", () => {
   it("only shows edge affordances where more content can be scrolled", async () => {
     const wrapper = mount(DetailCard, { props: { isOpen: false } });
     await wrapper.setProps({ isOpen: true });
-    const content = document.querySelector<HTMLElement>(".bottom-sheet.opened .bottom-sheet__content")!;
+    const content = document.querySelector<HTMLElement>(".bottom-sheet.opened .bottom-sheet__content");
     const contentWrap = document.querySelector<HTMLElement>(
       ".bottom-sheet.opened .bottom-sheet__content-wrap"
-    )!;
+    );
+    if (!content || !contentWrap) throw new Error("Opened bottom sheet not rendered");
     Object.defineProperties(content, {
       clientHeight: { configurable: true, value: 300 },
       scrollHeight: { configurable: true, value: 900 },
