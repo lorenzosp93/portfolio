@@ -22,8 +22,12 @@ class BackendService extends ApiClient {
     resourceURL: string,
     options: LimitOffsetOptions
   ): Promise<AxiosResponse<LimitOffsetResult<T>>> {
-    if (options.overrideLink?.length)
-      return this.instance.get(options.overrideLink);
+    // DRF builds `next` from the Host the origin saw (the Tailscale funnel, not
+    // the public domain), so keep only its path and query.
+    if (options.overrideLink?.length) {
+      const { pathname, search } = new URL(options.overrideLink, window.location.origin);
+      return this.instance.get(`${pathname}${search}`);
+    }
     return this.instance.get(`${resourceURL}?limit=${options.limit}`);
   }
 

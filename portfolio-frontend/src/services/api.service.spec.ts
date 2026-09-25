@@ -66,6 +66,19 @@ describe("API services", () => {
     );
   });
 
+  it("follows absolute pagination links on the current origin", async () => {
+    axiosMock.instance.get.mockResolvedValue({ data: {} });
+
+    await backendService.loadBlogEntries({
+      limit: 3,
+      overrideLink: "https://portfolio-funnel.felis-mahi.ts.net/api/blog/post/?limit=3&offset=3",
+    });
+
+    expect(axiosMock.instance.get).toHaveBeenCalledWith(
+      "/api/blog/post/?limit=3&offset=3"
+    );
+  });
+
   it("posts contact forms and push subscriptions to their public endpoints", async () => {
     axiosMock.instance.post.mockResolvedValue({ data: {} });
     const contact = {
