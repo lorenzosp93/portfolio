@@ -44,6 +44,12 @@ class BackendService extends ApiClient {
     return this.getLimitOffset<BlogPost>(`/api/blog/post/`, options);
   }
 
+  async loadBlogPostBySlug(
+    slug: string
+  ): Promise<AxiosResponse<LimitOffsetResult<BlogPost>>> {
+    return this.instance.get("/api/blog/post/", { params: { slug, limit: 1 } });
+  }
+
   async loadSiteSettings(): Promise<AxiosResponse<SiteSettings>> {
     return this.instance.get("/api/settings/1/");
   }

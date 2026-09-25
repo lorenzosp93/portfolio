@@ -7,6 +7,19 @@
     @apply scroll-smooth bg-paper text-ink antialiased dark:bg-night dark:text-white;
   }
 
+  /* Avoid a light flash before the theme script runs. */
+  @media (prefers-color-scheme: dark) {
+    html:not(.light) {
+      background-color: #0b1120;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
   body {
     @apply min-h-screen bg-paper dark:bg-night;
   }
@@ -35,16 +48,14 @@
     );
   }
 
-  @media (prefers-color-scheme: dark) {
-    .section-tint {
-      background: linear-gradient(
-        to bottom,
-        #0b1120 0%,
-        #111827 18%,
-        #111827 82%,
-        #0b1120 100%
-      );
-    }
+  .dark .section-tint {
+    background: linear-gradient(
+      to bottom,
+      #0b1120 0%,
+      #111827 18%,
+      #111827 82%,
+      #0b1120 100%
+    );
   }
 
   .bottom-sheet__backdrop {

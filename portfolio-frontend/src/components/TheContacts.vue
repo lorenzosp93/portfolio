@@ -36,7 +36,7 @@
             clip-rule="evenodd"
           />
         </svg>
-        Message received — thank you!
+        Message received — thank you! I usually reply within a couple of days.
       </p>
     </div>
     <detail-card
@@ -147,11 +147,13 @@
 </template>
 
 <script setup lang="ts">
-import { Ref, computed, ref } from "vue";
-import DetailCard from "./UI/Card/DetailCard.vue";
+import { Ref, computed, defineAsyncComponent, ref } from "vue";
 import backendService from "@/services/api.service";
 import { ContactForm } from "@/models/models.interface";
 import { useVisibilityObserver } from "@/composables/visibilityObserver";
+
+// Keeps GSAP out of the initial bundle.
+const DetailCard = defineAsyncComponent(() => import("./UI/Card/DetailCard.vue"));
 
 const root: Ref<HTMLDivElement | null> = ref(null);
 

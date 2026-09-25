@@ -33,6 +33,7 @@ vi.mock("gsap", () => {
   return {
     default: {
       registerPlugin: vi.fn(),
+      globalTimeline: { timeScale: vi.fn() },
       timeline: vi.fn(() => timeline),
       set: vi.fn(),
       to: vi.fn((_element, options) => {

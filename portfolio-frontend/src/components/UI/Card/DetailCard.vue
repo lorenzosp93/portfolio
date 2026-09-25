@@ -20,6 +20,8 @@
         @touchmove.prevent="() => {}"
       />
       <article
+        role="dialog"
+        aria-modal="true"
         class="bottom-sheet__card fx-default overflow-hidden bg-surface shadow-2xl ring-1 ring-ink/10 dark:bg-nightSurface dark:ring-white/10 md:max-w-lg lg:max-w-2xl"
         :style="[
           {
@@ -92,6 +94,14 @@ import { Draggable } from "gsap/Draggable";
 import { InertiaPlugin } from "gsap/InertiaPlugin";
 
 gsap.registerPlugin(Draggable, InertiaPlugin);
+
+// GSAP is only used by this component; honour reduced-motion by making its
+// open/close tweens near-instant instead of removing the gestures.
+const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+const syncMotionPreference = () =>
+  gsap.globalTimeline.timeScale(reducedMotion?.matches ? 20 : 1);
+syncMotionPreference();
+reducedMotion?.addEventListener?.("change", syncMotionPreference);
 
 const card: Ref<HTMLElement | null> = ref(null);
 const content: Ref<HTMLElement | null> = ref(null);
@@ -434,6 +444,10 @@ onBeforeUnmount(() => {
 });
 
 onMounted(() => {
+  // Cards can be mounted already open (deep links, lazy-loaded chunks).
+  if (props.isOpen) {
+    nextTick(open);
+  }
   useEventListener("keyup", (event) => {
     if (event.key == "Escape") {
       close(null);

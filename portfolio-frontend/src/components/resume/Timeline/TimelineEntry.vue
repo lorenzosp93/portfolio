@@ -54,9 +54,10 @@
 </template>
 
 <script lang="ts">
-import { marked } from "marked";
-import TimelineEntryDetail from "./TimelineEntryDetail.vue";
-import { defineComponent, nextTick } from "vue";
+import { renderMarkdown } from "@/composables/markdown";
+import { defineAsyncComponent, defineComponent, nextTick } from "vue";
+
+const TimelineEntryDetail = defineAsyncComponent(() => import("./TimelineEntryDetail.vue"));
 
 export default defineComponent({
   name: "TimelineEntry",
@@ -110,7 +111,7 @@ export default defineComponent({
       setTimeout(() => (this.justClosed = false), 100);
     },
     parse(text: string) {
-      return marked.parse(text, { breaks: true });
+      return renderMarkdown(text, { breaks: true });
     },
     updateDescriptionClipState() {
       nextTick(() => {

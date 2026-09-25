@@ -128,7 +128,7 @@
 <script setup lang="ts">
 import { useVisibilityObserver } from "@/composables/visibilityObserver";
 import { useEventListener, useMediaQuery, usePreferredReducedMotion } from "@vueuse/core";
-import { marked } from "marked";
+import { renderInlineMarkdown } from "@/composables/markdown";
 import { Ref, computed, ref, onMounted, onUnmounted } from "vue";
 import { useSiteStore } from "@/stores/site.store";
 import fallbackHero from "@/assets/hero.webp";
@@ -153,7 +153,7 @@ const heroParagraphs = computed(() =>
   (import.meta.env.VITE_HERO_COPY?.trim() || defaultHeroCopy)
     .split(/\n\s*\n/)
     .filter(Boolean)
-    .map((paragraph) => marked.parseInline(paragraph) as string)
+    .map((paragraph) => renderInlineMarkdown(paragraph))
 );
 
 // Pointer offsets belong to an outer layer, so they remain live throughout

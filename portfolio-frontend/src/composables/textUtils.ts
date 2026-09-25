@@ -1,9 +1,6 @@
 import { CreatedBy } from "@/models/models.interface";
-import { marked } from "marked";
-import { computed } from "vue";
-import markedKatex from "marked-katex-extension";
-
-marked.use(markedKatex({ throwOnError: false }));
+import { computed, ref, watch } from "vue";
+import { readingMinutes, renderMarkdown, renderRichMarkdown } from "./markdown";
 
 export function useTextUtils(props: {
   created_by?: CreatedBy;
@@ -29,8 +26,18 @@ export function useTextUtils(props: {
     return "";
   });
 
-  const html_content = computed(() => {
-    return marked.parse(props.content);
-  });
-  return { html_content, created_at__date, created_by__fullname };
+  // Render synchronously first; upgrade to KaTeX output if the text has math.
+  const html_content = ref(renderMarkdown(props.content));
+  watch(
+    () => props.content,
+    async (content) => {
+      const rendered = await renderRichMarkdown(content);
+      if (content === props.content) html_content.value = rendered;
+    },
+    { immediate: true }
+  );
+
+  const reading_minutes = computed(() => readingMinutes(props.content));
+
+  return { html_content, created_at__date, created_by__fullname, reading_minutes };
 }

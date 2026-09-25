@@ -37,6 +37,7 @@
       :isOpen="detailsVisible"
       @card-closed="toggleDetails"
       :name="name"
+      :slug="slug"
       :created_at="created_at"
       :created_by="created_by"
       :location="location"
@@ -59,8 +60,8 @@
 </template>
 
 <script setup lang="ts">
-import { marked } from "marked";
-import { computed, defineAsyncComponent, inject, ref } from "vue";
+import { renderMarkdown } from "@/composables/markdown";
+import { computed, defineAsyncComponent, ref } from "vue";
 import type { Attachment, CreatedBy } from "@/models/models.interface";
 
 const BlogEntryDetail = defineAsyncComponent(
@@ -70,12 +71,12 @@ const ProjectEntryDetail = defineAsyncComponent(
   () => import("../../resume/Projects/ProjectEntryDetail.vue")
 );
 
-const detailsVisible = ref(false);
-
 const props = defineProps<{
   type?: string;
   uuid: string;
   name: string;
+  slug?: string;
+  openOnMount?: boolean;
   created_at?: Date | string;
   created_by?: CreatedBy;
   location?: string;
@@ -85,14 +86,17 @@ const props = defineProps<{
   attachments: Attachment[];
   isActive: boolean;
 }>();
-const truncationAmount: (() => number) | undefined = inject("truncationAmount");
+const emit = defineEmits<{ (event: "open-change", open: boolean): void }>();
+
+const detailsVisible = ref(props.openOnMount ?? false);
 
 const truncatedContent = computed(() => {
-  return marked.parse(props.content ?? "", { breaks: true });
+  return renderMarkdown(props.content, { breaks: true });
 });
 
 function toggleDetails() {
   detailsVisible.value = !detailsVisible.value;
+  emit("open-change", detailsVisible.value);
 }
 </script>
 

@@ -27,6 +27,8 @@
           :key="post?.uuid"
           v-bind="post"
           :isActive="isActive"
+          :open-on-mount="!!linkedSlug && post.slug === linkedSlug"
+          @open-change="(open: boolean) => syncPostUrl(open ? post.slug : undefined)"
         />
         <div
           class="snap-center relative w-10 h-10 p-6 my-auto mx-10 flex bg-white dark:bg-gray-900 shadow-md container flex-none rounded-full"
@@ -61,7 +63,7 @@
 <script setup lang="ts">
 import ListCard from "../UI/Card/ListCard.vue";
 import RetryButton from "../UI/Buttons/RetryButton.vue";
-import { Ref, inject, ref, watch } from "vue";
+import { Ref, inject, onMounted, ref, watch } from "vue";
 import { useBlogStore } from "@/stores/blog.store";
 import { useVisibilityObserver } from "@/composables/visibilityObserver";
 import ArrowScroller from "../composables/ArrowScroller.vue";
@@ -82,6 +84,32 @@ const blogStore = useBlogStore();
 watch(isActive, (val) => {
   if (val && blogStore.posts.length == 0 && !isLoading.value) {
     void loadEntries();
+  }
+});
+
+// Deep links: /?post=<slug> opens that post; opening a card updates the URL.
+const linkedSlug = ref<string | null>(null);
+
+function syncPostUrl(slug?: string) {
+  const url = new URL(window.location.href);
+  if (slug) url.searchParams.set("post", slug);
+  else url.searchParams.delete("post");
+  window.history.replaceState(window.history.state, "", url);
+}
+
+onMounted(async () => {
+  const slug = new URLSearchParams(window.location.search).get("post");
+  if (!slug) return;
+  try {
+    const post = await blogStore.loadLinkedPost(slug);
+    if (!post) {
+      syncPostUrl();
+      return;
+    }
+    linkedSlug.value = slug;
+    root.value?.scrollIntoView({ block: "start" });
+  } catch {
+    // Fall back to the normal list if the post can't be fetched.
   }
 });
 

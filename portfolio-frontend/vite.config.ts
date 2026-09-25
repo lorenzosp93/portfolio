@@ -10,8 +10,9 @@ export default defineConfig({
     vue({
       isProduction: process.env.DEV === "false",
     }),
+    // Pre-compress text assets only; images are already compressed.
     viteCompression({
-      filter: /\.(js|mjs|json|css|html|svg|webp|ttf|png|ico|txt)$/i,
+      filter: /\.(js|mjs|json|css|html|svg|txt|xml|ttf|woff2?)$/i,
     }),
     VitePWA({
       strategies: "generateSW",
@@ -33,16 +34,28 @@ export default defineConfig({
       },
       includeAssets: [
         "favicon.ico",
-        "favicon-16x16.ico",
-        "favicon-32x32.ico",
+        "favicon-16x16.png",
+        "favicon-32x32.png",
         "apple-touch-icon.png",
       ],
       manifest: {
-        name: "Lorenzo Spinelli's portfolio website",
-        short_name: "lorenzosp",
-        description: "The web application for Lorenzo Spinelli's portfolio",
-        theme_color: "#000",
-        icons: [],
+        name: "Lorenzo Spinelli",
+        short_name: "Lorenzo",
+        description: "Résumé, projects and writing from Lorenzo Spinelli.",
+        start_url: "/",
+        display: "standalone",
+        background_color: "#FFF8EF",
+        theme_color: "#FFF8EF",
+        icons: [
+          { src: "/pwa-192x192.png", sizes: "192x192", type: "image/png" },
+          { src: "/pwa-512x512.png", sizes: "512x512", type: "image/png" },
+          {
+            src: "/pwa-maskable-512x512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "maskable",
+          },
+        ],
       },
     }),
   ],

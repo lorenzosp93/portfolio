@@ -1,4 +1,6 @@
 module.exports = {
+  // `dark`/`light` is set on <html> by src/composables/theme.ts.
+  darkMode: "class",
   content: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
   theme: {
     extend: {

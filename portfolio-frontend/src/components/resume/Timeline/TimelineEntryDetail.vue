@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts">
-import { marked } from "marked";
+import { renderMarkdown } from "@/composables/markdown";
 import DetailCard from "../../UI/Card/DetailCard.vue";
 import { defineComponent } from "vue";
 import { Keyword } from "@/models/models.interface";
@@ -54,7 +54,7 @@ export default defineComponent({
       this.$emit("cardClosed");
     },
     parse(text: string) {
-      return marked.parse(text);
+      return renderMarkdown(text);
     },
   },
   props: {

@@ -11,8 +11,16 @@
     <service-worker-update />
   </main>
 
-  <footer class="mx-auto w-full bg-paper px-5 pb-6 text-sm text-muted dark:bg-night dark:text-gray-300">
-    <p>© Lorenzo Spinelli, 2026</p>
+  <footer class="mx-auto flex w-full flex-wrap items-center justify-between gap-3 bg-paper px-5 pb-6 text-sm text-muted dark:bg-night dark:text-gray-300">
+    <p>© Lorenzo Spinelli, {{ currentYear }}</p>
+    <div class="flex items-center gap-3">
+      <a
+        class="underline-offset-4 hover:text-teal hover:underline dark:hover:text-tealSoft"
+        :href="feedUrl"
+        type="application/atom+xml"
+      >RSS</a>
+      <theme-toggle />
+    </div>
   </footer>
 </template>
 
@@ -24,9 +32,12 @@ import TheBlog from "./components/blog/TheBlog.vue";
 import TheContacts from "./components/TheContacts.vue";
 import { provide, onMounted } from "vue";
 import ServiceWorkerUpdate from "./components/UI/ServiceWorkerUpdate.vue";
+import ThemeToggle from "./components/UI/ThemeToggle.vue";
 import { useSiteStore } from "@/stores/site.store";
 
 const siteStore = useSiteStore();
+const currentYear = new Date().getFullYear();
+const feedUrl = `${import.meta.env.VITE_APP_BACKEND_URL ?? ""}/api/blog/feed/`;
 onMounted(() => {
   siteStore.loadSettings();
 });

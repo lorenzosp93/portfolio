@@ -125,3 +125,21 @@ When adding or modifying a public content field:
 4. Add or update backend tests; add frontend tests when a frontend test setup is
    introduced or affected tests exist.
 5. Consider existing PWA/API-cache behavior and backward compatibility.
+
+## Security and delivery notes
+
+- **Markdown** from the CMS is rendered only through
+  `src/composables/markdown.ts`: raw HTML is escaped, link/image URLs are
+  limited to safe schemes, and KaTeX is lazy-loaded when content contains math.
+- **Headers**: nginx adds CSP, HSTS, nosniff, referrer and permissions policy
+  via `security-headers.conf`, included in every `location` (nginx drops
+  server-level `add_header` inside locations that declare their own).
+- **Client IP**: `shared/client_ip.py` honours `X-Forwarded-For` only when the
+  direct peer is in `TRUSTED_PROXY_CIDRS`; set it to the ingress pod CIDR or
+  per-visitor contact limits apply to the ingress address.
+- **Push**: subscriptions must use `https` endpoints on known push services
+  (`WEB_PUSH_ALLOWED_HOST_SUFFIXES`) and are throttled; sends have a timeout.
+- **Admin**: sign-in lockout (`ADMIN_LOGIN_*`), optional `ADMIN_URL_PATH`, DB
+  cache table created by the entrypoint.
+- **Deep links**: `/?post=<slug>` opens a blog post; the Atom feed is at
+  `/api/blog/feed/`.
