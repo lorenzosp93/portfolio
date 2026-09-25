@@ -6,6 +6,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from shared.client_ip import client_ip
+
 from .admission import AdmissionLimited, enqueue_contact
 from .serializers import ContactSerializer
 
@@ -36,7 +38,7 @@ class ContactView(APIView):
             )
 
         try:
-            enqueue_contact(serializer_class.validated_data, request.META.get('REMOTE_ADDR', ''))
+            enqueue_contact(serializer_class.validated_data, client_ip(request))
         except AdmissionLimited:
             return Response(
                 {'success': False, 'message': 'Too many messages. Please try again later.'},

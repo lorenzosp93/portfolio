@@ -1,5 +1,9 @@
+from urllib.parse import urlsplit
+
+from django.conf import settings
 from rest_framework.serializers import (
-    ModelSerializer
+    ModelSerializer,
+    ValidationError,
 )
 from .models import (
     SiteSettings,
@@ -36,6 +40,17 @@ class SubscriptionSerializer(ModelSerializer):
     class Meta:
         model = Subscription
         fields = ['endpoint', 'keys']
+
+    def validate_endpoint(self, value: str) -> str:
+        parts = urlsplit(value)
+        host = (parts.hostname or '').lower()
+        allowed = any(
+            host == suffix or host.endswith('.' + suffix)
+            for suffix in settings.WEB_PUSH_ALLOWED_HOST_SUFFIXES
+        )
+        if parts.scheme != 'https' or not allowed or parts.port not in (None, 443):
+            raise ValidationError('Unsupported push service endpoint.')
+        return value
 
     def create(self, validated_data: dict):
         keys_data = validated_data.pop('keys')

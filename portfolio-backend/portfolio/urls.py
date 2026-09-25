@@ -29,11 +29,12 @@ urlpatterns = [
     path('api/site/', include(router.urls)),
     path('api/blog/', include('blog.urls', namespace='blog')),
     path('api/contacts/', include('contacts.urls', namespace='contacts')),
-    path('api/admin/', admin.site.urls),
+    path(settings.ADMIN_URL_PATH, admin.site.urls),
     path('api/health/', include('health_check.urls')),
-    path('api/api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('api/', include(router.urls)),
 ]
 
 if settings.DEBUG:
+    # Browsable-API sign-in is a development convenience only.
+    urlpatterns.insert(-1, path('api/api-auth/', include('rest_framework.urls', namespace='rest_framework')))
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

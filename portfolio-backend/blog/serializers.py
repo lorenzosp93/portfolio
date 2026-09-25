@@ -23,6 +23,7 @@ class PostSerializer(HyperlinkedModelSerializer):
         fields = [
             'uuid',
             'name',
+            'slug',
             'created_at',
             'location',
             'picture',

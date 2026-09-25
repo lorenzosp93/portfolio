@@ -10,7 +10,7 @@ fi
 PROCESS_TYPE=$1
 
 if [ "$PROCESS_TYPE" = "server" ]; then
-    if [ "$DJANGO_DEBUG" = "true" ]; then
+    if [ "${DEBUG:-false}" = "true" ]; then
         gunicorn \
             --reload \
             --bind 0.0.0.0:8000 \
@@ -20,10 +20,10 @@ if [ "$PROCESS_TYPE" = "server" ]; then
             --error-logfile "-" \
             portfolio.wsgi
     else
-        gunicorn \
+        exec gunicorn \
             --bind 0.0.0.0:8000 \
             --workers 2 \
-            --log-level DEBUG \
+            --log-level "${GUNICORN_LOGLEVEL:-info}" \
             --access-logfile "-" \
             --error-logfile "-" \
             portfolio.wsgi

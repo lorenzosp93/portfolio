@@ -2,6 +2,7 @@
 Django settings for portfolio project.
 """
 
+import ipaddress
 import os
 from django.core.exceptions import ImproperlyConfigured
 
@@ -301,3 +302,57 @@ CONTACT_GLOBAL_HOURLY_LIMIT = positive_env_int('CONTACT_GLOBAL_HOURLY_LIMIT', 20
 CONTACT_GLOBAL_DAILY_LIMIT = positive_env_int('CONTACT_GLOBAL_DAILY_LIMIT', 100)
 CONTACT_MAX_PENDING = positive_env_int('CONTACT_MAX_PENDING', 100)
 CONTACT_DUPLICATE_SECONDS = positive_env_int('CONTACT_DUPLICATE_SECONDS', 600)
+
+
+def env_networks(name):
+    try:
+        return [ipaddress.ip_network(item, strict=False) for item in env_list(name)]
+    except ValueError as exc:
+        raise ImproperlyConfigured(f'{name} must be a comma-separated list of CIDRs') from exc
+
+
+# Reverse proxies (e.g. the cluster ingress) whose X-Forwarded-For is trusted.
+# Empty means the direct peer address is always used.
+TRUSTED_PROXY_NETWORKS = env_networks('TRUSTED_PROXY_CIDRS')
+
+# Hosts allowed as Web Push endpoints; stops subscriptions from turning the
+# notification sender into a request forwarder to arbitrary URLs.
+WEB_PUSH_ALLOWED_HOST_SUFFIXES = env_list('WEB_PUSH_ALLOWED_HOST_SUFFIXES', (
+    'fcm.googleapis.com',
+    'push.apple.com',
+    'push.services.mozilla.com',
+    'notify.windows.com',
+))
+WEB_PUSH_TIMEOUT_SECONDS = float(os.environ.get('WEB_PUSH_TIMEOUT_SECONDS', '5'))
+
+REST_FRAMEWORK['DEFAULT_THROTTLE_RATES'] = {
+    'subscribe': os.environ.get('SUBSCRIBE_THROTTLE_RATE', '10/hour'),
+}
+
+# Transport and cookie hardening (TLS is terminated at the ingress).
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = int(os.environ.get('SECURE_HSTS_SECONDS', '31536000'))
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = env_bool('SECURE_HSTS_INCLUDE_SUBDOMAINS', False)
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+SESSION_COOKIE_HTTPONLY = True
+
+# Database-backed cache so throttles and lockouts are shared across gunicorn
+# workers and API replicas (`createcachetable` runs in the entrypoint).
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'django_cache',
+    },
+}
+
+AUTHENTICATION_BACKENDS = ['shared.auth.LockoutModelBackend']
+
+# Admin location; override with an unguessable path to cut drive-by scans.
+ADMIN_URL_PATH = os.environ.get('ADMIN_URL_PATH', 'api/admin/').strip('/') + '/'
+
+# Admin sign-in lockout (per client IP + username).
+ADMIN_LOGIN_MAX_FAILURES = positive_env_int('ADMIN_LOGIN_MAX_FAILURES', 5)
+ADMIN_LOGIN_LOCKOUT_SECONDS = positive_env_int('ADMIN_LOGIN_LOCKOUT_SECONDS', 900)

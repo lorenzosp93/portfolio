@@ -1,8 +1,16 @@
 import json
-from django.db import models
+import logging
+
+import requests
 from django.apps import apps
+from django.conf import settings
+from django.db import models
 from pywebpush import webpush, WebPushException
-from portfolio.settings import WEBPUSH_SETTINGS, FRONTEND_HOST
+
+logger = logging.getLogger(__name__)
+
+# Push services answer 404/410 when a subscription is gone for good.
+EXPIRED_SUBSCRIPTION_STATUSES = {404, 410}
 
 def send_notifications_for_subscriptions(
     subscriptions_list: list[str], payload: dict
@@ -22,22 +30,32 @@ def send_notifications_for_subscriptions(
             webpush(
                 subscription_info,
                 json.dumps(payload),
-                vapid_private_key=WEBPUSH_SETTINGS.get('VAPID_PRIVATE_KEY'),
+                vapid_private_key=settings.WEBPUSH_SETTINGS.get('VAPID_PRIVATE_KEY'),
                 vapid_claims={
-                    "sub": f"mailto:{WEBPUSH_SETTINGS.get('VAPID_ADMIN_EMAIL')}"},
+                    "sub": f"mailto:{settings.WEBPUSH_SETTINGS.get('VAPID_ADMIN_EMAIL')}"},
+                timeout=settings.WEB_PUSH_TIMEOUT_SECONDS,
             )
-        except WebPushException:
-            subscription.delete()
+        except WebPushException as exc:
+            status = getattr(exc.response, 'status_code', None)
+            if status in EXPIRED_SUBSCRIPTION_STATUSES:
+                subscription.delete()
+            else:
+                logger.warning('Web push failed for subscription %s: %s', subscription.pk, exc)
+        except requests.RequestException as exc:
+            # A slow or unreachable push service must not block publishing.
+            logger.warning('Web push unreachable for subscription %s: %s', subscription.pk, exc)
 
 class TriggersNotifications(models.Model):
     """Abstract mixin to trigger notification"""
     submit: models.Field = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs) -> None:
-        if self.submit:
-            self.send_notifications()
-            self.submit = False
+        notify = self.submit
+        self.submit = False
+        # Persist first so the slug and picture URL exist in the payload.
         super().save(*args, **kwargs)
+        if notify:
+            self.send_notifications()
 
     def send_notifications(self) -> None:
         subscriptions = self.get_subscriptions()
@@ -45,21 +63,22 @@ class TriggersNotifications(models.Model):
         send_notifications_for_subscriptions(
             [*subscriptions.values_list('pk', flat=True)], payload)
 
-    def build_payload(self) -> dict[str, str | dict[str, str] | None]:
+    def get_frontend_url(self) -> str:
+        return settings.FRONTEND_HOST.rstrip('/') + '/'
+
+    def build_payload(self) -> dict[str, str | None]:
         image_link = ''
         if (picture := getattr(self, 'picture', None)):
             image_link = picture.url
         return {
+            'title': f'New {self._meta.verbose_name}: {self.name}',
+            'body': 'Tap to read it on lorenzosp.com.',
             'image': image_link,
-            'body': "There is a new %(type)s for you: %(subject)s" % {'subject': self.name, 'type': self.__class__.__name__},
-            'data': {
-                'url': FRONTEND_HOST
-            }
+            'url': self.get_frontend_url(),
         }
 
     def get_subscriptions(self) -> models.QuerySet:
-        return apps.get_model('shared', 'Subscription') \
-                   .all()
+        return apps.get_model('shared', 'Subscription').objects.all()
 
     class Meta:
         abstract = True

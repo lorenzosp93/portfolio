@@ -18,6 +18,9 @@ class Post(
     ):
     "Define posts model"
 
+    def get_frontend_url(self) -> str:
+        return f"{super().get_frontend_url()}?post={self.slug}"
+
 
 class Comment(
         TimeStampable, Named, HasContent, Authorable, Serializable,

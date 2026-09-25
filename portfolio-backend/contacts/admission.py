@@ -16,8 +16,9 @@ class AdmissionLimited(Exception):
 
 
 def source_identity(address):
-    # Forwarding headers are caller-controlled unless an ingress sanitizes them.
-    # Use the direct peer; IPv6 privacy addresses share a /64 budget.
+    # `address` is resolved by shared.client_ip, which only honours
+    # X-Forwarded-For from TRUSTED_PROXY_CIDRS. IPv6 privacy addresses share a
+    # /64 budget.
     try:
         address = ipaddress.ip_address(address)
         if isinstance(address, ipaddress.IPv6Address):
