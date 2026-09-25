@@ -5,7 +5,7 @@ from django.views.generic import TemplateView
 
 from shared.models import SiteSettings
 
-from .models import Education, Experience, Language, Skill
+from .models import Education, Experience, Skill, SkillCategory
 
 
 class CVView(TemplateView):
@@ -23,8 +23,10 @@ class CVView(TemplateView):
             website_label=website.split('://', 1)[-1],
             experiences=Experience.objects.select_related('entity').order_by('-start_date'),
             educations=Education.objects.select_related('entity').order_by('-start_date'),
-            skills=Skill.objects.filter(show_on_cv=True).order_by('-level', 'name'),
-            languages=Language.objects.all(),
+            skills=Skill.objects.filter(show_on_cv=True)
+            .exclude(category=SkillCategory.LANGUAGE).order_by('-level', 'name'),
+            languages=Skill.objects.filter(show_on_cv=True, category=SkillCategory.LANGUAGE)
+            .order_by('-level', 'name'),
         )
         return context
 

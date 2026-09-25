@@ -1,5 +1,4 @@
 "Define models for the resume app"
-from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
@@ -126,26 +125,34 @@ class Experience(Serializable, Named, Datable, TimeStampable,
     def get_absolute_url(self):
         return reverse("resume:experience-detail", kwargs={"slug": self.slug})
 
-class SkillCategory(Named, Described):
-    "Model to capture categories for skills"
-    class Meta:
-        verbose_name_plural = 'Skill Categories'
-    
+class SkillCategory(models.TextChoices):
+    "Fixed skill categories (formerly a model)"
+    COMPUTER_SCIENCE = 'computer_science', 'Computer Science'
+    INDUSTRY_KNOWLEDGE = 'industry_knowledge', 'Industry knowledge'
+    LANGUAGE = 'language', 'Languages'
+
+
+SKILL_CATEGORY_DESCRIPTIONS = {
+    SkillCategory.COMPUTER_SCIENCE: 'Technical skills related to computer science',
+    SkillCategory.INDUSTRY_KNOWLEDGE: 'Knowledge of industry practices',
+    SkillCategory.LANGUAGE: 'Spoken languages',
+}
+
 
 class Skill(Serializable, Named, TimeStampable):
     "Model for individual skills instances"
 
-    category = models.ForeignKey(
-        SkillCategory,
-        on_delete=models.CASCADE,
-        related_name='skills',
+    category = models.CharField(
+        max_length=32,
+        choices=SkillCategory.choices,
+        default=SkillCategory.COMPUTER_SCIENCE,
     )
     url = models.URLField(blank=True, null=True,)
     level = models.IntegerField(choices=SKILL_LEVELS)
     show_on_cv = models.BooleanField(
         default=False,
         verbose_name="Show on CV",
-        help_text="Show as a bar on the printable CV; the bar length follows Level.",
+        help_text="Show on the printable CV (bar, or bubble for languages); size follows Level.",
     )
 
     class Meta:
@@ -153,22 +160,9 @@ class Skill(Serializable, Named, TimeStampable):
 
     @property
     def level_percent(self) -> int:
-        "Bar length for the CV: novice 20% … professional 100%."
+        "Size on the CV: novice 20% … professional 100%."
         return round((self.level + 1) * 100 / len(SKILL_LEVELS))
 
-
-class Language(models.Model):
-    "Spoken language shown on the printable CV"
-    name = models.CharField(max_length=40, unique=True)
-    proficiency = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(100)],
-        verbose_name="Proficiency (%)",
-        help_text="100 = native.",
-    )
-    order = models.PositiveSmallIntegerField(default=0)
-
-    class Meta:
-        ordering = ['order', 'name']
-
-    def __str__(self):
-        return self.name
+    @property
+    def category_description(self) -> str:
+        return SKILL_CATEGORY_DESCRIPTIONS.get(self.category, '')

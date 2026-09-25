@@ -2,7 +2,7 @@
 from django.views.generic import ListView, DetailView, TemplateView
 from .models import (
     Experience, Education, Project,
-    Skill, SkillCategory, 
+    Skill,
 )
 
 
@@ -35,12 +35,6 @@ class EducationDetailView(DetailView):
     model = Education
     template_name = 'mainpage/resume/cv_entry.html'
     context_object_name = 'entry'
-
-class SkillCategoryListView(ListView):
-    "List view for skills within skill category"
-    context_object_name = 'skillcategories'
-    model = SkillCategory
-    template_name = 'mainpage/resume/skill.html'
 
 class ProjectListView(ListView):
     "List view for Project objects"

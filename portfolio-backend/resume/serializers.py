@@ -1,7 +1,8 @@
 from rest_framework.serializers import (
-    HyperlinkedModelSerializer, 
+    HyperlinkedModelSerializer,
     ModelSerializer,
-    CharField
+    CharField,
+    Serializer,
 )
 from shared.serializers import (
     AttachmentSerializer
@@ -10,27 +11,27 @@ from .models import (
     Education,
     Experience,
     Skill,
-    SkillCategory,
     Project,
     Entity,
     Keyword,
 )
-class SkillCategorySerializer(ModelSerializer):
-    class Meta:
-        model = SkillCategory
-        fields = ['name', 'description']
+class SkillCategorySerializer(Serializer):
+    "Category as {name, description}; keeps the API shape of the old model."
+    name = CharField(source='get_category_display')
+    description = CharField(source='category_description')
+
 
 class SkillSerializer(ModelSerializer):
-    category = SkillCategorySerializer()
+    category = SkillCategorySerializer(source='*')
     class Meta:
         model = Skill
         fields = ['name', 'category', 'url', 'level']
 
-class CategorySkillSerializer(ModelSerializer):
-    skills = SkillSerializer(many=True, read_only=True, required=False)
-    class Meta:
-        model = SkillCategory
-        fields = ['name', 'description', 'skills']
+
+class CategorySkillSerializer(Serializer):
+    name = CharField()
+    description = CharField()
+    skills = SkillSerializer(many=True)
 
 class ProjectSerializer(HyperlinkedModelSerializer):
     attachments = AttachmentSerializer(many=True)

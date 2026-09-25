@@ -6,7 +6,7 @@ from django.test import TestCase
 
 from shared.models import SiteSettings
 
-from .models import Education, Entity, Experience, Language, Skill, SkillCategory
+from .models import Education, Entity, Experience, Skill, SkillCategory
 from .templatetags.resume_tags import cv_markdown
 
 
@@ -24,12 +24,14 @@ def seed_cv():
         cv_location='Amsterdam, NL',
         linkedin_url='https://linkedin.com/in/lorenzosp',
     )
-    category = SkillCategory.objects.create(name='Tech')
+    category = SkillCategory.COMPUTER_SCIENCE
     for name, level in (('Python', 4), ('Typescript', 3), ('Kubernetes', 3), ('SQL / NoSQL', 4)):
         Skill.objects.create(name=name, category=category, level=level, show_on_cv=True)
     Skill.objects.create(name='Hidden skill', category=category, level=1)
-    for order, (name, pct) in enumerate((('English', 96), ('Spanish', 90), ('Dutch', 50), ('Italian', 100))):
-        Language.objects.create(name=name, proficiency=pct, order=order)
+    for name, level in (('English', 4), ('Spanish', 3), ('Dutch', 1), ('Italian', 4)):
+        Skill.objects.create(
+            name=name, category=SkillCategory.LANGUAGE, level=level, show_on_cv=True,
+        )
     tesla = Entity.objects.create(name='Tesla International BV', type=0)
     Experience.objects.create(
         name='Manager, Software Product Engineering', entity=tesla, location='Amsterdam, NL',
@@ -75,6 +77,8 @@ class CVPageTests(TestCase):
         ):
             self.assertIn(text, html)
         self.assertNotIn('Hidden skill', html)
+        bars = html.split('class="bars"')[1].split('</dl>')[0]
+        self.assertNotIn('Italian', bars)  # languages are bubbles, not bars
         self.assertIn('max-age=300', response['Cache-Control'])
         if path := os.environ.get('CV_PREVIEW_PATH'):
             with open(path, 'w', encoding='utf-8') as handle:
@@ -106,3 +110,26 @@ class CVMarkdownTests(TestCase):
             html,
             '<p>Intro line second</p><ul><li>one continued</li><li><em>two</em></li></ul>',
         )
+
+
+class SkillCategoryApiTests(TestCase):
+    def test_grouped_endpoint_keeps_shape_and_order(self):
+        Skill.objects.create(name='Scrum', category=SkillCategory.INDUSTRY_KNOWLEDGE, level=4)
+        Skill.objects.create(name='Django', category=SkillCategory.COMPUTER_SCIENCE, level=3)
+        Skill.objects.create(name='Dutch', category=SkillCategory.LANGUAGE, level=1)
+        data = self.client.get('/api/resume/skillcategory/').json()
+        self.assertEqual(
+            [group['name'] for group in data],
+            ['Computer Science', 'Industry knowledge', 'Languages'],
+        )
+        self.assertEqual(data[0]['description'], 'Technical skills related to computer science')
+        self.assertEqual(data[2]['skills'][0]['name'], 'Dutch')
+        self.assertEqual(
+            data[2]['skills'][0]['category'],
+            {'name': 'Languages', 'description': 'Spoken languages'},
+        )
+
+    def test_skills_endpoint_serialises_category(self):
+        Skill.objects.create(name='Django', category=SkillCategory.COMPUTER_SCIENCE, level=3)
+        item = self.client.get('/api/resume/skills/').json()[0]
+        self.assertEqual(item['category']['name'], 'Computer Science')

@@ -1,5 +1,6 @@
 from django.db.models import Max
-from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.response import Response
+from rest_framework.viewsets import ReadOnlyModelViewSet, ViewSet
 from rest_framework.pagination import LimitOffsetPagination
 from .serializers import (
     KeywordSerializer,
@@ -18,7 +19,8 @@ from .models import (
     Project,
     Entity,
     Keyword,
-    SkillCategory
+    SkillCategory,
+    SKILL_CATEGORY_DESCRIPTIONS,
 )
 
 class EducationViewSet(ReadOnlyModelViewSet):
@@ -83,9 +85,23 @@ class EntityEducationViewSet(ReadOnlyModelViewSet):
     serializer_class = EntityEntriesSerializer
     queryset = Entity.objects.filter(type=1).annotate(max_date=Max('education_related__start_date')).order_by('-max_date')
 
-class CategorySkillViewSet(ReadOnlyModelViewSet):
+class CategorySkillViewSet(ViewSet):
     """
-    A viewset to return Skills related to a Category.
+    Skills grouped by category, in category order; empty categories omitted.
     """
-    serializer_class = CategorySkillSerializer
-    queryset = SkillCategory.objects.all()
+    queryset = Skill.objects.all()  # for DjangoModelPermissionsOrAnonReadOnly
+
+    def list(self, request):
+        grouped = {value: [] for value in SkillCategory.values}
+        for skill in self.queryset.all():
+            grouped.setdefault(skill.category, []).append(skill)
+        data = [
+            {
+                'name': SkillCategory(value).label,
+                'description': SKILL_CATEGORY_DESCRIPTIONS[value],
+                'skills': skills,
+            }
+            for value, skills in grouped.items()
+            if skills and value in SkillCategory.values
+        ]
+        return Response(CategorySkillSerializer(data, many=True).data)

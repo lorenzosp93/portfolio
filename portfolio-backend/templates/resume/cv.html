@@ -177,7 +177,7 @@
             {% for language in languages %}
             <div class="language">
               <span>{{ language.name }}</span>
-              <span class="bubble-slot"><span class="bubble" style="width: {{ language.proficiency }}%; height: {{ language.proficiency }}%" title="{{ language.proficiency }}%"></span></span>
+              <span class="bubble-slot"><span class="bubble" style="width: {{ language.level_percent }}%; height: {{ language.level_percent }}%" title="{{ language.get_level_display|capfirst }}"></span></span>
             </div>
             {% endfor %}
           </div>
