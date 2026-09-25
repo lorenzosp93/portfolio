@@ -25,7 +25,9 @@ class DeploymentTests(unittest.TestCase):
         self.assertEqual(pod['spec']['nodeSelector'], {'kubernetes.io/arch': 'amd64'})
         container = pod['spec']['containers'][0]
         self.assertEqual(container['envFrom'], [{'secretRef': {'name': 'db'}}])
-        self.assertEqual(container['command'], ['python', 'manage.py', 'migrate', '--noinput'])
+        self.assertEqual(container['command'], [
+            'sh', '-c', 'python manage.py migrate --noinput && python manage.py createcachetable',
+        ])
         self.assertNotIn('readinessProbe', container)
         self.assertEqual(DEPLOYMENT['spec']['template']['spec']['containers'][0]['image'], 'old')
 
