@@ -126,16 +126,22 @@ class Experience(Serializable, Named, Datable, TimeStampable,
         return reverse("resume:experience-detail", kwargs={"slug": self.slug})
 
 class SkillCategory(models.TextChoices):
-    "Fixed skill categories (formerly a model)"
-    COMPUTER_SCIENCE = 'computer_science', 'Computer Science'
+    "Fixed skill categories (formerly a model); order is display order."
+    SOFT_SKILLS = 'soft_skills', 'Soft skills'
+    LANGUAGE = 'language', 'Language'
     INDUSTRY_KNOWLEDGE = 'industry_knowledge', 'Industry knowledge'
-    LANGUAGE = 'language', 'Languages'
+    WEB_STACK = 'web_stack', 'Web stack'
+    PROGRAMMING = 'programming', 'Programming'
+    DATA = 'data', 'Data'
 
 
 SKILL_CATEGORY_DESCRIPTIONS = {
-    SkillCategory.COMPUTER_SCIENCE: 'Technical skills related to computer science',
-    SkillCategory.INDUSTRY_KNOWLEDGE: 'Knowledge of industry practices',
-    SkillCategory.LANGUAGE: 'Spoken languages',
+    SkillCategory.SOFT_SKILLS: '',
+    SkillCategory.LANGUAGE: '',
+    SkillCategory.INDUSTRY_KNOWLEDGE: 'Skills related to industry best practices.',
+    SkillCategory.WEB_STACK: 'Full-stack web development.',
+    SkillCategory.PROGRAMMING: '',
+    SkillCategory.DATA: 'Data analysis and database technology.',
 }
 
 
@@ -145,7 +151,7 @@ class Skill(Serializable, Named, TimeStampable):
     category = models.CharField(
         max_length=32,
         choices=SkillCategory.choices,
-        default=SkillCategory.COMPUTER_SCIENCE,
+        default=SkillCategory.PROGRAMMING,
     )
     url = models.URLField(blank=True, null=True,)
     level = models.IntegerField(choices=SKILL_LEVELS)

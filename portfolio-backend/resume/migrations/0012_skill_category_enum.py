@@ -1,27 +1,34 @@
 """Replace the SkillCategory model with an enum and fold Language into Skill."""
 from django.db import migrations, models
 
+# Keyed by the legacy category's name or slug (casefolded). Values match the
+# production categories as of 2026-09-25; "coding" is a local-dev leftover.
 LEGACY_CATEGORY_MAP = {
-    'coding': 'computer_science',
-    'computer-science': 'computer_science',
-    'industry-knowledge': 'industry_knowledge',
+    'soft skills': 'soft_skills', 'soft-skills': 'soft_skills',
+    'language': 'language', 'languages': 'language',
+    'industry knowledge': 'industry_knowledge', 'industry-knowledge': 'industry_knowledge',
+    'web stack': 'web_stack', 'web-stack': 'web_stack',
+    'programming': 'programming',
+    'data': 'data',
+    'coding': 'web_stack', 'computer science': 'web_stack',
 }
 
 
 def to_enum(apps, schema_editor):
     Skill = apps.get_model('resume', 'Skill')
+    unknown = set()
     for skill in Skill.objects.select_related('category_legacy'):
         legacy = skill.category_legacy
-        slug = (legacy.slug or '').lower() if legacy else ''
-        name = (legacy.name or '').lower() if legacy else ''
-        if 'language' in slug or 'language' in name:
-            value = 'language'
-        elif 'industry' in slug or 'industry' in name:
-            value = 'industry_knowledge'
-        else:
-            value = LEGACY_CATEGORY_MAP.get(slug, 'computer_science')
+        keys = [(legacy.name or '').casefold(), (legacy.slug or '').casefold()] if legacy else []
+        value = next((LEGACY_CATEGORY_MAP[k] for k in keys if k in LEGACY_CATEGORY_MAP), None)
+        if value is None:
+            unknown.add(legacy.name if legacy else '<none>')
+            continue
         skill.category = value
         skill.save(update_fields=['category'])
+    if unknown:
+        # Fail the deploy rather than silently misfiling skills.
+        raise RuntimeError(f'Unmapped skill categories: {sorted(unknown)}; extend LEGACY_CATEGORY_MAP.')
 
 
 def languages_to_skills(apps, schema_editor):
@@ -54,11 +61,14 @@ class Migration(migrations.Migration):
             name='category',
             field=models.CharField(
                 choices=[
-                    ('computer_science', 'Computer Science'),
+                    ('soft_skills', 'Soft skills'),
+                    ('language', 'Language'),
                     ('industry_knowledge', 'Industry knowledge'),
-                    ('language', 'Languages'),
+                    ('web_stack', 'Web stack'),
+                    ('programming', 'Programming'),
+                    ('data', 'Data'),
                 ],
-                default='computer_science',
+                default='programming',
                 max_length=32,
             ),
         ),

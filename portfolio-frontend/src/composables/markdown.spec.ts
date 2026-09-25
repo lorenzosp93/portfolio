@@ -24,6 +24,14 @@ describe("markdown rendering", () => {
     expect(renderInlineMarkdown("<b onclick=1>x</b>")).not.toContain("<b");
   });
 
+  it("keeps attribute-free formatting tags used in existing posts", () => {
+    expect(renderMarkdown("Text.\n\n<sup>All opinions are my own.</sup>")).toContain(
+      "<sup>All opinions are my own.</sup>"
+    );
+    expect(renderMarkdown('<sup onclick="x()">no</sup>')).not.toContain("<sup onclick");
+    expect(renderMarkdown("`<ESC>` key")).toContain("<code>&lt;ESC&gt;</code>");
+  });
+
   it("drops unsafe link and image URLs", () => {
     expect(renderMarkdown("[x](javascript:alert(1))")).not.toContain("href");
     expect(renderMarkdown("![x](data:text/html,boom)")).not.toContain("<img");

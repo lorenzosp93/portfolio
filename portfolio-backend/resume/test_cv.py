@@ -24,7 +24,7 @@ def seed_cv():
         cv_location='Amsterdam, NL',
         linkedin_url='https://linkedin.com/in/lorenzosp',
     )
-    category = SkillCategory.COMPUTER_SCIENCE
+    category = SkillCategory.PROGRAMMING
     for name, level in (('Python', 4), ('Typescript', 3), ('Kubernetes', 3), ('SQL / NoSQL', 4)):
         Skill.objects.create(name=name, category=category, level=level, show_on_cv=True)
     Skill.objects.create(name='Hidden skill', category=category, level=1)
@@ -115,21 +115,20 @@ class CVMarkdownTests(TestCase):
 class SkillCategoryApiTests(TestCase):
     def test_grouped_endpoint_keeps_shape_and_order(self):
         Skill.objects.create(name='Scrum', category=SkillCategory.INDUSTRY_KNOWLEDGE, level=4)
-        Skill.objects.create(name='Django', category=SkillCategory.COMPUTER_SCIENCE, level=3)
+        Skill.objects.create(name='Django', category=SkillCategory.WEB_STACK, level=3)
         Skill.objects.create(name='Dutch', category=SkillCategory.LANGUAGE, level=1)
         data = self.client.get('/api/resume/skillcategory/').json()
         self.assertEqual(
             [group['name'] for group in data],
-            ['Computer Science', 'Industry knowledge', 'Languages'],
+            ['Language', 'Industry knowledge', 'Web stack'],
         )
-        self.assertEqual(data[0]['description'], 'Technical skills related to computer science')
-        self.assertEqual(data[2]['skills'][0]['name'], 'Dutch')
+        self.assertEqual(data[2]['description'], 'Full-stack web development.')
+        self.assertEqual(data[0]['skills'][0]['name'], 'Dutch')
         self.assertEqual(
-            data[2]['skills'][0]['category'],
-            {'name': 'Languages', 'description': 'Spoken languages'},
+            data[0]['skills'][0]['category'], {'name': 'Language', 'description': ''},
         )
 
     def test_skills_endpoint_serialises_category(self):
-        Skill.objects.create(name='Django', category=SkillCategory.COMPUTER_SCIENCE, level=3)
+        Skill.objects.create(name='Django', category=SkillCategory.WEB_STACK, level=3)
         item = self.client.get('/api/resume/skills/').json()[0]
-        self.assertEqual(item['category']['name'], 'Computer Science')
+        self.assertEqual(item['category']['name'], 'Web stack')

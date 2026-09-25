@@ -5,7 +5,8 @@ import { Marked, type MarkedExtension } from "marked";
  *
  * Content comes from Django admin, but it is still rendered defensively so a
  * compromised account or a future user-generated field cannot inject script:
- * raw HTML is shown as text and links/images only accept safe URL schemes.
+ * raw HTML is shown as text (except a few attribute-free formatting tags such
+ * as <sup>) and links/images only accept safe URL schemes.
  * KaTeX is loaded on demand, only for content that contains math.
  */
 
@@ -23,6 +24,15 @@ export function escapeHtml(value: string): string {
   return value.replace(/[&<>"']/g, (char) => ESCAPES[char]);
 }
 
+// Attribute-free formatting tags that existing posts use; anything else is escaped.
+const ALLOWED_TAGS = /&lt;(\/?)(sup|sub|br|kbd|mark|small|em|strong|b|i|u|s|del|ins)\s*(\/?)&gt;/gi;
+
+export function sanitizeRawHtml(html: string): string {
+  return escapeHtml(html).replace(ALLOWED_TAGS, (_m, close: string, tag: string, self: string) =>
+    `<${close}${tag.toLowerCase()}${self ? " /" : ""}>`
+  );
+}
+
 export function safeUrl(href: string | null | undefined): string | null {
   if (!href) return null;
   // Strip control/whitespace characters browsers ignore inside schemes.
@@ -33,7 +43,7 @@ export function safeUrl(href: string | null | undefined): string | null {
 const hardening: MarkedExtension = {
   renderer: {
     html(html: string) {
-      return escapeHtml(html);
+      return sanitizeRawHtml(html);
     },
     link(href: string, title: string | null | undefined, text: string) {
       const url = safeUrl(href);
