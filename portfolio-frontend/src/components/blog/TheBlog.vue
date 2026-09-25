@@ -88,7 +88,9 @@ watch(isActive, (val) => {
 });
 
 // Deep links: /?post=<slug> opens that post; opening a card updates the URL.
-const linkedSlug = ref<string | null>(null);
+// ListCard reads openOnMount only once, so the slug must be known before the
+// linked card renders (the store adds it before loadLinkedPost resolves).
+const linkedSlug = ref(new URLSearchParams(window.location.search).get("post"));
 
 function syncPostUrl(slug?: string) {
   const url = new URL(window.location.href);
@@ -98,15 +100,15 @@ function syncPostUrl(slug?: string) {
 }
 
 onMounted(async () => {
-  const slug = new URLSearchParams(window.location.search).get("post");
+  const slug = linkedSlug.value;
   if (!slug) return;
   try {
     const post = await blogStore.loadLinkedPost(slug);
     if (!post) {
+      linkedSlug.value = null;
       syncPostUrl();
       return;
     }
-    linkedSlug.value = slug;
     root.value?.scrollIntoView({ block: "start" });
   } catch {
     // Fall back to the normal list if the post can't be fetched.

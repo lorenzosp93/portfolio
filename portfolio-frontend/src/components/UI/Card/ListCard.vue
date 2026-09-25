@@ -33,7 +33,7 @@
       </div>
     </div>
     <blog-entry-detail
-      v-if="type == 'blog' && isActive"
+      v-if="type == 'blog' && (isActive || detailsVisible)"
       :isOpen="detailsVisible"
       @card-closed="toggleDetails"
       :name="name"
@@ -46,7 +46,7 @@
       :attachments="attachments"
     />
     <project-entry-detail
-      v-if="type == 'project' && isActive"
+      v-if="type == 'project' && (isActive || detailsVisible)"
       :isOpen="detailsVisible"
       @card-closed="toggleDetails"
       :name="name"
