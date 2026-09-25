@@ -1,0 +1,242 @@
+{% load resume_tags %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lorenzo Spinelli — CV</title>
+  <meta name="description" content="{{ site.cv_headline|default:'Curriculum vitae' }}">
+  <style>
+    :root {
+      --ink: #111;
+      --muted: #555;
+      --rule: #d4d4d4;
+      --paper: #fff;
+      --backdrop: #ececec;
+      --bar: #111;
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      background: var(--backdrop);
+      color: var(--ink);
+      font: 9.5pt/1.4 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    a { color: inherit; text-decoration: none; border-bottom: 1px dotted currentColor; }
+
+    .toolbar {
+      position: sticky; top: 0; z-index: 1;
+      display: flex; justify-content: center; gap: 8px;
+      padding: 10px 16px;
+      background: rgba(236, 236, 236, .92);
+      backdrop-filter: blur(6px);
+    }
+    .toolbar a, .toolbar button {
+      font: 600 13px/1 inherit; font-family: inherit;
+      padding: 9px 16px; border-radius: 999px; cursor: pointer;
+      border: 1px solid #111; background: #fff; color: #111;
+    }
+    .toolbar button { background: #111; color: #fff; }
+
+    .page {
+      width: 210mm; min-height: 297mm; margin: 0 auto 24px;
+      padding: 14mm 14mm 12mm; background: var(--paper);
+      box-shadow: 0 2px 18px rgba(0, 0, 0, .12);
+    }
+
+    /* Header */
+    .header { display: grid; grid-template-columns: 1fr auto; gap: 8mm; align-items: start; }
+    .identity { display: flex; gap: 5mm; align-items: flex-start; }
+    .photo {
+      width: 24mm; height: 24mm; object-fit: cover; flex: none;
+      border: 3px solid var(--ink); padding: 1mm; background: #fff;
+    }
+    .name { margin: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+    .name span {
+      background: var(--ink); color: #fff; padding: 1px 6px 0;
+      font-size: 24pt; line-height: 1.05; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .02em;
+    }
+    .headline { margin: 4mm 0 0; font-size: 15pt; font-weight: 400; }
+    .contact { list-style: none; margin: 0; padding: 0; display: grid; gap: 2.2mm; }
+    .contact li { display: flex; align-items: center; gap: 2.5mm; }
+    .contact .ico {
+      width: 6mm; height: 6mm; flex: none; display: grid; place-items: center;
+      background: var(--ink); color: #fff;
+    }
+    .contact svg { width: 3.4mm; height: 3.4mm; fill: currentColor; }
+
+    /* Sections */
+    .section { margin-top: 7mm; }
+    .section > h2 {
+      display: inline-block; margin: 0 0 3mm; padding: 1px 5px 0;
+      background: var(--ink); color: #fff;
+      font-size: 9pt; letter-spacing: .06em; text-transform: uppercase;
+    }
+    .summary { display: grid; grid-template-columns: 1.3fr 1fr; gap: 8mm; align-items: start; }
+    .summary p { margin: 0 0 2.5mm; text-align: justify; hyphens: auto; }
+
+    .bars { display: grid; grid-template-columns: auto 1fr; gap: 1.6mm 2.5mm; align-items: center; }
+    .bars dt {
+      justify-self: end; background: var(--ink); color: #fff;
+      padding: 1px 5px 0; font-size: 8.5pt; white-space: nowrap;
+    }
+    .bars dd { margin: 0; height: 3.4mm; background: #f1f1f1; }
+    .bars dd span { display: block; height: 100%; background: var(--bar); }
+
+    .languages { display: flex; justify-content: space-between; gap: 3mm; margin-top: 5mm; }
+    .language { display: grid; justify-items: center; gap: 1.5mm; flex: 1; font-size: 8.5pt; }
+    .bubble-slot { width: 9mm; height: 9mm; display: grid; place-items: center; }
+    .bubble { border-radius: 50%; background: var(--ink); }
+
+    /* Entries */
+    .entries { list-style: none; margin: 0; padding: 0; }
+    .entry {
+      display: grid; grid-template-columns: 26mm 1fr; gap: 4mm;
+      padding: 2.5mm 0 3mm; break-inside: avoid;
+    }
+    .entry + .entry { border-top: 1px solid var(--rule); }
+    .when { font-size: 8pt; color: var(--muted); }
+    .when .role-note { display: block; }
+    .logo { display: block; max-width: 22mm; max-height: 7mm; margin-top: 2mm; object-fit: contain; object-position: left; filter: grayscale(1); }
+    .entry-head { display: flex; justify-content: space-between; gap: 4mm; align-items: baseline; }
+    .entry h3 { margin: 0; font-size: 10pt; }
+    .entry .where { font-size: 8pt; font-weight: 700; white-space: nowrap; }
+    .entry .body { margin-top: 1.2mm; }
+    .entry .body p { margin: 0 0 1.2mm; }
+    .entry .body ul { margin: 0; padding-left: 4.5mm; }
+    .entry .body li { margin: .6mm 0; }
+    .entry .body li::marker { font-size: .9em; }
+
+    @media screen and (max-width: 820px) {
+      body { background: var(--paper); font-size: 10.5pt; }
+      .page { width: auto; min-height: 0; margin: 0; padding: 20px 16px 32px; box-shadow: none; }
+      .header, .summary { grid-template-columns: 1fr; }
+      .summary p { text-align: left; }
+      .entry { grid-template-columns: 1fr; gap: 1mm; }
+      .logo { display: none; }
+      .entry-head { flex-wrap: wrap; }
+      .name span { font-size: 20pt; }
+    }
+
+    @page { size: A4; margin: 0; }
+    @media print {
+      body { background: #fff; }
+      .toolbar { display: none; }
+      .page { margin: 0; box-shadow: none; width: auto; min-height: 0; }
+      a { border-bottom: 0; }
+      .section { break-inside: auto; }
+      .section > h2 { break-after: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="toolbar" aria-label="CV actions">
+    <a href="{{ website }}/">Back to site</a>
+    <button type="button" onclick="window.print()">Save as PDF</button>
+  </nav>
+
+  <main class="page">
+    <header class="header">
+      <div>
+        <div class="identity">
+          {% if picture_url %}<img class="photo" src="{{ picture_url }}" alt="Portrait of Lorenzo Spinelli">{% endif %}
+          <h1 class="name"><span>Lorenzo</span><span>Spinelli</span></h1>
+        </div>
+        {% if site.cv_headline %}<p class="headline">{{ site.cv_headline }}</p>{% endif %}
+      </div>
+      <ul class="contact">
+        {% if site.cv_location %}
+        <li><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z"/></svg></span>{{ site.cv_location }}</li>
+        {% endif %}
+        <li><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.9 6h-3a15.7 15.7 0 0 0-1.3-4 8 8 0 0 1 4.3 4ZM12 4c.8 1.1 1.5 2.5 1.9 4h-3.8c.4-1.5 1.1-2.9 1.9-4ZM4.3 14a8 8 0 0 1 0-4h3.4a16.6 16.6 0 0 0 0 4H4.3Zm.8 2h3a15.7 15.7 0 0 0 1.3 4 8 8 0 0 1-4.3-4Zm3-8h-3a8 8 0 0 1 4.3-4 15.7 15.7 0 0 0-1.3 4ZM12 20c-.8-1.1-1.5-2.5-1.9-4h3.8c-.4 1.5-1.1 2.9-1.9 4Zm2.3-6H9.7a14.7 14.7 0 0 1 0-4h4.6a14.7 14.7 0 0 1 0 4Zm.3 6a15.7 15.7 0 0 0 1.3-4h3a8 8 0 0 1-4.3 4Zm1.7-6a16.6 16.6 0 0 0 0-4h3.4a8 8 0 0 1 0 4h-3.4Z"/></svg></span><a href="{{ website }}/">{{ website_label }}</a></li>
+        {% if site.linkedin_url %}
+        <li><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9.75h4V21H3V9.75Zm6.5 0h3.8v1.6h.05c.53-1 1.84-2.05 3.78-2.05 4.04 0 4.79 2.66 4.79 6.12V21h-4v-4.98c0-1.19-.02-2.72-1.66-2.72-1.66 0-1.91 1.3-1.91 2.63V21h-4V9.75Z"/></svg></span><a href="{{ site.linkedin_url }}">{{ site.linkedin_url|cut:"https://"|cut:"www." }}</a></li>
+        {% endif %}
+      </ul>
+    </header>
+
+    {% if site.cv_summary or skills or languages %}
+    <section class="section">
+      <h2>Summary</h2>
+      <div class="summary">
+        <div>{{ site.cv_summary|cv_markdown }}</div>
+        <div>
+          {% if skills %}
+          <dl class="bars">
+            {% for skill in skills %}
+            <dt>{{ skill.name }}</dt>
+            <dd role="meter" aria-label="{{ skill.name }}" aria-valuenow="{{ skill.cv_proficiency }}" aria-valuemin="0" aria-valuemax="100"><span style="width: {{ skill.cv_proficiency }}%"></span></dd>
+            {% endfor %}
+          </dl>
+          {% endif %}
+          {% if languages %}
+          <div class="languages">
+            {% for language in languages %}
+            <div class="language">
+              <span>{{ language.name }}</span>
+              <span class="bubble-slot"><span class="bubble" style="width: {{ language.proficiency }}%; height: {{ language.proficiency }}%" title="{{ language.proficiency }}%"></span></span>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+    {% endif %}
+
+    {% if experiences %}
+    <section class="section">
+      <h2>Experience</h2>
+      <ol class="entries">
+        {% for entry in experiences %}
+        <li class="entry">
+          <div class="when">
+            <time datetime="{{ entry.start_date|date:'Y-m' }}">{{ entry.start_date|cv_month }}</time> –
+            {% if entry.current %}Present{% else %}<time datetime="{{ entry.end_date|date:'Y-m' }}">{{ entry.end_date|cv_month }}</time>{% endif %}
+            {% if entry.entity.picture %}<img class="logo" src="{{ entry.entity.picture.url }}" alt="{{ entry.entity.name }}" loading="lazy">{% endif %}
+          </div>
+          <div>
+            <div class="entry-head">
+              <h3>{{ entry.name }} | {{ entry.entity.name }}</h3>
+              <span class="where">{{ entry.location }}</span>
+            </div>
+            <div class="body">
+              {{ entry.key_achievements|cv_markdown }}
+              {{ entry.description|cv_markdown }}
+            </div>
+          </div>
+        </li>
+        {% endfor %}
+      </ol>
+    </section>
+    {% endif %}
+
+    {% if educations %}
+    <section class="section">
+      <h2>Education</h2>
+      <ol class="entries">
+        {% for entry in educations %}
+        <li class="entry">
+          <div class="when">
+            <time datetime="{{ entry.start_date|date:'Y-m' }}">{{ entry.start_date|cv_month }}</time> –
+            {% if entry.current %}Present{% else %}<time datetime="{{ entry.end_date|date:'Y-m' }}">{{ entry.end_date|cv_month }}</time>{% endif %}
+            {% if entry.entity.picture %}<img class="logo" src="{{ entry.entity.picture.url }}" alt="{{ entry.entity.name }}" loading="lazy">{% endif %}
+          </div>
+          <div>
+            <div class="entry-head">
+              <h3>{{ entry.name }} | {{ entry.entity.name }}</h3>
+              <span class="where">{{ entry.location }}</span>
+            </div>
+            <div class="body">{{ entry.description|cv_markdown }}</div>
+          </div>
+        </li>
+        {% endfor %}
+      </ol>
+    </section>
+    {% endif %}
+  </main>
+</body>
+</html>

@@ -1,4 +1,5 @@
 "Define models for the resume app"
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
@@ -141,6 +142,30 @@ class Skill(Serializable, Named, TimeStampable):
     )
     url = models.URLField(blank=True, null=True,)
     level = models.IntegerField(choices=SKILL_LEVELS)
-    
+    cv_proficiency = models.PositiveSmallIntegerField(
+        blank=True,
+        null=True,
+        validators=[MaxValueValidator(100)],
+        verbose_name="CV proficiency (%)",
+        help_text="Set to show this skill as a bar on the printable CV.",
+    )
+
     class Meta:
         ordering = ['-level']
+
+
+class Language(models.Model):
+    "Spoken language shown on the printable CV"
+    name = models.CharField(max_length=40, unique=True)
+    proficiency = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(100)],
+        verbose_name="Proficiency (%)",
+        help_text="100 = native.",
+    )
+    order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ['order', 'name']
+
+    def __str__(self):
+        return self.name

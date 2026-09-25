@@ -23,6 +23,8 @@ from .viewsets import (
     CategorySkillViewSet,
 )
 
+from .cv import CVView
+
 app_name = 'resume'
 
 router = DefaultRouter()
@@ -37,6 +39,7 @@ router.register(r'keyword', KeywordViewSet)
 router.register(r'skillcategory', CategorySkillViewSet, 'category-skill')
 
 urlpatterns = [
+    path('cv/', CVView.as_view(), name='cv'),
     path('', include(router.urls))
 ]
 

@@ -8,6 +8,13 @@
       <p class="section-lede">
         Because I definitely needed a website to host my CV.
       </p>
+      <a
+        :href="cvUrl"
+        class="mx-auto mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-teal ring-1 ring-teal/30 transition hover:bg-teal/10 dark:text-tealSoft dark:ring-tealSoft/30"
+      >
+        <document-arrow-down-icon class="h-4 w-4" aria-hidden="true" />
+        View or download my CV
+      </a>
     </div>
 
     <ul
@@ -70,6 +77,9 @@ import { Ref, ref, computed, watch, nextTick, onMounted, onBeforeUnmount, reacti
 import ResumeSkills from "./Skills/ResumeSkills.vue";
 import ResumeTimeline from "./Timeline/ResumeTimeline.vue";
 import ArrowScroller from "../composables/ArrowScroller.vue";
+import { DocumentArrowDownIcon } from "@heroicons/vue/24/outline";
+
+const cvUrl = `${import.meta.env.VITE_APP_BACKEND_URL ?? ""}/api/resume/cv/`;
 import { useEventListener, useMediaQuery } from "@vueuse/core";
 const resumeContainer = ref<HTMLElement | null>(null);
 const resumeViewport = ref<HTMLElement | null>(null);

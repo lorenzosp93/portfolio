@@ -268,6 +268,21 @@ class SiteSettings(SingletonBaseModel):
         null=True,
         help_text="Square WebP recommended; 640×640 is sufficient for retina displays.",
     )
+    # Printable CV (public page: never add phone or email here).
+    cv_headline = models.CharField(
+        max_length=120, blank=True, verbose_name="CV headline",
+        help_text="E.g. \"Head of Product | Engineer\".",
+    )
+    cv_summary = models.TextField(
+        blank=True, verbose_name="CV summary",
+        help_text="Markdown; blank lines separate paragraphs.",
+    )
+    cv_location = models.CharField(max_length=80, blank=True, verbose_name="CV location")
+    linkedin_url = models.URLField(blank=True, verbose_name="LinkedIn URL")
+    cv_picture = models.ImageField(
+        upload_to="site/cv/", blank=True, null=True, verbose_name="CV picture",
+        help_text="Optional; falls back to the hero picture.",
+    )
 
 
 class Keys(models.Model):
