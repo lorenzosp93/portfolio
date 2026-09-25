@@ -14,8 +14,9 @@ admin.site.register(Project)
 
 @admin.register(Skill)
 class SkillAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category', 'level', 'cv_proficiency')
-    list_editable = ('cv_proficiency',)
+    list_display = ('name', 'category', 'level', 'show_on_cv')
+    list_editable = ('level', 'show_on_cv')
+    list_filter = ('show_on_cv', 'category')
 
 
 @admin.register(Language)

@@ -142,16 +142,19 @@ class Skill(Serializable, Named, TimeStampable):
     )
     url = models.URLField(blank=True, null=True,)
     level = models.IntegerField(choices=SKILL_LEVELS)
-    cv_proficiency = models.PositiveSmallIntegerField(
-        blank=True,
-        null=True,
-        validators=[MaxValueValidator(100)],
-        verbose_name="CV proficiency (%)",
-        help_text="Set to show this skill as a bar on the printable CV.",
+    show_on_cv = models.BooleanField(
+        default=False,
+        verbose_name="Show on CV",
+        help_text="Show as a bar on the printable CV; the bar length follows Level.",
     )
 
     class Meta:
         ordering = ['-level']
+
+    @property
+    def level_percent(self) -> int:
+        "Bar length for the CV: novice 20% … professional 100%."
+        return round((self.level + 1) * 100 / len(SKILL_LEVELS))
 
 
 class Language(models.Model):

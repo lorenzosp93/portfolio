@@ -168,7 +168,7 @@
           <dl class="bars">
             {% for skill in skills %}
             <dt>{{ skill.name }}</dt>
-            <dd role="meter" aria-label="{{ skill.name }}" aria-valuenow="{{ skill.cv_proficiency }}" aria-valuemin="0" aria-valuemax="100"><span style="width: {{ skill.cv_proficiency }}%"></span></dd>
+            <dd role="meter" aria-label="{{ skill.name }}" aria-valuetext="{{ skill.get_level_display|capfirst }}" aria-valuenow="{{ skill.level_percent }}" aria-valuemin="0" aria-valuemax="100" title="{{ skill.get_level_display|capfirst }}"><span style="width: {{ skill.level_percent }}%"></span></dd>
             {% endfor %}
           </dl>
           {% endif %}

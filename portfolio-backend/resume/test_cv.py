@@ -25,8 +25,8 @@ def seed_cv():
         linkedin_url='https://linkedin.com/in/lorenzosp',
     )
     category = SkillCategory.objects.create(name='Tech')
-    for name, pct in (('Python', 90), ('Typescript', 80), ('Kubernetes', 75), ('SQL / NoSQL', 90)):
-        Skill.objects.create(name=name, category=category, level=3, cv_proficiency=pct)
+    for name, level in (('Python', 4), ('Typescript', 3), ('Kubernetes', 3), ('SQL / NoSQL', 4)):
+        Skill.objects.create(name=name, category=category, level=level, show_on_cv=True)
     Skill.objects.create(name='Hidden skill', category=category, level=1)
     for order, (name, pct) in enumerate((('English', 96), ('Spanish', 90), ('Dutch', 50), ('Italian', 100))):
         Language.objects.create(name=name, proficiency=pct, order=order)
@@ -69,7 +69,8 @@ class CVPageTests(TestCase):
             'Head of Product | Engineer', 'Amsterdam, NL', 'linkedin.com/in/lorenzosp',
             'Manager, Software Product Engineering | Tesla International BV',
             'Mar 2023', 'Present', 'Feb 2021', '<strong>34 FTE</strong>',
-            'Until Nov 2025, Staff Product Manager', 'width: 90%', 'Italian',
+            'Until Nov 2025, Staff Product Manager', 'width: 100%', 'width: 80%',
+            'title="Expert"', 'Italian',
             'href="https://www.mdpi.com/1996-1073/15/3/1037"',
         ):
             self.assertIn(text, html)

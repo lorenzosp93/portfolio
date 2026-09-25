@@ -23,7 +23,7 @@ class CVView(TemplateView):
             website_label=website.split('://', 1)[-1],
             experiences=Experience.objects.select_related('entity').order_by('-start_date'),
             educations=Education.objects.select_related('entity').order_by('-start_date'),
-            skills=Skill.objects.filter(cv_proficiency__isnull=False).order_by('-cv_proficiency', 'name'),
+            skills=Skill.objects.filter(show_on_cv=True).order_by('-level', 'name'),
             languages=Language.objects.all(),
         )
         return context
