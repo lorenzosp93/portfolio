@@ -22,7 +22,11 @@ def migration_job(deployment, image, name):
     container = next(c for c in spec['containers'] if c['name'] == 'backend')
     for key in ('readinessProbe', 'livenessProbe', 'startupProbe', 'ports', 'lifecycle'):
         container.pop(key, None)
-    container.update(image=image, command=['python', 'manage.py', 'migrate', '--noinput'], args=[])
+    # The Deployment's `command` bypasses the image entrypoint, so this job also
+    # creates the database cache table the entrypoint would otherwise create.
+    container.update(image=image, command=[
+        'sh', '-c', 'python manage.py migrate --noinput && python manage.py createcachetable',
+    ], args=[])
     spec['containers'] = [container]
     # API anti-affinity would prevent this job scheduling on the occupied nodes.
     spec.pop('affinity', None)
