@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 // Keep geometry checks independent of network timing and live résumé content.
 test.beforeEach(async ({ page }) => {
@@ -9,50 +9,43 @@ test.beforeEach(async ({ page }) => {
   }));
 });
 
-test("pointer offsets work during the entrance and survive its completion", async ({ page }) => {
+// Finish the load choreography so geometry checks measure the resting layout.
+async function settleEntrance(page: Page) {
+  await page.evaluate(() => document.getAnimations().forEach(animation => {
+    if (animation.effect?.getComputedTiming().iterations !== Infinity) animation.finish();
+  }));
+}
+
+const tiltY = (page: Page) => page.locator(".hero-tilt").evaluate(el =>
+  parseFloat(el.style.getPropertyValue("--hero-tilt-y")) || 0);
+
+test("mouse tilt follows the pointer during the entrance and resets on leave", async ({ page }) => {
   await page.goto("/");
-  const entrance = page.locator(".hero-shape-entrance").first();
-  const layer = page.locator(".hero-pointer-layer").first();
-  await entrance.evaluate(async (element) => {
+  const shape = page.locator(".hero-shape").first();
+  await shape.evaluate(async (element) => {
     const animation = element.getAnimations()[0];
     animation.pause();
     await animation.ready;
     animation.currentTime = 150;
   });
+  const stage = (await page.locator(".hero-stage").boundingBox())!;
+  await page.mouse.move(stage.x + stage.width * .9, stage.y + stage.height * .5);
+  await expect.poll(() => tiltY(page)).toBeGreaterThan(5);
+  expect(Number(await shape.evaluate(el => getComputedStyle(el).opacity))).toBeLessThan(1);
 
-  // Use the browser's actual pointer so native enter/leave events agree with
-  // its location. A synthetic move can be undone by a real boundary event.
-  const bounds = (await page.locator("#the-hero").boundingBox())!;
-  const x = Math.round(bounds.x + bounds.width * .8);
-  const y = Math.round(bounds.y + bounds.height * .3);
-  const expectedX = ((x - bounds.x) / bounds.width - .5) * 24;
-  const expectedY = ((y - bounds.y) / bounds.height - .5) * 24;
-  const position = () => layer.evaluate(element => {
-    const matrix = new DOMMatrixReadOnly(getComputedStyle(element).transform);
-    return { x: matrix.m41, y: matrix.m42 };
-  });
-  await page.mouse.move(x, y);
-  // Wait for the real transition to settle, rather than assuming a wall-clock
-  // delay guarantees a rendered frame on every browser/CI runner.
-  await expect.poll(async () => (await position()).x).toBeCloseTo(expectedX, 2);
-  await expect.poll(async () => (await position()).y).toBeCloseTo(expectedY, 2);
-  expect(Number(await entrance.evaluate(el => getComputedStyle(el).opacity))).toBeLessThan(1);
+  await settleEntrance(page);
+  await expect(shape).toHaveCSS("opacity", "1");
+  expect(await tiltY(page)).toBeGreaterThan(5);
 
-  await entrance.evaluate(element => element.getAnimations()[0].finish());
-  await expect(entrance).toHaveCSS("opacity", "1");
-  expect((await position()).x).toBeCloseTo(expectedX, 2);
-  expect((await position()).y).toBeCloseTo(expectedY, 2);
-
-  await page.mouse.move(0, bounds.y + bounds.height + 10);
-  await expect.poll(async () => (await position()).x).toBeCloseTo(0, 2);
-  await expect.poll(async () => (await position()).y).toBeCloseTo(0, 2);
+  await page.mouse.move(0, stage.y + stage.height + 200);
+  await expect.poll(() => tiltY(page)).toBeCloseTo(0, 2);
 });
 
 for (const width of [390, 1280]) {
   test(`portrait stays in the hero through scrolling and image loads at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 844 });
     await page.goto("/");
-    await page.waitForTimeout(750);
+    await settleEntrance(page);
     const measurements = await page.evaluate(async () => {
       document.documentElement.style.scrollBehavior = "auto";
       const image = document.querySelector<HTMLElement>("#heroPicture")!;
@@ -95,31 +88,38 @@ test("navbar stays visible and sticky through toolbar and orientation changes", 
   await expect(page.getByRole("button", { name: "Blog", exact: true })).toBeVisible();
 });
 
-test("touch and pen input never move the pointer layers or block scrolling", async ({ page }) => {
+test("touch press-and-drag tilts the stage, springs back, and keeps vertical scrolling", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  const hero = page.locator("#the-hero");
-  await page.mouse.move(300, 200);
-  await expect.poll(() => hero.evaluate(el =>
-    Number(getComputedStyle(el).getPropertyValue("--hero-pointer-x")))).toBeGreaterThan(0);
-  for (const pointerType of ["touch", "pen"]) {
-    await hero.dispatchEvent("pointerdown", { clientX: 300, clientY: 200, pointerType });
-    await hero.dispatchEvent("pointermove", { clientX: 350, clientY: 300, pointerType });
-    await hero.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
-    expect(await hero.evaluate(el => getComputedStyle(el).getPropertyValue("--hero-pointer-x").trim())).toBe("0");
-    expect(await hero.evaluate(el => getComputedStyle(el).getPropertyValue("--hero-pointer-y").trim())).toBe("0");
+  await settleEntrance(page);
+  const stage = page.locator(".hero-stage");
+  await expect(stage).toHaveCSS("touch-action", "pan-y");
+  await expect(page.locator("#the-hero")).toHaveCSS("touch-action", "auto");
+  const box = (await stage.boundingBox())!;
+  const x = box.x + box.width / 2;
+  const y = box.y + box.height / 2;
+  for (const end of ["pointerup", "pointercancel"]) {
+    await stage.dispatchEvent("pointerdown", { pointerId: 7, clientX: x, clientY: y, pointerType: "touch" });
+    await stage.dispatchEvent("pointermove", { pointerId: 7, clientX: x + box.width * .4, clientY: y, pointerType: "touch" });
+    await expect.poll(() => tiltY(page)).toBeGreaterThan(5);
+    await expect(page.locator(".hero-tilt")).toHaveClass(/is-touching/);
+    await stage.dispatchEvent(end, { pointerId: 7, pointerType: "touch" });
+    await expect.poll(() => tiltY(page)).toBeCloseTo(0, 2);
+    await expect(page.locator(".hero-tilt")).toHaveClass(/is-releasing/);
   }
-  await expect(hero).toHaveCSS("touch-action", "auto");
 });
 
 test("reduced motion keeps the portrait and navigation static and available", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  await expect(page.locator(".hero-portrait-entrance")).toHaveCSS("animation-name", "none");
-  await expect(page.locator(".hero-shape-entrance").first()).toHaveCSS("animation-name", "none");
-  await page.locator("#the-hero").dispatchEvent("pointermove", { clientX: 300, clientY: 100 });
-  await expect(page.locator(".hero-pointer-layer").first()).toHaveCSS("transform", "none");
+  await expect(page.locator(".hero-portrait-mask")).toHaveCSS("animation-name", "none");
+  await expect(page.locator(".hero-shape").first()).toHaveCSS("animation-name", "none");
+  await expect(page.locator(".hero-letter").first()).toHaveCSS("animation-name", "none");
+  const stage = (await page.locator(".hero-stage").boundingBox())!;
+  await page.mouse.move(stage.x + stage.width * .9, stage.y + 10);
+  await expect(page.locator(".hero-tilt")).toHaveCSS("transform", "none");
   await page.evaluate(() => window.scrollTo(0, document.querySelector<HTMLElement>("#the-hero")!.offsetHeight));
+  await expect(page.locator(".hero-shape").first()).toHaveCSS("translate", "none");
   await expect(page.locator(".navbar-surface")).toHaveCSS("animation-name", "none");
   await expect(page.locator(".navbar-surface")).toHaveCSS("opacity", "1");
 });
@@ -127,7 +127,7 @@ test("reduced motion keeps the portrait and navigation static and available", as
 test("navbar waits for the portrait to exit, fades in, and never duplicates it on return", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/");
-  await page.waitForTimeout(750);
+  await settleEntrance(page);
   await page.evaluate(() => {
     document.documentElement.style.scrollBehavior = "auto";
     window.scrollTo(0, 100);
@@ -153,32 +153,31 @@ test("navbar waits for the portrait to exit, fades in, and never duplicates it o
 });
 
 for (const mobile of [false, true]) {
-  test.describe(mobile ? "mobile inertia" : "desktop inertia", () => {
+  test.describe(mobile ? "mobile scroll depth" : "desktop scroll depth", () => {
     test.use({ isMobile: mobile, hasTouch: mobile, viewport: mobile ? { width: 390, height: 844 } : { width: 1280, height: 720 } });
-test("scroll inertia moves only the shapes and settles at rest", async ({ page }) => {
-  await page.goto("/");
-  await page.waitForTimeout(750);
-  const result = await page.evaluate(async () => {
-    document.documentElement.style.scrollBehavior = "auto";
-    const hero = document.querySelector<HTMLElement>("#the-hero")!;
-    const image = document.querySelector("#heroPicture")!;
-    const y = image.getBoundingClientRect().top + scrollY;
-    const offsets: number[] = [];
-    window.scrollTo(0, 100);
-    for (let i = 0; i < 24; i++) {
-      await new Promise(requestAnimationFrame);
-      offsets.push(parseFloat(hero.style.getPropertyValue("--hero-scroll-offset")) || 0);
-    }
-    return { offsets, drift: image.getBoundingClientRect().top + scrollY - y };
-  });
-  expect(Math.max(...result.offsets)).toBeGreaterThan(mobile ? 24 : 1);
-  expect(Math.max(...result.offsets)).toBeLessThanOrEqual(mobile ? 40 : 14);
-  expect(Math.abs(result.drift)).toBeLessThan(1);
-  await expect.poll(() => page.locator("#the-hero").evaluate(el =>
-    el.style.getPropertyValue("--hero-scroll-offset"))).toBe("0px");
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.evaluate(() => window.scrollTo(0, 200));
-  await expect(page.locator(".hero-pointer-layer").first()).toHaveCSS("transform", "none");
-});
+    test("scroll depth moves only the shapes and follows scroll position", async ({ page }) => {
+      await page.goto("/");
+      await settleEntrance(page);
+      const result = await page.evaluate(async () => {
+        document.documentElement.style.scrollBehavior = "auto";
+        const hero = document.querySelector<HTMLElement>("#the-hero")!;
+        const image = document.querySelector("#heroPicture")!;
+        const amber = document.querySelector(".hero-shape--amber")!;
+        const y = image.getBoundingClientRect().top + scrollY;
+        const frames = () => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+        window.scrollTo(0, hero.offsetHeight / 2);
+        await frames();
+        const mid = { scroll: Number(hero.style.getPropertyValue("--hero-scroll")), translate: getComputedStyle(amber).translate,
+          drift: image.getBoundingClientRect().top + scrollY - y };
+        window.scrollTo(0, 0);
+        await frames();
+        return { mid, rest: Number(hero.style.getPropertyValue("--hero-scroll")) };
+      });
+      expect(result.mid.scroll).toBeCloseTo(.5, 1);
+      expect(result.mid.translate).not.toBe("none");
+      expect(result.mid.translate).not.toBe("0px");
+      expect(Math.abs(result.mid.drift)).toBeLessThan(1);
+      expect(result.rest).toBe(0);
+    });
   });
 }

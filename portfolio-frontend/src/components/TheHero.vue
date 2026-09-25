@@ -2,42 +2,40 @@
   <section
     ref="root"
     class="hero-section relative flex min-h-screen w-full items-center overflow-x-clip px-5 py-20 text-ink dark:text-white sm:px-8"
-    @pointermove="followPointer"
-    @pointerdown="followPointer"
-    @pointerleave="resetPointer"
-    @pointercancel="resetPointer"
-    @pointerup="releasePointer"
   >
     <div
       class="hero-layout relative -top-8 mx-auto grid w-full max-w-7xl items-center gap-10 sm:top-0 sm:grid-cols-[minmax(17rem,0.8fr)_minmax(0,1.2fr)] sm:gap-12 lg:gap-20"
     >
     <div class="relative min-w-0 py-5">
-      <div class="relative mx-auto h-56 w-56 md:h-72 md:w-72">
-        <div class="hero-pointer-layer hero-pointer-layer--teal" aria-hidden="true">
-          <div class="hero-shape-entrance hero-shape-entrance--teal">
-            <div
-              class="absolute z-10 left-1/2 top-1/2 h-44 w-56 -translate-x-1/2 -translate-y-1/2 rotate-[-9deg] rounded-[42%_58%_48%_52%/58%_39%_61%_42%] bg-tealSoft/80 shadow-xl ring-1 ring-teal/20 dark:bg-teal/25 dark:ring-tealSoft/20 md:h-56 md:w-72"
-            />
+      <div
+        ref="stage"
+        class="hero-stage relative mx-auto h-56 w-56 md:h-72 md:w-72"
+        @pointerdown="startTouchTilt"
+        @pointermove="movePointerTilt"
+        @pointerleave="leavePointerTilt"
+        @pointerup="endTouchTilt"
+        @pointercancel="endTouchTilt"
+        @lostpointercapture="endTouchTilt"
+        @contextmenu="suppressTouchMenu"
+      >
+        <div ref="tilt" class="hero-tilt" :class="tiltClass">
+          <div class="hero-shapes" aria-hidden="true">
+            <div class="hero-shape hero-shape--teal">
+              <div class="absolute z-10 left-1/2 top-1/2 h-44 w-56 -translate-x-1/2 -translate-y-1/2 rotate-[-9deg] rounded-[42%_58%_48%_52%/58%_39%_61%_42%] bg-tealSoft/80 shadow-xl ring-1 ring-teal/20 dark:bg-teal/25 dark:ring-tealSoft/20 md:h-56 md:w-72" />
+            </div>
+            <div class="hero-shape hero-shape--coral">
+              <div class="absolute z-10 left-1/2 top-1/2 h-48 w-48 -translate-x-[42%] -translate-y-[56%] rotate-12 rounded-[55%_45%_63%_37%/45%_62%_38%_55%] bg-coralSoft/90 shadow-lg ring-1 ring-coral/20 dark:bg-coral/25 dark:ring-coralSoft/20 md:h-60 md:w-60" />
+            </div>
+            <div class="hero-shape hero-shape--amber">
+              <div class="absolute z-10 left-1/2 top-1/2 h-28 w-28 translate-x-6 translate-y-5 rounded-full bg-amberSoft/90 blur-[1px] ring-1 ring-amber/20 dark:bg-amber/25 dark:ring-amberSoft/20 md:h-36 md:w-36" />
+            </div>
           </div>
-        </div>
-        <div class="hero-pointer-layer hero-pointer-layer--coral" aria-hidden="true">
-          <div class="hero-shape-entrance hero-shape-entrance--coral">
-            <div
-              class="absolute z-10 left-1/2 top-1/2 h-48 w-48 -translate-x-[42%] -translate-y-[56%] rotate-12 rounded-[55%_45%_63%_37%/45%_62%_38%_55%] bg-coralSoft/90 shadow-lg ring-1 ring-coral/20 dark:bg-coral/25 dark:ring-coralSoft/20 md:h-60 md:w-60"
-            />
-          </div>
-        </div>
-        <div class="hero-pointer-layer hero-pointer-layer--amber" aria-hidden="true">
-          <div class="hero-shape-entrance hero-shape-entrance--amber">
-            <div
-              class="absolute z-10 left-1/2 top-1/2 h-28 w-28 translate-x-6 translate-y-5 rounded-full bg-amberSoft/90 blur-[1px] ring-1 ring-amber/20 dark:bg-amber/25 dark:ring-amberSoft/20 md:h-36 md:w-36"
-            />
-          </div>
-        </div>
-        <div class="hero-portrait-entrance absolute inset-0 z-30">
-          <img
+          <div class="hero-portrait absolute left-1/2 top-1/2 z-30 h-40 w-40 -translate-x-1/2 -translate-y-1/2 md:h-56 md:w-56">
+            <div class="hero-portrait-ring absolute inset-0 rounded-full shadow-2xl ring-4 ring-surface dark:ring-nightSurface" aria-hidden="true" />
+            <div class="hero-portrait-mask absolute inset-0 overflow-hidden rounded-full">
+              <img
             id="heroPicture"
-            class="absolute left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full object-cover shadow-2xl ring-4 ring-surface dark:ring-nightSurface md:h-56 md:w-56"
+            class="h-full w-full object-cover"
             :src="heroPicture"
             :srcset="heroSrcset"
             sizes="(min-width: 768px) 224px, 160px"
@@ -45,15 +43,28 @@
             decoding="async"
             fetchpriority="high"
           />
+            </div>
+            <div class="hero-portrait-shine" aria-hidden="true" />
+          </div>
         </div>
       </div>
-      <h1 class="hero-text-entrance z-20 m-5 mt-8 text-center text-2xl md:text-3xl lg:text-4xl font-bold md:mt-10">
-        Hi, I'm <span class="text-coral dark:text-coralSoft">Lorenzo</span>
+      <h1 class="z-20 m-5 mt-8 text-center text-2xl md:text-3xl lg:text-4xl font-bold md:mt-10">
+        <span class="hero-fade-up inline-block" style="--d: 480ms">Hi, I'm</span>{{ " " }}<span class="text-coral dark:text-coralSoft">
+          <span class="sr-only">Lorenzo</span>
+          <span
+            v-for="(letter, index) in 'Lorenzo'"
+            :key="index"
+            class="hero-letter"
+            :style="{ '--i': index }"
+            aria-hidden="true"
+          >{{ letter }}</span>
+        </span>
       </h1>
-      <div class="hero-text-entrance flex mt-5">
+      <div class="flex mt-5">
         <!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
         <a
-          class="ml-auto fill-muted transition hover:fill-coral dark:fill-gray-300 dark:hover:fill-coralSoft"
+          :style="{ '--i': 0 }"
+          class="hero-pop ml-auto fill-muted transition hover:fill-coral dark:fill-gray-300 dark:hover:fill-coralSoft"
           href="https://twitter.com/Lorenzosp"
           aria-label="Twitter profile"
         >
@@ -68,8 +79,9 @@
           </svg>
         </a>
         <a
+          :style="{ '--i': 1 }"
           href="https://www.linkedin.com/in/lorenzosp/"
-          class="mx-5 fill-muted transition hover:fill-teal dark:fill-gray-300 dark:hover:fill-tealSoft"
+          class="hero-pop mx-5 fill-muted transition hover:fill-teal dark:fill-gray-300 dark:hover:fill-tealSoft"
           aria-label="Linkedin profile"
         >
           <svg
@@ -83,8 +95,9 @@
           </svg>
         </a>
         <a
+          :style="{ '--i': 2 }"
           href="https://github.com/lorenzosp93"
-          class="mr-auto fill-muted transition hover:fill-coral dark:fill-gray-300 dark:hover:fill-coralSoft"
+          class="hero-pop mr-auto fill-muted transition hover:fill-coral dark:fill-gray-300 dark:hover:fill-coralSoft"
           aria-label="Github space"
         >
           <svg
@@ -99,9 +112,10 @@
         </a>
       </div>
     </div>
-    <div class="hero-text-entrance relative z-20 min-w-0 max-w-2xl justify-self-center sm:justify-self-start">
+    <div class="relative z-20 min-w-0 max-w-2xl justify-self-center sm:justify-self-start">
       <p
-        class="mb-4 text-center text-xs font-bold uppercase tracking-[0.24em] text-teal dark:text-tealSoft sm:text-left"
+        style="--d: 760ms"
+        class="hero-fade-up mb-4 text-center text-xs font-bold uppercase tracking-[0.24em] text-teal dark:text-tealSoft sm:text-left"
       >
         Product · Software · Energy
       </p>
@@ -109,7 +123,13 @@
         class="hero-copy prose prose-slate max-w-none font-sans text-center leading-relaxed dark:prose-invert prose-p:my-4 prose-strong:text-coral dark:prose-strong:text-coralSoft sm:text-left lg:prose-lg"
       >
         <!-- VITE_HERO_COPY is trusted build-time configuration, rendered as Markdown. -->
-        <p v-for="paragraph in heroParagraphs" :key="paragraph" v-html="paragraph"></p>
+        <p
+          v-for="(paragraph, index) in heroParagraphs"
+          :key="paragraph"
+          class="hero-fade-up"
+          :style="{ '--d': `${860 + index * 120}ms` }"
+          v-html="paragraph"
+        ></p>
       </div>
     </div>
     </div>
@@ -127,19 +147,14 @@
 
 <script setup lang="ts">
 import { useVisibilityObserver } from "@/composables/visibilityObserver";
-import { useEventListener, useMediaQuery, usePreferredReducedMotion } from "@vueuse/core";
+import { useEventListener, usePreferredReducedMotion } from "@vueuse/core";
 import { renderInlineMarkdown } from "@/composables/markdown";
-import { Ref, computed, ref, onMounted, onUnmounted } from "vue";
+import { Ref, computed, ref, onUnmounted } from "vue";
 import { useSiteStore } from "@/stores/site.store";
 import fallbackHero from "@/assets/hero.webp";
 import fallbackHeroMobile from "@/assets/hero-mobile.webp";
 
 const reducedMotion = usePreferredReducedMotion();
-const isCoarsePointer = useMediaQuery("(pointer: coarse)");
-// Touch scrolling supplies the motion on phones; keep desktop motion restrained.
-const scrollMotion = computed(() => isCoarsePointer.value
-  ? { gain: 0.55, limit: 40, decay: 300 }
-  : { gain: 0.18, limit: 14, decay: 150 });
 
 const root: Ref<HTMLDivElement | null> = ref(null);
 useVisibilityObserver("theHero", root);
@@ -156,63 +171,86 @@ const heroParagraphs = computed(() =>
     .map((paragraph) => renderInlineMarkdown(paragraph))
 );
 
-// Pointer offsets belong to an outer layer, so they remain live throughout
-// the inner layer's entrance animation without a transform handoff.
-let pointerFrame = 0;
-function followPointer(event: PointerEvent) {
-  if (event.pointerType !== "mouse" || reducedMotion.value === "reduce") {
-    resetPointer();
-    return;
+// Stage motion: pointer tilt (mouse hover, or touch press-and-drag) rotates the
+// whole stage; scroll depth only moves the background shapes so the portrait
+// never shifts while the page scrolls. All writes are transforms, one per frame.
+const stage: Ref<HTMLDivElement | null> = ref(null);
+const tilt: Ref<HTMLDivElement | null> = ref(null);
+const tiltClass = ref("");
+const motion = { x: 0, y: 0, scroll: 0 };
+let frame = 0;
+let touchId: number | null = null;
+
+function render() {
+  frame = 0;
+  const still = reducedMotion.value === "reduce";
+  const x = still ? 0 : motion.x;
+  const y = still ? 0 : motion.y;
+  tilt.value?.style.setProperty("--hero-tilt-x", `${-y * 18}deg`);
+  tilt.value?.style.setProperty("--hero-tilt-y", `${x * 18}deg`);
+  tilt.value?.style.setProperty("--hero-shine-x", String(x));
+  tilt.value?.style.setProperty("--hero-shine-y", String(y));
+  root.value?.style.setProperty("--hero-scroll", String(still ? 0 : motion.scroll));
+}
+const schedule = () => { if (!frame) frame = requestAnimationFrame(render); };
+
+function locate(event: PointerEvent) {
+  const bounds = stage.value?.getBoundingClientRect();
+  if (!bounds) return;
+  motion.x = Math.max(-0.5, Math.min(0.5, (event.clientX - bounds.left) / bounds.width - 0.5));
+  motion.y = Math.max(-0.5, Math.min(0.5, (event.clientY - bounds.top) / bounds.height - 0.5));
+  schedule();
+}
+
+function settle(className: string) {
+  motion.x = 0;
+  motion.y = 0;
+  tiltClass.value = className;
+  schedule();
+}
+
+function movePointerTilt(event: PointerEvent) {
+  if (event.pointerType === "mouse") {
+    tiltClass.value = "is-hovering";
+    locate(event);
+  } else if (event.pointerId === touchId) {
+    locate(event);
   }
-  if (!root.value) return;
-  const bounds = root.value.getBoundingClientRect();
-  const x = Math.max(-0.5, Math.min(0.5, (event.clientX - bounds.left) / bounds.width - 0.5));
-  const y = Math.max(-0.5, Math.min(0.5, (event.clientY - bounds.top) / bounds.height - 0.5));
-  cancelAnimationFrame(pointerFrame);
-  pointerFrame = requestAnimationFrame(() => {
-    root.value?.style.setProperty("--hero-pointer-x", String(x));
-    root.value?.style.setProperty("--hero-pointer-y", String(y));
-  });
 }
-function resetPointer() {
-  cancelAnimationFrame(pointerFrame);
-  root.value?.style.setProperty("--hero-pointer-x", "0");
-  root.value?.style.setProperty("--hero-pointer-y", "0");
+
+function leavePointerTilt(event: PointerEvent) {
+  if (event.pointerType === "mouse") settle("");
 }
-function releasePointer(event: PointerEvent) {
-  if (event.pointerType !== "mouse") resetPointer();
+
+// Touch: press and drag tilts toward the finger. The stage keeps
+// touch-action: pan-y, so vertical swipes still scroll; the browser then
+// sends pointercancel and the stage springs back.
+function startTouchTilt(event: PointerEvent) {
+  if (event.pointerType === "mouse" || reducedMotion.value === "reduce") return;
+  touchId = event.pointerId;
+  tiltClass.value = "is-hovering is-touching";
+  locate(event);
 }
-// A bounded scroll impulse gives the decorative shapes a little weight.
-// Decay is time-based; the loop stops at rest and never drives page scrolling.
-let scrollFrame = 0;
-let scrollOffset = 0;
-let lastScrollY = 0;
-let lastFrameTime = 0;
-onMounted(() => { lastScrollY = window.scrollY; });
-function settleScroll(time: number) {
-  const elapsed = Math.max(0, Math.min(64, time - lastFrameTime));
-  lastFrameTime = time;
-  scrollOffset *= Math.exp(-elapsed / scrollMotion.value.decay);
-  if (Math.abs(scrollOffset) < 0.05 || reducedMotion.value === "reduce") scrollOffset = 0;
-  root.value?.style.setProperty("--hero-scroll-offset", `${scrollOffset}px`);
-  scrollFrame = scrollOffset ? requestAnimationFrame(settleScroll) : 0;
+
+function endTouchTilt(event: PointerEvent) {
+  if (event.pointerId !== touchId) return;
+  touchId = null;
+  settle("is-releasing");
 }
+
+function suppressTouchMenu(event: Event) {
+  if (touchId !== null) event.preventDefault();
+}
+
 useEventListener(window, "scroll", () => {
-  const delta = window.scrollY - lastScrollY;
-  lastScrollY = window.scrollY;
-  const bounds = root.value?.getBoundingClientRect();
-  if (!bounds || bounds.bottom <= 0 || bounds.top >= window.innerHeight || reducedMotion.value === "reduce") return;
-  const { gain, limit } = scrollMotion.value;
-  scrollOffset = Math.max(-limit, Math.min(limit, scrollOffset + delta * gain));
-  if (!scrollFrame) {
-    lastFrameTime = performance.now();
-    scrollFrame = requestAnimationFrame(settleScroll);
-  }
+  const height = root.value?.offsetHeight || window.innerHeight;
+  const progress = Math.max(0, Math.min(1, window.scrollY / height));
+  if (progress === motion.scroll) return;
+  motion.scroll = progress;
+  schedule();
 }, { passive: true });
-onUnmounted(() => {
-  cancelAnimationFrame(pointerFrame);
-  cancelAnimationFrame(scrollFrame);
-});
+
+onUnmounted(() => cancelAnimationFrame(frame));
 
 function scrollToResume() {
   document.getElementById("the-resume")?.scrollIntoView({
@@ -227,46 +265,110 @@ function scrollToResume() {
 <style scoped>
 .hero-section {
   min-height: 100svh;
-  --hero-pointer-x: 0;
-  --hero-pointer-y: 0;
-  --hero-scroll-offset: 0px;
+  --hero-scroll: 0;
+  --hero-spring: linear(0, 0.009, 0.035 2.1%, 0.141, 0.281 6.7%, 0.723 12.9%, 0.938 16.7%, 1.017, 1.077, 1.121, 1.149 24.3%, 1.159, 1.163, 1.161, 1.154 29.9%, 1.129 32.8%, 1.051 39.6%, 1.017 43.1%, 0.991, 0.977 51%, 0.974 53.8%, 0.975 57.1%, 0.997 69.8%, 1.003 76.9%, 1.004 83.8%, 1);
+  --hero-out: cubic-bezier(.2, .7, .2, 1);
 }
-.hero-pointer-layer,
-.hero-shape-entrance {
+@supports not (animation-timing-function: linear(0, 1)) {
+  .hero-section { --hero-spring: cubic-bezier(.34, 1.56, .64, 1); }
+}
+
+/* Stage and tilt */
+.hero-stage {
+  perspective: 900px;
+  touch-action: pan-y;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.hero-tilt {
   position: absolute;
   inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--hero-tilt-x, 0deg)) rotateY(var(--hero-tilt-y, 0deg));
+  transition: transform 400ms var(--hero-out);
 }
-.hero-pointer-layer {
+.hero-tilt.is-touching { transition: transform 120ms linear; }
+.hero-tilt.is-releasing { transition: transform 700ms var(--hero-spring); }
+
+/* Shapes: spring entrance, depth, and scroll parallax (independent `translate`
+   composes with the entrance transform). Only the shapes react to scroll. */
+.hero-shapes {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(calc(var(--hero-scroll) * 14deg));
+}
+.hero-shape {
+  position: absolute;
+  inset: 0;
   z-index: 10;
   pointer-events: none;
-  transform: translate(calc(var(--hero-pointer-x) * var(--hero-depth)), calc(var(--hero-pointer-y) * var(--hero-depth) + var(--hero-scroll-offset) * var(--hero-scroll-depth)));
-  transition: transform 100ms ease-out;
+  transform: translateZ(var(--hero-z));
+  translate: 0 calc(var(--hero-scroll) * var(--hero-scroll-depth));
+  animation: hero-shape-in 1100ms var(--hero-spring) both;
 }
-.hero-pointer-layer--teal { --hero-depth: 24px; --hero-scroll-depth: 1; }
-.hero-pointer-layer--coral { --hero-depth: -18px; --hero-scroll-depth: -0.65; }
-.hero-pointer-layer--amber { --hero-depth: 34px; --hero-scroll-depth: 1.35; }
-.hero-shape-entrance {
-  animation: hero-shape-enter 550ms cubic-bezier(.2,.7,.2,1) both;
+.hero-shape--teal { --hero-z: 10px; --hero-rot: -25deg; --hero-scroll-depth: -40px; }
+.hero-shape--coral { --hero-z: 25px; --hero-rot: 20deg; --hero-scroll-depth: 30px; animation-delay: 90ms; }
+.hero-shape--amber { --hero-z: 45px; --hero-rot: -15deg; --hero-scroll-depth: -90px; animation-delay: 180ms; }
+@keyframes hero-shape-in {
+  from { opacity: 0; transform: translateZ(var(--hero-z)) rotate(var(--hero-rot)) scale(0); }
+  30% { opacity: 1; }
+  to { opacity: 1; transform: translateZ(var(--hero-z)) rotate(0) scale(1); }
 }
-.hero-shape-entrance--coral { animation-delay: 70ms; }
-.hero-shape-entrance--amber { animation-delay: 140ms; }
-.hero-portrait-entrance {
-  animation: hero-portrait-enter 450ms cubic-bezier(.2,.7,.2,1) 150ms both;
+
+/* Portrait: circular reveal, colour settle, ring draws in, pointer shine. */
+.hero-portrait { transform-style: preserve-3d; }
+.hero-portrait-ring { animation: hero-ring-in 700ms var(--hero-out) 520ms both; }
+.hero-portrait-mask {
+  transform: translateZ(70px);
+  animation: hero-portrait-reveal 900ms var(--hero-out) 260ms both;
 }
-.hero-text-entrance {
-  animation: hero-text-enter 450ms cubic-bezier(.2,.7,.2,1) 250ms both;
+.hero-portrait-mask img { animation: hero-portrait-settle 1400ms var(--hero-out) 260ms both; }
+.hero-portrait-shine {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateZ(71px);
+  transition: opacity 300ms;
+  background: radial-gradient(circle at calc(50% + var(--hero-shine-x, 0) * 100%) calc(50% + var(--hero-shine-y, 0) * 100%), rgb(255 255 255 / .35), transparent 55%);
 }
-@keyframes hero-shape-enter {
-  from { opacity: 0; transform: translateY(16px) scale(.85) rotate(-9deg); }
-  to { opacity: 1; transform: translateY(0) scale(1) rotate(0); }
+.hero-tilt.is-hovering .hero-portrait-shine { opacity: 1; }
+@keyframes hero-portrait-reveal {
+  from { clip-path: circle(0% at 38% 62%); }
+  to { clip-path: circle(75% at 50% 50%); }
 }
-@keyframes hero-portrait-enter {
-  from { opacity: 0; transform: translateY(8px) scale(.96); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+@keyframes hero-portrait-settle {
+  from { transform: scale(1.18); filter: saturate(.4); }
+  to { transform: scale(1); filter: saturate(1); }
 }
-@keyframes hero-text-enter {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes hero-ring-in {
+  from { opacity: 0; transform: translateZ(69px) scale(.92); }
+  to { opacity: 1; transform: translateZ(69px) scale(1); }
+}
+.hero-portrait-ring { transform: translateZ(69px); }
+
+/* Text */
+.hero-fade-up { animation: hero-fade-up 600ms var(--hero-out) var(--d, 0ms) both; }
+@keyframes hero-fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+.hero-letter {
+  display: inline-block;
+  animation: hero-letter 700ms var(--hero-spring) calc(560ms + var(--i) * 45ms) both;
+}
+@keyframes hero-letter {
+  from { opacity: 0; transform: translateY(.6em) rotate(8deg) scale(.6); }
+  40% { opacity: 1; }
+  to { opacity: 1; transform: none; }
+}
+.hero-pop { animation: hero-pop 650ms var(--hero-spring) calc(900ms + var(--i) * 70ms) both; }
+@keyframes hero-pop {
+  from { opacity: 0; transform: scale(0); }
+  to { opacity: 1; transform: none; }
 }
 
 .hero-scroll-indicator {
@@ -307,13 +409,21 @@ function scrollToResume() {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-pointer-layer {
+  .hero-tilt,
+  .hero-shapes {
     transform: none;
     transition: none;
   }
-  .hero-shape-entrance,
-  .hero-portrait-entrance,
-  .hero-text-entrance,
+  .hero-shape {
+    translate: none;
+  }
+  .hero-shape,
+  .hero-portrait-ring,
+  .hero-portrait-mask,
+  .hero-portrait-mask img,
+  .hero-fade-up,
+  .hero-letter,
+  .hero-pop,
   .hero-scroll-line {
     animation: none;
   }
