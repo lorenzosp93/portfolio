@@ -45,7 +45,7 @@
           <header class="relative mt-auto border-b border-ink/10 p-4 dark:border-white/10">
             <div
               v-if="$slots['extra-title-content']"
-              class="text-md pr-12 text-muted dark:text-gray-300 sm:order-last sm:ml-auto"
+              class="text-xs pr-12 text-muted dark:text-gray-300 sm:order-last sm:ml-auto"
             >
               <slot name="extra-title-content" />
             </div>
@@ -53,7 +53,7 @@
               <div :id="titleId" class="pr-12 text-2xl font-semibold text-ink dark:text-white">
                 <slot name="title">Some title for the card</slot>
               </div>
-              <div class="text-md text-muted dark:text-gray-300 pb-auto">
+              <div class="text-sm leading-relaxed text-muted dark:text-gray-300 pb-auto">
                 <slot name="subtitle"
                   >A subtitle for the card. This should be somewhat longer</slot
                 >
@@ -76,7 +76,7 @@
             @scroll.passive="updateScrollAffordances"
           >
             <div
-              class="container my-3 text-sm leading-relaxed text-ink dark:text-gray-100 px-auto lg:text-base"
+              class="type-body container my-3 text-ink dark:text-gray-100 px-auto"
             >
               <slot name="inner-content">
                 Here goes the main content of the card. Lorem ipsum dolor sit,

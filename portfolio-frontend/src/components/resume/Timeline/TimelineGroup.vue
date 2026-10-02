@@ -12,7 +12,7 @@
       />
     </span>
     <h3
-      class="flex items-center mx-4 pt-4 align-text-bottom text-base font-semibold text-ink dark:text-white sm:mx-5 sm:text-lg"
+      class="flex items-center mx-4 pt-4 align-text-bottom type-card-title text-ink dark:text-white sm:mx-5"
     >
       {{ entityName }}
     </h3>

@@ -12,21 +12,21 @@
     >
       <div class="mb-2 flex w-full flex-wrap items-start justify-between gap-x-3 gap-y-1">
         <time
-          class="order-2 rounded-full bg-surface/80 px-2.5 py-1 text-[0.68rem] font-normal text-muted ring-1 ring-ink/5 dark:bg-nightSurface dark:text-gray-300 dark:ring-white/10 sm:text-xs"
+          class="order-2 rounded-full bg-surface/80 px-2.5 py-1 text-xs font-normal text-muted ring-1 ring-ink/5 dark:bg-nightSurface dark:text-gray-300 dark:ring-white/10"
         >
           {{ start_date__date }} — {{ end_date__date }}
         </time>
-        <p class="order-1 min-w-0 flex-1 font-semibold text-ink dark:text-white">
+        <p class="type-card-title order-1 min-w-0 w-full sm:w-auto sm:flex-1 text-ink dark:text-white">
           <button ref="opener" type="button" class="text-left" :aria-label="`Open ${name}`" aria-haspopup="dialog" :aria-expanded="detailsVisible" @click.stop="openDetails">{{ name }}</button>
         </p>
-        <p class="order-3 w-full text-xs text-teal dark:text-tealSoft sm:text-sm">
+        <p class="order-3 w-full text-sm text-teal dark:text-tealSoft">
           {{ location }}
         </p>
       </div>
       <div class="relative border-t border-ink/5 pt-2 dark:border-white/10">
         <div
           ref="descriptionEl"
-          class="timeline-description overflow-hidden text-xs font-normal leading-relaxed text-muted dark:text-gray-300 sm:text-sm lg:text-base"
+          class="type-body timeline-description overflow-hidden font-normal text-muted dark:text-gray-300"
           :class="descriptionHeightClass"
           v-html="renderedDescription"
         />
@@ -75,8 +75,8 @@ export default defineComponent({
     },
     descriptionHeightClass() {
       return this.isFirstEntry
-        ? "max-h-32 sm:max-h-40 md:max-h-48"
-        : "max-h-20 sm:max-h-24 md:max-h-28";
+        ? "max-h-56"
+        : "max-h-32";
     },
     start_date__date() {
       let date = new Date(this.start_date);

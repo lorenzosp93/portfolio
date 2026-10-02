@@ -232,3 +232,25 @@ test('Explore lands at the pin start and the next scroll advances the cards with
   await expect.poll(()=>card.evaluate(el=>new DOMMatrixReadOnly(getComputedStyle(el).transform).m41)).toBeLessThan(before-10);
   expect(await scene.evaluate(el=>el.getBoundingClientRect().top)).toBeCloseTo(88,0);
 });
+
+test('wide displays hide upcoming highlights until their entrance and reduced motion restores visibility', async ({ page }) => {
+  await page.setViewportSize({ width: 2560, height: 1440 });
+  await page.goto('/');
+  await expect(page.locator('.leadership-cards')).toHaveClass(/is-animated/);
+  const highlights = page.locator('.leadership-card');
+  await expect(highlights.first()).toHaveCSS('opacity', '1');
+  await expect(highlights.nth(1)).toHaveCSS('opacity', '0');
+  await expect(highlights.nth(2)).toHaveCSS('opacity', '0');
+  await expect.poll(() => page.locator('.leadership-scene').getAttribute('data-scroll-start')).not.toBeNull();
+  await page.locator('.leadership-scene').evaluate(el => {
+    window.scrollTo({ top: Number((el as HTMLElement).dataset.scrollStart) + innerHeight * .45, behavior: 'instant' });
+  });
+  await expect.poll(() => highlights.nth(1).evaluate(el => +getComputedStyle(el).opacity)).toBeGreaterThan(0);
+  expect(await highlights.nth(1).evaluate(el => +getComputedStyle(el).opacity)).toBeLessThan(1);
+  await expect(highlights.nth(2)).toHaveCSS('opacity', '0');
+  await page.locator('#the-resume').scrollIntoViewIfNeeded();
+  await expect(highlights.last()).toHaveCSS('opacity', '1');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(page.locator('.leadership-cards')).not.toHaveClass(/is-animated/);
+  expect(await highlights.evaluateAll(els => els.every(el => getComputedStyle(el).opacity === '1'))).toBe(true);
+});

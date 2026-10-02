@@ -11,16 +11,16 @@
       loading="lazy"
       decoding="async"
     />
-    <div class="w-full border-b border-ink/10 bg-sand/70 p-4 text-lg text-ink dark:border-white/10 dark:bg-nightElevated dark:text-white">
+    <div class="w-full border-b border-ink/10 bg-sand/70 p-4 text-ink dark:border-white/10 dark:bg-nightElevated dark:text-white">
       <p class="text-xs font-medium uppercase tracking-wide text-coral dark:text-coralSoft">{{ location }}{{ status }}</p>
-      <h2 class="list-card-title mt-1 w-full text-xl font-semibold tracking-tight text-ink dark:text-white">
+      <h2 class="type-card-title list-card-title mt-1 w-full tracking-tight text-ink dark:text-white">
         <button ref="opener" type="button" class="text-left" :aria-label="`Open ${name}`" aria-haspopup="dialog" :aria-expanded="detailsVisible" @click.stop="openDetails">{{ name }}</button>
       </h2>
     </div>
     <div class="relative">
       <div
         v-html="truncatedContent"
-        class="list-card-content max-h-64 md:max-h-72 lg:max-h-80 overflow-hidden w-full p-4 text-sm leading-relaxed text-muted dark:text-gray-300 lg:text-base"
+        class="type-body list-card-content max-h-64 md:max-h-72 lg:max-h-80 overflow-hidden w-full p-4 text-muted dark:text-gray-300"
       />
       <div
         class="pointer-events-none absolute inset-x-0 bottom-0 flex justify-end bg-gradient-to-t from-surface via-surface/90 to-transparent p-4 pt-10 dark:from-nightSurface dark:via-nightSurface/90"

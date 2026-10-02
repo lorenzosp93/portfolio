@@ -3,7 +3,7 @@
     <div ref="scene" class="leadership-scene mx-auto w-full max-w-6xl">
       <header class="mb-8">
         <p v-if="site.highlightsEyebrow" class="mb-3 text-xs font-bold uppercase tracking-[0.24em] text-teal dark:text-tealSoft">{{ site.highlightsEyebrow }}</p>
-        <h2 class="max-w-2xl text-2xl font-bold leading-tight sm:text-3xl">{{ site.highlightsHeading }}</h2>
+        <h2 class="type-section-heading max-w-2xl">{{ site.highlightsHeading }}</h2>
       </header>
       <div ref="cardsRoot" class="leadership-cards grid gap-5 lg:grid-cols-3">
         <article v-for="(card, index) in site.highlightCards" :key="card.id" class="leadership-card portfolio-card p-6 shadow-lg" :class="{ 'portfolio-card--coral': index % 3 === 2 }">
@@ -13,8 +13,8 @@
             </span>
             <span class="text-xs text-muted dark:text-gray-400" aria-hidden="true">{{ String(index + 1).padStart(2, '0') }}</span>
           </div>
-          <h3 class="mb-4 text-xl font-semibold leading-snug">{{ card.title }}</h3>
-          <div class="prose prose-sm max-w-none leading-relaxed text-muted dark:prose-invert dark:text-gray-300" v-html="renderMarkdown(card.body)" />
+          <h3 class="type-card-title mb-4">{{ card.title }}</h3>
+          <div class="type-body prose prose-base max-w-none text-muted dark:prose-invert dark:text-gray-300" v-html="renderMarkdown(card.body)" />
         </article>
       </div>
     </div>
@@ -73,8 +73,8 @@ async function animate() {
       gsap.set(card, { zIndex: index + 1 });
       if (index === 0) return;
       timeline.fromTo(card,
-        desktop ? { x: () => element.clientWidth + 60, y: 0 } : { x: 0, y: () => window.innerHeight + 60 },
-        { x: 0, y: desktop ? 0 : index * 12, duration: 1, ease: 'none' }, index - 1);
+        desktop ? { x: () => element.clientWidth + 60, y: 0, opacity: 0 } : { x: 0, y: () => window.innerHeight + 60, opacity: 0 },
+        { x: 0, y: desktop ? 0 : index * 12, opacity: 1, duration: 1, ease: 'none' }, index - 1);
       if (!desktop) timeline.to(cards[index - 1], { scale: .975, y: (index - 1) * 12 - 8, duration: 1, ease: 'none' }, index - 1);
     });
     timeline.to({}, { duration: .35 });
