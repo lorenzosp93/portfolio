@@ -262,7 +262,7 @@ test('wide displays hide upcoming highlights until their entrance and reduced mo
   await expect(highlights.nth(2)).toHaveCSS('opacity', '0');
   await expect.poll(() => page.locator('.leadership-scene').getAttribute('data-scroll-start')).not.toBeNull();
   await page.locator('.leadership-scene').evaluate(el => {
-    window.scrollTo({ top: Number((el as HTMLElement).dataset.scrollStart) + innerHeight * .45, behavior: 'instant' });
+    window.scrollTo({ top: Number((el as HTMLElement).dataset.scrollStart) + innerHeight * .1, behavior: 'instant' });
   });
   await expect.poll(() => highlights.nth(1).evaluate(el => +getComputedStyle(el).opacity)).toBeGreaterThan(0);
   expect(await highlights.nth(1).evaluate(el => +getComputedStyle(el).opacity)).toBeLessThan(1);
@@ -291,5 +291,42 @@ for (const width of [390, 1280]) {
     }
     await expect.poll(() => page.locator('#the-navbar').evaluate(el => el.getBoundingClientRect().top)).toBe(0);
     expect(await page.locator('.leadership-card').evaluateAll(els => els.every(el => getComputedStyle(el).opacity === '1'))).toBe(true);
+  });
+}
+
+for (const width of [844, 956, 1024]) {
+  test(`short landscape About cards animate in readable flow at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 440 });
+    await page.goto('/');
+    const cards = page.locator('.leadership-card');
+    await expect(cards).toHaveCount(3);
+    await expect(page.locator('.leadership-cards')).not.toHaveClass(/is-animated/);
+    await expect(cards.last()).toHaveCSS('opacity', '0');
+    for (const card of await cards.all()) {
+      await card.scrollIntoViewIfNeeded();
+      await expect(card).toHaveCSS('opacity', '1');
+      expect(await card.evaluate(el => el.scrollHeight <= el.clientHeight + 2)).toBe(true);
+    }
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    expect(await cards.evaluateAll(els => els.every(el => getComputedStyle(el).opacity === '1'))).toBe(true);
+    await page.setViewportSize({ width: 390, height: 900 });
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await expect(page.locator('.leadership-cards')).toHaveClass(/is-animated/);
+  });
+}
+
+for (const width of [390, 1280]) {
+  test(`About cards finish fading before finishing movement at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/');
+    const scene = page.locator('.leadership-scene');
+    await expect(scene).toHaveAttribute('data-scroll-start', /\d/);
+    await scene.evaluate(el => scrollTo({ top: Number((el as HTMLElement).dataset.scrollStart) + innerHeight * 1.8 * (.5 / 2.35), behavior: 'instant' }));
+    const card = page.locator('.leadership-card').nth(1);
+    await expect(card).toHaveCSS('opacity', '1');
+    expect(await card.evaluate((el, desktop) => {
+      const transform = new DOMMatrixReadOnly(getComputedStyle(el).transform);
+      return desktop ? transform.m41 : transform.m42;
+    }, width >= 1024)).toBeGreaterThan(100);
   });
 }

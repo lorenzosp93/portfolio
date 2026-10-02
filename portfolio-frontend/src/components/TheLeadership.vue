@@ -71,8 +71,16 @@ async function animate() {
       cards.forEach(card => card.style.removeProperty('min-height'));
     };
     if (reduced || cards.length < 2) return cleanup;
-    // Long CMS copy, zoom, and short landscape windows retain the normal flow.
-    if (height + headingHeight + 64 > window.innerHeight - 72) return cleanup;
+    // Short landscape windows and long copy need a readable, unpinned flow.
+    // Animate each card once rather than silently dropping all motion.
+    if (height + headingHeight + 64 > window.innerHeight - 72) {
+      cards.forEach(card => {
+        const entrance = gsap.timeline({ scrollTrigger: { trigger: card, start: 'top 92%', once: true } });
+        entrance.fromTo(card, { y: 32 }, { y: 0, duration: .5, ease: 'power2.out' }, 0);
+        entrance.fromTo(card, { opacity: 0 }, { opacity: 1, duration: .2, ease: 'power2.out' }, 0);
+      });
+      return cleanup;
+    }
     container.classList.add('is-animated');
     container.style.height = `${height + 32}px`;
     cards.forEach(card => { card.style.minHeight = `${height}px`; });
@@ -86,8 +94,10 @@ async function animate() {
       gsap.set(card, { zIndex: index + 1 });
       if (index === 0) return;
       timeline.fromTo(card,
-        desktop ? { x: () => element.clientWidth + 60, y: 0, opacity: 0 } : { x: 0, y: () => window.innerHeight + 60, opacity: 0 },
-        { x: 0, y: desktop ? 0 : index * 12, opacity: 1, duration: 1, ease: 'none' }, index - 1);
+        desktop ? { x: () => element.clientWidth + 60, y: 0 } : { x: 0, y: () => window.innerHeight + 60 },
+        { x: 0, y: desktop ? 0 : index * 12, duration: 1, ease: 'none' }, index - 1);
+      // Fade in early while the card continues travelling to its resting place.
+      timeline.fromTo(card, { opacity: 0 }, { opacity: 1, duration: .35, ease: 'power2.out' }, index - 1);
       if (!desktop) timeline.to(cards[index - 1], { scale: .975, y: (index - 1) * 12 - 8, duration: 1, ease: 'none' }, index - 1);
     });
     timeline.to({}, { duration: .35 });
