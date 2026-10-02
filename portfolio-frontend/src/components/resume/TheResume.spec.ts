@@ -56,7 +56,7 @@ describe("TheResume", () => {
     expect(wrapper.find("ul").exists()).toBe(false);
   });
 
-  it("keeps the shorter panel in view when switching at the bottom of resume", async () => {
+  it("updates a shrinking panel without compensating the page scroll", async () => {
     const observers: Array<{
       callback: ResizeObserverCallback;
       observe: ReturnType<typeof vi.fn>;
@@ -98,7 +98,9 @@ describe("TheResume", () => {
     panelObserver?.callback([], panelObserver as unknown as ResizeObserver);
     await wrapper.vm.$nextTick();
 
-    expect(scrollBy).toHaveBeenCalledWith({ top: -200, behavior: "smooth" });
+    await wrapper.vm.$nextTick();
+    expect(scrollBy).not.toHaveBeenCalled();
+    expect(wrapper.find(".overflow-hidden").attributes("style")).toContain("height: 600px");
     wrapper.unmount();
     window.ResizeObserver = originalResizeObserver;
   });
