@@ -27,7 +27,7 @@
         aria-modal="true"
         :aria-labelledby="titleId"
         tabindex="-1"
-        class="bottom-sheet__card fx-default overflow-hidden bg-surface shadow-2xl ring-1 ring-ink/10 dark:bg-nightSurface dark:ring-white/10 md:max-w-lg lg:max-w-2xl"
+        class="bottom-sheet__card fx-default overflow-hidden bg-surface shadow-2xl dark:bg-nightSurface md:max-w-lg lg:max-w-2xl"
         :style="[
           {
             bottom: cardP + 'px',
@@ -44,9 +44,10 @@
           <header class="relative mt-auto border-b border-ink/10 p-4 dark:border-white/10">
             <button type="button" class="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full text-muted transition hover:bg-ink/5 hover:text-ink dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white" aria-label="Close dialog" @click="close(null)"><XMarkIcon class="h-5 w-5" aria-hidden="true" /></button>
             <div
+              v-if="$slots['extra-title-content']"
               class="text-md pr-12 text-muted dark:text-gray-300 sm:order-last sm:ml-auto"
             >
-              <slot name="extra-title-content">Extra title content</slot>
+              <slot name="extra-title-content" />
             </div>
             <div>
               <div :id="titleId" class="pr-12 text-2xl font-semibold text-ink dark:text-white">
@@ -70,7 +71,7 @@
           <div
             style="min-height: 40vh; min-height: 40svh"
             class="bottom-sheet__content min-h-[40vh] lg:min-h-[70vh] bg-surface dark:bg-nightSurface"
-            :style="{ height: contentH }"
+            :style="{ height: contentH, minHeight: contentH === 'auto' ? undefined : '0px' }"
             ref="content"
             @scroll.passive="updateScrollAffordances"
           >
@@ -170,19 +171,47 @@ const closeThreshold = 150;
 const minCloseDuration = 0.16;
 const maxCloseDuration = 0.42;
 const openAnimationDurationMs = 400;
-let previousBodyOverscrollBehavior = "";
+const lockedBodyProperties = ["position", "top", "left", "width", "overflow", "overscroll-behavior"];
+let previousBodyStyles: { property: string; value: string; priority: string }[] = [];
+let previousRootOverflow = "";
+let previousRootOverflowPriority = "";
+let lockedScrollX = 0;
+let lockedScrollY = 0;
 let isBodyScrollLocked = false;
 
 function lockBodyScroll() {
   if (isBodyScrollLocked) return;
-  previousBodyOverscrollBehavior = document.body.style.overscrollBehavior;
-  document.body.style.overscrollBehavior = "none";
+  lockedScrollX = window.scrollX;
+  lockedScrollY = window.scrollY;
+  previousBodyStyles = lockedBodyProperties.map(property => ({
+    property,
+    value: document.body.style.getPropertyValue(property),
+    priority: document.body.style.getPropertyPriority(property),
+  }));
+  previousRootOverflow = document.documentElement.style.overflow;
+  previousRootOverflowPriority = document.documentElement.style.getPropertyPriority("overflow");
+  // A fixed body also prevents scroll chaining on iOS Safari, including gestures
+  // starting on form controls or at the ends of the dialog's scroll area.
+  Object.assign(document.body.style, {
+    position: "fixed", top: `-${lockedScrollY}px`, left: `-${lockedScrollX}px`,
+    width: "100%", overflow: "hidden", overscrollBehavior: "none",
+  });
+  document.documentElement.style.overflow = "hidden";
   isBodyScrollLocked = true;
 }
 
 function unlockBodyScroll() {
   if (!isBodyScrollLocked) return;
-  document.body.style.overscrollBehavior = previousBodyOverscrollBehavior;
+  previousBodyStyles.forEach(({ property, value, priority }) => {
+    document.body.style.setProperty(property, value, priority);
+  });
+  document.documentElement.style.setProperty("overflow", previousRootOverflow, previousRootOverflowPriority);
+  const root = document.documentElement;
+  const previousScrollBehavior = root.style.getPropertyValue("scroll-behavior");
+  const previousScrollPriority = root.style.getPropertyPriority("scroll-behavior");
+  root.style.setProperty("scroll-behavior", "auto", "important");
+  window.scrollTo({ left: lockedScrollX, top: lockedScrollY, behavior: "instant" });
+  root.style.setProperty("scroll-behavior", previousScrollBehavior, previousScrollPriority);
   isBodyScrollLocked = false;
 }
 
@@ -396,8 +425,8 @@ type DragCloseState = {
 
 function close(dragState: DragCloseState | null) {
   if (opened.value) {
-  unlockBodyScroll();
   leaveModal();
+  unlockBodyScroll();
   closing.value = true;
     resetExpansion();
     if (dragState != null) {
@@ -475,8 +504,8 @@ watch(
 );
 
 onBeforeUnmount(() => {
-  unlockBodyScroll();
   leaveModal();
+  unlockBodyScroll();
   timeline.value?.kill();
   drag.value?.kill();
   if (card.value) {

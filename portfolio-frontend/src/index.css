@@ -30,6 +30,14 @@
 }
 
 @layer components {
+  .portfolio-card {
+    @apply rounded-2xl border-0 border-t-[3px] border-t-tealSoft bg-surface shadow-sm dark:border-t-teal dark:bg-nightSurface;
+  }
+
+  .portfolio-card--coral {
+    @apply border-t-coral dark:border-t-coralSoft;
+  }
+
   .section-heading {
     @apply w-full text-center text-xl font-bold text-ink dark:text-white md:text-2xl;
   }

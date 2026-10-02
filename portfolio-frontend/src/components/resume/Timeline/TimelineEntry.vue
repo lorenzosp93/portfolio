@@ -8,7 +8,7 @@
       ></div>
     </span>
     <div
-      class="cursor-pointer rounded-xl bg-paper/45 p-3 ring-1 ring-transparent transition hover:bg-paper/75 hover:ring-teal/30 dark:bg-night/45 dark:hover:bg-night/70 dark:hover:ring-tealSoft/30 sm:p-4"
+      class="cursor-pointer rounded-xl bg-paper/45 p-3 transition hover:bg-paper/75 dark:bg-night/45 dark:hover:bg-night/70 sm:p-4"
     >
       <div class="mb-2 flex w-full flex-wrap items-start justify-between gap-x-3 gap-y-1">
         <time

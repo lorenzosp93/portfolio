@@ -56,19 +56,36 @@ vi.mock("gsap/InertiaPlugin", () => ({
 import DetailCard from "./DetailCard.vue";
 
 describe("DetailCard", () => {
-  it("does not change the document scroll position when opened", async () => {
+  it("locks the background and restores scroll and existing styles on close", async () => {
+    const scrollTo = vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
+    const scrollY = vi.spyOn(window, "scrollY", "get").mockReturnValue(720);
+    document.body.style.setProperty("position", "relative", "important");
     const wrapper = mount(DetailCard, { props: { isOpen: false } });
-    const initialBodyOverflow = document.body.style.overflow;
-    const initialDocumentOverflow = document.documentElement.style.overflow;
-
     await wrapper.setProps({ isOpen: true });
-    expect(document.body.style.overflow).toBe(initialBodyOverflow);
-    expect(document.documentElement.style.overflow).toBe(initialDocumentOverflow);
-
+    expect(document.body.style.position).toBe("fixed");
+    expect(document.body.style.top).toBe("-720px");
+    expect(document.documentElement.style.overflow).toBe("hidden");
+    expect(document.querySelector(".bottom-sheet")?.textContent).not.toContain("Extra title content");
     await wrapper.setProps({ isOpen: false });
-    expect(document.body.style.overflow).toBe(initialBodyOverflow);
-    expect(document.documentElement.style.overflow).toBe(initialDocumentOverflow);
+    expect(document.body.style.position).toBe("relative");
+    expect(document.body.style.getPropertyPriority("position")).toBe("important");
+    expect(document.body.style.top).toBe("");
+    expect(document.documentElement.style.overflow).toBe("");
+    expect(scrollTo).toHaveBeenCalledWith({ left: 0, top: 720, behavior: "instant" });
     wrapper.unmount();
+    document.body.style.removeProperty("position");
+    scrollY.mockRestore();
+    scrollTo.mockRestore();
+  });
+  it("releases the background lock when an open dialog is unmounted", async () => {
+    const scrollTo = vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
+    const wrapper = mount(DetailCard, { props: { isOpen: false } });
+    await wrapper.setProps({ isOpen: true });
+    wrapper.unmount();
+    expect(document.body.style.position).toBe("");
+    expect(document.documentElement.style.overflow).toBe("");
+    expect(scrollTo).toHaveBeenCalledOnce();
+    scrollTo.mockRestore();
   });
 
   it("releases an active drag when the pointer leaves the browser window", async () => {

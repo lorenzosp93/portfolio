@@ -150,3 +150,38 @@ for (const width of [390, 1280]) {
     await expect(page.locator('#the-navbar').getByRole('button', { name: 'Leadership', exact: true, includeHidden: true })).toHaveCount(0);
   });
 }
+
+for (const width of [390, 1280]) {
+  test(`contact dialog isolates scrolling and restores the page at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 600 });
+    await page.goto('/');
+    const opener = page.getByRole('button', { name: 'Click here to send me a message.' });
+    await opener.scrollIntoViewIfNeeded();
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(500);
+    await page.waitForTimeout(500);
+    await opener.click();
+    const dialog = page.getByRole('dialog', { name: 'Contact form' });
+    await expect(dialog).toBeVisible();
+    await expect(dialog).not.toContainText('Extra title content');
+    await expect(page.locator('body')).toHaveCSS('position', 'fixed');
+    // WebKit may scroll the opener into view as part of the click; preserve the
+    // position at dialog entry, rather than the position before that browser action.
+    const before = await page.locator('body').evaluate(el => -parseFloat(el.style.top));
+    const content = dialog.locator('.bottom-sheet__content');
+    await page.waitForTimeout(450);
+    const hasOverflow = await content.evaluate(el => el.scrollHeight > el.clientHeight);
+    await content.hover();
+    await page.mouse.wheel(0, 500);
+    if (hasOverflow) await expect.poll(() => content.evaluate(el => el.scrollTop)).toBeGreaterThan(0);
+    await content.evaluate(el => { el.scrollTop = el.scrollHeight; });
+    const backgroundTop = await page.locator('#the-contacts').evaluate(el => el.getBoundingClientRect().top);
+    await page.getByLabel('Message', { exact: true }).hover();
+    await page.mouse.wheel(0, 500);
+    await page.waitForTimeout(250);
+    expect(await page.locator('#the-contacts').evaluate(el => el.getBoundingClientRect().top)).toBeCloseTo(backgroundTop, 0);
+    await dialog.getByRole('button', { name: 'Close dialog' }).click();
+    await expect(page.locator('body')).not.toHaveCSS('position', 'fixed');
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeCloseTo(before, 0);
+    await expect(opener).toBeFocused();
+  });
+}

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="justify-start rounded-2xl bg-sand shadow-sm ring-1 ring-ink/10 dark:bg-nightElevated dark:text-gray-300 dark:ring-white/10 z-1 w-full"
+    class="portfolio-card justify-start dark:text-gray-300 z-1 w-full"
   >
     <div class="rounded-t-2xl border-b border-ink/10 bg-surface/60 px-3 pt-3 pb-2 dark:border-white/10 dark:bg-nightSurface/60">
       <h3

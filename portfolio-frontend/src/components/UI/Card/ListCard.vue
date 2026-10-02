@@ -1,7 +1,7 @@
 <template>
   <div
     @click="openDetails"
-    class="group relative cursor-pointer overflow-hidden rounded-2xl bg-surface shadow-sm ring-1 ring-ink/10 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:ring-teal/30 dark:bg-nightSurface dark:ring-white/10"
+    class="portfolio-card portfolio-card--coral group relative cursor-pointer overflow-hidden transition duration-300 hover:-translate-y-1 hover:shadow-xl"
     :class="{ 'pointer-events-none': detailsVisible }"
   >
     <img

@@ -14,7 +14,7 @@
         v-if="!hasSentMessage"
         type="button"
         class="mt-5 rounded-full bg-teal px-6 py-3 text-center font-semibold text-white shadow-md ring-1 ring-teal/20 transition duration-300 hover:-translate-y-0.5 hover:bg-teal/90 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-tealSoft dark:bg-tealSoft dark:text-night dark:ring-tealSoft/30 dark:hover:bg-tealSoft/90"
-        @click="formVisible = true"
+        @click="openForm"
       >
         Click here to send me a message.
       </button>
@@ -47,7 +47,6 @@
       <template #title>
         <p>Contact form</p>
       </template>
-      <template #extra-title-content />
       <template #subtitle>
         <div class="mt-3 flex items-center justify-between gap-3">
         <p>Send me a quick message!</p>
@@ -184,6 +183,12 @@ type ApiErrorLike = {
     errors?: Record<string, string[] | string>;
   };
 };
+
+function openForm(event: MouseEvent) {
+  // Safari does not focus buttons on pointer activation by default.
+  (event.currentTarget as HTMLButtonElement).focus({ preventScroll: true });
+  formVisible.value = true;
+}
 
 const formVisible = ref(false);
 const isLoading = ref(false);
