@@ -1,7 +1,7 @@
 <template>
   <div class="relative m-auto max-w-[99%] md:max-w-xl lg:max-w-4xl xl:max-w-6xl">
     <div
-      class="rounded-2xl border border-ink/10 bg-surface py-1 shadow-sm ring-1 ring-ink/5 dark:border-white/10 dark:bg-nightSurface dark:ring-white/10"
+      class="portfolio-card py-1"
     >
       <div class="mx-auto">
         <slot name="content"> </slot>
