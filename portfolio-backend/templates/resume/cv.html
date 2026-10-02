@@ -20,7 +20,7 @@
       margin: 0;
       background: var(--backdrop);
       color: var(--ink);
-      font: 9.5pt/1.4 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font: 9pt/1.35 "Helvetica Neue", Helvetica, Arial, sans-serif;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
@@ -56,10 +56,10 @@
     .name { margin: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
     .name span {
       background: var(--ink); color: #fff; padding: 1px 6px 0;
-      font-size: 24pt; line-height: 1.05; font-weight: 700;
+      font-size: 23pt; line-height: 1.05; font-weight: 700;
       text-transform: uppercase; letter-spacing: .02em;
     }
-    .headline { margin: 4mm 0 0; font-size: 15pt; font-weight: 400; }
+    .headline { margin: 4mm 0 0; font-size: 14pt; font-weight: 400; }
     .contact { list-style: none; margin: 0; padding: 0; display: grid; gap: 2.2mm; }
     .contact li { display: flex; align-items: center; gap: 2.5mm; }
     .contact .ico {
@@ -79,7 +79,7 @@
     .summary--full { grid-template-columns: 1fr; }
     .leadership { list-style: none; margin: 3mm 0 0; padding: 0; }
     .leadership li { margin-top: 2.5mm; break-inside: avoid; }
-    .leadership h3 { margin: 0 0 1mm; font-size: 9.5pt; }
+    .leadership h3 { margin: 0 0 1mm; font-size: 9pt; }
     .summary .leadership p { text-align: left; }
     .summary p { margin: 0 0 2.5mm; text-align: justify; hyphens: auto; }
 
@@ -107,7 +107,7 @@
     .when .role-note { display: block; }
     .logo { display: block; max-width: 22mm; max-height: 7mm; margin-top: 2mm; object-fit: contain; object-position: left; filter: grayscale(1); }
     .entry-head { display: flex; justify-content: space-between; gap: 4mm; align-items: baseline; }
-    .entry h3 { margin: 0; font-size: 10pt; }
+    .entry h3 { margin: 0; font-size: 9.5pt; }
     .entry .where { font-size: 8pt; font-weight: 700; text-align: right; max-width: 48mm; flex: none; }
     .entry .body { margin-top: 1.2mm; }
     .entry .body p { margin: 0 0 1.2mm; }
@@ -121,7 +121,7 @@
       .header, .summary { grid-template-columns: 1fr; }
       .leadership { list-style: none; margin: 3mm 0 0; padding: 0; }
     .leadership li { margin-top: 2.5mm; break-inside: avoid; }
-    .leadership h3 { margin: 0 0 1mm; font-size: 9.5pt; }
+    .leadership h3 { margin: 0 0 1mm; font-size: 9pt; }
     .summary .leadership p { text-align: left; }
     .summary p { text-align: left; }
       .entry { grid-template-columns: 1fr; gap: 1mm; }
@@ -130,11 +130,11 @@
       .name span { font-size: 20pt; }
     }
 
-    @page { size: A4; margin: 0; }
+    @page { size: A4; margin: 14mm 14mm 12mm; }
     @media print {
       body { background: #fff; }
       .toolbar { display: none; }
-      .page { margin: 0; box-shadow: none; width: auto; min-height: 0; }
+      .page { margin: 0; padding: 0; box-shadow: none; width: auto; min-height: 0; }
       a { border-bottom: 0; }
       .section { break-inside: auto; }
       .section > h2 { break-after: avoid; }

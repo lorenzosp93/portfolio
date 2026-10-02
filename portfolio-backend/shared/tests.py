@@ -286,3 +286,22 @@ class LeadershipContentTests(TestCase):
         response = self.client.get('/api/site/settings/1/')
         self.assertEqual([card['title'] for card in response.json()['leadership_cards']], ['First', 'Second'])
         self.assertIn(self.client.post('/api/site/settings/1/', {}).status_code, (403, 405))
+
+
+class HighlightIconCatalogTests(TestCase):
+    def test_catalog_supports_the_full_collection_and_public_api(self):
+        from .models import HighlightCard
+        from .serializers import HighlightCardSerializer
+        from .admin import HighlightCardAdmin
+        from django.contrib.admin.sites import AdminSite
+        from django.test import RequestFactory
+        choices = dict(HighlightCard.ICON_CHOICES)
+        self.assertGreater(len(choices), 300)
+        self.assertIn('RocketLaunchIcon', choices)
+        self.assertIn('users', choices)
+        card = HighlightCard(title='New product', body='A new product.', icon='RocketLaunchIcon')
+        card.full_clean()
+        card.save()
+        self.assertEqual(HighlightCardSerializer(card).data['icon'], 'RocketLaunchIcon')
+        form = HighlightCardAdmin(HighlightCard, AdminSite()).get_form(RequestFactory().get('/'))
+        self.assertIn('RocketLaunchIcon', dict(form.base_fields['icon'].choices))

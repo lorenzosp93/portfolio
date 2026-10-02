@@ -230,7 +230,10 @@ defaults. These are operational helpers, not authoritative cluster manifests.
 Apply the new shared migrations to seed the approved hero and leadership copy.
 The content migration intentionally replaces `SiteSettings.about_text`, preserves
 existing pictures/CV settings, and inserts three leadership cards. Edit wording,
-icons, publication status, and order in Django admin afterward. The printable CV
+icons, publication status, and order in Django admin afterward. The icon selector
+contains the full Heroicons outline collection; existing layers/globe/users
+selections remain compatible. The backend catalogue in shared/highlight_icons.json
+tracks the installed frontend library, and icons are loaded as a separate chunk. The printable CV
 reuses the published leadership cards and hero introduction in its summary;
 `cv_summary` remains the fallback when no leadership cards are published.
 
