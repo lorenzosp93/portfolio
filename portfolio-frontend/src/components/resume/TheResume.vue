@@ -36,13 +36,13 @@
       data-testid="resume-mobile-tabs"
       class="relative mb-4 flex w-full flex-wrap border-b border-ink/10 text-ink dark:border-white/10 dark:text-white capitalize sm:hidden"
     >
-      <span class="mobile-tab-bar" :style="mobileTabBarStyle" />
+      <li aria-hidden="true" role="presentation" class="mobile-tab-bar" :style="mobileTabBarStyle" />
       <li
         v-for="comp in resumeList"
         :key="comp.id"
 
         :class="[
-          'relative z-10 px-3 py-2 inline-flex items-center justify-center cursor-pointer mx-auto first:ml-0 last:mr-0 text-sm transition text-muted dark:text-gray-300',
+          'relative z-10 min-w-0 flex-1 px-3 inline-flex items-center justify-center text-sm transition text-muted dark:text-gray-300',
           { active: activeSlideId === comp.id },
         ]"
 
@@ -54,7 +54,7 @@
           :aria-selected="activeSlideId === comp.id"
           :aria-controls="comp.id"
           :tabindex="activeSlideId === comp.id ? 0 : -1"
-          class="capitalize"
+          class="min-h-11 capitalize"
           @click="scrollToSlide(comp.id)"
           @keydown="handleTabKey($event, comp.id)"
         >{{ comp.id }}</button>

@@ -7,8 +7,8 @@ declare global {
 }
 
 const image = '/og-image.jpg';
-const posts = [1, 2, 3, 4, 5].map(id => ({
-  uuid: `motion-post-${id}`, name: `Motion article ${id}`, slug: `motion-article-${id}`,
+const posts = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(id => ({
+  uuid: `motion-post-${id}`, name: id > 3 ? `Motion article ${id}: a much longer title about regional product leadership and developing independent teams` : `Motion article ${id}`, slug: `motion-article-${id}`,
   created_at: '2026-10-02', content: 'An article about product leadership.\n\n'.repeat(20),
   picture: image, attachments: [], created_by: { username: 'lorenzo' },
 }));
@@ -38,11 +38,18 @@ test.beforeEach(async ({ page }) => {
       return animation;
     };
   });
-  await page.route('**/api/**', route => {
-    const url = route.request().url();
-    const results = url.includes('/blog/post/') ? posts : url.includes('/experience/') ? [experience] : [];
-    return route.fulfill({ json: url.includes('/settings/') ? { show_skills: false, hero_picture: null }
-      : url.includes('skillcategory') ? [] : { count: results.length, results, next: null } });
+  await page.route('**/api/**', async route => {
+    const url = new URL(route.request().url());
+    if (url.pathname.includes('/blog/post/')) {
+      const offset = Number(url.searchParams.get('offset') || 0);
+      const limit = Number(url.searchParams.get('limit') || 3);
+      await new Promise(resolve => setTimeout(resolve, 350));
+      const next = offset + limit < posts.length ? `${url.origin}${url.pathname}?limit=${limit}&offset=${offset + limit}` : null;
+      return route.fulfill({ json: { count: posts.length, results: posts.slice(offset, offset + limit), next } });
+    }
+    const results = url.pathname.includes('/experience/') ? [experience] : [];
+    return route.fulfill({ json: url.pathname.includes('/settings/') ? { show_skills: false, hero_picture: null }
+      : url.pathname.includes('skillcategory') ? [] : { count: results.length, results, next: null } });
   });
 });
 
@@ -52,7 +59,7 @@ for (const width of [390, 1280]) {
     await page.goto('/');
     await page.locator('#the-blog').scrollIntoViewIfNeeded();
     const cards = page.locator('.blog-card');
-    await expect(cards).toHaveCount(5);
+    await expect(cards).toHaveCount(width === 390 ? 3 : 6);
     const first = cards.first();
     // Sample throughout the entrance, including while async content loads.
     await page.evaluate(() => {
@@ -64,13 +71,28 @@ for (const width of [390, 1280]) {
     const motion = await page.evaluate(() => window.blogMotion[0]);
     expect(motion.duration).toBe(600);
     expect(motion.samples.some(sample => sample.opacity > 0 && sample.opacity < 1 && sample.y > 0)).toBe(true);
-    if (width === 390) {
-      const last = cards.last();
-      await expect(last).toHaveClass(/blog-card--pending/);
-      await page.locator('#blog-container').evaluate(el => el.scrollLeft = el.scrollWidth);
-      await expect(last).not.toHaveClass(/blog-card--pending/);
-      await page.locator('#blog-container').evaluate(el => el.scrollLeft = 0);
+    await expect.poll(() => cards.evaluateAll(elements => elements.every(el => el.getAnimations().length === 0))).toBe(true);
+    const motionCount = await page.evaluate(() => window.blogMotion.length);
+    const before = await page.locator('#blog-container').evaluate(el => ({ y: scrollY, height: el.clientHeight }));
+    // Loading two more pages must not replay the entrance, hide peeking cards,
+    // change the gallery height, or move the surrounding page.
+    while (await cards.count() < posts.length) {
+      const previousCount = await cards.count();
+      await page.locator('#blog-container').evaluate(el => el.scrollTo({ left: el.scrollWidth, behavior: 'instant' }));
+      await expect(page.getByRole('status', { name: 'Loading articles' })).toHaveCount(1);
+      const loadingPosition = await page.locator('#blog-container').evaluate(el => ({ y: scrollY, height: el.clientHeight, x: el.scrollLeft }));
+      expect({ y: loadingPosition.y, height: loadingPosition.height }).toEqual(before);
+      await expect.poll(() => cards.count()).toBeGreaterThan(previousCount);
+      if (width === 390) {
+        expect(await page.locator('#blog-container').evaluate(el => el.scrollLeft)).toBeCloseTo(loadingPosition.x, 0);
+      }
+      await expect(page.getByRole('status', { name: 'Loading articles' })).toHaveCount(0);
+      expect(await page.locator('#blog-container').evaluate(el => ({ y: scrollY, height: el.clientHeight }))).toEqual(before);
+      expect(await cards.evaluateAll(elements => elements.every(el => getComputedStyle(el).opacity === '1'))).toBe(true);
     }
+    expect(await page.evaluate(() => window.blogMotion.length)).toBe(motionCount);
+    await page.locator('#blog-container').evaluate(el => el.scrollTo({ left: 0, behavior: 'instant' }));
+    await expect(first).toBeInViewport();
     await first.getByRole('button', { name: 'Open Motion article 1' }).click();
     const article = page.getByRole('dialog', { name: 'Motion article 1', exact: true });
     const cover = article.locator('.blog-detail-cover');
@@ -93,7 +115,34 @@ test('reduced motion leaves every blog card visible without entrance animations'
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
   await page.locator('#the-blog').scrollIntoViewIfNeeded();
-  await expect(page.locator('.blog-card')).toHaveCount(5);
+  await expect(page.locator('.blog-card')).toHaveCount(6);
   await expect(page.locator('.blog-card--pending')).toHaveCount(0);
   expect(await page.locator('.blog-card').evaluateAll(cards => cards.every(card => getComputedStyle(card).opacity === '1' && card.getAnimations().length === 0))).toBe(true);
 });
+
+for (const showSkills of [false, true]) {
+  test(`mobile résumé tabs are centered in equal columns with skills ${showSkills}`, async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.route('**/api/settings/**', route => route.fulfill({ json: { show_skills: showSkills, hero_picture: null } }));
+    await page.goto('/');
+    await page.locator('#the-resume').scrollIntoViewIfNeeded();
+    const tabs = page.getByRole('tablist', { name: 'Résumé sections' });
+    await expect(tabs.getByRole('tab')).toHaveCount(showSkills ? 3 : 2);
+    const columns = await tabs.evaluate(el => {
+      const rect = el.getBoundingClientRect();
+      const buttons = [...el.querySelectorAll('button')];
+      return buttons.map((button, index) => {
+        const b = button.getBoundingClientRect();
+        return Math.abs(b.left + b.width / 2 - (rect.left + rect.width * (index + .5) / buttons.length));
+      });
+    });
+    expect(columns.every(error => error < 1)).toBe(true);
+    await tabs.getByRole('tab', { name: 'education' }).click();
+    await expect(tabs.getByRole('tab', { name: 'education' })).toHaveAttribute('aria-selected', 'true');
+    await expect.poll(() => tabs.evaluate(el => {
+      const tab = el.querySelector('[aria-selected="true"]')!.getBoundingClientRect();
+      const bar = el.querySelector('.mobile-tab-bar')!.getBoundingClientRect();
+      return Math.abs(tab.left - bar.left) + Math.abs(tab.width - bar.width);
+    })).toBeLessThan(2);
+  });
+}

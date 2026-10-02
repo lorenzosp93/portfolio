@@ -13,7 +13,7 @@
     />
     <div class="w-full border-b border-ink/10 bg-sand/70 p-4 text-lg text-ink dark:border-white/10 dark:bg-nightElevated dark:text-white">
       <p class="text-xs font-medium uppercase tracking-wide text-coral dark:text-coralSoft">{{ location }}{{ status }}</p>
-      <h2 class="mt-1 w-full text-xl font-semibold tracking-tight text-ink dark:text-white">
+      <h2 class="list-card-title mt-1 w-full text-xl font-semibold tracking-tight text-ink dark:text-white">
         <button ref="opener" type="button" class="text-left" :aria-label="`Open ${name}`" aria-haspopup="dialog" :aria-expanded="detailsVisible" @click.stop="openDetails">{{ name }}</button>
       </h2>
     </div>
