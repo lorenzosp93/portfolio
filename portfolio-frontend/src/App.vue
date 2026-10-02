@@ -1,17 +1,20 @@
 <template>
-  <main class="page-scroll-container w-full bg-paper text-ink snap-y snap-proximity dark:bg-night">
+  <div class="site-shell relative isolate">
+  <site-background />
+  <main class="page-scroll-container w-full text-ink dark:text-white">
     <the-hero class="snap-center scroll-mt-20" id="the-hero" />
     <the-navbar
       class="snap-center"
       id="the-navbar"
     />
+    <the-leadership />
     <the-resume class="snap-center scroll-mt-20" id="the-resume" />
     <the-blog class="snap-center scroll-mt-20" id="the-blog" />
     <the-contacts class="snap-center scroll-mt-20" id="the-contacts" />
     <service-worker-update />
   </main>
 
-  <footer class="mx-auto flex w-full flex-wrap items-center justify-between gap-3 bg-paper px-5 pb-6 text-sm text-muted dark:bg-night dark:text-gray-300">
+  <footer class="mx-auto flex w-full flex-wrap items-center justify-between gap-3 px-5 pb-6 text-sm text-muted dark:text-gray-300">
     <p>© Lorenzo Spinelli, {{ currentYear }}</p>
     <div class="flex items-center gap-3">
       <a
@@ -22,9 +25,12 @@
       <theme-toggle />
     </div>
   </footer>
+  </div>
 </template>
 
 <script setup lang="ts">
+import TheLeadership from "./components/TheLeadership.vue";
+import SiteBackground from "./components/UI/SiteBackground.vue";
 import TheHero from "./components/TheHero.vue";
 import TheNavbar from "./components/UI/TheNavbar.vue";
 import TheResume from "./components/resume/TheResume.vue";

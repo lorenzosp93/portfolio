@@ -122,7 +122,7 @@
       <div
         class="hero-copy prose prose-slate max-w-none font-sans text-center leading-relaxed dark:prose-invert prose-p:my-4 prose-strong:text-coral dark:prose-strong:text-coralSoft sm:text-left lg:prose-lg"
       >
-        <!-- VITE_HERO_COPY is trusted build-time configuration, rendered as Markdown. -->
+        <!-- Runtime copy is maintained in Django admin. -->
         <p
           v-for="(paragraph, index) in heroParagraphs"
           :key="paragraph"
@@ -163,9 +163,9 @@ const heroPicture = computed(() => siteStore.heroPicture || fallbackHero);
 const heroSrcset = computed(() =>
   siteStore.heroPicture ? undefined : `${fallbackHeroMobile} 320w, ${fallbackHero} 600w`
 );
-const defaultHeroCopy = `I'm a **product leader** with a background in **software** and **energy engineering**. I turn complex problems into focused products, bringing technical depth and pragmatic execution to teams at every stage.`;
+const defaultHeroCopy = "I lead software product teams at Tesla in EMEA, combining technical depth with a focus on developing people and simplifying complex problems.";
 const heroParagraphs = computed(() =>
-  (import.meta.env.VITE_HERO_COPY?.trim() || defaultHeroCopy)
+  (siteStore.aboutText.trim() || defaultHeroCopy)
     .split(/\n\s*\n/)
     .filter(Boolean)
     .map((paragraph) => renderInlineMarkdown(paragraph))

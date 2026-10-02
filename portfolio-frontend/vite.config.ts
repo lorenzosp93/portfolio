@@ -1,11 +1,16 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
 import { fileURLToPath } from "url";
 import viteCompression from "vite-plugin-compression";
 import { VitePWA } from "vite-plugin-pwa";
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), "VITE_");
+  const backend = process.env.VITE_APP_BACKEND_URL || env.VITE_APP_BACKEND_URL || "http://localhost:8000";
+  return {
+  build: { manifest: "asset-manifest.json" },
+  server: { proxy: { "/writing/": backend, "/sitemap.xml": backend } },
   plugins: [
     vue({
       isProduction: process.env.DEV === "false",
@@ -24,7 +29,7 @@ export default defineConfig({
         cleanupOutdatedCaches: true,
         clientsClaim: true,
         skipWaiting: true,
-        navigateFallbackDenylist: [/^\/api(?:\/|$)/],
+        navigateFallbackDenylist: [/^\/api(?:\/|$)/, /^\/writing(?:\/|$)/, /^\/sitemap\.xml$/],
         // API/admin responses must never silently fall back to stale data.
         // Keep precaching versioned application assets for offline navigation.
         runtimeCaching: [],
@@ -64,4 +69,5 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
+};
 });

@@ -21,15 +21,17 @@
     <div class="mx-auto flex w-full max-w-7xl flex-wrap px-5">
     <div class="flex flex-wrap w-full mx-auto mb-8 md:mb-12">
       <h2 class="section-heading">
-        Here are a few things I've done.
+        Experience leading products and teams.
       </h2>
       <p class="section-lede">
-        Because I definitely needed a website to host my CV.
+        My experience, education, and the capabilities I bring to product teams.
       </p>
     </div>
 
     <ul
       v-if="isMobile"
+      role="tablist"
+      aria-label="Résumé sections"
       ref="mobileTabs"
       data-testid="resume-mobile-tabs"
       class="relative mb-4 flex w-full flex-wrap border-b border-ink/10 text-ink dark:border-white/10 dark:text-white capitalize sm:hidden"
@@ -38,14 +40,24 @@
       <li
         v-for="comp in resumeList"
         :key="comp.id"
-        :ref="(el) => setMobileTabRef(comp.id, el)"
+
         :class="[
           'relative z-10 px-3 py-2 inline-flex items-center justify-center cursor-pointer mx-auto first:ml-0 last:mr-0 text-sm transition text-muted dark:text-gray-300',
           { active: activeSlideId === comp.id },
         ]"
-        @click="scrollToSlide(comp.id)"
+
       >
-        {{ comp.id }}
+        <button
+          :id="`${comp.id}-tab`"
+          :ref="(el) => setMobileTabRef(comp.id, el)"
+          type="button" role="tab"
+          :aria-selected="activeSlideId === comp.id"
+          :aria-controls="comp.id"
+          :tabindex="activeSlideId === comp.id ? 0 : -1"
+          class="capitalize"
+          @click="scrollToSlide(comp.id)"
+          @keydown="handleTabKey($event, comp.id)"
+        >{{ comp.id }}</button>
       </li>
     </ul>
 
@@ -73,6 +85,9 @@
             :key="comp.id"
             :ref="(el) => setSlideRef(comp.id, el)"
             :id="comp.id"
+            :role="isMobile ? 'tabpanel' : undefined"
+            :aria-labelledby="isMobile ? `${comp.id}-tab` : undefined"
+            :inert="activeSlideId !== comp.id ? '' : undefined"
             class="flex-none w-full snap-center px-5 sm:px-0"
           >
             <component :is="comp.component" v-bind="comp.props" />
@@ -240,6 +255,18 @@ function scheduleActiveSlideUpdate() {
     updateActiveSlideFromScroll();
     scrollFrame = null;
   });
+}
+
+function handleTabKey(event: KeyboardEvent, id: string) {
+  const keys = ['ArrowLeft', 'ArrowRight', 'Home', 'End'];
+  if (!keys.includes(event.key)) return;
+  event.preventDefault();
+  const index = resumeList.findIndex(item => item.id === id);
+  const next = event.key === 'Home' ? 0 : event.key === 'End' ? resumeList.length - 1
+    : (index + (event.key === 'ArrowRight' ? 1 : -1) + resumeList.length) % resumeList.length;
+  const target = resumeList[next].id;
+  scrollToSlide(target);
+  mobileTabRefs[target]?.focus();
 }
 
 function scrollToSlide(id: string) {

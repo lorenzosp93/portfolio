@@ -14,7 +14,7 @@ test("production worker upgrades without forced reload, removes old API cache an
   try {
     for (const release of ["A", "B"]) {
       execFileSync(process.execPath, ["node_modules/vite/bin/vite.js", "build", "--outDir", join(directory, release)], {
-        env: { ...process.env, VITE_HERO_COPY: `Release ${release}`, VITE_APP_BACKEND_URL: "" }, stdio: "pipe",
+        env: { ...process.env, VITE_APP_BACKEND_URL: `/release-${release}` }, stdio: "pipe",
       });
     }
     let release = "A";
@@ -22,9 +22,14 @@ test("production worker upgrades without forced reload, removes old API cache an
     server = createServer(async (request, response) => {
       const path = new URL(request.url, "http://localhost").pathname;
       response.setHeader("Cache-Control", "no-store");
-      if (path.startsWith("/api/")) {
+      if (path.includes("/api/")) {
         response.setHeader("Content-Type", "application/json");
-        response.end(JSON.stringify({ revision: apiRevision, results: [], count: 0 }));
+        response.end(JSON.stringify({ revision: apiRevision, about_text: `Release ${path.startsWith("/release-A/") ? "A" : "B"}`, hero_picture: null, results: [], count: 0 }));
+        return;
+      }
+      if (path.startsWith("/writing/")) {
+        response.setHeader("Content-Type", "text/html");
+        response.writeHead(404).end('<!doctype html><title>Article not found</title><h1>Article not found</h1>');
         return;
       }
       const file = path === "/" ? "index.html" : path.slice(1);
@@ -80,9 +85,19 @@ test("production worker upgrades without forced reload, removes old API cache an
     const names = await page.evaluate(() => caches.keys());
     assert.equal(names.includes("api-cache"), false);
     assert.equal(names.includes("unrelated-cache"), true);
+    // The worker must preserve server article 404s rather than return the SPA.
+    const articleTab = await context.newPage();
+    const articleResponse = await articleTab.goto(`${origin}/writing/missing/`);
+    assert.equal(articleResponse.status(), 404);
+    assert.equal(await articleTab.locator(".hero-copy").count(), 0);
+    await articleTab.close();
     await context.setOffline(true);
     await page.reload();
-    assert.match(await page.locator(".hero-copy").innerText(), /Release B/);
+    // CMS copy is intentionally unavailable offline; the bundled intro remains readable.
+    assert.match(await page.locator(".hero-copy").innerText(), /I lead software product teams at Tesla in EMEA/);
+    const entry = await page.locator('script[type="module"][src]').getAttribute('src');
+    const cachedBundle = await page.evaluate(url => fetch(url).then(response => response.text()), entry);
+    assert.match(cachedBundle, /release-B/);
     const offlineAPI = await page.evaluate(() => fetch("/api/settings/1/").then(() => "unexpected cache hit", () => "offline"));
     assert.equal(offlineAPI, "offline");
   } finally {

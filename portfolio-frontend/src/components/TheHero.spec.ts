@@ -17,11 +17,9 @@ describe("TheHero", () => {
     vi.unstubAllEnvs();
   });
 
-  it("renders trusted Markdown hero copy as separate paragraphs", () => {
-    vi.stubEnv(
-      "VITE_HERO_COPY",
-      "Building **thoughtful software**.\n\nWorking with _curious people_."
-    );
+  it("renders database Markdown hero copy as separate paragraphs", () => {
+    const site = useSiteStore();
+    site.aboutText = "Building **thoughtful software**.\n\nWorking with _curious people_.";
 
     const wrapper = mount(TheHero);
     const paragraphs = wrapper.findAll('[class*="prose"] p');
