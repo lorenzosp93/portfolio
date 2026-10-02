@@ -18,11 +18,10 @@ for (const width of [320, 390, 1023, 1024, 1280]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/');
     await expect(page.locator('.leadership-cards')).toHaveClass(/is-animated/);
-    const end = await page.locator('.leadership-scene').evaluate(el => {
-      const spacer = el.parentElement!;
-      return spacer.getBoundingClientRect().top + window.scrollY + spacer.offsetHeight - el.offsetHeight;
-    });
-    await page.evaluate(y => window.scrollTo({ top: y, behavior: 'instant' }), end);
+    await expect(page.locator('.pin-spacer > .leadership-scene')).toHaveCount(1);
+    // Follow the reading flow rather than deriving a scroll destination from a
+    // spacer while ScrollTrigger is still refreshing its layout in WebKit.
+    await page.locator('#the-resume').scrollIntoViewIfNeeded();
     await expect.poll(() => page.locator('.leadership-card').last().evaluate(el => new DOMMatrixReadOnly(getComputedStyle(el).transform).m42)).toBeLessThan(30);
     expect(await page.locator('.leadership-card').evaluateAll(els => els.every(el => el.scrollHeight <= el.clientHeight + 2))).toBe(true);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
