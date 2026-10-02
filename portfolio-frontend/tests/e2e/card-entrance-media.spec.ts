@@ -146,3 +146,31 @@ for (const showSkills of [false, true]) {
     })).toBeLessThan(2);
   });
 }
+
+test('mobile tab selection and indicator do not reverse during horizontal transitions', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await page.locator('#the-resume').scrollIntoViewIfNeeded();
+  await page.locator('[data-testid="resume-mobile-tabs"]').evaluate(el => window.scrollTo({ top: el.getBoundingClientRect().top + scrollY - 100, behavior: 'instant' }));
+  const tabs = page.getByRole('tablist', { name: 'Résumé sections' });
+  for (const name of ['education', 'experience', 'education', 'experience']) {
+    const beforeY = await page.evaluate(() => scrollY);
+    await tabs.getByRole('tab', { name }).click();
+    const samples = await tabs.evaluate(async el => {
+      const records: { selected: string | null; left: number; y: number }[] = [];
+      const until = performance.now() + 900;
+      while (performance.now() < until) {
+        await new Promise(requestAnimationFrame);
+        const bar = el.querySelector('.mobile-tab-bar')!;
+        records.push({ selected: el.querySelector('[aria-selected="true"]')?.textContent || null,
+          left: new DOMMatrixReadOnly(getComputedStyle(bar).transform).m41, y: scrollY });
+      }
+      return records;
+    });
+    expect(samples.every(sample => sample.selected === name)).toBe(true);
+    expect(samples.every(sample => Math.abs(sample.y - beforeY) < 1)).toBe(true);
+    const direction = name === 'education' ? 1 : -1;
+    expect(samples.slice(1).every((sample, index) => direction * (sample.left - samples[index].left) >= -1)).toBe(true);
+    await expect(page.locator(`#${name}`)).not.toHaveAttribute('inert', '');
+  }
+});

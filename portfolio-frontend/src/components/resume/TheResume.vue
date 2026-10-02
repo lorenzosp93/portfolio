@@ -42,7 +42,7 @@
         :key="comp.id"
 
         :class="[
-          'relative z-10 min-w-0 flex-1 px-3 inline-flex items-center justify-center text-sm transition text-muted dark:text-gray-300',
+          'relative z-10 min-w-0 flex-1 px-3 inline-flex items-center justify-center text-sm font-semibold transition text-muted dark:text-gray-300',
           { active: activeSlideId === comp.id },
         ]"
 
@@ -132,6 +132,7 @@ const mobileTabBar = reactive({ left: 0, width: 0, visible: false });
 const scrollSettleDelayMs = 220;
 let resizeObserver: ResizeObserver | null = null;
 let scrollFrame: number | null = null;
+let selectedScrollTarget: string | null = null;
 let scrollSettleTimer: ReturnType<typeof window.setTimeout> | null = null;
 
 const resumeList = computed(() => [
@@ -214,28 +215,13 @@ function updateActivePanelHeight() {
     if (!activeSlide) return;
     const nextPanelHeight = activeSlide.scrollHeight;
     if (nextPanelHeight === activePanelHeight.value) return;
-    const viewportHeight = getViewportHeight();
-    const previousTargetHeight = Math.max(activePanelHeight.value, viewportHeight);
-    const nextTargetHeight = Math.max(nextPanelHeight, viewportHeight);
-    const shrinkAmount = previousTargetHeight - nextTargetHeight;
-
-    if (
-      shrinkAmount > 0 &&
-      resumeViewport.value &&
-      resumeViewport.value.getBoundingClientRect().bottom <= viewportHeight + 1
-    ) {
-      window.scrollBy({
-        top: -Math.min(shrinkAmount, window.scrollY),
-        behavior: "smooth",
-      });
-    }
     activePanelHeight.value = nextPanelHeight;
   });
 }
 
 function updateActiveSlideFromScroll() {
   const container = resumeContainer.value;
-  if (!container) return;
+  if (!container || selectedScrollTarget) return;
 
   const containerBox = container.getBoundingClientRect();
   const containerCenter = containerBox.left + containerBox.width / 2;
@@ -261,7 +247,19 @@ function updateActiveSlideFromScroll() {
   }
 }
 
+function finishSlideScroll() {
+  if (scrollSettleTimer) window.clearTimeout(scrollSettleTimer);
+  scrollSettleTimer = null;
+  selectedScrollTarget = null;
+  updateActiveSlideFromScroll();
+}
+
 function scheduleActiveSlideUpdate() {
+  if (selectedScrollTarget) {
+    if (scrollSettleTimer) window.clearTimeout(scrollSettleTimer);
+    scrollSettleTimer = window.setTimeout(finishSlideScroll, scrollSettleDelayMs);
+    return;
+  }
   if (scrollFrame) return;
   scrollFrame = window.requestAnimationFrame(() => {
     updateActiveSlideFromScroll();
@@ -282,18 +280,21 @@ function handleTabKey(event: KeyboardEvent, id: string) {
 }
 
 function scrollToSlide(id: string) {
+  const container = resumeContainer.value;
   const slide = slideRefs[id];
-  if (!slide) return;
+  const firstSlide = slideRefs[resumeList.value[0].id];
+  if (!container || !slide || !firstSlide) return;
+  selectedScrollTarget = id;
   activeSlideId.value = id;
-  updateActivePanelHeight();
-  updateMobileTabBar();
-  slide.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+  if (scrollSettleTimer) window.clearTimeout(scrollSettleTimer);
+  scrollSettleTimer = window.setTimeout(finishSlideScroll, scrollSettleDelayMs);
+  container.scrollTo({ left: slide.offsetLeft - firstSlide.offsetLeft, behavior: "smooth" });
 }
 
 watch(activeSlideId, () => {
   updateActivePanelHeight();
-  nextTick(updateMobileTabBar);
-}, { immediate: true });
+  updateMobileTabBar();
+}, { immediate: true, flush: 'post' });
 
 onMounted(() => {
   resizeObserver = new ResizeObserver(updateActivePanelHeight);
@@ -310,8 +311,13 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   resizeObserver?.disconnect();
+  if (scrollSettleTimer) window.clearTimeout(scrollSettleTimer);
   if (scrollFrame) window.cancelAnimationFrame(scrollFrame);
 });
+
+useEventListener(() => resumeContainer.value, "scrollend", finishSlideScroll);
+// A touch gesture takes over from a pending tab selection.
+useEventListener(() => resumeContainer.value, "pointerdown", finishSlideScroll, { passive: true });
 
 useEventListener(window, "resize", () => {
   updateActiveSlideFromScroll();
@@ -322,11 +328,11 @@ useEventListener(window, "resize", () => {
 
 <style scoped>
 .active {
-  @apply font-bold text-coral dark:text-coralSoft;
+  @apply text-coral dark:text-coralSoft;
 }
 
 .mobile-tab-bar {
-  @apply pointer-events-none absolute bottom-0 left-0 z-0 h-0.5 rounded-full bg-coral transition-all duration-300 ease-out dark:bg-coralSoft;
+  @apply pointer-events-none absolute bottom-0 left-0 z-0 h-0.5 rounded-full bg-coral transition-[transform,width] duration-300 ease-out dark:bg-coralSoft;
 }
 
 .cv-fab {

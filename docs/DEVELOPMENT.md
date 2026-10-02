@@ -225,6 +225,29 @@ without sending by default; `--send` sends one message to `EMAIL_TO`.
 `KUBE_NAMESPACE`, `KUBE_DEPLOYMENT`, and `KUBE_EMAIL_SECRET` override their
 defaults. These are operational helpers, not authoritative cluster manifests.
 
+### Manual frontend releases
+
+For authorized production releases, build the frontend locally, publish directly
+to DockerHub, and restart the frontend rollout rather than waiting for GitHub
+Actions. Run the relevant local build, lint, unit and browser checks first.
+The ignored `portfolio-frontend/.env.production` provides browser configuration.
+Use an immutable release tag and record the registry digest:
+
+```sh
+docker buildx build --platform linux/amd64,linux/arm64 --push \
+  --tag docker.io/lorenzosp93/portfolio-frontend:<release-tag> \
+  --metadata-file /tmp/portfolio-frontend-image.json ./portfolio-frontend
+```
+
+Production pins the frontend by digest. Update the image to the published digest
+and the `kubectl.kubernetes.io/restartedAt` pod-template annotation together in
+one scoped Deployment patch, then wait for the rollout and verify the public
+site. A restart without an image update would keep running the old digest.
+Use explicit context `home-k3s` and namespace `portfolio`. Keep the previous
+digest for rollback. For a manually published release, use `[skip ci]` on the
+GitHub merge commit so the automatic pipeline cannot later replace that image.
+Backend releases still require migration review and application before rollout.
+
 ### Leadership and canonical articles
 
 Apply the new shared migrations to seed the approved hero and leadership copy.
