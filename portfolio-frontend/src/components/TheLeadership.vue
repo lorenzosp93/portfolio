@@ -1,12 +1,12 @@
 <template>
-  <section v-if="site.leadershipCards.length" id="the-leadership" ref="root" class="leadership-section scroll-mt-20 px-5 py-16 sm:px-8">
+  <section v-if="site.highlightCards.length" id="the-leadership" ref="root" class="leadership-section scroll-mt-20 px-5 py-16 sm:px-8">
     <div ref="scene" class="leadership-scene mx-auto w-full max-w-6xl">
       <header class="mb-8">
-        <p class="mb-3 text-xs font-bold uppercase tracking-[0.24em] text-teal dark:text-tealSoft">How I lead</p>
-        <h2 class="max-w-2xl text-2xl font-bold leading-tight sm:text-3xl">{{ site.leadershipHeading }}</h2>
+        <p v-if="site.highlightsEyebrow" class="mb-3 text-xs font-bold uppercase tracking-[0.24em] text-teal dark:text-tealSoft">{{ site.highlightsEyebrow }}</p>
+        <h2 class="max-w-2xl text-2xl font-bold leading-tight sm:text-3xl">{{ site.highlightsHeading }}</h2>
       </header>
       <div ref="cardsRoot" class="leadership-cards grid gap-5 lg:grid-cols-3">
-        <article v-for="(card, index) in site.leadershipCards" :key="card.id" class="leadership-card rounded-2xl border border-ink/10 border-t-[3px] border-t-tealSoft bg-surface p-6 shadow-lg dark:border-white/10 dark:border-t-teal dark:bg-nightSurface" :class="{ 'leadership-card--coaching': card.icon === 'users' }">
+        <article v-for="(card, index) in site.highlightCards" :key="card.id" class="leadership-card rounded-2xl border border-ink/10 border-t-[3px] border-t-tealSoft bg-surface p-6 shadow-lg dark:border-white/10 dark:border-t-teal dark:bg-nightSurface" :class="{ 'leadership-card--coaching': card.icon === 'users' }">
           <div class="mb-6 flex items-center justify-between">
             <span class="leadership-icon inline-flex rounded-2xl bg-tealSoft/40 p-3 text-teal dark:bg-teal/20 dark:text-tealSoft">
               <component :is="icons[card.icon] || Square3Stack3DIcon" class="h-6 w-6" aria-hidden="true" />
@@ -82,7 +82,7 @@ async function animate() {
     };
   });
 }
-watch(() => site.leadershipCards, () => { void animate().catch(() => { media?.revert(); }); });
+watch(() => site.highlightCards, () => { void animate().catch(() => { media?.revert(); }); });
 // Re-evaluate available reading space after viewport height changes as well.
 let resizeTimer: ReturnType<typeof setTimeout>;
 function resize() { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { void animate().catch(() => { media?.revert(); }); }, 200); }

@@ -262,7 +262,18 @@ class SingletonBaseModel(models.Model):
 class SiteSettings(SingletonBaseModel):
     "Concrete model for the settings for the website"
     about_text = models.TextField(help_text="Short hero introduction; Markdown supported.")
-    leadership_heading = models.CharField(max_length=160, blank=True)
+    highlights_heading = models.CharField(
+        max_length=160, blank=True, db_column="leadership_heading",
+        verbose_name="Highlights heading",
+    )
+    highlights_nav_label = models.CharField(
+        max_length=40, default="Leadership", verbose_name="Highlights navigation label",
+        help_text="Label used in the desktop and mobile navigation.",
+    )
+    highlights_eyebrow = models.CharField(
+        max_length=80, default="How I lead", blank=True, verbose_name="Highlights eyebrow",
+        help_text="Small text above the heading; leave blank to hide it.",
+    )
     show_skills = models.BooleanField(
         default=False, verbose_name="Show Skills",
         help_text="Show skills and languages on the website and printable CV.",

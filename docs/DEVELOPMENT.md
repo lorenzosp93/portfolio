@@ -71,7 +71,7 @@ Contact email worker** terminal. The matching Contact submission moves from
 | Django core | `DEBUG`, `DJANGO_SECRET_KEY` (or `SECRET_KEY`), `DJANGO_ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS`; legacy: `DJANGO_HOST` |
 | Database | `DB_ENGINE`, `DATABASE_NAME`, `DATABASE_USERNAME`, `DATABASE_PASSWORD`, `DATABASE_HOST`, `DATABASE_PORT` |
 | Browser/API origin | `FRONTEND_HOST`, `BACKEND_HOST`, `VITE_APP_BACKEND_URL` |
-| Frontend content | Hero introduction, leadership heading, and published highlight cards are edited in Django admin; Show Skills controls both website and printed CV (off by default). |
+| Frontend content | Hero introduction, highlights heading, navigation label, eyebrow, and published highlight cards are edited in Django admin; Show Skills controls both website and printed CV (off by default). |
 | Email | `EMAIL_TO`, `EMAIL_FROM`, `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `EMAIL_USE_TLS`, `EMAIL_TIMEOUT`, `CONTACT_EMAIL_MAX_ATTEMPTS`, `CONTACT_EMAIL_RETRY_BASE_SECONDS`, `CONTACT_EMAIL_LEASE_SECONDS`, `CONTACT_EMAIL_POLL_SECONDS` |
 | Push | `VITE_APP_KEY`, `WEB_PUSH_PUBLIC_KEY`, `WEB_PUSH_PRIVATE_KEY`, `WEB_PUSH_ADMIN_EMAIL` |
 | Optional S3 storage | `USE_S3`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_STORAGE_BUCKET_NAME`, `AWS_S3_CUSTOM_DOMAIN` |

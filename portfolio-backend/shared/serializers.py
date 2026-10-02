@@ -3,6 +3,7 @@ from urllib.parse import urlsplit
 from django.conf import settings
 from rest_framework.serializers import (
     ModelSerializer,
+    CharField,
     SerializerMethodField,
     ValidationError,
 )
@@ -29,10 +30,16 @@ class HighlightCardSerializer(ModelSerializer):
 
 
 class SettingsSerializer(ModelSerializer):
+    highlight_cards = SerializerMethodField()
+    # Keep previously deployed clients compatible during rolling releases.
     leadership_cards = SerializerMethodField()
+    leadership_heading = CharField(source='highlights_heading', read_only=True)
+
+    def get_highlight_cards(self, obj):
+        return HighlightCardSerializer(HighlightCard.objects.filter(active=True), many=True).data
 
     def get_leadership_cards(self, obj):
-        return HighlightCardSerializer(HighlightCard.objects.filter(active=True), many=True).data
+        return self.get_highlight_cards(obj)
 
     class Meta:
         model = SiteSettings
@@ -40,6 +47,10 @@ class SettingsSerializer(ModelSerializer):
             'about_text',
             'hero_picture',
             'show_skills',
+            'highlights_heading',
+            'highlights_nav_label',
+            'highlights_eyebrow',
+            'highlight_cards',
             'leadership_heading',
             'leadership_cards',
         ]

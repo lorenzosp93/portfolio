@@ -20,6 +20,10 @@ export interface HighlightCard {
 
 export interface SiteSettings {
   about_text: string;
+  highlights_heading?: string;
+  highlights_nav_label?: string;
+  highlights_eyebrow?: string;
+  highlight_cards?: HighlightCard[];
   leadership_heading?: string;
   show_skills?: boolean;
   leadership_cards?: HighlightCard[];
