@@ -1,15 +1,14 @@
 <template>
   <section
     ref="root"
-    class="min-h-[45vh] lg:min-h-[50vh] w-full relative flex flex-wrap mx-auto bg-paper py-20 dark:bg-night md:py-28"
+    class="min-h-[45vh] lg:min-h-[50vh] w-full relative flex flex-wrap mx-auto py-20 md:py-28"
   >
     <div class="flex w-full max-w-7xl flex-col items-center mx-auto mb-8 px-5 md:mb-12">
       <h2 class="section-heading">
         Thoughts from the blog.
       </h2>
       <p class="section-lede px-2">
-        Who needs MySpace when you can create your own blog and write whatever
-        comes to mind on it, right?
+        Writing about product, engineering, and the systems behind everyday work.
       </p>
       <PushSubscribe class="mt-3 dark:fill-white" />
     </div>
@@ -90,12 +89,18 @@ watch(isActive, (val) => {
 // Deep links: /?post=<slug> opens that post; opening a card updates the URL.
 // ListCard reads openOnMount only once, so the slug must be known before the
 // linked card renders (the store adds it before loadLinkedPost resolves).
-const linkedSlug = ref(new URLSearchParams(window.location.search).get("post"));
+const articlePath = window.location.pathname.match(/^\/writing\/([^/]+)\/?$/);
+const linkedSlug = ref(articlePath ? decodeURIComponent(articlePath[1]) : new URLSearchParams(window.location.search).get("post"));
 
 function syncPostUrl(slug?: string) {
   const url = new URL(window.location.href);
-  if (slug) url.searchParams.set("post", slug);
-  else url.searchParams.delete("post");
+  if (articlePath) {
+    url.pathname = slug ? `/writing/${encodeURIComponent(slug)}/` : '/';
+    url.searchParams.delete('post');
+  } else {
+    if (slug) url.searchParams.set("post", slug);
+    else url.searchParams.delete("post");
+  }
   window.history.replaceState(window.history.state, "", url);
 }
 

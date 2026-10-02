@@ -1,7 +1,7 @@
 <template>
   <div
-    @click="toggleDetails"
-    class="group cursor-pointer overflow-hidden rounded-2xl bg-surface shadow-sm ring-1 ring-ink/10 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:ring-teal/30 dark:bg-nightSurface dark:ring-white/10"
+    @click="openDetails"
+    class="group relative cursor-pointer overflow-hidden rounded-2xl bg-surface shadow-sm ring-1 ring-ink/10 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:ring-teal/30 dark:bg-nightSurface dark:ring-white/10"
     :class="{ 'pointer-events-none': detailsVisible }"
   >
     <img
@@ -14,7 +14,7 @@
     <div class="w-full border-b border-ink/10 bg-sand/70 p-4 text-lg text-ink dark:border-white/10 dark:bg-nightElevated dark:text-white">
       <p class="text-xs font-medium uppercase tracking-wide text-coral dark:text-coralSoft">{{ location }}{{ status }}</p>
       <h2 class="mt-1 w-full text-xl font-semibold tracking-tight text-ink dark:text-white">
-        {{ name }}
+        <button ref="opener" type="button" class="text-left" :aria-label="`Open ${name}`" aria-haspopup="dialog" :aria-expanded="detailsVisible" @click.stop="openDetails">{{ name }}</button>
       </h2>
     </div>
     <div class="relative">
@@ -35,9 +35,10 @@
     <blog-entry-detail
       v-if="type == 'blog' && (isActive || detailsVisible)"
       :isOpen="detailsVisible"
-      @card-closed="toggleDetails"
+      @card-closed="closeDetails"
       :name="name"
       :slug="slug"
+      :canonical-url="canonical_url"
       :created_at="created_at"
       :created_by="created_by"
       :location="location"
@@ -48,7 +49,7 @@
     <project-entry-detail
       v-if="type == 'project' && (isActive || detailsVisible)"
       :isOpen="detailsVisible"
-      @card-closed="toggleDetails"
+      @card-closed="closeDetails"
       :name="name"
       :location="location"
       :picture="picture"
@@ -76,11 +77,12 @@ const props = defineProps<{
   uuid: string;
   name: string;
   slug?: string;
+  canonical_url?: string;
   openOnMount?: boolean;
   created_at?: Date | string;
   created_by?: CreatedBy;
   location?: string;
-  picture: string;
+  picture: string | null;
   content: string;
   status?: string;
   attachments: Attachment[];
@@ -88,15 +90,22 @@ const props = defineProps<{
 }>();
 const emit = defineEmits<{ (event: "open-change", open: boolean): void }>();
 
+const opener = ref<HTMLButtonElement | null>(null);
 const detailsVisible = ref(props.openOnMount ?? false);
 
 const truncatedContent = computed(() => {
   return renderMarkdown(props.content, { breaks: true });
 });
 
-function toggleDetails() {
-  detailsVisible.value = !detailsVisible.value;
-  emit("open-change", detailsVisible.value);
+function openDetails(event?: MouseEvent) {
+  if (event?.target instanceof Element && event.target.closest('a')) return;
+  opener.value?.focus({ preventScroll: true });
+  detailsVisible.value = true;
+  emit("open-change", true);
+}
+function closeDetails() {
+  detailsVisible.value = false;
+  emit("open-change", false);
 }
 </script>
 

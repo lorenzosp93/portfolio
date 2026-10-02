@@ -47,26 +47,26 @@
       <template #title>
         <p>Contact form</p>
       </template>
+      <template #extra-title-content />
       <template #subtitle>
+        <div class="mt-3 flex items-center justify-between gap-3">
         <p>Send me a quick message!</p>
-      </template>
-      <template #extra-title-content>
         <button
           v-if="!isLoading"
-          class="absolute right-4 top-4 rounded-full px-5 py-2 text-sm font-semibold shadow-sm ring-1 transition duration-300 focus:outline-none focus:ring-2 focus:ring-tealSoft"
+          class="rounded-full px-5 py-2 text-sm font-semibold shadow-sm ring-1 transition duration-300 focus:outline-none focus:ring-2 focus:ring-tealSoft"
           :class="{
             'bg-teal text-white ring-teal/20 hover:-translate-y-0.5 hover:bg-teal/90 hover:shadow-lg dark:bg-tealSoft dark:text-night dark:ring-tealSoft/30 dark:hover:bg-tealSoft/90': canSubmit,
             'cursor-not-allowed bg-muted/20 text-muted ring-ink/10 dark:bg-white/10 dark:text-gray-400 dark:ring-white/10': !canSubmit,
           }"
           type="submit"
           :disabled="!canSubmit"
-          @click.prevent="submitMessage"
+          form="contact-form"
         >
           Send
         </button>
         <div
           v-else
-          class="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-surface shadow-md ring-1 ring-ink/10 dark:bg-nightSurface dark:ring-white/10"
+          class="flex h-10 w-10 items-center justify-center rounded-full bg-surface shadow-md ring-1 ring-ink/10 dark:bg-nightSurface dark:ring-white/10"
         >
           <svg
             role="status"
@@ -85,9 +85,12 @@
             />
           </svg>
         </div>
+        </div>
       </template>
       <template #inner-content>
         <form
+          id="contact-form"
+          @submit.prevent="submitMessage"
           class="relative mx-auto grid max-w-lg grid-cols-1 gap-4 px-4 sm:grid-cols-2"
           autocomplete="on"
         >
@@ -95,6 +98,7 @@
             v-for="(item, idx) in formItems"
             :key="item.id"
             class="w-full"
+            :class="{ 'sm:col-span-2': item.type === 'textarea' }"
           >
             <label
               class="mb-1 ml-1 block text-sm font-semibold text-ink dark:text-white"
@@ -120,6 +124,8 @@
             />
             <textarea
               v-else
+              :name="item.id"
+              :aria-describedby="`${item.id}-help`"
               :id="item.id"
               v-model="item.value"
               class="w-full rounded-xl bg-sand/70 px-3 py-2 text-base text-ink caret-teal ring-1 ring-ink/10 outline-none transition placeholder:font-light placeholder:text-muted focus:bg-surface focus:ring-2 focus:ring-teal dark:bg-nightElevated dark:text-white dark:caret-tealSoft dark:ring-white/10 dark:placeholder:text-gray-400 dark:focus:bg-nightSurface dark:focus:ring-tealSoft sm:col-span-2"
@@ -130,12 +136,13 @@
               required
               @input="error = null"
             />
-            <span class="block px-1 pt-1 text-xs text-muted dark:text-gray-400"
-              >{{ item?.help }}
+            <span :id="`${item.id}-help`" class="block px-1 pt-1 text-xs text-muted dark:text-gray-400"
+              >{{ item.type === 'textarea' ? `${item.value.length} / ${item.maxLength} characters` : item?.help }}
             </span>
           </div>
           <p
             v-if="error"
+            role="alert"
             class="absolute pt-1 -top-4 left-1/2 w-full -translate-x-1/2 text-center text-xs text-red-700 dark:text-red-300"
           >
             {{ error }}
@@ -218,8 +225,7 @@ const formItems: Ref<FormItem[]> = ref([
     type: "textarea",
     label: "Message",
     placeholder: "Here goes my message",
-    help: "Please keep it within 280 characters",
-    maxLength: 280,
+    maxLength: 2000,
     value: "",
     autocomplete: false,
   },
@@ -227,7 +233,7 @@ const formItems: Ref<FormItem[]> = ref([
 
 const canSubmit = computed(() => {
   return formItems.value.every((item: FormItem) => {
-    return item.value;
+    return item.value.trim();
   });
 });
 
@@ -259,7 +265,7 @@ function formatApiError(err: unknown): string {
 }
 
 async function submitMessage() {
-  if (!canSubmit.value || hasSentMessage.value) return;
+  if (!canSubmit.value || hasSentMessage.value || isLoading.value) return;
 
   isLoading.value = true;
   error.value = null;

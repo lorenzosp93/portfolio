@@ -5,9 +5,9 @@ test("renders the main portfolio sections", async ({ page }) => {
 
   await expect(page.getByRole("main")).toHaveCount(1);
   await expect(page.getByRole("main").locator("footer")).toHaveCount(0);
-  await expect(page.locator("body > footer, #app > footer")).toHaveCount(1);
+  await expect(page.getByRole("contentinfo")).toHaveCount(1);
   await expect(page.getByRole("heading", { name: /Hi, I'm Lorenzo/i })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Here are a few things I've done." })).toBeAttached();
+  await expect(page.getByRole("heading", { name: "Experience leading products and teams." })).toBeAttached();
   await expect(page.getByRole("heading", { name: "Thoughts from the blog." })).toBeAttached();
   await expect(page.getByRole("heading", { name: "Get in touch!" })).toBeAttached();
 });
@@ -38,16 +38,16 @@ test("does not place the animated portrait inside a transformed hero layout", as
   }
 });
 
-test("uses night gradients for tinted sections in dark mode", async ({ page }) => {
+test("uses a consistent night background across sections in dark mode", async ({ page }) => {
   await page.emulateMedia({ colorScheme: "dark" });
   await page.goto("/");
-
+  await expect(page.locator("body")).toHaveCSS("background-color", "rgb(11, 17, 32)");
+  await expect(page.locator(".cloud-teal")).toHaveCSS("background-image", /rgb\(24, 60, 54\)/);
+  await expect(page.locator(".cloud-teal")).toHaveCSS("opacity", "0.28");
+  await expect(page.locator(".cloud-coral")).toHaveCSS("background-image", /rgb\(68, 43, 50\)/);
   for (const selector of ["#the-resume", "#the-contacts"]) {
-    const background = await page.locator(selector).evaluate(
-      (element) => getComputedStyle(element).backgroundImage
-    );
-    expect(background).toContain("rgb(11, 17, 32)");
-    expect(background).not.toContain("rgb(255, 248, 239)");
+    await expect(page.locator(selector)).toHaveCSS("background-image", "none");
+    await expect(page.locator(selector)).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
   }
 });
 

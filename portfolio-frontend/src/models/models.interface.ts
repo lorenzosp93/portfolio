@@ -10,8 +10,18 @@ export interface ContactForm {
   content: string;
 }
 
+export interface LeadershipCard {
+  id: number;
+  title: string;
+  body: string;
+  icon: 'layers' | 'globe' | 'users';
+  position: number;
+}
+
 export interface SiteSettings {
   about_text: string;
+  leadership_heading?: string;
+  leadership_cards?: LeadershipCard[];
   hero_picture: string | null;
 }
 
@@ -66,7 +76,7 @@ export interface Project {
   description: string;
   content: string;
   attachments: Attachment[];
-  picture: string;
+  picture: string | null;
   status: string;
 }
 
@@ -91,12 +101,13 @@ export interface CreatedBy {
 }
 
 export interface BlogPost {
+  canonical_url?: string;
   uuid: string;
   name: string;
   slug?: string;
   created_at: Date | string;
   location: string;
-  picture: string;
+  picture: string | null;
   content: string;
   attachments: Attachment[];
   created_by: CreatedBy;

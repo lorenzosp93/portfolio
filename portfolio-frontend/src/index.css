@@ -38,25 +38,7 @@
     @apply mx-auto mt-2 w-full max-w-xl text-center text-sm leading-relaxed text-muted dark:text-gray-300 md:text-base;
   }
 
-  .section-tint {
-    background: linear-gradient(
-      to bottom,
-      #fff8ef 0%,
-      #f8eedc 18%,
-      #f8eedc 82%,
-      #fff8ef 100%
-    );
-  }
-
-  .dark .section-tint {
-    background: linear-gradient(
-      to bottom,
-      #0b1120 0%,
-      #111827 18%,
-      #111827 82%,
-      #0b1120 100%
-    );
-  }
+  .section-tint { background: transparent; }
 
   .bottom-sheet__backdrop {
     background: linear-gradient(
@@ -86,3 +68,10 @@
     scrollbar-width: none; /* Firefox */
   }
 }
+
+/* Consistent focus across navigation, cards, and modal controls. */
+#app :focus-visible, .bottom-sheet :focus-visible {
+  outline: 3px solid #0f766e;
+  outline-offset: 3px;
+}
+.dark #app :focus-visible, .dark .bottom-sheet :focus-visible { outline-color: #8ed8c8; }

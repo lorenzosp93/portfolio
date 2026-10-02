@@ -9,6 +9,9 @@
         moving: moving,
       }"
       style="pointer-events: all"
+      :inert="opened ? undefined : ''"
+      :aria-hidden="!opened"
+      @click.stop
       ref="bottomSheet"
     >
       <div
@@ -22,6 +25,8 @@
       <article
         role="dialog"
         aria-modal="true"
+        :aria-labelledby="titleId"
+        tabindex="-1"
         class="bottom-sheet__card fx-default overflow-hidden bg-surface shadow-2xl ring-1 ring-ink/10 dark:bg-nightSurface dark:ring-white/10 md:max-w-lg lg:max-w-2xl"
         :style="[
           {
@@ -36,14 +41,15 @@
       >
         <div class="bottom-sheet__pan bg-gradient-to-br from-sand via-surface to-tealSoft/40 dark:from-nightElevated dark:via-nightSurface dark:to-teal/20" ref="pan">
           <div class="bottom-sheet__bar bg-teal dark:bg-tealSoft" />
-          <header class="mt-auto border-b border-ink/10 p-4 dark:border-white/10">
+          <header class="relative mt-auto border-b border-ink/10 p-4 dark:border-white/10">
+            <button type="button" class="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full text-muted transition hover:bg-ink/5 hover:text-ink dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white" aria-label="Close dialog" @click="close(null)"><XMarkIcon class="h-5 w-5" aria-hidden="true" /></button>
             <div
-              class="text-md text-muted dark:text-gray-300 sm:order-last sm:ml-auto"
+              class="text-md pr-12 text-muted dark:text-gray-300 sm:order-last sm:ml-auto"
             >
               <slot name="extra-title-content">Extra title content</slot>
             </div>
             <div>
-              <div class="text-2xl font-semibold text-ink dark:text-white">
+              <div :id="titleId" class="pr-12 text-2xl font-semibold text-ink dark:text-white">
                 <slot name="title">Some title for the card</slot>
               </div>
               <div class="text-md text-muted dark:text-gray-300 pb-auto">
@@ -87,6 +93,7 @@
 </template>
 
 <script setup lang="ts">
+import { XMarkIcon } from "@heroicons/vue/24/outline";
 import { useEventListener } from "@vueuse/core";
 import { nextTick, onBeforeUnmount, onMounted, Ref, ref, watch } from "vue";
 import gsap from "gsap";
@@ -95,13 +102,44 @@ import { InertiaPlugin } from "gsap/InertiaPlugin";
 
 gsap.registerPlugin(Draggable, InertiaPlugin);
 
-// GSAP is only used by this component; honour reduced-motion by making its
-// open/close tweens near-instant instead of removing the gestures.
 const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)");
-const syncMotionPreference = () =>
-  gsap.globalTimeline.timeScale(reducedMotion?.matches ? 20 : 1);
-syncMotionPreference();
-reducedMotion?.addEventListener?.("change", syncMotionPreference);
+const titleId = `dialog-title-${crypto.randomUUID()}`;
+let opener: HTMLElement | null = null;
+let focusFrame = 0;
+let backgroundElements: { element: HTMLElement; inert: boolean }[] = [];
+
+function enterModal() {
+  opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+  backgroundElements = Array.from(document.body.children)
+    .filter((el): el is HTMLElement => el instanceof HTMLElement && el !== bottomSheet.value && !el.contains(bottomSheet.value))
+    .map(element => ({ element, inert: element.inert }));
+  backgroundElements.forEach(({ element }) => { element.inert = true; });
+  nextTick(() => {
+    focusFrame = requestAnimationFrame(() => {
+      if (!opened.value) return;
+      const first = card.value?.querySelector<HTMLElement>('[autofocus], button, a[href], input, textarea');
+      (first || card.value)?.focus({ preventScroll: true });
+    });
+  });
+}
+function leaveModal() {
+  cancelAnimationFrame(focusFrame);
+  backgroundElements.forEach(({ element, inert }) => { element.inert = inert; });
+  backgroundElements = [];
+  if (opener?.isConnected) opener.focus({ preventScroll: true });
+  opener = null;
+}
+function trapFocus(event: KeyboardEvent) {
+  if (!opened.value) return;
+  if (event.key === 'Escape') { event.preventDefault(); close(null); return; }
+  if (event.key !== 'Tab') return;
+  const elements = Array.from(card.value?.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex="0"]') || [])
+    .filter(el => el.getClientRects().length > 0 && !el.closest('[inert]'));
+  const index = elements.indexOf(document.activeElement as HTMLElement);
+  const next = event.shiftKey ? index <= 0 ? elements.length - 1 : index - 1 : (index + 1) % elements.length;
+  event.preventDefault();
+  (elements[next] || card.value)?.focus();
+}
 
 const card: Ref<HTMLElement | null> = ref(null);
 const content: Ref<HTMLElement | null> = ref(null);
@@ -264,9 +302,9 @@ function init() {
       tl.from(card.value, {
         y: cardH.value,
         opacity: 0,
-        duration: openAnimationDurationMs / 1000,
+        duration: reducedMotion?.matches ? .001 : openAnimationDurationMs / 1000,
         ease: "power3",
-      }).from(backdrop.value, { opacity: 0, duration: 0.3 }, 0);
+      }).from(backdrop.value, { opacity: 0, duration: reducedMotion?.matches ? .001 : 0.3 }, 0);
       timeline.value = tl;
 
       const dr = Draggable.create(card.value, {
@@ -341,6 +379,8 @@ function init() {
 const emit = defineEmits(["cardOpened", "cardClosed"]);
 
 function open() {
+  if (opened.value) return;
+  enterModal();
   lockBodyScroll();
   closing.value = false;
   init();
@@ -357,6 +397,7 @@ type DragCloseState = {
 function close(dragState: DragCloseState | null) {
   if (opened.value) {
   unlockBodyScroll();
+  leaveModal();
   closing.value = true;
     resetExpansion();
     if (dragState != null) {
@@ -435,6 +476,7 @@ watch(
 
 onBeforeUnmount(() => {
   unlockBodyScroll();
+  leaveModal();
   timeline.value?.kill();
   drag.value?.kill();
   if (card.value) {
@@ -448,11 +490,7 @@ onMounted(() => {
   if (props.isOpen) {
     nextTick(open);
   }
-  useEventListener("keyup", (event) => {
-    if (event.key == "Escape") {
-      close(null);
-    }
-  });
+  useEventListener(document, "keydown", trapFocus);
   useEventListener("resize", () => {
     updateDragBounds();
     nextTick(updateScrollAffordances);

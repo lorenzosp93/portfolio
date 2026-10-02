@@ -17,7 +17,7 @@
           {{ start_date__date }} — {{ end_date__date }}
         </time>
         <p class="order-1 min-w-0 flex-1 font-semibold text-ink dark:text-white">
-          {{ name }}
+          <button ref="opener" type="button" class="text-left" :aria-label="`Open ${name}`" aria-haspopup="dialog" :aria-expanded="detailsVisible" @click.stop="openDetails">{{ name }}</button>
         </p>
         <p class="order-3 w-full text-xs text-teal dark:text-tealSoft sm:text-sm">
           {{ location }}
@@ -43,7 +43,7 @@
       </div>
     </div>
     <timeline-entry-detail
-      v-if="isActive"
+      v-if="isActive || detailsVisible"
       v-bind="$props"
       :end_date__date="end_date__date"
       :start_date__date="start_date__date"
@@ -100,8 +100,10 @@ export default defineComponent({
   },
   inject: ["truncationAmount"],
   methods: {
-    openDetails() {
+    openDetails(event?: MouseEvent) {
+      if (event?.target instanceof Element && event.target.closest("a")) return;
       if (!this.justClosed) {
+        (this.$refs.opener as HTMLButtonElement)?.focus({ preventScroll: true });
         this.detailsVisible = true;
       }
     },

@@ -29,7 +29,7 @@ import DetailCard from "../../UI/Card/DetailCard.vue";
 const props = defineProps<{
   name: string;
   location?: string;
-  picture: string;
+  picture: string | null;
   content: string;
   attachments?: Attachment[];
   status?: string;

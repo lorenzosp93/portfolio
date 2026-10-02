@@ -17,7 +17,9 @@
         </div>
 
         <div class="flex flex-1 items-center justify-end sm:items-stretch sm:justify-start">
-          <div
+          <button
+            type="button"
+            aria-label="Back to introduction"
             class="mx-3 my-2 flex flex-shrink-0 items-center z-50"
             @click="scrollToElement(navStore.refs?.theHero)"
           >
@@ -29,7 +31,7 @@
               alt="Hero image logo"
               decoding="async"
             />
-          </div>
+          </button>
 
           <div class="my-auto hidden w-full justify-end sm:ml-6 sm:block">
             <div
@@ -52,6 +54,13 @@
                 About
               </button> -->
 
+              <button
+                v-if="siteStore.leadershipCards.length"
+                :ref="(el) => setNavItemRef('theLeadership', el)"
+                class="nav-link"
+                :class="{ active_top_text: activeNavItem === 'theLeadership' }"
+                @click="scrollToElement(navStore.refs?.theLeadership)"
+              >Leadership</button>
               <Transition name="resume-nav" @after-enter="updateActiveIndicator" @after-leave="updateActiveIndicator">
                 <button
                   v-if="!isResumeActive"
@@ -124,6 +133,8 @@
 
     <div
       id="mobile-menu"
+      :inert="!isMenuOpen || !revealed ? '' : undefined"
+      :aria-hidden="!isMenuOpen || !revealed"
       class="absolute ml-3 mt-2 overflow-hidden rounded-2xl bg-surface shadow-xl ring-1 ring-ink/10 transition duration-300 ease-in-out dark:bg-nightSurface dark:ring-white/10 sm:hidden"
       :class="{ 'menu-closed': !isMenuOpen }"
     >
@@ -131,6 +142,7 @@
         <button class="mobile-link" :class="{ active: navStore.visible === 'theHero' }" @click="scrollMobile(navStore.refs?.theHero)">
           About
         </button>
+        <button v-if="siteStore.leadershipCards.length" class="mobile-link" :class="{ active: navStore.visible === 'theLeadership' }" @click="scrollMobile(navStore.refs?.theLeadership)">Leadership</button>
         <button class="mobile-link" :class="{ active: isResumeActive }" @click="scrollMobileToResumeSection">
           Resume
         </button>
@@ -273,7 +285,7 @@ function scrollToElement(elem: MaybeRef<HTMLDivElement | null>) {
   if (!elem) return;
 
   scrollHorizontallyIntoView(elem);
-  elem.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+  elem.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start", inline: "nearest" });
 }
 
 function scrollHorizontallyIntoView(elem: HTMLElement) {
@@ -289,7 +301,7 @@ function scrollHorizontallyIntoView(elem: HTMLElement) {
     parentBox.width / 2 +
     elemBox.width / 2;
 
-  scrollParent.scrollTo({ left: targetLeft, behavior: "smooth" });
+  scrollParent.scrollTo({ left: targetLeft, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
 }
 
 function getHorizontalScrollParent(elem: HTMLElement): HTMLElement | null {

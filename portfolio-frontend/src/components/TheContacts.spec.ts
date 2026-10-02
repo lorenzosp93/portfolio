@@ -48,6 +48,14 @@ describe("TheContacts", () => {
     expect(wrapper.get('button[type="submit"]').attributes("disabled")).toBeUndefined();
   });
 
+  it("shows the extended message limit and updates its counter", async () => {
+    const wrapper = mount(TheContacts, { global: { stubs: { DetailCard: DetailCardStub } } });
+    await openAndFillForm(wrapper);
+    await wrapper.get('#content').setValue('x'.repeat(1200));
+    expect(wrapper.get('#content').attributes('maxlength')).toBe('2000');
+    expect(wrapper.get('#content-help').text()).toBe('1200 / 2000 characters');
+  });
+
   it("posts the form and replaces the button with a session-persistent confirmation", async () => {
     backend.postContactForm.mockResolvedValue({});
     const wrapper = mount(TheContacts, {
@@ -55,7 +63,7 @@ describe("TheContacts", () => {
     });
     await openAndFillForm(wrapper);
 
-    await wrapper.get('button[type="submit"]').trigger("click");
+    await wrapper.get("form").trigger("submit");
     await flushPromises();
 
     expect(backend.postContactForm).toHaveBeenCalledWith({
@@ -91,7 +99,7 @@ describe("TheContacts", () => {
     });
     await openAndFillForm(wrapper);
 
-    await wrapper.get('button[type="submit"]').trigger("click");
+    await wrapper.get("form").trigger("submit");
     await flushPromises();
 
     expect(wrapper.text()).toContain(
@@ -108,7 +116,7 @@ describe("TheContacts", () => {
       global: { stubs: { DetailCard: DetailCardStub } },
     });
     await openAndFillForm(wrapper);
-    await wrapper.get('button[type="submit"]').trigger("click");
+    await wrapper.get("form").trigger("submit");
     await flushPromises();
     expect(wrapper.text()).toContain("Too many messages. Please try again later.");
     expect((wrapper.get("#content").element as HTMLTextAreaElement).value).toBe(
@@ -116,7 +124,7 @@ describe("TheContacts", () => {
     );
     expect(window.sessionStorage.getItem("contactMessageSent")).toBeNull();
     backend.postContactForm.mockResolvedValue({});
-    await wrapper.get('button[type="submit"]').trigger("click");
+    await wrapper.get("form").trigger("submit");
     await flushPromises();
     expect(wrapper.get('[data-test="contact-success"]').exists()).toBe(true);
   });
