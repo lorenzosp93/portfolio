@@ -71,7 +71,7 @@ Contact email worker** terminal. The matching Contact submission moves from
 | Django core | `DEBUG`, `DJANGO_SECRET_KEY` (or `SECRET_KEY`), `DJANGO_ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS`; legacy: `DJANGO_HOST` |
 | Database | `DB_ENGINE`, `DATABASE_NAME`, `DATABASE_USERNAME`, `DATABASE_PASSWORD`, `DATABASE_HOST`, `DATABASE_PORT` |
 | Browser/API origin | `FRONTEND_HOST`, `BACKEND_HOST`, `VITE_APP_BACKEND_URL` |
-| Frontend content | `VITE_HERO_COPY` (trusted Markdown hero copy; separate paragraphs with a blank line) |
+| Frontend content | Hero introduction, leadership heading, and published leadership cards are edited in Django admin. |
 | Email | `EMAIL_TO`, `EMAIL_FROM`, `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `EMAIL_USE_TLS`, `EMAIL_TIMEOUT`, `CONTACT_EMAIL_MAX_ATTEMPTS`, `CONTACT_EMAIL_RETRY_BASE_SECONDS`, `CONTACT_EMAIL_LEASE_SECONDS`, `CONTACT_EMAIL_POLL_SECONDS` |
 | Push | `VITE_APP_KEY`, `WEB_PUSH_PUBLIC_KEY`, `WEB_PUSH_PRIVATE_KEY`, `WEB_PUSH_ADMIN_EMAIL` |
 | Optional S3 storage | `USE_S3`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_STORAGE_BUCKET_NAME`, `AWS_S3_CUSTOM_DOMAIN` |
@@ -224,3 +224,30 @@ stores the values in the `portfolio-email` Kubernetes Secret, injects them into
 without sending by default; `--send` sends one message to `EMAIL_TO`.
 `KUBE_NAMESPACE`, `KUBE_DEPLOYMENT`, and `KUBE_EMAIL_SECRET` override their
 defaults. These are operational helpers, not authoritative cluster manifests.
+
+### Leadership and canonical articles
+
+Apply the new shared migrations to seed the approved hero and leadership copy.
+The content migration intentionally replaces `SiteSettings.about_text`, preserves
+existing pictures/CV settings, and inserts three leadership cards. Edit wording,
+icons, publication status, and order in Django admin afterward. The printable CV
+reuses the published leadership cards and hero introduction in its summary;
+`cv_summary` remains the fallback when no leadership cards are published.
+
+Published articles are served by Django at `/writing/<slug>/`; `/sitemap.xml` lists
+them. JavaScript-free readers get the full article and specific social metadata.
+Django loads the Vite `asset-manifest.json` from `FRONTEND_ASSET_ORIGIN` (defaults
+to `FRONTEND_HOST`, two-second timeout, one-minute process cache). The Vue bundle
+then replaces the fallback with the homepage and existing article modal. Manifest
+failures leave the readable HTML intact. Keep that origin accessible from the API.
+
+For full-stack development, set `FRONTEND_DEV_SERVER=http://localhost:8080` on the
+backend; Vite proxies `/writing/` and `/sitemap.xml` to `VITE_APP_BACKEND_URL`.
+Production ignores `FRONTEND_DEV_SERVER`.
+
+At deployment, route `/writing/` and `/sitemap.xml` to Django alongside `/api/`,
+or set `WRITING_BACKEND_ORIGIN` on the frontend container to the reachable Django
+HTTP origin. The container then proxies those paths without an SPA fallback.
+Without either routing choice they intentionally return 503 rather than generic
+homepage HTML. Keep assets, the manifest, and normal homepage requests on the
+frontend. Apply migrations and roll out the backend before the frontend.

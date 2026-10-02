@@ -4,13 +4,14 @@ import os
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from shared.models import SiteSettings
+from shared.models import LeadershipCard, SiteSettings
 
 from .models import Education, Entity, Experience, Skill, SkillCategory
 from .templatetags.resume_tags import cv_markdown
 
 
 def seed_cv():
+    SiteSettings.objects.all().delete()
     SiteSettings.objects.create(
         about_text='About',
         cv_headline='Head of Product | Engineer',
@@ -83,6 +84,29 @@ class CVPageTests(TestCase):
         if path := os.environ.get('CV_PREVIEW_PATH'):
             with open(path, 'w', encoding='utf-8') as handle:
                 handle.write(html)
+
+    def test_cv_reuses_published_leadership_content_in_order(self):
+        LeadershipCard.objects.all().delete()
+        second = LeadershipCard.objects.create(title='Regional autonomy', body='Shared global direction.', position=2)
+        LeadershipCard.objects.create(title='Developing leaders', body='Coaching independent **product leaders**.', position=1)
+        LeadershipCard.objects.create(title='Draft card', body='Do not publish.', active=False)
+        site = SiteSettings.objects.get(pk=1)
+        site.about_text = 'I lead software product teams in EMEA.'
+        site.cv_summary = 'Outdated summary'
+        site.save()
+        html = self.client.get('/api/resume/cv/').content.decode()
+        self.assertIn(site.about_text, html)
+        self.assertIn('Coaching independent <strong>product leaders</strong>.', html)
+        self.assertLess(html.index('Developing leaders'), html.index('Regional autonomy'))
+        self.assertNotIn('Draft card', html)
+        self.assertNotIn('Outdated summary', html)
+        second.body = 'Updated regional strategy.'
+        second.save()
+        self.assertContains(self.client.get('/api/resume/cv/'), second.body)
+
+    def test_cv_retains_summary_fallback_without_leadership_content(self):
+        LeadershipCard.objects.all().delete()
+        self.assertContains(self.client.get('/api/resume/cv/'), 'A Product leader mixing tech knowledge')
 
     def test_never_exposes_private_contact_details(self):
         get_user_model().objects.create_user(username='x', email='me@lorenzosp.com')

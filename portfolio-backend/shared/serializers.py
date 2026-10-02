@@ -3,10 +3,12 @@ from urllib.parse import urlsplit
 from django.conf import settings
 from rest_framework.serializers import (
     ModelSerializer,
+    SerializerMethodField,
     ValidationError,
 )
 from .models import (
     SiteSettings,
+    LeadershipCard,
     Attachment,
     Subscription,
     Keys,
@@ -20,12 +22,25 @@ class AttachmentSerializer(ModelSerializer):
             'file'
         ]
 
+class LeadershipCardSerializer(ModelSerializer):
+    class Meta:
+        model = LeadershipCard
+        fields = ['id', 'title', 'body', 'icon', 'position']
+
+
 class SettingsSerializer(ModelSerializer):
+    leadership_cards = SerializerMethodField()
+
+    def get_leadership_cards(self, obj):
+        return LeadershipCardSerializer(LeadershipCard.objects.filter(active=True), many=True).data
+
     class Meta:
         model = SiteSettings
         fields = [
             'about_text',
             'hero_picture',
+            'leadership_heading',
+            'leadership_cards',
         ]
 
 class KeysSerializer(ModelSerializer):

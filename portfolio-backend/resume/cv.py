@@ -3,7 +3,7 @@ from django.conf import settings
 from django.utils.cache import patch_cache_control
 from django.views.generic import TemplateView
 
-from shared.models import SiteSettings
+from shared.models import LeadershipCard, SiteSettings
 
 from .models import Education, Experience, Skill, SkillCategory
 
@@ -18,6 +18,7 @@ class CVView(TemplateView):
         website = settings.FRONTEND_HOST.rstrip('/')
         context.update(
             site=site,
+            leadership_cards=LeadershipCard.objects.filter(active=True),
             picture_url=picture.url if picture else '',
             website=website,
             website_label=website.split('://', 1)[-1],

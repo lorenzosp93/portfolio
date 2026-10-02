@@ -261,7 +261,8 @@ class SingletonBaseModel(models.Model):
 
 class SiteSettings(SingletonBaseModel):
     "Concrete model for the settings for the website"
-    about_text = models.TextField()
+    about_text = models.TextField(help_text="Short hero introduction; Markdown supported.")
+    leadership_heading = models.CharField(max_length=160, blank=True)
     hero_picture = models.ImageField(
         upload_to="site/hero/",
         blank=True,
@@ -301,3 +302,19 @@ class Subscription(TimeStampable):
                 fields=["user_agent", "endpoint"], name="unique_subscription_per_device"
             ),
         ]
+
+
+class LeadershipCard(models.Model):
+    ICON_CHOICES = [('layers', 'Product practice'), ('globe', 'Regional autonomy'),
+                    ('users', 'People and coaching')]
+    title = models.CharField(max_length=100)
+    body = models.TextField(help_text='Markdown supported. Keep the card concise.')
+    icon = models.CharField(max_length=20, choices=ICON_CHOICES, default='layers')
+    position = models.PositiveSmallIntegerField(default=0)
+    active = models.BooleanField(default=True, verbose_name='Published')
+
+    class Meta:
+        ordering = ['position', 'pk']
+
+    def __str__(self):
+        return self.title

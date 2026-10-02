@@ -1,4 +1,7 @@
 "Define modules for the blog app"
+from django.conf import settings
+from django.urls import reverse
+
 from shared.models import (
     Serializable,
     TimeStampable,
@@ -17,6 +20,9 @@ class Post(
         Localizable, Attachable, Authorable, Serializable,
     ):
     "Define posts model"
+
+    def get_article_url(self) -> str:
+        return settings.FRONTEND_HOST.rstrip('/') + reverse('writing-article', kwargs={'slug': self.slug})
 
     def get_frontend_url(self) -> str:
         return f"{super().get_frontend_url()}?post={self.slug}"

@@ -76,6 +76,10 @@
       font-size: 9pt; letter-spacing: .06em; text-transform: uppercase;
     }
     .summary { display: grid; grid-template-columns: 1.3fr 1fr; gap: 8mm; align-items: start; }
+    .leadership { list-style: none; margin: 3mm 0 0; padding: 0; }
+    .leadership li { margin-top: 2.5mm; break-inside: avoid; }
+    .leadership h3 { margin: 0 0 1mm; font-size: 9.5pt; }
+    .summary .leadership p { text-align: left; }
     .summary p { margin: 0 0 2.5mm; text-align: justify; hyphens: auto; }
 
     .bars { display: grid; grid-template-columns: auto 1fr; gap: 1.6mm 2.5mm; align-items: center; }
@@ -114,7 +118,11 @@
       body { background: var(--paper); font-size: 10.5pt; }
       .page { width: auto; min-height: 0; margin: 0; padding: 20px 16px 32px; box-shadow: none; }
       .header, .summary { grid-template-columns: 1fr; }
-      .summary p { text-align: left; }
+      .leadership { list-style: none; margin: 3mm 0 0; padding: 0; }
+    .leadership li { margin-top: 2.5mm; break-inside: avoid; }
+    .leadership h3 { margin: 0 0 1mm; font-size: 9.5pt; }
+    .summary .leadership p { text-align: left; }
+    .summary p { text-align: left; }
       .entry { grid-template-columns: 1fr; gap: 1mm; }
       .logo { display: none; }
       .entry-head { flex-wrap: wrap; }
@@ -158,11 +166,22 @@
       </ul>
     </header>
 
-    {% if site.cv_summary or skills or languages %}
+    {% if leadership_cards or site.cv_summary or skills or languages %}
     <section class="section">
       <h2>Summary</h2>
       <div class="summary">
-        <div>{{ site.cv_summary|cv_markdown }}</div>
+        <div>
+          {% if leadership_cards %}
+          {{ site.about_text|cv_markdown }}
+          <ul class="leadership" aria-label="Leadership approach">
+            {% for card in leadership_cards %}
+            <li><h3>{{ card.title }}</h3>{{ card.body|cv_markdown }}</li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          {{ site.cv_summary|cv_markdown }}
+          {% endif %}
+        </div>
         <div>
           {% if skills %}
           <dl class="bars">

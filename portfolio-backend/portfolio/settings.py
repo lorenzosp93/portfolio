@@ -86,6 +86,8 @@ if HOST:
 
 FRONTEND_HOST = os.environ.get('FRONTEND_HOST', 'http://localhost:8080')
 BACKEND_HOST = os.environ.get('BACKEND_HOST', 'http://localhost:8080')
+FRONTEND_ASSET_ORIGIN = os.environ.get('FRONTEND_ASSET_ORIGIN', FRONTEND_HOST)
+FRONTEND_DEV_SERVER = os.environ.get('FRONTEND_DEV_SERVER', '') if DEBUG else ''
 
 # Application definition
 

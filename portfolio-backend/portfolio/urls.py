@@ -19,12 +19,15 @@ from django.conf.urls.static import static
 from django.conf import settings
 from rest_framework.routers import DefaultRouter
 from shared import viewsets
+from blog import articles
 
 router = DefaultRouter()
 router.register(r'settings', viewsets.SettingsViewSet, 'settings')
 router.register(r'subscribe', viewsets.SubscriptionViewset, 'subscribe')
 
 urlpatterns = [
+    path('writing/<slug:slug>/', articles.article, name='writing-article'),
+    path('sitemap.xml', articles.sitemap, name='writing-sitemap'),
     path('api/resume/', include('resume.urls', namespace='resume')),
     path('api/site/', include(router.urls)),
     path('api/blog/', include('blog.urls', namespace='blog')),

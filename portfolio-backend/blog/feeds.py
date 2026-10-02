@@ -25,7 +25,7 @@ class LatestPostsFeed(Feed):
         return Truncator(item.content).words(60)
 
     def item_link(self, item):
-        return item.get_frontend_url()
+        return item.get_article_url()
 
     def item_pubdate(self, item):
         return item.created_at

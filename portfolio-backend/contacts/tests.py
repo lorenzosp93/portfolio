@@ -41,6 +41,24 @@ class ContactViewTests(TestCase):
         self.assertEqual(submission.delivery_status, 'pending')
         self.assertEqual(submission.delivery_attempts, 0)
 
+    def test_2000_character_message_is_stored_without_truncation(self):
+        response = self.client.post(reverse('contacts:contacts'), {
+            'first_name': 'Ada', 'last_name': 'Lovelace',
+            'email': 'ada@example.test', 'content': 'x' * 2000,
+        })
+        self.assertEqual(response.status_code, 202)
+        self.assertEqual(len(ContactSubmission.objects.get().content), 2000)
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_over_limit_message_is_rejected_without_queueing(self):
+        response = self.client.post(reverse('contacts:contacts'), {
+            'first_name': 'Ada', 'last_name': 'Lovelace',
+            'email': 'ada@example.test', 'content': 'x' * 2001,
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('content', response.json()['errors'])
+        self.assertFalse(ContactSubmission.objects.exists())
+
     def test_invalid_submission_returns_validation_errors(self):
         response = self.client.post(reverse('contacts:contacts'), {})
 

@@ -18,7 +18,7 @@ class ContactSubmission(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     email = models.EmailField()
-    content = models.CharField(max_length=280)
+    content = models.CharField(max_length=2000)
     source_key = models.CharField(max_length=64, default='', editable=False)
     payload_key = models.CharField(max_length=64, default='', editable=False)
     submitted_at = models.DateTimeField(auto_now_add=True, db_index=True)

@@ -2,7 +2,7 @@
 
 ## Purpose and shape
 
-This is a public, single-page portfolio site. The Vue frontend presents hero,
+This is a public, single-page portfolio site. The Vue frontend presents hero, leadership,
 résumé, blog, and contact sections; Django supplies content and receives the
 contact and browser-push submissions. Django's admin is mounted under the API
 prefix and is the likely content-management surface.
@@ -141,5 +141,10 @@ When adding or modifying a public content field:
   (`WEB_PUSH_ALLOWED_HOST_SUFFIXES`) and are throttled; sends have a timeout.
 - **Admin**: sign-in lockout (`ADMIN_LOGIN_*`), optional `ADMIN_URL_PATH`, DB
   cache table created by the entrypoint.
-- **Deep links**: `/?post=<slug>` opens a blog post; the Atom feed is at
-  `/api/blog/feed/`.
+- **Article discovery**: `/writing/<slug>/` serves full Django-rendered article HTML
+  with specific metadata, then mounts the Vite homepage with its article modal.
+  `/?post=<slug>` remains supported. Share/RSS use canonical article URLs;
+  `/sitemap.xml` lists published articles. The frontend manifest stays uncached.
+- **Leadership**: site settings carry the hero introduction and section heading;
+  ordered, published `LeadershipCard` records are nested in the settings API.
+  The frontend owns icons, animation, and the shared background.

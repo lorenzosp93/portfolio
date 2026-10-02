@@ -1,6 +1,6 @@
 from rest_framework.serializers import (
     HyperlinkedModelSerializer, 
-    ModelSerializer
+    ModelSerializer, SerializerMethodField
 )
 from django.contrib.auth.models import User
 from shared.serializers import (
@@ -16,6 +16,11 @@ class SimpleUserSerializer(ModelSerializer):
         fields = ['id', 'username', 'first_name', 'last_name']
 
 class PostSerializer(HyperlinkedModelSerializer):
+    canonical_url = SerializerMethodField()
+
+    def get_canonical_url(self, obj):
+        return obj.get_article_url()
+
     attachments = AttachmentSerializer(many=True)
     created_by = SimpleUserSerializer()
     class Meta:
@@ -24,6 +29,7 @@ class PostSerializer(HyperlinkedModelSerializer):
             'uuid',
             'name',
             'slug',
+            'canonical_url',
             'created_at',
             'location',
             'picture',

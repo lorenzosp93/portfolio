@@ -13,6 +13,9 @@ from .models import Keys, SiteSettings, Subscription
 
 
 class SiteSettingsTests(TestCase):
+    def setUp(self):
+        SiteSettings.objects.all().delete()
+
     def test_settings_api_exposes_configurable_hero_picture(self):
         SiteSettings.objects.create(about_text="About")
 
@@ -34,6 +37,7 @@ class SiteSettingsTests(TestCase):
 })
 class SiteSettingsAdminSaveTests(TestCase):
     def setUp(self):
+        SiteSettings.objects.all().delete()
         self.user = get_user_model().objects.create_superuser(
             username='settings-admin', password='test-only-password',
         )
@@ -237,3 +241,23 @@ class AdminLockoutTests(TestCase):
         self.login('wrong')
         self.login('right-password-123')
         self.assertIn('_auth_user_id', self.client.session)
+
+
+class LeadershipContentTests(TestCase):
+    def test_settings_contains_seeded_editorial_copy(self):
+        response = self.client.get('/api/site/settings/1/')
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn('I lead software product teams', data['about_text'])
+        self.assertEqual(len(data['leadership_cards']), 3)
+        self.assertEqual([card['icon'] for card in data['leadership_cards']], ['layers', 'globe', 'users'])
+
+    def test_only_published_cards_are_returned_in_editorial_order(self):
+        from .models import LeadershipCard
+        LeadershipCard.objects.all().delete()
+        LeadershipCard.objects.create(title='Second', body='Text', position=2)
+        LeadershipCard.objects.create(title='Hidden', body='Text', position=0, active=False)
+        LeadershipCard.objects.create(title='First', body='Text', position=1)
+        response = self.client.get('/api/site/settings/1/')
+        self.assertEqual([card['title'] for card in response.json()['leadership_cards']], ['First', 'Second'])
+        self.assertIn(self.client.post('/api/site/settings/1/', {}).status_code, (403, 405))

@@ -7,4 +7,4 @@ class ContactSerializer(serializers.Serializer):
     first_name = serializers.CharField(max_length=50)
     last_name = serializers.CharField(max_length=50)
     email = serializers.EmailField()
-    content = serializers.CharField(max_length=280)
+    content = serializers.CharField(max_length=2000)

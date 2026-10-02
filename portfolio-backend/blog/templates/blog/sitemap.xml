@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{% for post in posts %}<url><loc>{{ post.get_article_url }}</loc><lastmod>{{ post.modified_at|date:'c' }}</lastmod></url>{% endfor %}
+</urlset>

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ post.name }} — Lorenzo Spinelli</title>
+  <meta name="description" content="{{ description }}">
+  <link rel="canonical" href="{{ canonical_url }}">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="{{ post.name }}">
+  <meta property="og:description" content="{{ description }}">
+  <meta property="og:url" content="{{ canonical_url }}">
+  {% if picture_url %}<meta property="og:image" content="{{ picture_url }}">{% endif %}
+  <meta property="article:published_time" content="{{ post.created_at|date:'c' }}">
+  <meta name="twitter:card" content="{% if picture_url %}summary_large_image{% else %}summary{% endif %}">
+  <meta name="twitter:title" content="{{ post.name }}">
+  <meta name="twitter:description" content="{{ description }}">
+  {% if picture_url %}<meta name="twitter:image" content="{{ picture_url }}">{% endif %}
+  {% for style in styles %}<link rel="stylesheet" href="{{ style }}">{% endfor %}
+  <style>
+    :root { color-scheme: light dark; --paper: #fff8ef; --surface: #fff; --ink: #172026; --muted: #647078; --teal: #0f766e; }
+    .article-fallback * { box-sizing: border-box; }
+    body { margin: 0; }
+    .article-fallback { max-width: 780px; margin: auto; padding: 32px 24px 80px; background: var(--paper); color: var(--ink); font: 17px/1.75 Helvetica, Arial, sans-serif; }
+    .article-fallback nav { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; font-size: 14px; margin-bottom: 48px; }
+    .article-fallback a { color: var(--teal); text-underline-offset: 3px; }
+    .article-fallback a:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
+    .article-fallback h1 { font-size: clamp(28px, 5vw, 42px); line-height: 1.2; }
+    .article-fallback h2, .article-fallback h3 { line-height: 1.3; }
+    .article-fallback .byline { color: var(--muted); font-size: 14px; }
+    .article-fallback .cover { width: 100%; border-radius: 16px; margin: 20px 0; }
+    .article-fallback article { overflow-wrap: anywhere; }
+    .article-fallback article img { max-width: 100%; height: auto; }
+    .article-fallback pre { overflow-x: auto; background: var(--surface); padding: 16px; border-radius: 12px; }
+    .article-fallback table { display: block; overflow-x: auto; border-collapse: collapse; }
+    .article-fallback td, .article-fallback th { padding: 8px 12px; border-bottom: 1px solid var(--muted); }
+    .article-fallback blockquote { border-left: 3px solid var(--teal); margin-left: 0; padding-left: 20px; }
+    @media (prefers-color-scheme: dark) { :root { --paper: #0b1120; --surface: #111827; --ink: #ecf0f5; --muted: #bac3d0; --teal: #8ed8c8; } }
+  </style>
+</head>
+<body>
+<div id="app">
+<main class="article-fallback">
+  <nav aria-label="Article navigation"><a href="{{ website }}">Lorenzo Spinelli</a><a href="{{ portfolio_url }}">Read in the portfolio</a></nav>
+  <header>
+    <h1>{{ post.name }}</h1>
+    <p class="byline">{{ post.created_by.get_full_name|default:post.created_by.username }} · <time datetime="{{ post.created_at|date:'c' }}">{{ post.created_at|date:'j F Y' }}</time></p>
+    {% if picture_url %}<img class="cover" src="{{ picture_url }}" alt="" decoding="async">{% endif %}
+  </header>
+  <article>{{ body }}</article>
+  <p><a href="{{ website }}#the-blog">More writing from Lorenzo</a></p>
+</main>
+</div>
+{% for script in scripts %}<script type="module" src="{{ script }}"></script>{% endfor %}
+</body>
+</html>
