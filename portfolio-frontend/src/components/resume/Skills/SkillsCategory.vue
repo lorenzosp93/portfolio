@@ -4,11 +4,11 @@
   >
     <div class="rounded-t-2xl border-b border-ink/10 bg-surface/60 px-3 pt-3 pb-2 dark:border-white/10 dark:bg-nightSurface/60">
       <h3
-        class="items-center align-text-bottom text-lg font-semibold text-ink dark:text-white"
+        class="items-center align-text-bottom type-card-title text-ink dark:text-white"
       >
         {{ name }}
       </h3>
-      <p class="text-sm leading-relaxed text-muted dark:text-gray-300 lg:text-base">
+      <p class="type-body text-muted dark:text-gray-300">
         {{ description }}
       </p>
     </div>

@@ -378,7 +378,7 @@ function scrollToResume() {
 }
 
 .hero-scroll-indicator {
-  @apply absolute bottom-5 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2 bg-transparent px-3 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-muted transition hover:text-teal focus:outline-none focus-visible:ring-2 focus-visible:ring-teal dark:text-gray-400 dark:hover:text-tealSoft;
+  @apply absolute bottom-5 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2 bg-transparent px-3 py-2 text-sm font-semibold uppercase tracking-[0.22em] text-muted transition hover:text-teal focus:outline-none focus-visible:ring-2 focus-visible:ring-teal dark:text-gray-400 dark:hover:text-tealSoft;
 }
 
 .hero-scroll-line {

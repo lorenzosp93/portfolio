@@ -16,7 +16,7 @@
           decoding="async"
         />
         <div class="min-w-0">
-          <div class="font-bold text-lg text-teal dark:text-tealSoft">
+          <div class="type-card-title text-teal dark:text-tealSoft">
             {{ entity.name }}
           </div>
           <div v-if="department" class="text-sm text-muted dark:text-gray-300">
@@ -26,7 +26,7 @@
       </div>
     </template>
     <template v-slot:inner-content>
-      <div class="px-3 pb-5 prose prose-slate dark:prose-invert prose-a:text-coral dark:prose-a:text-coralSoft">
+      <div class="px-3 pb-5 prose prose-base prose-slate dark:prose-invert prose-a:text-coral dark:prose-a:text-coralSoft">
         <h3 v-if="description" class="mb-3">Description:</h3>
         <p v-html="parse(description ?? '')" />
         <h3 v-if="key_achievements" class="my-3">Key Achievements:</h3>

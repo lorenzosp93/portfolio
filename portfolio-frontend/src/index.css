@@ -38,12 +38,17 @@
     @apply border-t-coral dark:border-t-coralSoft;
   }
 
-  .section-heading {
-    @apply w-full text-center text-xl font-bold text-ink dark:text-white md:text-2xl;
+  /* Reading copy stays at 16px on every viewport. Smaller sizes are reserved
+     for supporting text (14px) and metadata (12px). */
+  .type-body { @apply text-base leading-relaxed; }
+  .type-card-title { @apply text-xl font-semibold leading-snug; }
+  .type-section-heading, .section-heading {
+    @apply text-2xl font-bold leading-tight md:text-3xl;
   }
+  .section-heading { @apply w-full text-center text-ink dark:text-white; }
 
   .section-lede {
-    @apply mx-auto mt-2 w-full max-w-xl text-center text-sm leading-relaxed text-muted dark:text-gray-300 md:text-base;
+    @apply mx-auto mt-2 w-full max-w-xl text-center text-base leading-relaxed text-muted dark:text-gray-300;
   }
 
   .section-tint { background: transparent; }
