@@ -112,7 +112,9 @@ for (const width of [390, 1280]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/');
     await page.locator('#the-resume').scrollIntoViewIfNeeded();
+    await expect(page.locator('#the-navbar .resume-subnav')).toHaveCount(1);
     await expect(page.locator('#skills')).toHaveCount(0);
+    await expect(page.locator('#the-navbar').getByRole('button', { name: 'Skills', exact: true, includeHidden: true })).toHaveCount(0);
     await expect(page.getByRole('tab', { name: 'skills' })).toHaveCount(0);
     if (width < 640) {
       const experience = page.getByRole('tab', { name: 'experience' });
@@ -127,5 +129,24 @@ for (const width of [390, 1280]) {
       await page.locator('#the-resume').getByRole('button', { name: 'Scroll resume carousel right' }).click();
       await expect(page.locator('#education')).not.toHaveAttribute('inert', '');
     }
+  });
+}
+
+for (const width of [390, 1280]) {
+  test(`CMS highlights labels reach the section and navigation at ${width}px`, async ({ page }) => {
+    await page.route('**/api/settings/1/', route => route.fulfill({ json: {
+      about_text: settings.about_text, hero_picture: null, show_skills: false,
+      highlights_heading: 'Work that matters', highlights_nav_label: 'Selected work',
+      highlights_eyebrow: 'My impact', highlight_cards: cards,
+    } }));
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Scroll to explore the portfolio' }).click();
+    await expect(page.locator('.navbar-surface')).toHaveCSS('opacity', '1');
+    if (width < 640) await page.getByRole('button', { name: 'Open main menu' }).click();
+    await page.getByRole('button', { name: 'Selected work', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'Work that matters', exact: true })).toBeVisible();
+    await expect(page.locator('#the-leadership header')).toContainText('My impact');
+    await expect(page.locator('#the-navbar').getByRole('button', { name: 'Leadership', exact: true, includeHidden: true })).toHaveCount(0);
   });
 }

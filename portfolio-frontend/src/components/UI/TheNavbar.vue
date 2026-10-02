@@ -55,12 +55,12 @@
               </button> -->
 
               <button
-                v-if="siteStore.leadershipCards.length"
+                v-if="siteStore.highlightCards.length"
                 :ref="(el) => setNavItemRef('theLeadership', el)"
                 class="nav-link"
                 :class="{ active_top_text: activeNavItem === 'theLeadership' }"
                 @click="scrollToElement(navStore.refs?.theLeadership)"
-              >Leadership</button>
+              >{{ siteStore.highlightsNavLabel }}</button>
               <Transition name="resume-nav" @after-enter="updateActiveIndicator" @after-leave="updateActiveIndicator">
                 <button
                   v-if="!isResumeActive"
@@ -99,6 +99,7 @@
                     Projects
                   </button>
                   <button
+                    v-if="siteStore.showSkills"
                     :ref="(el) => setNavItemRef('skills', el)"
                     class="resume-nav-link"
                     :class="{ active_resume_text: activeNavItem === 'skills' }"
@@ -142,7 +143,7 @@
         <button class="mobile-link" :class="{ active: navStore.visible === 'theHero' }" @click="scrollMobile(navStore.refs?.theHero)">
           About
         </button>
-        <button v-if="siteStore.leadershipCards.length" class="mobile-link" :class="{ active: navStore.visible === 'theLeadership' }" @click="scrollMobile(navStore.refs?.theLeadership)">Leadership</button>
+        <button v-if="siteStore.highlightCards.length" class="mobile-link" :class="{ active: navStore.visible === 'theLeadership' }" @click="scrollMobile(navStore.refs?.theLeadership)">{{ siteStore.highlightsNavLabel }}</button>
         <button class="mobile-link" :class="{ active: isResumeActive }" @click="scrollMobileToResumeSection">
           Resume
         </button>
@@ -210,18 +211,18 @@ const desktopNav = ref<HTMLElement | null>(null);
 const navItemRefs = reactive<Record<string, HTMLElement | null>>({});
 const activeIndicator = reactive({ left: 0, width: 0, visible: false });
 const resumeSectionName = "theResume";
-const resumeSubnavItems = ["experience", "education", "projects", "skills"];
+const resumeSubnavItems = computed(() => ["experience", "education", "projects", ...(siteStore.showSkills ? ["skills"] : [])]);
 
 const isResumeActive = computed(
   () =>
     navStore.isActive?.experience ||
     navStore.isActive?.education ||
     navStore.isActive?.projects ||
-    navStore.isActive?.skills
+    (siteStore.showSkills && navStore.isActive?.skills)
 );
 
 const activeNavItem = computed(() => {
-  if (isResumeActive.value && resumeSubnavItems.includes(navStore.visible)) {
+  if (isResumeActive.value && resumeSubnavItems.value.includes(navStore.visible)) {
     return navStore.visible;
   }
 
@@ -259,7 +260,7 @@ function updateActiveIndicator() {
   activeIndicator.visible = true;
 }
 
-watch([activeNavItem, isResumeActive], () => nextTick(updateActiveIndicator), {
+watch([activeNavItem, isResumeActive, () => siteStore.showSkills], () => nextTick(updateActiveIndicator), {
   immediate: true,
 });
 

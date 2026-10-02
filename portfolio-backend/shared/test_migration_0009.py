@@ -31,3 +31,17 @@ class HighlightCardMigrationTests(TransactionTestCase):
         site = apps.get_model('shared', 'SiteSettings').objects.get(pk=1)
         self.assertEqual(site.about_text, 'Edited introduction')
         self.assertFalse(site.show_skills)
+
+    def test_generic_heading_rename_preserves_existing_copy_and_visibility(self):
+        apps = self.migrate([('shared', '0009_highlight_cards_and_skills')])
+        Site = apps.get_model('shared', 'SiteSettings')
+        Site.objects.update_or_create(pk=1, defaults={
+            'about_text': 'Edited introduction', 'leadership_heading': 'My custom heading',
+            'show_skills': False,
+        })
+        apps = self.migrate([('shared', '0010_generic_highlight_settings')])
+        site = apps.get_model('shared', 'SiteSettings').objects.get(pk=1)
+        self.assertEqual(site.highlights_heading, 'My custom heading')
+        self.assertEqual(site.highlights_nav_label, 'Leadership')
+        self.assertEqual(site.highlights_eyebrow, 'How I lead')
+        self.assertFalse(site.show_skills)

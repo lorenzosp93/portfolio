@@ -145,8 +145,10 @@ When adding or modifying a public content field:
   with specific metadata, then mounts the Vite homepage with its article modal.
   `/?post=<slug>` remains supported. Share/RSS use canonical article URLs;
   `/sitemap.xml` lists published articles. The frontend manifest stays uncached.
-- **Leadership**: site settings carry the hero introduction and section heading;
+- **Leadership**: site settings carry the hero introduction and generic highlights heading,
+  navigation label, and eyebrow;
   ordered, published `HighlightCard` records are nested in the settings API.
   The frontend owns icons, animation, and the shared background.
   `SiteSettings.show_skills` controls Skills on both the website and printed CV.
-  The existing `leadership_cards` API field stays compatible.
+  Generic `highlight_cards` and `highlights_heading` are preferred; legacy
+  `leadership_cards` and `leadership_heading` fields remain compatible.

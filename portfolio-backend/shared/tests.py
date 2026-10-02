@@ -33,6 +33,22 @@ class SiteSettingsTests(TestCase):
         self.assertTrue(self.client.get('/api/settings/1/').json()['show_skills'])
         self.assertIn('show_skills', admin.site._registry[SiteSettings].get_form(None).base_fields)
 
+    def test_highlights_copy_is_generic_editable_and_backward_compatible(self):
+        SiteSettings.objects.create(
+            about_text="About", highlights_heading="Work that matters",
+            highlights_nav_label="Selected work", highlights_eyebrow="My impact",
+        )
+        data = self.client.get('/api/settings/1/').json()
+        self.assertEqual(data['highlights_heading'], 'Work that matters')
+        self.assertEqual(data['highlights_nav_label'], 'Selected work')
+        self.assertEqual(data['highlights_eyebrow'], 'My impact')
+        self.assertEqual(data['leadership_heading'], data['highlights_heading'])
+        self.assertEqual(data['leadership_cards'], data['highlight_cards'])
+        fields = admin.site._registry[SiteSettings].get_form(None).base_fields
+        self.assertNotIn('leadership_heading', fields)
+        for field in ('highlights_heading', 'highlights_nav_label', 'highlights_eyebrow'):
+            self.assertIn(field, fields)
+
     def test_admin_form_exposes_hero_picture(self):
         model_admin = admin.site._registry[SiteSettings]
 
@@ -58,6 +74,7 @@ class SiteSettingsAdminSaveTests(TestCase):
         Image.new('RGB', (8, 8)).save(buffer, format='PNG')
         return self.client.post(url, {
             'about_text': 'About',
+            'highlights_nav_label': 'Leadership',
             'hero_picture': SimpleUploadedFile(
                 'portrait.png', buffer.getvalue(), content_type='image/png',
             ),
@@ -88,7 +105,7 @@ class SiteSettingsAdminSaveTests(TestCase):
         self.upload_picture(self.add_url)
         original_name = self.assert_picture_saved()
         response = self.client.post(self.change_url, {
-            'about_text': 'Updated', '_save': 'Save',
+            'about_text': 'Updated', 'highlights_nav_label': 'Leadership', '_save': 'Save',
         })
         self.assertEqual(response.status_code, 302)
         self.assertEqual(self.assert_picture_saved(), original_name)
