@@ -14,7 +14,7 @@ export interface HighlightCard {
   id: number;
   title: string;
   body: string;
-  icon: 'layers' | 'globe' | 'users';
+  icon: string;
   position: number;
 }
 

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="pointer-events-none sticky top-1/2 z-10 hidden h-0 w-full -translate-y-1/2 md:block"
+    class="pointer-events-none sticky top-1/2 z-10 hidden h-0 w-full -translate-y-1/2 sm:block"
     ref="arrowContainer"
   >
     <button
@@ -30,76 +30,49 @@
 
 <script setup lang="ts">
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/vue/24/outline";
-import { useDebounceFn, useEventListener, useThrottleFn } from "@vueuse/core";
-import { watch, ref } from "vue";
+import { useEventListener, useMutationObserver, useResizeObserver, useThrottleFn } from "@vueuse/core";
+import { watch, ref, nextTick } from "vue";
 
-const props = defineProps<{
-  scrollContainer: HTMLDivElement | null;
-}>();
+const props = defineProps<{ scrollContainer: HTMLDivElement | null }>();
 const emit = defineEmits(["end"]);
-
-let begin = ref(true);
-let end = ref(false);
+const begin = ref(true);
+const end = ref(true);
+const notifyEnd = useThrottleFn(() => emit("end"), 1000, true);
 
 function scrollToSibling(next: boolean) {
-  let scrollWidth = 0;
   const container = props.scrollContainer;
-  if (container) {
-    scrollWidth = container.children[0].clientWidth ?? 0;
-
-    if (next) {
-      container.scrollLeft += scrollWidth;
-    } else {
-      container.scrollLeft -= scrollWidth;
-    }
-  }
+  if (!container || !container.children.length) return;
+  const children = Array.from(container.children) as HTMLElement[];
+  const origin = children[0].offsetLeft;
+  const positions = children.map(child => child.offsetLeft - origin);
+  const current = positions.reduce((closest, position, index) =>
+    Math.abs(position - container.scrollLeft) < Math.abs(positions[closest] - container.scrollLeft) ? index : closest, 0);
+  const target = Math.max(0, Math.min(children.length - 1, current + (next ? 1 : -1)));
+  container.scrollTo({ left: positions[target], behavior: "smooth" });
 }
 
-function calculateScrollPosition(target: HTMLDivElement) {
-  return useDebounceFn(() => {
-    if (target.scrollLeft <= 0) {
-      begin.value = true;
-    } else {
-      begin.value = false;
-    }
-    if (target.scrollLeft + target.clientWidth >= target.scrollWidth) {
-      end.value = true;
-      return useThrottleFn(
-        () => {
-          emit("end");
-        },
-        1000,
-        true
-      )();
-    } else {
-      end.value = false;
-    }
-  }, 500)();
+function calculateScrollPosition() {
+  const container = props.scrollContainer;
+  if (!container) return;
+  const maximum = Math.max(0, container.scrollWidth - container.clientWidth);
+  begin.value = container.scrollLeft <= 1;
+  const atEnd = maximum - container.scrollLeft <= 1;
+  if (atEnd && !end.value) notifyEnd();
+  end.value = atEnd;
 }
 
-watch(
-  () => props.scrollContainer,
-  (val) => {
-    if (val) {
-      calculateScrollPosition(val);
-      useEventListener(props.scrollContainer, "scroll", (event) => {
-        calculateScrollPosition(event.target as HTMLDivElement);
-      });
-
-      useEventListener(
-        props.scrollContainer,
-        "keydown",
-        (event: KeyboardEvent) => {
-          if (event.key === "ArrowRight") {
-            scrollToSibling(true);
-          } else if (event.key === "ArrowLeft") {
-            scrollToSibling(false);
-          }
-        }
-      );
-    }
+useEventListener(() => props.scrollContainer, "scroll", calculateScrollPosition, { passive: true });
+useEventListener(() => props.scrollContainer, "keydown", (event: KeyboardEvent) => {
+  if (event.target instanceof Element && event.target.closest('input, textarea, select')) return;
+  if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+    event.preventDefault();
+    scrollToSibling(event.key === "ArrowRight");
   }
-);
+});
+useResizeObserver(() => props.scrollContainer, calculateScrollPosition);
+useMutationObserver(() => props.scrollContainer, () => nextTick(calculateScrollPosition), { childList: true });
+watch(() => props.scrollContainer, () => nextTick(calculateScrollPosition), { immediate: true });
+
 </script>
 
 <style scoped>

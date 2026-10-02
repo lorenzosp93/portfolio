@@ -6,10 +6,10 @@
         <h2 class="max-w-2xl text-2xl font-bold leading-tight sm:text-3xl">{{ site.highlightsHeading }}</h2>
       </header>
       <div ref="cardsRoot" class="leadership-cards grid gap-5 lg:grid-cols-3">
-        <article v-for="(card, index) in site.highlightCards" :key="card.id" class="leadership-card portfolio-card p-6 shadow-lg" :class="{ 'portfolio-card--coral': card.icon === 'users' }">
+        <article v-for="(card, index) in site.highlightCards" :key="card.id" class="leadership-card portfolio-card p-6 shadow-lg" :class="{ 'portfolio-card--coral': index % 3 === 2 }">
           <div class="mb-6 flex items-center justify-between">
             <span class="leadership-icon inline-flex rounded-2xl bg-tealSoft/40 p-3 text-teal dark:bg-teal/20 dark:text-tealSoft">
-              <component :is="icons[card.icon] || Square3Stack3DIcon" class="h-6 w-6" aria-hidden="true" />
+              <highlight-icon :name="card.icon" class="h-6 w-6" aria-hidden="true" />
             </span>
             <span class="text-xs text-muted dark:text-gray-400" aria-hidden="true">{{ String(index + 1).padStart(2, '0') }}</span>
           </div>
@@ -22,15 +22,15 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onMounted, onBeforeUnmount, ref, watch } from 'vue';
+import { nextTick, onMounted, onBeforeUnmount, ref, watch, defineAsyncComponent } from 'vue';
+import { HIGHLIGHTS_PIN_TOP } from '@/composables/highlightsLayout';
 import { useSiteStore } from '@/stores/site.store';
 import { renderMarkdown } from '@/composables/markdown';
 import { useVisibilityObserver } from '@/composables/visibilityObserver';
-import { Square3Stack3DIcon, GlobeAltIcon, UserGroupIcon } from '@heroicons/vue/24/outline';
 import type { MatchMedia } from 'gsap';
 
 const site = useSiteStore();
-const icons = { layers: Square3Stack3DIcon, globe: GlobeAltIcon, users: UserGroupIcon };
+const HighlightIcon = defineAsyncComponent(() => import('@/components/UI/HighlightIcon.vue'));
 const root = ref<HTMLDivElement | null>(null);
 const scene = ref<HTMLDivElement | null>(null);
 const cardsRoot = ref<HTMLDivElement | null>(null);
@@ -64,9 +64,10 @@ async function animate() {
     container.style.height = `${height + 32}px`;
     cards.forEach(card => { card.style.minHeight = `${height}px`; });
     const timeline = gsap.timeline({ scrollTrigger: {
-      trigger: element, pin: true, start: 'top 88px',
+      trigger: element, pin: true, start: `top ${HIGHLIGHTS_PIN_TOP}px`,
       end: () => `+=${window.innerHeight * (cards.length - 1) * .9}`,
       scrub: true, invalidateOnRefresh: true,
+      onRefresh: self => { element.dataset.scrollStart = String(self.start); },
     }});
     cards.forEach((card, index) => {
       gsap.set(card, { zIndex: index + 1 });
@@ -76,6 +77,7 @@ async function animate() {
     });
     timeline.to({}, { duration: .35 });
     return () => {
+      delete element.dataset.scrollStart;
       container.classList.remove('is-animated');
       container.style.removeProperty('height');
       cards.forEach(card => card.style.removeProperty('min-height'));
@@ -93,7 +95,7 @@ onBeforeUnmount(() => { disposed = true; generation++; clearTimeout(resizeTimer)
 <style scoped>
 .leadership-section { position: relative; }
 
-.leadership-card--coaching .leadership-icon { @apply bg-coralSoft/40 text-coral dark:bg-coral/20 dark:text-coralSoft; }
+.portfolio-card--coral .leadership-icon { @apply bg-coralSoft/40 text-coral dark:bg-coral/20 dark:text-coralSoft; }
 .is-animated { position: relative; }
 .is-animated .leadership-card { grid-area: 1 / 1; transform-origin: center top; }
 @media (min-width: 1024px) {

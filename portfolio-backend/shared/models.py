@@ -1,4 +1,6 @@
 "Define abstract models to be used in all apps"
+import json
+from pathlib import Path
 from io import BytesIO
 import os
 import uuid
@@ -320,10 +322,12 @@ class Subscription(TimeStampable):
 
 
 class HighlightCard(models.Model):
-    ICON_CHOICES = [('layers', 'Layers'), ('globe', 'Globe'), ('users', 'People')]
+    ICON_CHOICES = [('layers', 'Layers (legacy)'), ('globe', 'Globe (legacy)'), ('users', 'People (legacy)')] + [
+        tuple(icon) for icon in json.loads(Path(__file__).with_name('highlight_icons.json').read_text())
+    ]
     title = models.CharField(max_length=100)
     body = models.TextField(help_text='Markdown supported. Keep the card concise.')
-    icon = models.CharField(max_length=20, choices=ICON_CHOICES, default='layers')
+    icon = models.CharField(max_length=64, choices=ICON_CHOICES, default='layers', help_text='Choose any icon from the Heroicons outline collection.')
     position = models.PositiveSmallIntegerField(default=0)
     active = models.BooleanField(default=True, verbose_name='Published')
 

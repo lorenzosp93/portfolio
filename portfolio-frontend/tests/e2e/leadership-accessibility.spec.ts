@@ -163,10 +163,11 @@ for (const width of [390, 1280]) {
     const dialog = page.getByRole('dialog', { name: 'Contact form' });
     await expect(dialog).toBeVisible();
     await expect(dialog).not.toContainText('Extra title content');
-    await expect(page.locator('body')).toHaveCSS('position', 'fixed');
-    // WebKit may scroll the opener into view as part of the click; preserve the
-    // position at dialog entry, rather than the position before that browser action.
-    const before = await page.locator('body').evaluate(el => -parseFloat(el.style.top));
+    await expect(page.locator('body')).not.toHaveCSS('position', 'fixed');
+    const before = await page.evaluate(() => window.scrollY);
+    await expect(page.locator('.navbar-surface')).toHaveCSS('opacity', '1');
+    const navbarTop = await page.locator('#the-navbar').evaluate(el => el.getBoundingClientRect().top);
+    expect(Math.abs(navbarTop)).toBeLessThan(1);
     const content = dialog.locator('.bottom-sheet__content');
     await page.waitForTimeout(450);
     const hasOverflow = await content.evaluate(el => el.scrollHeight > el.clientHeight);
@@ -179,9 +180,50 @@ for (const width of [390, 1280]) {
     await page.mouse.wheel(0, 500);
     await page.waitForTimeout(250);
     expect(await page.locator('#the-contacts').evaluate(el => el.getBoundingClientRect().top)).toBeCloseTo(backgroundTop, 0);
-    await dialog.getByRole('button', { name: 'Close dialog' }).click();
+    const close = dialog.getByRole('button', { name: 'Close dialog' });
+    const insets = await close.evaluate(el => { const c=el.closest('[role=dialog]')!.getBoundingClientRect();const b=el.getBoundingClientRect(); return [b.top-c.top,c.right-b.right]; });
+    expect(insets[0]).toBeCloseTo(insets[1], 0);
+    await close.click();
     await expect(page.locator('body')).not.toHaveCSS('position', 'fixed');
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBeCloseTo(before, 0);
     await expect(opener).toBeFocused();
   });
 }
+
+for (const width of [768, 1280]) {
+  test(`two résumé panels support repeated round trips and resizing at ${width}px`, async ({ page }) => {
+    await page.route('**/api/settings/1/', route => route.fulfill({ json: { ...settings, show_skills: false } }));
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/');
+    await page.locator('#the-resume').scrollIntoViewIfNeeded();
+    const right = page.getByRole('button', { name: 'Scroll resume carousel right' });
+    const left = page.getByRole('button', { name: 'Scroll resume carousel left' });
+    for (let round=0;round<3;round++) {
+      await expect(right).toBeVisible();
+      await expect(left).not.toBeVisible();
+      await right.click();
+      await expect(right).not.toBeVisible();
+      await expect(left).toBeVisible();
+      await expect(page.locator('#education')).not.toHaveAttribute('inert', '');
+      await left.click();
+      await expect(left).not.toBeVisible();
+      await expect(page.locator('#experience')).not.toHaveAttribute('inert', '');
+      if (round===1) await page.setViewportSize({ width: width+73, height: 900 });
+    }
+  });
+}
+
+test('Explore lands at the pin start and the next scroll advances the cards without moving the heading', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto('/');
+  const scene=page.locator('.leadership-scene');
+  await expect(scene).toHaveAttribute('data-scroll-start', /\d/);
+  await page.getByRole('button', { name: 'Scroll to explore the portfolio' }).click();
+  await expect.poll(()=>scene.evaluate(el=>el.getBoundingClientRect().top)).toBeCloseTo(88, 0);
+  await page.waitForTimeout(150);
+  const card=page.locator('.leadership-card').nth(1);
+  const before=await card.evaluate(el=>new DOMMatrixReadOnly(getComputedStyle(el).transform).m42);
+  await page.mouse.wheel(0,40);
+  await expect.poll(()=>card.evaluate(el=>new DOMMatrixReadOnly(getComputedStyle(el).transform).m42)).toBeLessThan(before-10);
+  expect(await scene.evaluate(el=>el.getBoundingClientRect().top)).toBeCloseTo(88,0);
+});

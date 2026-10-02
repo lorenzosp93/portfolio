@@ -39,10 +39,10 @@
         id="detail-card"
         ref="card"
       >
+        <button type="button" class="absolute right-3 top-3 z-20 flex h-10 w-10 items-center justify-center rounded-full text-muted transition hover:bg-ink/5 hover:text-ink dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white" aria-label="Close dialog" @click="close(null)"><XMarkIcon class="h-5 w-5" aria-hidden="true" /></button>
         <div class="bottom-sheet__pan bg-gradient-to-br from-sand via-surface to-tealSoft/40 dark:from-nightElevated dark:via-nightSurface dark:to-teal/20" ref="pan">
           <div class="bottom-sheet__bar bg-teal dark:bg-tealSoft" />
           <header class="relative mt-auto border-b border-ink/10 p-4 dark:border-white/10">
-            <button type="button" class="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full text-muted transition hover:bg-ink/5 hover:text-ink dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white" aria-label="Close dialog" @click="close(null)"><XMarkIcon class="h-5 w-5" aria-hidden="true" /></button>
             <div
               v-if="$slots['extra-title-content']"
               class="text-md pr-12 text-muted dark:text-gray-300 sm:order-last sm:ml-auto"
@@ -133,6 +133,17 @@ function leaveModal() {
 function trapFocus(event: KeyboardEvent) {
   if (!opened.value) return;
   if (event.key === 'Escape') { event.preventDefault(); close(null); return; }
+  const textControl = event.target instanceof Element && event.target.closest('input, textarea, select, [contenteditable="true"]');
+  if (!textControl && ['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End'].includes(event.key)) {
+    event.preventDefault();
+    const area = content.value;
+    if (area) {
+      const direction = ['ArrowUp', 'PageUp', 'Home'].includes(event.key) ? -1 : 1;
+      const distance = event.key.startsWith('Arrow') ? 40 : area.clientHeight;
+      area.scrollTop = event.key === 'Home' ? 0 : event.key === 'End' ? area.scrollHeight : area.scrollTop + direction * distance;
+    }
+    return;
+  }
   if (event.key !== 'Tab') return;
   const elements = Array.from(card.value?.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex="0"]') || [])
     .filter(el => el.getClientRects().length > 0 && !el.closest('[inert]'));
@@ -171,48 +182,53 @@ const closeThreshold = 150;
 const minCloseDuration = 0.16;
 const maxCloseDuration = 0.42;
 const openAnimationDurationMs = 400;
-const lockedBodyProperties = ["position", "top", "left", "width", "overflow", "overscroll-behavior"];
-let previousBodyStyles: { property: string; value: string; priority: string }[] = [];
-let previousRootOverflow = "";
-let previousRootOverflowPriority = "";
-let lockedScrollX = 0;
-let lockedScrollY = 0;
+let previousBodyOverscrollBehavior = "";
 let isBodyScrollLocked = false;
+let touchX = 0;
+let touchY = 0;
 
 function lockBodyScroll() {
   if (isBodyScrollLocked) return;
-  lockedScrollX = window.scrollX;
-  lockedScrollY = window.scrollY;
-  previousBodyStyles = lockedBodyProperties.map(property => ({
-    property,
-    value: document.body.style.getPropertyValue(property),
-    priority: document.body.style.getPropertyPriority(property),
-  }));
-  previousRootOverflow = document.documentElement.style.overflow;
-  previousRootOverflowPriority = document.documentElement.style.getPropertyPriority("overflow");
-  // A fixed body also prevents scroll chaining on iOS Safari, including gestures
-  // starting on form controls or at the ends of the dialog's scroll area.
-  Object.assign(document.body.style, {
-    position: "fixed", top: `-${lockedScrollY}px`, left: `-${lockedScrollX}px`,
-    width: "100%", overflow: "hidden", overscrollBehavior: "none",
-  });
-  document.documentElement.style.overflow = "hidden";
+  previousBodyOverscrollBehavior = document.body.style.overscrollBehavior;
+  document.body.style.overscrollBehavior = "none";
   isBodyScrollLocked = true;
 }
 
 function unlockBodyScroll() {
   if (!isBodyScrollLocked) return;
-  previousBodyStyles.forEach(({ property, value, priority }) => {
-    document.body.style.setProperty(property, value, priority);
-  });
-  document.documentElement.style.setProperty("overflow", previousRootOverflow, previousRootOverflowPriority);
-  const root = document.documentElement;
-  const previousScrollBehavior = root.style.getPropertyValue("scroll-behavior");
-  const previousScrollPriority = root.style.getPropertyPriority("scroll-behavior");
-  root.style.setProperty("scroll-behavior", "auto", "important");
-  window.scrollTo({ left: lockedScrollX, top: lockedScrollY, behavior: "instant" });
-  root.style.setProperty("scroll-behavior", previousScrollBehavior, previousScrollPriority);
+  document.body.style.overscrollBehavior = previousBodyOverscrollBehavior;
   isBodyScrollLocked = false;
+}
+
+function canScrollWithinCard(target: EventTarget | null, deltaX: number, deltaY: number) {
+  let element = target instanceof Element ? target : null;
+  const horizontal = Math.abs(deltaX) > Math.abs(deltaY);
+  const delta = horizontal ? deltaX : deltaY;
+  while (element && card.value?.contains(element)) {
+    if (element instanceof HTMLElement) {
+      const overflow = getComputedStyle(element)[horizontal ? "overflowX" : "overflowY"];
+      const position = horizontal ? element.scrollLeft : element.scrollTop;
+      const maximum = horizontal ? element.scrollWidth - element.clientWidth : element.scrollHeight - element.clientHeight;
+      if (/(auto|scroll)/.test(overflow) && maximum > 1 &&
+          (delta < 0 ? position > 0 : position < maximum - 1)) return true;
+    }
+    element = element.parentElement;
+  }
+  return false;
+}
+
+function containWheel(event: WheelEvent) {
+  if (isBodyScrollLocked && !canScrollWithinCard(event.target, event.deltaX, event.deltaY)) event.preventDefault();
+}
+
+function containTouch(event: TouchEvent) {
+  if (!isBodyScrollLocked || event.touches.length !== 1) return;
+  const touch = event.touches[0];
+  const deltaX = touchX - touch.clientX;
+  const deltaY = touchY - touch.clientY;
+  touchX = touch.clientX;
+  touchY = touch.clientY;
+  if (!canScrollWithinCard(event.target, deltaX, deltaY)) event.preventDefault();
 }
 
 function getDownwardDragLimit() {
@@ -520,6 +536,13 @@ onMounted(() => {
     nextTick(open);
   }
   useEventListener(document, "keydown", trapFocus);
+  useEventListener(document, "wheel", containWheel, { passive: false });
+  useEventListener(document, "touchstart", (event: TouchEvent) => {
+    if (event.touches.length !== 1) return;
+    touchX = event.touches[0].clientX;
+    touchY = event.touches[0].clientY;
+  }, { passive: true });
+  useEventListener(document, "touchmove", containTouch, { passive: false });
   useEventListener("resize", () => {
     updateDragBounds();
     nextTick(updateScrollAffordances);

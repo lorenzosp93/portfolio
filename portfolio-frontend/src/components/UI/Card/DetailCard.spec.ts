@@ -56,36 +56,49 @@ vi.mock("gsap/InertiaPlugin", () => ({
 import DetailCard from "./DetailCard.vue";
 
 describe("DetailCard", () => {
-  it("locks the background and restores scroll and existing styles on close", async () => {
-    const scrollTo = vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
-    const scrollY = vi.spyOn(window, "scrollY", "get").mockReturnValue(720);
-    document.body.style.setProperty("position", "relative", "important");
+  it("contains background gestures without changing document geometry", async () => {
+    document.body.style.position = "relative";
     const wrapper = mount(DetailCard, { props: { isOpen: false } });
     await wrapper.setProps({ isOpen: true });
-    expect(document.body.style.position).toBe("fixed");
-    expect(document.body.style.top).toBe("-720px");
-    expect(document.documentElement.style.overflow).toBe("hidden");
-    expect(document.querySelector(".bottom-sheet")?.textContent).not.toContain("Extra title content");
-    await wrapper.setProps({ isOpen: false });
     expect(document.body.style.position).toBe("relative");
-    expect(document.body.style.getPropertyPriority("position")).toBe("important");
-    expect(document.body.style.top).toBe("");
     expect(document.documentElement.style.overflow).toBe("");
-    expect(scrollTo).toHaveBeenCalledWith({ left: 0, top: 720, behavior: "instant" });
+    expect(document.querySelector(".bottom-sheet")?.textContent).not.toContain("Extra title content");
+    const backgroundWheel = new WheelEvent("wheel", { deltaY: 50, bubbles: true, cancelable: true });
+    document.body.dispatchEvent(backgroundWheel);
+    expect(backgroundWheel.defaultPrevented).toBe(true);
+    const area = document.querySelector<HTMLElement>(".bottom-sheet__content")!;
+    area.style.overflowY = "scroll";
+    Object.defineProperties(area, {
+      clientHeight: { configurable: true, value: 300 },
+      scrollHeight: { configurable: true, value: 900 },
+      scrollTop: { configurable: true, writable: true, value: 300 },
+    });
+    const within = new WheelEvent("wheel", { deltaY: 50, bubbles: true, cancelable: true });
+    area.dispatchEvent(within);
+    expect(within.defaultPrevented).toBe(false);
+    area.scrollTop = 600;
+    const boundary = new WheelEvent("wheel", { deltaY: 50, bubbles: true, cancelable: true });
+    area.dispatchEvent(boundary);
+    expect(boundary.defaultPrevented).toBe(true);
+    const touch = new Event("touchmove", { bubbles: true, cancelable: true });
+    Object.defineProperty(touch, "touches", { value: [{ clientX: 0, clientY: -30 }] });
+    area.dispatchEvent(touch);
+    expect(touch.defaultPrevented).toBe(true);
+    await wrapper.setProps({ isOpen: false });
+    const after = new WheelEvent("wheel", { deltaY: 50, bubbles: true, cancelable: true });
+    document.body.dispatchEvent(after);
+    expect(after.defaultPrevented).toBe(false);
     wrapper.unmount();
     document.body.style.removeProperty("position");
-    scrollY.mockRestore();
-    scrollTo.mockRestore();
   });
-  it("releases the background lock when an open dialog is unmounted", async () => {
-    const scrollTo = vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
+  it("releases gesture containment when an open dialog is unmounted", async () => {
     const wrapper = mount(DetailCard, { props: { isOpen: false } });
     await wrapper.setProps({ isOpen: true });
     wrapper.unmount();
-    expect(document.body.style.position).toBe("");
-    expect(document.documentElement.style.overflow).toBe("");
-    expect(scrollTo).toHaveBeenCalledOnce();
-    scrollTo.mockRestore();
+    expect(document.body.style.overscrollBehavior).toBe("");
+    const after = new WheelEvent("wheel", { deltaY: 50, bubbles: true, cancelable: true });
+    document.body.dispatchEvent(after);
+    expect(after.defaultPrevented).toBe(false);
   });
 
   it("releases an active drag when the pointer leaves the browser window", async () => {
