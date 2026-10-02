@@ -1,5 +1,5 @@
 import { shallowMount } from "@vue/test-utils";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@/composables/visibilityObserver", async () => {
   const { ref } = await import("vue");
@@ -7,6 +7,8 @@ vi.mock("@/composables/visibilityObserver", async () => {
 });
 
 import TheResume from "./TheResume.vue";
+import { createPinia, setActivePinia } from "pinia";
+import { useSiteStore } from "@/stores/site.store";
 
 function setViewportWidth(width: number) {
   window.matchMedia = vi.fn().mockImplementation((query: string) => ({
@@ -22,6 +24,22 @@ function setViewportWidth(width: number) {
 }
 
 describe("TheResume", () => {
+  beforeEach(() => setActivePinia(createPinia()));
+
+  it("hides the skills panel and tab when disabled and restores them when enabled", async () => {
+    setViewportWidth(390);
+    const site = useSiteStore();
+    site.showSkills = false;
+    const wrapper = shallowMount(TheResume);
+    expect(wrapper.find('#skills').exists()).toBe(false);
+    expect(wrapper.find('#skills-tab').exists()).toBe(false);
+    expect(wrapper.find('#education-tab').exists()).toBe(true);
+    site.showSkills = true;
+    await wrapper.vm.$nextTick();
+    expect(wrapper.find('#skills').exists()).toBe(true);
+    expect(wrapper.find('#skills-tab').exists()).toBe(true);
+    wrapper.unmount();
+  });
   it("renders tabs only at mobile widths", () => {
     setViewportWidth(639);
 

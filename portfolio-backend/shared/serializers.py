@@ -8,7 +8,7 @@ from rest_framework.serializers import (
 )
 from .models import (
     SiteSettings,
-    LeadershipCard,
+    HighlightCard,
     Attachment,
     Subscription,
     Keys,
@@ -22,9 +22,9 @@ class AttachmentSerializer(ModelSerializer):
             'file'
         ]
 
-class LeadershipCardSerializer(ModelSerializer):
+class HighlightCardSerializer(ModelSerializer):
     class Meta:
-        model = LeadershipCard
+        model = HighlightCard
         fields = ['id', 'title', 'body', 'icon', 'position']
 
 
@@ -32,13 +32,14 @@ class SettingsSerializer(ModelSerializer):
     leadership_cards = SerializerMethodField()
 
     def get_leadership_cards(self, obj):
-        return LeadershipCardSerializer(LeadershipCard.objects.filter(active=True), many=True).data
+        return HighlightCardSerializer(HighlightCard.objects.filter(active=True), many=True).data
 
     class Meta:
         model = SiteSettings
         fields = [
             'about_text',
             'hero_picture',
+            'show_skills',
             'leadership_heading',
             'leadership_cards',
         ]

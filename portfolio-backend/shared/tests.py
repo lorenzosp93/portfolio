@@ -25,6 +25,14 @@ class SiteSettingsTests(TestCase):
         self.assertIn('hero_picture', response.json())
         self.assertIsNone(response.json()['hero_picture'])
 
+    def test_skills_visibility_defaults_off_and_can_be_enabled(self):
+        site = SiteSettings.objects.create(about_text="About")
+        self.assertFalse(self.client.get('/api/settings/1/').json()['show_skills'])
+        site.show_skills = True
+        site.save()
+        self.assertTrue(self.client.get('/api/settings/1/').json()['show_skills'])
+        self.assertIn('show_skills', admin.site._registry[SiteSettings].get_form(None).base_fields)
+
     def test_admin_form_exposes_hero_picture(self):
         model_admin = admin.site._registry[SiteSettings]
 
@@ -253,11 +261,11 @@ class LeadershipContentTests(TestCase):
         self.assertEqual([card['icon'] for card in data['leadership_cards']], ['layers', 'globe', 'users'])
 
     def test_only_published_cards_are_returned_in_editorial_order(self):
-        from .models import LeadershipCard
-        LeadershipCard.objects.all().delete()
-        LeadershipCard.objects.create(title='Second', body='Text', position=2)
-        LeadershipCard.objects.create(title='Hidden', body='Text', position=0, active=False)
-        LeadershipCard.objects.create(title='First', body='Text', position=1)
+        from .models import HighlightCard
+        HighlightCard.objects.all().delete()
+        HighlightCard.objects.create(title='Second', body='Text', position=2)
+        HighlightCard.objects.create(title='Hidden', body='Text', position=0, active=False)
+        HighlightCard.objects.create(title='First', body='Text', position=1)
         response = self.client.get('/api/site/settings/1/')
         self.assertEqual([card['title'] for card in response.json()['leadership_cards']], ['First', 'Second'])
         self.assertIn(self.client.post('/api/site/settings/1/', {}).status_code, (403, 405))

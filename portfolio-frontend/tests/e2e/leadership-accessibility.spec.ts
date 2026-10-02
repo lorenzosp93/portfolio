@@ -105,3 +105,27 @@ test('mobile résumé tabs support arrow-key navigation', async ({ page }) => {
   await education.press('End');
   await expect(page.getByRole('tab', { name: 'skills' })).toBeFocused();
 });
+
+for (const width of [390, 1280]) {
+  test(`Skills setting removes the panel and keeps résumé navigation usable at ${width}px`, async ({ page }) => {
+    await page.route('**/api/settings/1/', route => route.fulfill({ json: { ...settings, show_skills: false } }));
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/');
+    await page.locator('#the-resume').scrollIntoViewIfNeeded();
+    await expect(page.locator('#skills')).toHaveCount(0);
+    await expect(page.getByRole('tab', { name: 'skills' })).toHaveCount(0);
+    if (width < 640) {
+      const experience = page.getByRole('tab', { name: 'experience' });
+      await experience.focus();
+      await experience.press('End');
+      const education = page.getByRole('tab', { name: 'education' });
+      await expect(education).toBeFocused();
+      await expect(education).toHaveAttribute('aria-selected', 'true');
+      await education.press('ArrowRight');
+      await expect(experience).toBeFocused();
+    } else {
+      await page.locator('#the-resume').getByRole('button', { name: 'Scroll resume carousel right' }).click();
+      await expect(page.locator('#education')).not.toHaveAttribute('inert', '');
+    }
+  });
+}

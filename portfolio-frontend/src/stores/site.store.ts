@@ -1,13 +1,14 @@
 import { defineStore } from "pinia";
-import type { LeadershipCard } from "@/models/models.interface";
+import type { HighlightCard } from "@/models/models.interface";
 import { ref } from "vue";
 import backendService from "@/services/api.service";
 
 export const useSiteStore = defineStore("site", () => {
   const heroPicture = ref<string | null>(null);
   const aboutText = ref("");
+  const showSkills = ref(true);
   const leadershipHeading = ref("");
-  const leadershipCards = ref<LeadershipCard[]>([]);
+  const leadershipCards = ref<HighlightCard[]>([]);
   let settingsPromise: Promise<void> | null = null;
 
   function loadSettings() {
@@ -17,6 +18,7 @@ export const useSiteStore = defineStore("site", () => {
         .then(({ data }) => {
           heroPicture.value = data.hero_picture;
           aboutText.value = data.about_text ?? "";
+          showSkills.value = data.show_skills ?? true;
           leadershipHeading.value = data.leadership_heading ?? "";
           leadershipCards.value = data.leadership_cards ?? [];
         })
@@ -28,5 +30,5 @@ export const useSiteStore = defineStore("site", () => {
     return settingsPromise;
   }
 
-  return { heroPicture, aboutText, leadershipHeading, leadershipCards, loadSettings };
+  return { heroPicture, aboutText, showSkills, leadershipHeading, leadershipCards, loadSettings };
 });

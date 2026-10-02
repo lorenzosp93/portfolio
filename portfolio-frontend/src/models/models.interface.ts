@@ -10,7 +10,7 @@ export interface ContactForm {
   content: string;
 }
 
-export interface LeadershipCard {
+export interface HighlightCard {
   id: number;
   title: string;
   body: string;
@@ -21,7 +21,8 @@ export interface LeadershipCard {
 export interface SiteSettings {
   about_text: string;
   leadership_heading?: string;
-  leadership_cards?: LeadershipCard[];
+  show_skills?: boolean;
+  leadership_cards?: HighlightCard[];
   hero_picture: string | null;
 }
 

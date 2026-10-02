@@ -263,6 +263,10 @@ class SiteSettings(SingletonBaseModel):
     "Concrete model for the settings for the website"
     about_text = models.TextField(help_text="Short hero introduction; Markdown supported.")
     leadership_heading = models.CharField(max_length=160, blank=True)
+    show_skills = models.BooleanField(
+        default=False, verbose_name="Show Skills",
+        help_text="Show skills and languages on the website and printable CV.",
+    )
     hero_picture = models.ImageField(
         upload_to="site/hero/",
         blank=True,
@@ -304,9 +308,8 @@ class Subscription(TimeStampable):
         ]
 
 
-class LeadershipCard(models.Model):
-    ICON_CHOICES = [('layers', 'Product practice'), ('globe', 'Regional autonomy'),
-                    ('users', 'People and coaching')]
+class HighlightCard(models.Model):
+    ICON_CHOICES = [('layers', 'Layers'), ('globe', 'Globe'), ('users', 'People')]
     title = models.CharField(max_length=100)
     body = models.TextField(help_text='Markdown supported. Keep the card concise.')
     icon = models.CharField(max_length=20, choices=ICON_CHOICES, default='layers')
@@ -314,6 +317,9 @@ class LeadershipCard(models.Model):
     active = models.BooleanField(default=True, verbose_name='Published')
 
     class Meta:
+        # Preserve the existing table during rolling releases and keep its content.
+        db_table = 'shared_leadershipcard'
+        verbose_name = 'Highlight card'
         ordering = ['position', 'pk']
 
     def __str__(self):

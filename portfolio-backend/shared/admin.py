@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import SiteSettings, Attachment, Subscription, SystemLog, LeadershipCard
+from .models import SiteSettings, Attachment, Subscription, SystemLog, HighlightCard
 
 
 class SystemLogAdmin(admin.ModelAdmin):
@@ -42,8 +42,8 @@ admin.site.register(Attachment)
 admin.site.register(SystemLog, SystemLogAdmin)
 
 
-@admin.register(LeadershipCard)
-class LeadershipCardAdmin(admin.ModelAdmin):
+@admin.register(HighlightCard)
+class HighlightCardAdmin(admin.ModelAdmin):
     list_display = ('title', 'position', 'icon', 'active')
     list_editable = ('position', 'active')
     list_filter = ('active', 'icon')
