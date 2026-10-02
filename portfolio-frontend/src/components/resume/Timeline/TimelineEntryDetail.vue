@@ -7,12 +7,21 @@
       <time> {{ start_date__date }} — {{ end_date__date }} </time>
     </template>
     <template v-slot:subtitle>
-      <div class="flex flex-wrap my-auto">
-        <div class="font-bold text-lg mr-auto text-teal dark:text-tealSoft">
-          {{ entity.name }}
-        </div>
-        <div class="text-md text-muted dark:text-gray-300">
-          {{ department }}
+      <div class="mt-4 flex items-center gap-3">
+        <img
+          v-if="entity.picture"
+          :src="entity.picture"
+          :alt="`${entity.name} logo`"
+          class="h-12 w-12 flex-none rounded-xl bg-white object-contain"
+          decoding="async"
+        />
+        <div class="min-w-0">
+          <div class="font-bold text-lg text-teal dark:text-tealSoft">
+            {{ entity.name }}
+          </div>
+          <div v-if="department" class="text-sm text-muted dark:text-gray-300">
+            {{ department }}
+          </div>
         </div>
       </div>
     </template>

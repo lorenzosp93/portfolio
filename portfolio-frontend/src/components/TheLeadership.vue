@@ -72,7 +72,9 @@ async function animate() {
     cards.forEach((card, index) => {
       gsap.set(card, { zIndex: index + 1 });
       if (index === 0) return;
-      timeline.fromTo(card, { y: window.innerHeight + 60 }, { y: desktop ? 0 : index * 12, duration: 1, ease: 'none' }, index - 1);
+      timeline.fromTo(card,
+        desktop ? { x: () => element.clientWidth + 60, y: 0 } : { x: 0, y: () => window.innerHeight + 60 },
+        { x: 0, y: desktop ? 0 : index * 12, duration: 1, ease: 'none' }, index - 1);
       if (!desktop) timeline.to(cards[index - 1], { scale: .975, y: (index - 1) * 12 - 8, duration: 1, ease: 'none' }, index - 1);
     });
     timeline.to({}, { duration: .35 });
@@ -93,7 +95,7 @@ onBeforeUnmount(() => { disposed = true; generation++; clearTimeout(resizeTimer)
 </script>
 
 <style scoped>
-.leadership-section { position: relative; }
+.leadership-section { position: relative; overflow-x: clip; }
 
 .portfolio-card--coral .leadership-icon { @apply bg-coralSoft/40 text-coral dark:bg-coral/20 dark:text-coralSoft; }
 .is-animated { position: relative; }

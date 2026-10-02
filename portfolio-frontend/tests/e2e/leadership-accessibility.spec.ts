@@ -22,7 +22,10 @@ for (const width of [320, 390, 1023, 1024, 1280]) {
     // Follow the reading flow rather than deriving a scroll destination from a
     // spacer while ScrollTrigger is still refreshing its layout in WebKit.
     await page.locator('#the-resume').scrollIntoViewIfNeeded();
-    await expect.poll(() => page.locator('.leadership-card').last().evaluate(el => new DOMMatrixReadOnly(getComputedStyle(el).transform).m42)).toBeLessThan(30);
+    await expect.poll(() => page.locator('.leadership-card').last().evaluate((el, desktop) => {
+      const transform = new DOMMatrixReadOnly(getComputedStyle(el).transform);
+      return desktop ? transform.m41 : transform.m42;
+    }, width >= 1024)).toBeLessThan(30);
     expect(await page.locator('.leadership-card').evaluateAll(els => els.every(el => el.scrollHeight <= el.clientHeight + 2))).toBe(true);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     const positions = await page.locator('.leadership-card').evaluateAll(els => els.map(el => el.getBoundingClientRect().left));
@@ -222,8 +225,10 @@ test('Explore lands at the pin start and the next scroll advances the cards with
   await expect.poll(()=>scene.evaluate(el=>el.getBoundingClientRect().top)).toBeCloseTo(88, 0);
   await page.waitForTimeout(150);
   const card=page.locator('.leadership-card').nth(1);
-  const before=await card.evaluate(el=>new DOMMatrixReadOnly(getComputedStyle(el).transform).m42);
+  const before=await card.evaluate(el=>new DOMMatrixReadOnly(getComputedStyle(el).transform).m41);
+  expect(before).toBeGreaterThan(500);
+  expect(await card.evaluate(el=>new DOMMatrixReadOnly(getComputedStyle(el).transform).m42)).toBe(0);
   await page.mouse.wheel(0,40);
-  await expect.poll(()=>card.evaluate(el=>new DOMMatrixReadOnly(getComputedStyle(el).transform).m42)).toBeLessThan(before-10);
+  await expect.poll(()=>card.evaluate(el=>new DOMMatrixReadOnly(getComputedStyle(el).transform).m41)).toBeLessThan(before-10);
   expect(await scene.evaluate(el=>el.getBoundingClientRect().top)).toBeCloseTo(88,0);
 });
