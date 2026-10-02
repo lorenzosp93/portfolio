@@ -183,9 +183,11 @@ function updateFade() {
   const stickyTop = parseFloat(getComputedStyle(navbar.value).top) || 0;
   const remainingToStick = hero.getBoundingClientRect().bottom - stickyTop;
   const distance = remainingToStick - portraitBottom;
-  fadeProgress.value = distance > 0
+  const progress = distance > 0
     ? Math.max(0, Math.min(1, -portraitBottom / distance))
     : remainingToStick <= 0 ? 1 : 0;
+  // Stay hidden for most of the approach, then reveal near the sticky position.
+  fadeProgress.value = Math.pow(Math.max(0, (progress - .6) / .4), 3);
 }
 function scheduleFade() {
   if (!fadeFrame) fadeFrame = requestAnimationFrame(updateFade);

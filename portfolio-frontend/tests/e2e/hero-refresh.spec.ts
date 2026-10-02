@@ -149,7 +149,7 @@ test("navbar waits for the portrait to exit, fades in, and never duplicates it o
       window.scrollTo(0, start + (end - start) * progress);
     }, { ...endpoints, progress });
     await expect.poll(async () => Number(await page.locator(".navbar-surface").evaluate(
-      el => getComputedStyle(el).opacity))).toBeCloseTo(progress, 2);
+      el => getComputedStyle(el).opacity))).toBeCloseTo(Math.pow(Math.max(0, (progress - .6) / .4), 3), 2);
   }
   await page.evaluate(() => window.scrollTo(0, 100));
   await expect(page.locator("#heroLogo")).toHaveCSS("visibility", "hidden");
