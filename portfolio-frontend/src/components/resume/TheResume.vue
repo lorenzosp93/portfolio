@@ -24,7 +24,7 @@
         Experience leading products and teams.
       </h2>
       <p class="section-lede">
-        My experience, education, and the capabilities I bring to product teams.
+        My experience and education.
       </p>
     </div>
 
@@ -106,6 +106,9 @@ import ResumeTimeline from "./Timeline/ResumeTimeline.vue";
 import ArrowScroller from "../composables/ArrowScroller.vue";
 import { DocumentArrowDownIcon } from "@heroicons/vue/24/outline";
 
+import { useSiteStore } from "@/stores/site.store";
+const site = useSiteStore();
+
 const cvUrl = `${import.meta.env.VITE_APP_BACKEND_URL ?? ""}/api/resume/cv/`;
 // Float the CV shortcut only while the résumé section is on screen.
 const resumeSection = ref<HTMLElement | null>(null);
@@ -131,7 +134,7 @@ let resizeObserver: ResizeObserver | null = null;
 let scrollFrame: number | null = null;
 let scrollSettleTimer: ReturnType<typeof window.setTimeout> | null = null;
 
-const resumeList = [
+const resumeList = computed(() => [
   {
     component: ResumeTimeline,
     props: { ix: "first", kind: "experience" },
@@ -139,7 +142,7 @@ const resumeList = [
   },
   {
     component: ResumeTimeline,
-    props: { ix: "center", kind: "education" },
+    props: { ix: site.showSkills ? "center" : "last", kind: "education" },
     id: "education",
   },
   {
@@ -147,7 +150,16 @@ const resumeList = [
     props: { ix: "last" },
     id: "skills",
   },
-];
+].filter(item => item.id !== "skills" || site.showSkills));
+
+watch(resumeList, async (items) => {
+  if (!items.some(item => item.id === activeSlideId.value)) {
+    await nextTick();
+    scrollToSlide(items[0].id);
+  }
+  updateActivePanelHeight();
+  nextTick(updateMobileTabBar);
+});
 
 // Keep this boundary aligned with TheNavbar: its desktop navigation starts at `sm`.
 const isMobile = useMediaQuery("(max-width: 639px)");
@@ -230,7 +242,7 @@ function updateActiveSlideFromScroll() {
   let closestId = activeSlideId.value;
   let closestDistance = Number.POSITIVE_INFINITY;
 
-  resumeList.forEach(({ id }) => {
+  resumeList.value.forEach(({ id }) => {
     const slide = slideRefs[id];
     if (!slide) return;
 
@@ -261,10 +273,10 @@ function handleTabKey(event: KeyboardEvent, id: string) {
   const keys = ['ArrowLeft', 'ArrowRight', 'Home', 'End'];
   if (!keys.includes(event.key)) return;
   event.preventDefault();
-  const index = resumeList.findIndex(item => item.id === id);
-  const next = event.key === 'Home' ? 0 : event.key === 'End' ? resumeList.length - 1
-    : (index + (event.key === 'ArrowRight' ? 1 : -1) + resumeList.length) % resumeList.length;
-  const target = resumeList[next].id;
+  const index = resumeList.value.findIndex(item => item.id === id);
+  const next = event.key === 'Home' ? 0 : event.key === 'End' ? resumeList.value.length - 1
+    : (index + (event.key === 'ArrowRight' ? 1 : -1) + resumeList.value.length) % resumeList.value.length;
+  const target = resumeList.value[next].id;
   scrollToSlide(target);
   mobileTabRefs[target]?.focus();
 }

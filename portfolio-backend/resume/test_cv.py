@@ -4,7 +4,7 @@ import os
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from shared.models import LeadershipCard, SiteSettings
+from shared.models import HighlightCard, SiteSettings
 
 from .models import Education, Entity, Experience, Skill, SkillCategory
 from .templatetags.resume_tags import cv_markdown
@@ -14,6 +14,7 @@ def seed_cv():
     SiteSettings.objects.all().delete()
     SiteSettings.objects.create(
         about_text='About',
+        show_skills=True,
         cv_headline='Head of Product | Engineer',
         cv_summary=(
             'A Product leader mixing tech knowledge and business acumen, rooted in software '
@@ -85,11 +86,24 @@ class CVPageTests(TestCase):
             with open(path, 'w', encoding='utf-8') as handle:
                 handle.write(html)
 
+    def test_skills_toggle_hides_bars_and_languages_but_keeps_experience(self):
+        site = SiteSettings.objects.get(pk=1)
+        site.show_skills = False
+        site.save()
+        response = self.client.get('/api/resume/cv/')
+        self.assertContains(response, 'summary--full')
+        self.assertNotContains(response, '<dl class="bars">')
+        self.assertNotContains(response, '<div class="languages">')
+        self.assertNotContains(response, 'Python')
+        self.assertNotContains(response, 'Italian')
+        self.assertContains(response, 'Manager, Software Product Engineering')
+        self.assertContains(response, 'M.Sc. in Energy Engineering')
+
     def test_cv_reuses_published_leadership_content_in_order(self):
-        LeadershipCard.objects.all().delete()
-        second = LeadershipCard.objects.create(title='Regional autonomy', body='Shared global direction.', position=2)
-        LeadershipCard.objects.create(title='Developing leaders', body='Coaching independent **product leaders**.', position=1)
-        LeadershipCard.objects.create(title='Draft card', body='Do not publish.', active=False)
+        HighlightCard.objects.all().delete()
+        second = HighlightCard.objects.create(title='Regional autonomy', body='Shared global direction.', position=2)
+        HighlightCard.objects.create(title='Developing leaders', body='Coaching independent **product leaders**.', position=1)
+        HighlightCard.objects.create(title='Draft card', body='Do not publish.', active=False)
         site = SiteSettings.objects.get(pk=1)
         site.about_text = 'I lead software product teams in EMEA.'
         site.cv_summary = 'Outdated summary'
@@ -105,7 +119,7 @@ class CVPageTests(TestCase):
         self.assertContains(self.client.get('/api/resume/cv/'), second.body)
 
     def test_cv_retains_summary_fallback_without_leadership_content(self):
-        LeadershipCard.objects.all().delete()
+        HighlightCard.objects.all().delete()
         self.assertContains(self.client.get('/api/resume/cv/'), 'A Product leader mixing tech knowledge')
 
     def test_never_exposes_private_contact_details(self):

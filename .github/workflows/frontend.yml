@@ -52,6 +52,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: docker build -t portfolio-frontend:test ./portfolio-frontend
+      - name: Validate nginx startup with both routing configurations
+        run: |
+          docker run --rm portfolio-frontend:test nginx -t
+          docker run --rm -e WRITING_BACKEND_ORIGIN=http://127.0.0.1:8000 portfolio-frontend:test nginx -t
 
   build:
     runs-on: ubuntu-latest

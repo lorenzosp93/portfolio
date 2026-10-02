@@ -3,7 +3,7 @@ from django.conf import settings
 from django.utils.cache import patch_cache_control
 from django.views.generic import TemplateView
 
-from shared.models import LeadershipCard, SiteSettings
+from shared.models import HighlightCard, SiteSettings
 
 from .models import Education, Experience, Skill, SkillCategory
 
@@ -18,16 +18,16 @@ class CVView(TemplateView):
         website = settings.FRONTEND_HOST.rstrip('/')
         context.update(
             site=site,
-            leadership_cards=LeadershipCard.objects.filter(active=True),
+            leadership_cards=HighlightCard.objects.filter(active=True),
             picture_url=picture.url if picture else '',
             website=website,
             website_label=website.split('://', 1)[-1],
             experiences=Experience.objects.select_related('entity').order_by('-start_date'),
             educations=Education.objects.select_related('entity').order_by('-start_date'),
             skills=Skill.objects.filter(show_on_cv=True)
-            .exclude(category=SkillCategory.LANGUAGE).order_by('-level', 'name'),
+            .exclude(category=SkillCategory.LANGUAGE).order_by('-level', 'name') if site.show_skills else Skill.objects.none(),
             languages=Skill.objects.filter(show_on_cv=True, category=SkillCategory.LANGUAGE)
-            .order_by('-level', 'name'),
+            .order_by('-level', 'name') if site.show_skills else Skill.objects.none(),
         )
         return context
 
