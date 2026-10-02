@@ -3,15 +3,15 @@
     ref="root"
     class="min-h-[45vh] lg:min-h-[50vh] w-full relative flex flex-wrap mx-auto bg-paper py-20 dark:bg-night md:py-28"
   >
-    <div class="flex w-full max-w-7xl flex-wrap mx-auto mb-8 px-5 md:mb-12">
-      <h2 class="section-heading mt-auto">
+    <div class="flex w-full max-w-7xl flex-col items-center mx-auto mb-8 px-5 md:mb-12">
+      <h2 class="section-heading">
         Thoughts from the blog.
       </h2>
-      <p class="section-lede mb-auto px-2">
+      <p class="section-lede px-2">
         Who needs MySpace when you can create your own blog and write whatever
         comes to mind on it, right?
       </p>
-      <PushSubscribe class="mx-auto dark:fill-white" />
+      <PushSubscribe class="mt-3 dark:fill-white" />
     </div>
     <div class="relative w-full">
       <ArrowScroller @end="loadEntries" :scroll-container="blogContainer" />

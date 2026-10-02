@@ -12,6 +12,20 @@ test("renders the main portfolio sections", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Get in touch!" })).toBeAttached();
 });
 
+test("docks the navbar after scrolling to explore", async ({ page }) => {
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/");
+    await page.getByRole("button", { name: "Scroll to explore the portfolio" }).click();
+
+    await expect.poll(async () => {
+      const navbar = await page.locator("#the-navbar").boundingBox();
+      return Math.abs(navbar!.y);
+    }).toBeLessThan(1);
+    await expect(page.locator(".navbar-surface")).toHaveCSS("opacity", "1");
+  }
+});
+
 test("does not place the animated portrait inside a transformed hero layout", async ({ page }) => {
   await page.goto("/");
 

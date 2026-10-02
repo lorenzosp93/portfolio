@@ -253,10 +253,11 @@ useEventListener(window, "scroll", () => {
 onUnmounted(() => cancelAnimationFrame(frame));
 
 function scrollToResume() {
-  document.getElementById("the-resume")?.scrollIntoView({
+  if (!root.value) return;
+  // Dock the navbar at the hero's bottom; the resume's scroll margin stops short.
+  window.scrollTo({
+    top: window.scrollY + root.value.getBoundingClientRect().bottom,
     behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
-    block: "start",
-    inline: "nearest",
   });
 }
 
