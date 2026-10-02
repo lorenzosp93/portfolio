@@ -16,19 +16,24 @@
       <ArrowScroller @end="loadEntries" :scroll-container="blogContainer" />
       <div
         class="relative flex overflow-x-scroll overflow-y-hidden no-scrollbar snap-x snap-proximity h-full w-full scroll-smooth px-[12.5%] md:px-[25%] lg:px-16 xl:px-24 py-5 gap-x-5"
+        :class="{ 'blog-loading': isLoading }"
         id="blog-container"
         ref="blogContainer"
       >
-        <list-card
-          type="blog"
-          class="blog-card w-full lg:w-[30%] snap-center flex-none mx-auto"
+        <div
           v-for="post in blogStore.posts"
           :key="post?.uuid"
-          v-bind="post"
-          :isActive="isActive"
-          :open-on-mount="!!linkedSlug && post.slug === linkedSlug"
-          @open-change="(open: boolean) => syncPostUrl(open ? post.slug : undefined)"
-        />
+          class="blog-card-shell flex w-full lg:w-[30%] snap-center flex-none mx-auto"
+        >
+          <list-card
+            type="blog"
+            class="blog-card w-full"
+            v-bind="post"
+            :isActive="isActive"
+            :open-on-mount="!!linkedSlug && post.slug === linkedSlug"
+            @open-change="(open: boolean) => syncPostUrl(open ? post.slug : undefined)"
+          />
+        </div>
         <div
           class="snap-center relative w-10 h-10 p-6 my-auto mx-10 flex bg-white dark:bg-gray-900 shadow-md container flex-none rounded-full"
           v-if="isLoading"
@@ -62,13 +67,13 @@
 <script setup lang="ts">
 import ListCard from "../UI/Card/ListCard.vue";
 import RetryButton from "../UI/Buttons/RetryButton.vue";
-import { Ref, inject, onMounted, ref, watch } from "vue";
+import { Ref, inject, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useBlogStore } from "@/stores/blog.store";
 import { useVisibilityObserver } from "@/composables/visibilityObserver";
 import ArrowScroller from "../composables/ArrowScroller.vue";
 import PushSubscribe from "./PushSubscribe.vue";
 
-const blogContainer = ref(null);
+const blogContainer = ref<HTMLDivElement | null>(null);
 
 const isLoading = ref(false);
 
@@ -79,6 +84,67 @@ const { isActive } = useVisibilityObserver("theBlog", root);
 const entriesLimit: () => number = inject("entriesLimit", () => 5);
 
 const blogStore = useBlogStore();
+
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const observedCards = new Set<HTMLElement>();
+const entranceAnimations = new Map<HTMLElement, Animation>();
+let entranceObserver: IntersectionObserver | undefined;
+
+function revealImmediately(card: HTMLElement) {
+  entranceObserver?.unobserve(card);
+  card.classList.remove('blog-card--pending');
+  entranceAnimations.get(card)?.cancel();
+  entranceAnimations.delete(card);
+}
+
+function observeCards() {
+  if (!entranceObserver || reducedMotion.matches) return;
+  blogContainer.value?.querySelectorAll<HTMLElement>('.blog-card').forEach(card => {
+    if (observedCards.has(card)) return;
+    observedCards.add(card);
+    card.classList.add('blog-card--pending');
+    entranceObserver?.observe(card);
+  });
+}
+
+function motionPreferenceChanged() {
+  if (reducedMotion.matches) observedCards.forEach(revealImmediately);
+}
+
+function revealFocusedCard(event: FocusEvent) {
+  const card = event.target instanceof Element ? event.target.closest<HTMLElement>('.blog-card') : null;
+  if (card) revealImmediately(card);
+}
+
+onMounted(() => {
+  if (!('IntersectionObserver' in window)) return;
+  entranceObserver = new IntersectionObserver(entries => {
+    entries.filter(entry => entry.isIntersecting).forEach((entry, index) => {
+      const card = entry.target as HTMLElement;
+      entranceObserver?.unobserve(card);
+      if (reducedMotion.matches) { revealImmediately(card); return; }
+      const animation = card.animate([
+        { opacity: 0, transform: 'translateY(48px) scale(.97)' },
+        { opacity: 1, transform: 'translateY(0) scale(1)' },
+      ], { duration: 600, delay: index * 180, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'both' });
+      entranceAnimations.set(card, animation);
+      // Let the existing hover transition settle underneath the entrance;
+      // removing the pending state at the end would replay that transition.
+      card.classList.remove('blog-card--pending');
+      animation.onfinish = () => revealImmediately(card);
+    });
+  }, { threshold: .2, rootMargin: '0px 0px -48px 0px' });
+  observeCards();
+  reducedMotion.addEventListener('change', motionPreferenceChanged);
+  blogContainer.value?.addEventListener('focusin', revealFocusedCard);
+});
+watch(() => blogStore.posts.length, observeCards, { flush: 'post' });
+onBeforeUnmount(() => {
+  entranceObserver?.disconnect();
+  observedCards.forEach(revealImmediately);
+  reducedMotion.removeEventListener('change', motionPreferenceChanged);
+  blogContainer.value?.removeEventListener('focusin', revealFocusedCard);
+});
 
 watch(isActive, (val) => {
   if (val && blogStore.posts.length == 0 && !isLoading.value) {
@@ -122,9 +188,14 @@ onMounted(async () => {
 
 async function loadEntries() {
   if (isLoading.value) return;
+  const firstPage = blogStore.posts.length === 0;
   isLoading.value = true;
   try {
     await blogStore.getBlogEntries(entriesLimit());
+    if (firstPage) {
+      await nextTick();
+      if (blogContainer.value) blogContainer.value.scrollLeft = 0;
+    }
   } catch {
     // The empty state exposes the retry control once loading is cleared.
   } finally {
@@ -132,3 +203,11 @@ async function loadEntries() {
   }
 }
 </script>
+
+<style scoped>
+.blog-loading { scroll-snap-type: none; scroll-behavior: auto; }
+.blog-card--pending { opacity: 0; transform: translateY(48px) scale(.97); }
+@media (prefers-reduced-motion: reduce) {
+  .blog-card--pending { opacity: 1; transform: none; }
+}
+</style>

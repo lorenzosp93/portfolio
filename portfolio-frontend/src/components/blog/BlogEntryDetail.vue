@@ -29,6 +29,13 @@
       </div>
     </template>
     <template v-slot:inner-content>
+      <img
+        v-if="picture"
+        :src="picture"
+        :alt="`Header image for ${name}`"
+        class="blog-detail-cover mb-5 aspect-video w-full object-cover sm:aspect-[3.3/1]"
+        decoding="async"
+      />
       <div class="px-3 prose dark:prose-invert">
         <div v-html="html_content" />
       </div>
