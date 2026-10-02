@@ -216,22 +216,41 @@ for (const width of [768, 1280]) {
   });
 }
 
-test('Explore lands at the pin start and the next scroll advances the cards without moving the heading', async ({ page }) => {
-  await page.setViewportSize({ width: 1280, height: 900 });
-  await page.goto('/');
-  const scene=page.locator('.leadership-scene');
-  await expect(scene).toHaveAttribute('data-scroll-start', /\d/);
-  await page.getByRole('button', { name: 'Scroll to explore the portfolio' }).click();
-  await expect.poll(()=>scene.evaluate(el=>el.getBoundingClientRect().top)).toBeCloseTo(88, 0);
-  await page.waitForTimeout(150);
-  const card=page.locator('.leadership-card').nth(1);
-  const before=await card.evaluate(el=>new DOMMatrixReadOnly(getComputedStyle(el).transform).m41);
-  expect(before).toBeGreaterThan(500);
-  expect(await card.evaluate(el=>new DOMMatrixReadOnly(getComputedStyle(el).transform).m42)).toBe(0);
-  await page.mouse.wheel(0,40);
-  await expect.poll(()=>card.evaluate(el=>new DOMMatrixReadOnly(getComputedStyle(el).transform).m41)).toBeLessThan(before-10);
-  expect(await scene.evaluate(el=>el.getBoundingClientRect().top)).toBeCloseTo(88,0);
-});
+for (const width of [390, 1280]) {
+  test(`Explore and About leave the navbar attached and begin the timeline immediately at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/');
+    const scene = page.locator('.leadership-scene');
+    await expect(scene).toHaveAttribute('data-scroll-start', /\d/);
+    const pinTop = Number(await scene.getAttribute('data-pin-top'));
+    await page.getByRole('button', { name: 'Scroll to explore the portfolio' }).click();
+    await expect.poll(() => scene.evaluate(el => el.getBoundingClientRect().top)).toBeCloseTo(pinTop, 0);
+    expect(await page.locator('#the-navbar').evaluate(el => el.getBoundingClientRect().top)).toBe(0);
+    if (width >= 1024) {
+      const centerError = await scene.evaluate(el => {
+        const rect = el.getBoundingClientRect();
+        const nav = document.getElementById('the-navbar')!.getBoundingClientRect();
+        return Math.abs(rect.top + rect.height / 2 - (innerHeight + nav.height) / 2);
+      });
+      expect(centerError).toBeLessThan(3);
+    }
+    const card = page.locator('.leadership-card').nth(1);
+    const axis = width >= 1024 ? 'm41' : 'm42';
+    const before = await card.evaluate((el, axis) => new DOMMatrixReadOnly(getComputedStyle(el).transform)[axis], axis);
+    await page.mouse.wheel(0, 40);
+    await expect.poll(() => card.evaluate((el, axis) => new DOMMatrixReadOnly(getComputedStyle(el).transform)[axis], axis)).toBeLessThan(before - 10);
+    expect(await scene.evaluate(el => el.getBoundingClientRect().top)).toBeCloseTo(pinTop, 0);
+    await page.locator('#the-resume').scrollIntoViewIfNeeded();
+    if (width < 640) {
+      await page.getByRole('button', { name: 'Open main menu' }).click();
+      await page.locator('#mobile-menu button').nth(1).click();
+    } else {
+      await page.locator('.navbar-surface').getByRole('button', { name: 'Highlights', exact: true }).click();
+    }
+    await expect.poll(() => scene.evaluate(el => el.getBoundingClientRect().top)).toBeCloseTo(pinTop, 0);
+    expect(await page.locator('#the-navbar').evaluate(el => el.getBoundingClientRect().top)).toBe(0);
+  });
+}
 
 test('wide displays hide upcoming highlights until their entrance and reduced motion restores visibility', async ({ page }) => {
   await page.setViewportSize({ width: 2560, height: 1440 });
@@ -254,3 +273,23 @@ test('wide displays hide upcoming highlights until their entrance and reduced mo
   await expect(page.locator('.leadership-cards')).not.toHaveClass(/is-animated/);
   expect(await highlights.evaluateAll(els => els.every(el => getComputedStyle(el).opacity === '1'))).toBe(true);
 });
+
+for (const width of [390, 1280]) {
+  test(`highlights navigation sticks the navbar in reduced motion at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/');
+    await expect(page.locator('.leadership-card')).toHaveCount(3);
+    await page.getByRole('button', { name: 'Scroll to explore the portfolio' }).click();
+    await expect.poll(() => page.locator('#the-navbar').evaluate(el => el.getBoundingClientRect().top)).toBe(0);
+    await page.locator('#the-resume').scrollIntoViewIfNeeded();
+    if (width < 640) {
+      await page.getByRole('button', { name: 'Open main menu' }).click();
+      await page.locator('#mobile-menu button').nth(1).click();
+    } else {
+      await page.locator('.navbar-surface').getByRole('button', { name: 'Highlights', exact: true }).click();
+    }
+    await expect.poll(() => page.locator('#the-navbar').evaluate(el => el.getBoundingClientRect().top)).toBe(0);
+    expect(await page.locator('.leadership-card').evaluateAll(els => els.every(el => getComputedStyle(el).opacity === '1'))).toBe(true);
+  });
+}

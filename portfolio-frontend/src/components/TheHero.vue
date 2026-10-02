@@ -146,7 +146,7 @@
 </template>
 
 <script setup lang="ts">
-import { HIGHLIGHTS_PIN_TOP } from "@/composables/highlightsLayout";
+import { highlightsScrollTop } from "@/composables/highlightsLayout";
 import { useVisibilityObserver } from "@/composables/visibilityObserver";
 import { useEventListener, usePreferredReducedMotion } from "@vueuse/core";
 import { renderInlineMarkdown } from "@/composables/markdown";
@@ -255,11 +255,8 @@ onUnmounted(() => cancelAnimationFrame(frame));
 
 function scrollToResume() {
   if (!root.value) return;
-  const scene = document.querySelector<HTMLElement>('.leadership-scene');
-  const start = scene?.dataset.scrollStart;
-  const destination = start !== undefined ? Number(start) : scene
-    ? window.scrollY + scene.getBoundingClientRect().top - HIGHLIGHTS_PIN_TOP
-    : window.scrollY + root.value.getBoundingClientRect().bottom;
+  const destination = highlightsScrollTop()
+    ?? window.scrollY + root.value.getBoundingClientRect().bottom;
   window.scrollTo({
     top: destination,
     behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",

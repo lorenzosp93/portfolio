@@ -159,6 +159,7 @@
 </template>
 
 <script setup lang="ts">
+import { highlightsScrollTop } from '@/composables/highlightsLayout';
 import { useNavStore } from "@/stores/nav.store";
 import { Bars3Icon, XMarkIcon } from "@heroicons/vue/24/outline";
 import { MaybeRef, useEventListener } from "@vueuse/core";
@@ -284,6 +285,14 @@ function scrollToElement(elem: MaybeRef<HTMLDivElement | null>) {
   if (!elem) return;
   if ("value" in elem) elem = elem.value;
   if (!elem) return;
+
+  if (elem.id === 'the-leadership') {
+    const top = highlightsScrollTop();
+    if (top !== null) {
+      window.scrollTo({ top, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+      return;
+    }
+  }
 
   scrollHorizontallyIntoView(elem);
   elem.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start", inline: "nearest" });

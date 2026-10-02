@@ -55,16 +55,29 @@ async function animate() {
     if (!container || !element || !context.conditions) return;
     const cards = Array.from(container.querySelectorAll<HTMLElement>('.leadership-card'));
     const { desktop, reduced } = context.conditions;
-    if (reduced || cards.length < 2) return;
     const height = Math.max(...cards.map(card => card.offsetHeight));
     const headingHeight = (element.querySelector('header')?.getBoundingClientRect().height ?? 0) + 32;
+    const navbarHeight = document.getElementById('the-navbar')?.offsetHeight ?? 56;
+    const pinTop = desktop ? Math.max(HIGHLIGHTS_PIN_TOP,
+      (window.innerHeight - height - headingHeight - 32 + navbarHeight) / 2) : HIGHLIGHTS_PIN_TOP;
+    element.dataset.pinTop = String(pinTop);
+    root.value?.style.setProperty('--highlights-offset', `${pinTop - HIGHLIGHTS_PIN_TOP}px`);
+    const cleanup = () => {
+      delete element.dataset.scrollStart;
+      delete element.dataset.pinTop;
+      root.value?.style.removeProperty('--highlights-offset');
+      container.classList.remove('is-animated');
+      container.style.removeProperty('height');
+      cards.forEach(card => card.style.removeProperty('min-height'));
+    };
+    if (reduced || cards.length < 2) return cleanup;
     // Long CMS copy, zoom, and short landscape windows retain the normal flow.
-    if (height + headingHeight + 64 > window.innerHeight - 72) return;
+    if (height + headingHeight + 64 > window.innerHeight - 72) return cleanup;
     container.classList.add('is-animated');
     container.style.height = `${height + 32}px`;
     cards.forEach(card => { card.style.minHeight = `${height}px`; });
     const timeline = gsap.timeline({ scrollTrigger: {
-      trigger: element, pin: true, start: `top ${HIGHLIGHTS_PIN_TOP}px`,
+      trigger: element, pin: true, start: `top ${pinTop}px`,
       end: () => `+=${window.innerHeight * (cards.length - 1) * .9}`,
       scrub: true, invalidateOnRefresh: true,
       onRefresh: self => { element.dataset.scrollStart = String(self.start); },
@@ -78,12 +91,7 @@ async function animate() {
       if (!desktop) timeline.to(cards[index - 1], { scale: .975, y: (index - 1) * 12 - 8, duration: 1, ease: 'none' }, index - 1);
     });
     timeline.to({}, { duration: .35 });
-    return () => {
-      delete element.dataset.scrollStart;
-      container.classList.remove('is-animated');
-      container.style.removeProperty('height');
-      cards.forEach(card => card.style.removeProperty('min-height'));
-    };
+    return cleanup;
   });
 }
 watch(() => site.highlightCards, () => { void animate().catch(() => { media?.revert(); }); });
@@ -101,6 +109,7 @@ onBeforeUnmount(() => { disposed = true; generation++; clearTimeout(resizeTimer)
 .is-animated { position: relative; }
 .is-animated .leadership-card { grid-area: 1 / 1; transform-origin: center top; }
 @media (min-width: 1024px) {
+  .leadership-section { padding-top: calc(4rem + var(--highlights-offset, 0px)); }
   .is-animated .leadership-card:nth-child(2) { grid-area: 1 / 2; }
   .is-animated .leadership-card:nth-child(3) { grid-area: 1 / 3; }
 }

@@ -99,11 +99,12 @@
     /* Entries */
     .entries { list-style: none; margin: 0; padding: 0; }
     .entry {
-      display: grid; grid-template-columns: 26mm 1fr; gap: 4mm;
+      display: grid; grid-template-columns: 34mm minmax(0, 1fr); gap: 4mm;
       padding: 2.5mm 0 3mm; break-inside: avoid;
     }
     .entry + .entry { border-top: 1px solid var(--rule); }
     .when { font-size: 8pt; color: var(--muted); }
+    .date-range { display: block; white-space: nowrap; }
     .when .role-note { display: block; }
     .logo { display: block; max-width: 22mm; max-height: 7mm; margin-top: 2mm; object-fit: contain; object-position: left; filter: grayscale(1); }
     .entry-head { display: flex; justify-content: space-between; gap: 4mm; align-items: baseline; }
@@ -216,8 +217,8 @@
         {% for entry in experiences %}
         <li class="entry">
           <div class="when">
-            <time datetime="{{ entry.start_date|date:'Y-m' }}">{{ entry.start_date|cv_month }}</time> –
-            {% if entry.current %}Present{% else %}<time datetime="{{ entry.end_date|date:'Y-m' }}">{{ entry.end_date|cv_month }}</time>{% endif %}
+            <span class="date-range"><time datetime="{{ entry.start_date|date:'Y-m' }}">{{ entry.start_date|cv_month }}</time> –
+            {% if entry.current %}Present{% else %}<time datetime="{{ entry.end_date|date:'Y-m' }}">{{ entry.end_date|cv_month }}</time>{% endif %}</span>
             {% if entry.entity.picture %}<img class="logo" src="{{ entry.entity.picture.url }}" alt="{{ entry.entity.name }}" loading="lazy">{% endif %}
           </div>
           <div>
@@ -243,8 +244,8 @@
         {% for entry in educations %}
         <li class="entry">
           <div class="when">
-            <time datetime="{{ entry.start_date|date:'Y-m' }}">{{ entry.start_date|cv_month }}</time> –
-            {% if entry.current %}Present{% else %}<time datetime="{{ entry.end_date|date:'Y-m' }}">{{ entry.end_date|cv_month }}</time>{% endif %}
+            <span class="date-range"><time datetime="{{ entry.start_date|date:'Y-m' }}">{{ entry.start_date|cv_month }}</time> –
+            {% if entry.current %}Present{% else %}<time datetime="{{ entry.end_date|date:'Y-m' }}">{{ entry.end_date|cv_month }}</time>{% endif %}</span>
             {% if entry.entity.picture %}<img class="logo" src="{{ entry.entity.picture.url }}" alt="{{ entry.entity.name }}" loading="lazy">{% endif %}
           </div>
           <div>
