@@ -56,7 +56,7 @@ describe("TheResume", () => {
     expect(wrapper.find("ul").exists()).toBe(false);
   });
 
-  it("updates a shrinking panel without compensating the page scroll", async () => {
+  it("reserves a shrinking panel's height without compensating the page scroll", async () => {
     const observers: Array<{
       callback: ResizeObserverCallback;
       observe: ReturnType<typeof vi.fn>;
@@ -100,7 +100,7 @@ describe("TheResume", () => {
 
     await wrapper.vm.$nextTick();
     expect(scrollBy).not.toHaveBeenCalled();
-    expect(wrapper.find(".overflow-hidden").attributes("style")).toContain("height: 600px");
+    expect(wrapper.find(".overflow-hidden").attributes("style")).toContain("height: 800px");
     wrapper.unmount();
     window.ResizeObserver = originalResizeObserver;
   });

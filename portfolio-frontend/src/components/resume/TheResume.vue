@@ -71,7 +71,7 @@
       />
       <div
         ref="resumeViewport"
-        class="overflow-hidden transition-[height] duration-300 ease-out min-h-[1vh] min-h-[1svh]"
+        class="overflow-hidden min-h-[1vh] min-h-[1svh]"
         :style="resumeViewportStyle"
       >
         <div
@@ -211,11 +211,10 @@ function updateMobileTabBar() {
 
 function updateActivePanelHeight() {
   nextTick(() => {
-    const activeSlide = slideRefs[activeSlideId.value];
-    if (!activeSlide) return;
-    const nextPanelHeight = activeSlide.scrollHeight;
-    if (nextPanelHeight === activePanelHeight.value) return;
-    activePanelHeight.value = nextPanelHeight;
+    // Reserve the tallest loaded panel. Switching to a shorter panel must not
+    // collapse the document above Blog or feed scroll anchoring/visibility loops.
+    const nextPanelHeight = Math.max(0, ...Object.values(slideRefs).map(slide => slide?.scrollHeight ?? 0));
+    activePanelHeight.value = Math.max(activePanelHeight.value, nextPanelHeight);
   });
 }
 
