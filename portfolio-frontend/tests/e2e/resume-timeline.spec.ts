@@ -130,7 +130,6 @@ for (const width of [320, 390, 768, 1023, 1024, 1440]) {
 for (const width of [390, 1280]) {
   test(`marker leads the side entrance, hidden future and Detail Card work at ${width}px`, async ({
     page,
-    browserName,
   }) => {
     const errors: string[] = [];
     page.on("pageerror", (error) => errors.push(error.message));
@@ -160,6 +159,14 @@ for (const width of [390, 1280]) {
     await expect(page.locator(".journey-row").nth(1)).not.toHaveClass(
       /is-reached/,
     );
+    // The setup scroll can briefly reveal then hide the row; let that exit
+    // finish before measuring a fresh entrance from its full side offset.
+    await expect.poll(() => page.locator(".journey-row").nth(1)
+      .locator(".journey-card").evaluate((el) => {
+        const style = getComputedStyle(el);
+        return Math.abs(new DOMMatrixReadOnly(style.transform).m41
+          - parseFloat(style.getPropertyValue("--journey-enter")));
+      })).toBeLessThan(0.1);
     const samples = await page
       .locator(".journey-row")
       .nth(1)
@@ -172,12 +179,30 @@ for (const width of [390, 1280]) {
           x: number;
           t: number;
         }[] = [];
-        scrollBy({ top: 24, behavior: "instant" });
-        const until = performance.now() + 850;
-        while (performance.now() < until) {
+        // Sample the real CSS transitions at fixed times: busy renderers can
+        // skip the entire marker-only interval between wall-clock frames.
+        const animations = await new Promise<Animation[]>((resolve, reject) => {
+          const timeout = setTimeout(() => {
+            observer.disconnect();
+            reject(new Error("The path did not reach the second timeline entry"));
+          }, 5000);
+          const observer = new MutationObserver(() => {
+            if (!el.classList.contains("is-reached")) return;
+            const transitions = [...node.getAnimations(), ...card.getAnimations()];
+            transitions.forEach((animation) => animation.pause());
+            clearTimeout(timeout);
+            observer.disconnect();
+            resolve(transitions);
+          });
+          observer.observe(el, { attributes: true, attributeFilter: ["class"] });
+          scrollBy({ top: 24, behavior: "instant" });
+        });
+        await Promise.all(animations.map((animation) => animation.ready));
+        for (const t of [0, 90, 150, 250, 450, 750]) {
+          animations.forEach((animation) => { animation.currentTime = t; });
           await new Promise(requestAnimationFrame);
           values.push({
-            t: performance.now() - (until - 850),
+            t,
             node: +getComputedStyle(node).opacity,
             opacity: +getComputedStyle(card).opacity,
             x: Math.abs(
@@ -185,10 +210,10 @@ for (const width of [390, 1280]) {
             ),
           });
         }
+        animations.forEach((animation) => animation.finish());
         return values;
       });
-    // WebKit's headless first-paint frames can skip the entire 100ms delay.
-    // Verify the browser's transition schedule as well as the visible side motion.
+    // Verify the transition schedule as well as the rendered side motion.
     await expect(
       page.locator(".journey-row").nth(1).locator(".journey-card"),
     ).toHaveCSS("transition-delay", "0.1s");
@@ -196,11 +221,10 @@ for (const width of [390, 1280]) {
       "transition-delay",
       /^0s(?:, 0s)*$/,
     );
-    if (browserName === "chromium")
-      expect(
-        samples.some((s) => s.node > 0.5 && s.opacity === 0 && s.x > 20),
-      ).toBe(true);
-    else expect(samples[0].opacity).toBe(0);
+    expect(
+      samples.some((s) => s.node > 0.5 && s.opacity === 0 && s.x > 20),
+      JSON.stringify(samples),
+    ).toBe(true);
     // Check visible sideways travel across the entrance, not a narrow overlap
     // after the fade completes that busy renderers can skip between frames.
     expect(samples.some((s) => s.opacity > 0.1 && s.x > 2 && s.x < 60), JSON.stringify(samples.filter((_, i) => i % 4 === 0))).toBe(true);
