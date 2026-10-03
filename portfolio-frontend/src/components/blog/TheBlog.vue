@@ -3,11 +3,11 @@
     ref="root"
     class="min-h-[45vh] lg:min-h-[50vh] w-full relative flex flex-wrap mx-auto py-20 md:py-28"
   >
-    <div class="flex w-full max-w-7xl flex-col items-center mx-auto mb-8 px-5 md:mb-12">
+    <div class="flex w-full max-w-7xl flex-col items-start mx-auto mb-8 px-5 md:mb-12 md:px-12">
       <h2 class="section-heading">
         Thoughts from the blog.
       </h2>
-      <p class="section-lede px-2">
+      <p class="section-lede">
         Writing about product, engineering, and the systems behind everyday work.
       </p>
       <PushSubscribe class="mt-3 dark:fill-white" />
