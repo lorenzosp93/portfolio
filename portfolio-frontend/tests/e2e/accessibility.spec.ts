@@ -1,3 +1,4 @@
+import { timelineResponse } from './timeline.fixture';
 import { expect, test } from '@playwright/test';
 import axe from 'axe-core';
 
@@ -10,6 +11,7 @@ for (const width of [390, 1280]) {
         entity: { uuid: 'tesla', name: 'Tesla', picture: '/favicon-32x32.png' } };
       const post = { uuid: 'post-one', name: 'Product leadership', slug: 'product-leadership', created_at: '2026-01-01',
         location: 'EMEA', content: 'Leading products and teams.', picture: '/og-image.jpg', attachments: [], created_by: { username: 'lorenzo' } };
+      if (url.pathname.includes('/resume/timeline/')) return route.fulfill({ json: timelineResponse([entry]) });
       const results = url.pathname.includes('/experience/') || url.pathname.includes('/education/') ? [entry] : url.pathname.includes('/blog/post/') ? [post] : [];
       return route.fulfill({ json: url.pathname.includes('/settings/') ? { show_skills: false, highlight_cards: [] }
         : url.pathname.includes('skillcategory') ? [] : { count: results.length, results, next: null } });
@@ -31,11 +33,13 @@ for (const width of [390, 1280]) {
         expect(violations, `${section}, dark=${dark}`).toEqual([]);
       }
     }
-    if (width < 640) {
-      const tab = page.getByRole('tab', { name: 'experience' });
-      await tab.focus();
-      await tab.press('ArrowRight');
-      await expect(page.getByRole('tab', { name: 'education' })).toHaveAttribute('aria-selected', 'true');
-    }
+    const details = page.getByRole('button', { name: 'View Product leader details' });
+    await details.focus();
+    await expect(details).toBeVisible();
+    await details.press('Enter');
+    await expect(page.getByRole('dialog', { name: 'Product leader', exact: true })).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(details).toBeFocused();
+
   });
 }

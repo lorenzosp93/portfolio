@@ -40,6 +40,9 @@
 
   /* Reading copy stays at 16px on every viewport. Smaller sizes are reserved
      for supporting text (14px) and metadata (12px). */
+  .type-meta { @apply text-xs leading-normal; }
+  .type-support { @apply text-sm leading-relaxed; }
+  .type-detail-title { @apply text-2xl font-semibold leading-snug; }
   .type-body { @apply text-base leading-relaxed; }
   .type-card-title { @apply text-xl font-semibold leading-snug; }
   .type-section-heading, .section-heading {

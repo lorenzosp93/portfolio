@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const backend = vi.hoisted(() => ({
   loadResumeEntries: vi.fn(),
@@ -19,7 +19,10 @@ describe("limit/offset loading", () => {
   beforeEach(() => {
     localStorage.clear();
     vi.clearAllMocks();
+    vi.stubEnv("DEV", false);
   });
+
+  afterEach(() => vi.unstubAllEnvs());
 
   it("loads and appends resume pages, then stops when next is null", async () => {
     backend.loadResumeEntries
@@ -85,6 +88,16 @@ describe("limit/offset loading", () => {
 
     expect(backend.loadResumeEntries).not.toHaveBeenCalled();
     expect(data.value.results[0].uuid).toBe("cached");
+  });
+
+  it("refreshes preview data after a database snapshot changes", async () => {
+    vi.stubEnv("DEV", true);
+    localStorage.setItem("blog-data", JSON.stringify({ count: 1, next: null, results: [post("old-preview")] }));
+    localStorage.setItem("blog-expiry", String(Date.now() + 60_000));
+    backend.loadBlogEntries.mockResolvedValue({ data: { count: 1, next: null, results: [post("production-copy")] } });
+    const { data, getLimitOffsetEntries } = useBlogLimitOffset("blog");
+    await getLimitOffsetEntries(5, 60);
+    expect(data.value.results).toEqual([post("production-copy")]);
   });
 
   it("updates the blog total from the API response", async () => {

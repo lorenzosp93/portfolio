@@ -69,8 +69,28 @@ class Project(
 class Keyword(Named):
     "Model for keywords"
 
+class TimelinePresentation(models.Model):
+    "Optional editorial copy for the website; never changes the printable CV."
+    timeline_summary = models.TextField(
+        blank=True, help_text="Markdown preview; leave blank to use Description.",
+    )
+    narrative_heading = models.CharField(
+        max_length=160, blank=True, help_text="Optional chapter heading before this entry.",
+    )
+    narrative_body = models.TextField(blank=True, help_text="Short plain-text chapter introduction.")
+    transition_motif = models.CharField(
+        max_length=16, default="none",
+        choices=[("none", "Automatic flowing path"), ("detour", "Around a difficulty"),
+                 ("breakthrough", "Through a roadblock")],
+        help_text="Decorative transition before this entry. Geometry adapts to the screen.",
+    )
+
+    class Meta:
+        abstract = True
+
+
 class Education(Serializable, Named, Datable, TimeStampable, 
-    Localizable, Described, Attachable):
+    Localizable, Described, Attachable, TimelinePresentation):
     "Model for Education entries"
 
     entity = models.ForeignKey(
@@ -98,7 +118,7 @@ class Education(Serializable, Named, Datable, TimeStampable,
     
 
 class Experience(Serializable, Named, Datable, TimeStampable, 
-    Localizable, Described, Attachable):
+    Localizable, Described, Attachable, TimelinePresentation):
     "Model for Experience entries"
 
     entity = models.ForeignKey(

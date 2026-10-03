@@ -34,6 +34,10 @@ function useLimitOffset<T>(resource: string) {
     }
   );
 
+  // Local content snapshots can change between reloads during development.
+  // Do not let yesterday's browser cache mask a refreshed preview database.
+  if (import.meta.env.DEV) data.value = { count: 0, next: null, results: [] };
+
   return { data };
 }
 

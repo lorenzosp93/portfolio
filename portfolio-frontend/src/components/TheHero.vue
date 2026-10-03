@@ -120,7 +120,7 @@
         Product · Software · Energy
       </p>
       <div
-        class="hero-copy prose prose-slate max-w-none font-sans text-center leading-relaxed dark:prose-invert prose-p:my-4 prose-strong:text-coralInk dark:prose-strong:text-coralSoft sm:text-left lg:prose-lg"
+        class="hero-copy type-body prose prose-slate max-w-none font-sans text-center leading-relaxed dark:prose-invert prose-p:my-4 prose-strong:text-coralInk dark:prose-strong:text-coralSoft sm:text-left"
       >
         <!-- Runtime copy is maintained in Django admin. -->
         <p
@@ -386,11 +386,6 @@ function scrollToResume() {
 @media (max-width: 420px) {
   .hero-layout {
     row-gap: 0.75rem;
-  }
-
-  .hero-copy {
-    font-size: 0.875rem;
-    line-height: 1.55;
   }
 
   .hero-copy :deep(p) {

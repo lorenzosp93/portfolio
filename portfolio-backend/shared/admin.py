@@ -32,6 +32,11 @@ class SubscriptionAdmin(admin.ModelAdmin):
 
 @admin.register(SiteSettings)
 class SiteSettingsAdmin(admin.ModelAdmin):
+    def get_fieldsets(self, request, obj=None):
+        timeline = ('timeline_heading', 'timeline_intro', 'timeline_closing_heading', 'timeline_closing_body')
+        fields = [field for field in self.get_fields(request, obj) if field not in timeline]
+        return [(None, {'fields': fields}), ('Timeline presentation', {'fields': timeline})]
+
     def has_add_permission(self, request):
         # The model always saves to pk=1. A second Add form would overwrite
         # that row, including clearing an existing picture when none is sent.

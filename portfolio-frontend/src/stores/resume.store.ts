@@ -6,6 +6,7 @@ import {
   Education,
   Project,
   SkillCategory,
+  ResumeTimeline,
 } from "@/models/models.interface";
 import { useResumeLimitOffset } from "@/composables/LimitOffset";
 import { useGroupedData } from "@/composables/GroupedData";
@@ -62,4 +63,25 @@ export const useSkillStore = defineStore("skill", () => {
   }
 
   return { data, getEntries };
+});
+
+
+// One complete snapshot per visit; no persisted content or paginated geometry.
+export const useTimelineStore = defineStore("resume-timeline", () => {
+  const data = ref<ResumeTimeline | null>(null);
+  const loading = ref(false);
+  const error = ref("");
+  let pending: Promise<void> | null = null;
+
+  function load(): Promise<void> {
+    if (pending) return pending;
+    loading.value = true;
+    error.value = "";
+    pending = backendService.loadResumeTimeline()
+      .then(response => { data.value = response.data; })
+      .catch(() => { error.value = "The timeline couldn’t be loaded. Please try again."; })
+      .finally(() => { loading.value = false; pending = null; });
+    return pending;
+  }
+  return { data, loading, error, load };
 });

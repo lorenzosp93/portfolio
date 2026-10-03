@@ -1,5 +1,7 @@
 from django.db.models import Max
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from shared.models import SiteSettings
 from rest_framework.viewsets import ReadOnlyModelViewSet, ViewSet
 from rest_framework.pagination import LimitOffsetPagination
 from .serializers import (
@@ -11,6 +13,9 @@ from .serializers import (
     ExperienceSerializer,
     EducationSerializer,
     SkillSerializer,
+    TimelineCopySerializer,
+    TimelineEducationSerializer,
+    TimelineExperienceSerializer,
 )
 from .models import (
     Education,
@@ -105,3 +110,24 @@ class CategorySkillViewSet(ViewSet):
             if skills and value in SkillCategory.values
         ]
         return Response(CategorySkillSerializer(data, many=True).data)
+
+
+class TimelineViewSet(ViewSet):
+    "Complete, oldest-first journey. Pagination would change the path mid-scroll."
+    permission_classes = [AllowAny]
+    http_method_names = ['get', 'head', 'options']
+
+    def list(self, request):
+        entries = []
+        for model, serializer in (
+            (Education, TimelineEducationSerializer), (Experience, TimelineExperienceSerializer),
+        ):
+            queryset = model.objects.select_related('entity').prefetch_related(
+                'keywords', 'attachments', 'projects__attachments',
+            )
+            entries.extend(serializer(queryset, many=True, context={'request': request}).data)
+        entries.sort(key=lambda entry: (entry['start_date'], entry['kind'], entry['uuid']))
+        return Response({
+            'copy': TimelineCopySerializer(SiteSettings.load()).data,
+            'entries': entries,
+        })

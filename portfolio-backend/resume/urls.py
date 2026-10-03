@@ -21,6 +21,7 @@ from .viewsets import (
     EntityEducationViewSet,
     EntityExperienceViewSet,
     CategorySkillViewSet,
+    TimelineViewSet,
 )
 
 from .cv import CVView
@@ -28,6 +29,7 @@ from .cv import CVView
 app_name = 'resume'
 
 router = DefaultRouter()
+router.register(r'timeline', TimelineViewSet, 'timeline')
 router.register(r'experience', ExperienceViewSet)
 router.register(r'education', EducationViewSet)
 router.register(r'skills', SkillViewSet)

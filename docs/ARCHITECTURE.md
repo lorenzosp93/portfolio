@@ -33,7 +33,8 @@ component → Pinia store → composable/service → Axios → /api/... endpoint
 ```
 
 `src/services/api.service.ts` is the API boundary. `src/composables/LimitOffset.ts`
-handles cached, paginated list loading; resume and blog stores use it. Frontend
+handles cached, paginated legacy résumé lists and blog loading. The timeline store
+loads one fresh, complete snapshot from `/api/resume/timeline/` per visit. Frontend
 types are in `src/models/models.interface.ts`. Keep them aligned with DRF
 serializer fields.
 
@@ -41,9 +42,8 @@ Runtime presentation settings are loaded once through `src/stores/site.store.ts`
 The hero and navbar share the configured `SiteSettings.hero_picture`; bundled
 WebP assets remain the offline/error fallback.
 
-The service worker is generated through `vite-plugin-pwa`; API GET requests
-receive a NetworkFirst cache policy. Be deliberate when changing an API route
-or response: users may see a cached response for up to its configured lifetime.
+The service worker is generated through `vite-plugin-pwa`; API responses are not
+cached. Offline navigation retains the shell and shows the normal API error UI.
 
 Required build-time browser variables:
 
@@ -73,6 +73,7 @@ Routes are rooted at `portfolio/urls.py`:
 | Route | Notes |
 | --- | --- |
 | `/api/resume/` | DRF routers for résumé resources. |
+| `/api/resume/timeline/` | Read-only, unpaginated `{copy, entries}`; full education/experience data, sorted by `(start_date, kind, uuid)` ascending. |
 | `/api/blog/` | `post` and `comment` routers. |
 | `/api/contacts/` | Unauthenticated contact POST; `get-token/` exposes a CSRF token. |
 | `/api/site/` and `/api/` | Site settings and push subscription routers. |
@@ -80,7 +81,7 @@ Routes are rooted at `portfolio/urls.py`:
 | `/api/health/` | `django-health-check` endpoints. |
 
 Read-only portfolio content uses DRF `ReadOnlyModelViewSet`; list resources use
-the standard `limit`/`offset` paginator. Content-bearing models inherit shared
+the standard `limit`/`offset` paginator, except the complete timeline feed. Content-bearing models inherit shared
 mixins (for names/slugs, timestamps, media, attachments, authors, etc.), so
 model changes can affect several serializers and admin behavior.
 
@@ -152,3 +153,41 @@ When adding or modifying a public content field:
   `SiteSettings.show_skills` controls Skills on both the website and printed CV.
   Generic `highlight_cards` and `highlights_heading` are preferred; legacy
   `leadership_cards` and `leadership_heading` fields remain compatible.
+
+## Résumé journey
+
+`TheResume` replaces the separate education/experience carousel with `ResumeTimeline`.
+`journeyPath.ts` lays out an SVG route from measured card boxes. The compact
+alternating layout remains through 1023px; desktop uses wider alternating columns.
+The path uses quintic approaches that match loop tangents and curvature, sampled
+as cubics. Advancing alpha loops get extra vertical space and unequal approach
+speeds to avoid counter-turns before the lobe. Detours remain deliberately tighter. CMS motifs describe the
+transition before an entry; loop variation is deterministic from its UUID.
+
+Scroll maps between dated stations to SVG arc length, so upward-turning loops
+cannot reveal later cards early. The marker appears first and the corresponding
+card enters from its side after 100ms. Resize/font changes recompute the path;
+no pagination or scroll pinning can change the chronology. Reduced motion shows
+a static, readable journey. Keyboard focus reveals its card immediately. Detail
+Cards retain their focus trap, scroll isolation, and full entry data.
+
+Timeline editorial fields are separate from original résumé descriptions and
+achievements. The printable CV continues to use its original queries and ordering.
+
+Timeline cards use tinted headers (teal for experience, warm for education), faded
+previews, and a full-card accessible ellipsis control. Background years reveal
+along the path and move more slowly than cards. Each year appears once at its first entry; the
+current year appears beside Today only when no entry has already used it. Colored haze uses small radial-gradient surfaces
+whose parallax stays within the section, avoiding filtered, document-height
+compositing layers and hard clipping edges in Safari. The floating CV button is
+the only CV link in the résumé section. Logos retain production's fully rounded
+mask in cards and details. The straight dotted future starts at Today. The explicit jump
+animates for 1.8–12 seconds based on distance and yields to touch, wheel, pointer,
+or scrolling keys. Reduced motion skips animation. Shared Detail Card IDs use
+Vue instance IDs so dialogs also work on insecure HTTP LAN previews.
+
+Reading copy across the hero, highlights, timeline and blog uses the shared 16px
+body style. Card titles use 20px, detail titles 24px, supporting text 14px, and
+metadata 12px. Decorative timeline years retain their display scale. Blog cards
+render without a staggered entrance; horizontal browsing, pagination and Detail
+Cards remain interactive as soon as content is available.

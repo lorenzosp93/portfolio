@@ -286,6 +286,11 @@ class SiteSettings(SingletonBaseModel):
         null=True,
         help_text="Square WebP recommended; 640×640 is sufficient for retina displays.",
     )
+    timeline_heading = models.CharField(max_length=160, default="Experience leading products and teams.")
+    timeline_intro = models.TextField(default="From engineering foundations to leading products and people.", blank=True)
+    timeline_closing_heading = models.CharField(max_length=160, default="Still building.", blank=True)
+    timeline_closing_body = models.TextField(default="New problems, the same curiosity.", blank=True)
+
     # Printable CV (public page: never add phone or email here).
     cv_headline = models.CharField(
         max_length=120, blank=True, verbose_name="CV headline",

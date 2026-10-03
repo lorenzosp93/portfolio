@@ -75,6 +75,7 @@ class SiteSettingsAdminSaveTests(TestCase):
         return self.client.post(url, {
             'about_text': 'About',
             'highlights_nav_label': 'Leadership',
+            'timeline_heading': 'Experience leading products and teams.',
             'hero_picture': SimpleUploadedFile(
                 'portrait.png', buffer.getvalue(), content_type='image/png',
             ),
@@ -105,7 +106,8 @@ class SiteSettingsAdminSaveTests(TestCase):
         self.upload_picture(self.add_url)
         original_name = self.assert_picture_saved()
         response = self.client.post(self.change_url, {
-            'about_text': 'Updated', 'highlights_nav_label': 'Leadership', '_save': 'Save',
+            'about_text': 'Updated', 'highlights_nav_label': 'Leadership',
+            'timeline_heading': 'Experience leading products and teams.', '_save': 'Save',
         })
         self.assertEqual(response.status_code, 302)
         self.assertEqual(self.assert_picture_saved(), original_name)

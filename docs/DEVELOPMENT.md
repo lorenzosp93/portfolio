@@ -277,3 +277,53 @@ HTTP origin. The container then proxies those paths without an SPA fallback.
 Without either routing choice they intentionally return 503 rather than generic
 homepage HTML. Keep assets, the manifest, and normal homepage requests on the
 frontend. Apply migrations and roll out the backend before the frontend.
+
+### Résumé timeline and phone preview
+
+Apply the resume/shared migrations before running the new frontend. Django admin
+has a **Timeline presentation** fieldset on Experience, Education, and Site settings.
+The section heading, introduction, and closing copy live in Site settings. Each
+entry can set a Markdown `timeline_summary`, a chapter heading/body, and a
+transition before the entry: automatic flowing path, detour, or breakthrough.
+Blank summaries fall back to the existing description (then achievements).
+Migration `resume.0014` seeds the approved copy for known public entry UUIDs only;
+it preserves any already edited timeline fields. The original CV fields are unchanged.
+
+To test from an iPhone on the same network, run Django on `127.0.0.1:8000` and Vite:
+
+```sh
+VITE_APP_BACKEND_URL='' BACKEND_PROXY_TARGET=http://127.0.0.1:8000 npm run dev -- --host 0.0.0.0
+```
+
+Open the Network URL Vite prints. The browser uses the same origin for API, CV,
+and media requests; Vite proxies `/api/`, `/media/`, and `/mediafiles/` to Django.
+A blank browser API base is important: `localhost` on the phone points to the phone.
+`BACKEND_PROXY_TARGET` is a development-server setting, never bundled for browsers.
+The preview server is for local development; no production deployment is implied.
+
+### Local production-content preview
+
+The current timeline preview uses `/tmp/portfolio-production-preview.sqlite3`.
+It contains production site settings, résumé records, skills, blog content, and
+referenced media copied to the ignored `portfolio-backend/mediafiles/` directory.
+Approved timeline-only editorial copy is retained because those fields have not
+been deployed yet. Account credentials, privileges, contact submissions, sessions,
+and push subscriptions are excluded; author records only preserve attribution.
+The previous preview database and the original local database remain available.
+
+From `portfolio-backend/`, run the snapshot:
+
+```sh
+DEBUG=true DATABASE_NAME=/tmp/portfolio-production-preview.sqlite3 .venv/bin/python manage.py runserver 127.0.0.1:8000 --noreload
+```
+
+From `portfolio-frontend/`, expose the preview to the LAN:
+
+```sh
+VITE_APP_BACKEND_URL='' BACKEND_PROXY_TARGET=http://127.0.0.1:8000 npm run dev -- --host 0.0.0.0
+```
+
+The proxy preserves the browser's Host, so media
+URLs work over the LAN. Development builds reload paginated content on each
+page load so browser caches cannot hide a refreshed local database. Temporary
+preview files under `/tmp` are not persistent backups.

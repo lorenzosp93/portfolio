@@ -6,8 +6,16 @@ from .models import (
     Keyword,
 )
 # Register your models here.
-admin.site.register(Education)
-admin.site.register(Experience)
+@admin.register(Education, Experience)
+class TimelineEntryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'entity', 'start_date', 'transition_motif')
+    list_filter = ('entity', 'transition_motif')
+
+    def get_fieldsets(self, request, obj=None):
+        timeline = ('timeline_summary', 'narrative_heading', 'narrative_body', 'transition_motif')
+        fields = [field for field in self.get_fields(request, obj) if field not in timeline]
+        return [(None, {'fields': fields}), ('Timeline presentation', {'fields': timeline})]
+
 admin.site.register(Entity)
 admin.site.register(Project)
 admin.site.register(Keyword)
