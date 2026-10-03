@@ -28,7 +28,7 @@
       </p>
     </div>
 
-    <ul
+    <div
       v-if="isMobile"
       role="tablist"
       aria-label="Résumé sections"
@@ -36,10 +36,11 @@
       data-testid="resume-mobile-tabs"
       class="relative mb-4 flex w-full flex-wrap border-b border-ink/10 text-ink dark:border-white/10 dark:text-white capitalize sm:hidden"
     >
-      <li aria-hidden="true" role="presentation" class="mobile-tab-bar" :style="mobileTabBarStyle" />
-      <li
+      <span aria-hidden="true" class="mobile-tab-bar" :style="mobileTabBarStyle" />
+      <div
         v-for="comp in resumeList"
         :key="comp.id"
+        role="presentation"
 
         :class="[
           'relative z-10 min-w-0 flex-1 px-3 inline-flex items-center justify-center text-sm font-semibold transition text-muted dark:text-gray-300',
@@ -58,8 +59,8 @@
           @click="scrollToSlide(comp.id)"
           @keydown="handleTabKey($event, comp.id)"
         >{{ comp.id }}</button>
-      </li>
-    </ul>
+      </div>
+    </div>
 
     <!-- On mobile the slides span the viewport; each slide restores the inset. -->
     <div class="relative min-w-0 -mx-5 w-[calc(100%+2.5rem)] sm:mx-0 sm:w-full">
@@ -76,6 +77,9 @@
       >
         <div
           id="resume-container"
+          tabindex="0"
+          role="region"
+          aria-label="Résumé panels"
           ref="resumeContainer"
           class="relative flex items-start gap-6 overflow-x-scroll overflow-y-hidden no-scrollbar snap-x snap-mandatory scroll-smooth w-full"
           @scroll.passive="scheduleActiveSlideUpdate"
@@ -328,7 +332,7 @@ useEventListener(window, "resize", () => {
 
 <style scoped>
 .active {
-  @apply text-coral dark:text-coralSoft;
+  @apply text-coralInk dark:text-coralSoft;
 }
 
 .mobile-tab-bar {

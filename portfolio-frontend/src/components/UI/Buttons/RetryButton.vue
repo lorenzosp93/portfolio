@@ -1,11 +1,12 @@
 <template>
   <div class="p-10 m-auto">
-    <div
+    <button
+      type="button"
       @click="$emit('loadEntries')"
-      class="rounded-2xl text-white dark:text-gray-300 font-bold py-3 px-5 bg-gray-400 dark:bg-gray-600 shadow-md cursor-pointer hover:scale-105 transition duration-300 ease-in max-w-xs text-center m-auto"
+      class="block rounded-2xl text-white dark:text-gray-300 font-bold py-3 px-5 bg-gray-600 dark:bg-gray-600 shadow-md cursor-pointer hover:scale-105 transition duration-300 ease-in max-w-xs text-center m-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-teal"
     >
       Retry
-    </div>
+    </button>
   </div>
 </template>
 

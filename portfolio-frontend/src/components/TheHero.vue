@@ -49,7 +49,7 @@
         </div>
       </div>
       <h1 class="z-20 m-5 mt-8 text-center text-2xl md:text-3xl lg:text-4xl font-bold md:mt-10">
-        <span class="hero-fade-up inline-block" style="--d: 480ms">Hi, I'm</span>{{ " " }}<span class="text-coral dark:text-coralSoft">
+        <span class="hero-fade-up inline-block" style="--d: 480ms">Hi, I'm</span>{{ " " }}<span class="text-coralInk dark:text-coralSoft">
           <span class="sr-only">Lorenzo</span>
           <span
             v-for="(letter, index) in 'Lorenzo'"
@@ -120,7 +120,7 @@
         Product · Software · Energy
       </p>
       <div
-        class="hero-copy prose prose-slate max-w-none font-sans text-center leading-relaxed dark:prose-invert prose-p:my-4 prose-strong:text-coral dark:prose-strong:text-coralSoft sm:text-left lg:prose-lg"
+        class="hero-copy prose prose-slate max-w-none font-sans text-center leading-relaxed dark:prose-invert prose-p:my-4 prose-strong:text-coralInk dark:prose-strong:text-coralSoft sm:text-left lg:prose-lg"
       >
         <!-- Runtime copy is maintained in Django admin. -->
         <p
