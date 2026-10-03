@@ -6,7 +6,7 @@
         <h2 class="type-section-heading max-w-2xl">{{ site.highlightsHeading }}</h2>
       </header>
       <div ref="cardsRoot" class="leadership-cards grid gap-5 lg:grid-cols-3">
-        <article v-for="(card, index) in site.highlightCards" :key="card.id" class="leadership-card portfolio-card p-6 shadow-lg" :class="{ 'portfolio-card--coral': index % 3 === 2 }">
+        <article v-for="(card, index) in site.highlightCards" :key="card.id" class="leadership-card tinted-card p-6" :class="{ 'tinted-card--warm': index % 3 === 2 }">
           <div class="mb-6 flex items-center justify-between">
             <span class="leadership-icon inline-flex rounded-2xl bg-tealSoft/40 p-3 text-teal dark:bg-teal/20 dark:text-tealSoft">
               <highlight-icon :name="card.icon" class="h-6 w-6" aria-hidden="true" />
@@ -132,7 +132,7 @@ onBeforeUnmount(() => { disposed = true; generation++; clearTimeout(resizeTimer)
 <style scoped>
 .leadership-section { position: relative; overflow-x: clip; }
 
-.portfolio-card--coral .leadership-icon { @apply bg-coralSoft/40 text-coral dark:bg-coral/20 dark:text-coralSoft; }
+.tinted-card--warm .leadership-icon { @apply bg-coralSoft/40 text-coral dark:bg-coral/20 dark:text-coralSoft; }
 .is-animated { position: relative; }
 .is-animated .leadership-card { grid-area: 1 / 1; transform-origin: center top; }
 @media (min-width: 1024px) {

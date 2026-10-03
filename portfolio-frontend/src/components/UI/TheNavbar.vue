@@ -1,26 +1,26 @@
 <template>
-  <nav ref="navbar" class="sticky top-0 z-20 w-full">
-    <div :inert="revealed ? undefined : ''" :aria-hidden="!revealed" :class="{ 'navbar-revealed': revealed }" :style="{ opacity: fadeProgress }" class="navbar-surface w-full rounded-b-3xl bg-surface/95 shadow-sm ring-1 ring-ink/10 dark:bg-nightSurface/95 dark:ring-white/10">
-      <div class="relative flex items-center justify-between px-4 sm:px-6 lg:px-8">
-        <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
-          <button
-            type="button"
-            class="ml-2 inline-flex items-center justify-center rounded-full p-2 text-muted transition hover:text-teal dark:text-gray-300 dark:hover:text-tealSoft"
-            aria-controls="mobile-menu"
-            :aria-expanded="isMenuOpen"
-            @click="toggleMenu"
-          >
-            <span class="sr-only">Open main menu</span>
-            <bars-3-icon class="h-6 w-6" :class="{ hidden: isMenuOpen, block: !isMenuOpen }" />
-            <x-mark-icon class="h-6 w-6" :class="{ hidden: !isMenuOpen, block: isMenuOpen }" />
-          </button>
-        </div>
-
-        <div class="flex flex-1 items-center justify-end sm:items-stretch sm:justify-start">
+  <nav ref="navbar" class="pointer-events-none sticky top-0 z-20 w-full" @keydown.esc="isMenuOpen = false">
+    <transition name="navbar-veil">
+      <div
+        v-if="isMenuOpen && revealed"
+        class="pointer-events-auto fixed inset-0 bg-ink/20 dark:bg-black/45 sm:hidden"
+        aria-hidden="true"
+        @click="isMenuOpen = false"
+      />
+    </transition>
+    <div class="relative flex justify-end px-3 py-1 sm:px-6 lg:px-8">
+      <div
+        :inert="revealed ? undefined : ''"
+        :aria-hidden="!revealed"
+        :class="{ 'navbar-revealed': revealed, 'tinted-card--warm': isWarmSection, 'is-open': isMenuOpen }"
+        :style="{ opacity: fadeProgress }"
+        class="navbar-surface navbar-pill tinted-card"
+      >
+        <div class="flex items-center gap-2 sm:gap-4">
           <button
             type="button"
             aria-label="Back to introduction"
-            class="mx-3 my-2 flex flex-shrink-0 items-center z-50"
+            class="flex flex-shrink-0 items-center rounded-full"
             @click="scrollMobile(navStore.refs?.theHero)"
           >
             <img
@@ -33,10 +33,28 @@
             />
           </button>
 
-          <div class="my-auto hidden w-full justify-end sm:ml-6 sm:block">
+          <button
+            type="button"
+            class="flex min-w-0 flex-1 items-center gap-2 text-left sm:hidden"
+            aria-label="Open main menu"
+            aria-controls="mobile-menu"
+            :aria-expanded="isMenuOpen"
+            @click="toggleMenu"
+          >
+            <span class="min-w-0 flex-1 truncate text-sm font-semibold text-ink dark:text-white" aria-hidden="true">
+              <span class="block text-xs font-medium text-muted dark:text-gray-400">Section</span>
+              {{ currentSectionLabel }}
+            </span>
+            <span class="navbar-toggle-icon">
+              <bars-3-icon v-if="!isMenuOpen" class="h-5 w-5" />
+              <x-mark-icon v-else class="h-5 w-5" />
+            </span>
+          </button>
+
+          <div class="hidden sm:block">
             <div
               ref="desktopNav"
-              class="relative isolate flex w-full items-center justify-end space-x-2 overflow-x-auto no-scrollbar"
+              class="relative isolate flex items-center space-x-1 overflow-x-auto no-scrollbar"
             >
               <div
                 class="nav-active-indicator"
@@ -56,8 +74,6 @@
                 :class="{ active_top_text: activeNavItem === 'theResume' }" :aria-current="activeNavItem === 'theResume' ? 'location' : undefined"
                 @click="scrollToResumeSection"
               >Resume</button>
-
-
               <button
                 :ref="(el) => setNavItemRef('theBlog', el)"
                 class="nav-link"
@@ -77,27 +93,28 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <div
-      id="mobile-menu"
-      :inert="!isMenuOpen || !revealed ? '' : undefined"
-      :aria-hidden="!isMenuOpen || !revealed"
-      class="absolute ml-3 mt-2 overflow-hidden rounded-2xl bg-surface shadow-xl ring-1 ring-ink/10 transition duration-300 ease-in-out dark:bg-nightSurface dark:ring-white/10 sm:hidden"
-      :class="{ 'menu-closed': !isMenuOpen }"
-    >
-      <div class="space-y-2 p-2">
-        <button v-if="siteStore.highlightCards.length" class="mobile-link" :class="{ active: activeNavItem === 'theLeadership' }" :aria-current="activeNavItem === 'theLeadership' ? 'location' : undefined" @click="scrollMobile(navStore.refs?.theLeadership)">{{ siteStore.highlightsNavLabel }}</button>
-        <button class="mobile-link" :class="{ active: activeNavItem === 'theResume' }" :aria-current="activeNavItem === 'theResume' ? 'location' : undefined" @click="scrollMobileToResumeSection">
-          Resume
-        </button>
-        <button class="mobile-link" :class="{ active: activeNavItem === 'theBlog' }" :aria-current="activeNavItem === 'theBlog' ? 'location' : undefined" @click="scrollMobile(navStore.refs?.theBlog)">
-          Blog
-        </button>
-        <button class="mobile-link" :class="{ active: activeNavItem === 'theContacts' }" :aria-current="activeNavItem === 'theContacts' ? 'location' : undefined" @click="scrollMobile(navStore.refs?.theContacts)">
-          Contacts
-        </button>
+        <div
+          id="mobile-menu"
+          :inert="!isMenuOpen || !revealed ? '' : undefined"
+          :aria-hidden="!isMenuOpen || !revealed"
+          class="navbar-menu sm:hidden"
+        >
+          <div class="overflow-hidden">
+            <div class="space-y-1 px-1 pb-1 pt-2">
+              <button v-if="siteStore.highlightCards.length" class="mobile-link" :class="{ active: activeNavItem === 'theLeadership' }" :aria-current="activeNavItem === 'theLeadership' ? 'location' : undefined" @click="scrollMobile(navStore.refs?.theLeadership)">{{ siteStore.highlightsNavLabel }}</button>
+              <button class="mobile-link" :class="{ active: activeNavItem === 'theResume' }" :aria-current="activeNavItem === 'theResume' ? 'location' : undefined" @click="scrollMobileToResumeSection">
+                Resume
+              </button>
+              <button class="mobile-link" :class="{ active: activeNavItem === 'theBlog' }" :aria-current="activeNavItem === 'theBlog' ? 'location' : undefined" @click="scrollMobile(navStore.refs?.theBlog)">
+                Blog
+              </button>
+              <button class="mobile-link" :class="{ active: activeNavItem === 'theContacts' }" :aria-current="activeNavItem === 'theContacts' ? 'location' : undefined" @click="scrollMobile(navStore.refs?.theContacts)">
+                Contacts
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </nav>
@@ -167,6 +184,14 @@ const desktopNav = ref<HTMLElement | null>(null);
 const navItemRefs = reactive<Record<string, HTMLElement | null>>({});
 const activeIndicator = reactive({ left: 0, width: 0, visible: false });
 const activeNavItem = computed(() => navStore.visible);
+// The pill's tint follows the section, matching the timeline and blog cards.
+const isWarmSection = computed(() => ["theBlog", "theContacts"].includes(activeNavItem.value));
+const currentSectionLabel = computed(() => ({
+  theLeadership: siteStore.highlightsNavLabel,
+  theResume: "Resume",
+  theBlog: "Blog",
+  theContacts: "Contacts",
+} as Record<string, string>)[activeNavItem.value] ?? "Menu");
 
 const activeIndicatorStyle = computed(() => ({
   width: `${activeIndicator.width}px`,
@@ -255,8 +280,35 @@ function scrollToElement(elem: MaybeRef<HTMLDivElement | null>) {
   backdrop-filter: none;
 }
 
+/* A floating capsule; on phones it shows the current section and grows into the menu. */
+.navbar-pill {
+  @apply rounded-3xl p-[3px];
+  width: 12.5rem;
+  max-width: 100%;
+  transition: width .32s cubic-bezier(.22, .61, .36, 1);
+}
+.navbar-pill.is-open { width: 100%; }
+@media (min-width: 640px) {
+  .navbar-pill, .navbar-pill.is-open { width: auto; }
+}
+
+.navbar-toggle-icon {
+  @apply grid h-10 w-10 flex-none place-items-center rounded-full text-ink ring-1 ring-ink/5 dark:text-white dark:ring-white/10;
+}
+
+.navbar-menu {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows .32s cubic-bezier(.22, .61, .36, 1);
+}
+.is-open .navbar-menu { grid-template-rows: 1fr; }
+
+.navbar-veil-enter-active, .navbar-veil-leave-active { transition: opacity .25s; }
+.navbar-veil-enter-from, .navbar-veil-leave-to { opacity: 0; }
+
 .nav-active-indicator {
-  @apply pointer-events-none absolute left-0 top-1/2 z-10 h-9 rounded-full bg-teal shadow-sm transition-all duration-300 ease-out dark:bg-tealSoft;
+  @apply pointer-events-none absolute left-0 top-1/2 z-10 h-9 rounded-full transition-all duration-300 ease-out;
+  background: var(--card-tint);
 }
 
 .nav-link {
@@ -265,19 +317,25 @@ function scrollToElement(elem: MaybeRef<HTMLDivElement | null>) {
 }
 
 .active_top_text {
-  @apply text-white hover:text-white dark:text-night dark:hover:text-night;
+  @apply font-semibold text-teal hover:text-teal dark:text-tealSoft dark:hover:text-tealSoft;
 }
 
 .mobile-link {
-  @apply block w-full rounded-xl px-4 py-2 text-left text-sm font-medium text-ink transition hover:text-teal focus:outline-none focus-visible:outline-none dark:text-gray-300 dark:hover:text-tealSoft;
+  @apply block w-full rounded-2xl px-4 py-3 text-left text-base font-medium text-ink transition hover:text-teal focus:outline-none focus-visible:outline-none dark:text-gray-300 dark:hover:text-tealSoft;
   -webkit-tap-highlight-color: transparent;
 }
 
 .active {
-  @apply bg-teal text-white shadow-sm hover:text-white dark:bg-tealSoft dark:text-night dark:hover:text-night;
+  @apply font-semibold text-teal hover:text-teal dark:text-tealSoft dark:hover:text-tealSoft;
+  background: var(--card-tint);
 }
 
-.menu-closed {
-  @apply pointer-events-none scale-95 -translate-y-2 opacity-0;
+.tinted-card--warm .active_top_text,
+.tinted-card--warm .active {
+  @apply text-coralInk hover:text-coralInk dark:text-coralSoft dark:hover:text-coralSoft;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar-pill, .navbar-menu { transition: none; }
 }
 </style>

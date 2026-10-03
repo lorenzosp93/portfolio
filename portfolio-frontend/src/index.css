@@ -38,6 +38,30 @@
     @apply border-t-coral dark:border-t-coralSoft;
   }
 
+  /* Mirrors the résumé timeline cards (.journey-card): a corner tint that
+     fades into the surface. Children can reuse --card-tint for their own wash. */
+  .tinted-card {
+    --card-tint: #bce4dc;
+    --card-surface: #fffefd;
+    border: 1px solid #0b15240b;
+    border-radius: 17px;
+    background:
+      linear-gradient(155deg, var(--card-tint), transparent 180px),
+      var(--card-surface);
+    box-shadow: 0 9px 24px #38302009;
+  }
+
+  .tinted-card--warm { --card-tint: #f9d8c5; }
+
+  .dark .tinted-card {
+    --card-tint: #183c36;
+    --card-surface: #172132;
+    border-color: #ffffff0c;
+    box-shadow: 0 9px 24px #00000020;
+  }
+
+  .dark .tinted-card--warm { --card-tint: #442b32; }
+
   /* Reading copy stays at 16px on every viewport. Smaller sizes are reserved
      for supporting text (14px) and metadata (12px). */
   .type-meta { @apply text-xs leading-normal; }

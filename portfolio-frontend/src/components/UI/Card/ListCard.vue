@@ -1,7 +1,7 @@
 <template>
   <div
     @click="openDetails"
-    class="portfolio-card portfolio-card--coral group relative cursor-pointer overflow-hidden transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+    class="tinted-card tinted-card--warm group relative cursor-pointer overflow-hidden transition duration-300 hover:-translate-y-1 hover:shadow-xl"
     :class="{ 'pointer-events-none': detailsVisible }"
   >
     <img
@@ -11,25 +11,25 @@
       loading="lazy"
       decoding="async"
     />
-    <div class="w-full border-b border-ink/10 bg-sand/70 p-4 text-ink dark:border-white/10 dark:bg-nightElevated dark:text-white">
-      <p class="text-xs font-medium uppercase tracking-wide text-coralInk dark:text-coralSoft">{{ location }}{{ status }}</p>
-      <h2 class="type-card-title list-card-title mt-1 w-full tracking-tight text-ink dark:text-white">
-        <button ref="opener" type="button" class="text-left" :aria-label="`Open ${name}`" aria-haspopup="dialog" :aria-expanded="detailsVisible" @click.stop="openDetails">{{ name }}</button>
-      </h2>
-    </div>
-    <div class="relative">
-      <div
-        v-html="truncatedContent"
-        class="type-body list-card-content max-h-64 md:max-h-72 lg:max-h-80 overflow-hidden w-full p-4 text-muted dark:text-gray-300"
-      />
-      <div
-        class="pointer-events-none absolute inset-x-0 bottom-0 flex justify-end bg-gradient-to-t from-surface via-surface/90 to-transparent p-4 pt-10 dark:from-nightSurface dark:via-nightSurface/90"
-      >
-        <span
-          class="rounded-full bg-sand/95 px-2 py-0.5 text-sm font-bold leading-none tracking-wide text-coralInk shadow-sm ring-1 ring-coral/20 dark:bg-nightElevated/95 dark:text-coralSoft dark:ring-coralSoft/20"
-        >
-          •••
-        </span>
+    <div class="list-card-body">
+      <div class="w-full p-4 pb-2 text-ink dark:text-white">
+        <p class="text-xs font-medium uppercase tracking-wide text-coralInk dark:text-coralSoft">{{ location }}{{ status }}</p>
+        <h2 class="type-card-title list-card-title mt-1 w-full tracking-tight text-ink dark:text-white">
+          <button ref="opener" type="button" class="text-left" :aria-label="`Open ${name}`" aria-haspopup="dialog" :aria-expanded="detailsVisible" @click.stop="openDetails">{{ name }}</button>
+        </h2>
+      </div>
+      <div class="relative">
+        <div
+          v-html="truncatedContent"
+          class="type-body list-card-content max-h-64 md:max-h-72 lg:max-h-80 overflow-hidden w-full p-4 pt-2 text-muted dark:text-gray-300"
+        />
+        <div class="pointer-events-none absolute inset-x-0 bottom-0 flex justify-end p-4">
+          <span
+            class="list-card-more rounded-full px-2 py-0.5 text-sm font-bold leading-none tracking-wide text-coralInk shadow-sm ring-1 ring-coral/20 dark:text-coralSoft dark:ring-coralSoft/20"
+          >
+            •••
+          </span>
+        </div>
       </div>
     </div>
     <blog-entry-detail
@@ -112,6 +112,19 @@ function closeDetails() {
 </script>
 
 <style scoped>
+/* The picture covers the card's own corner tint, so the text area restarts it. */
+.list-card-body {
+  background: linear-gradient(155deg, var(--card-tint), transparent 180px);
+}
+
+.list-card-content {
+  mask-image: linear-gradient(#000 40%, transparent 100%);
+}
+
+.list-card-more {
+  background: var(--card-surface);
+}
+
 .list-card-content :deep(p) {
   margin: 0;
 }
