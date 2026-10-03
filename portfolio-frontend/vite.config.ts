@@ -29,10 +29,17 @@ export default defineConfig(({ mode }) => {
         cleanupOutdatedCaches: true,
         clientsClaim: true,
         skipWaiting: true,
-        navigateFallbackDenylist: [/^\/api(?:\/|$)/, /^\/writing(?:\/|$)/, /^\/sitemap\.xml$/],
+        navigateFallbackDenylist: [/^\/api(?:\/|$)/, /^\/writing(?:\/|$)/, /^\/sitemap\.xml$/, /^\/\.well-known(?:\/|$)/],
+        globIgnores: ['**/*Icon-*.js'],
         // API/admin responses must never silently fall back to stale data.
         // Keep precaching versioned application assets for offline navigation.
-        runtimeCaching: [],
+        // Cache selected immutable icons on demand, not the entire catalogue
+        // during service-worker installation. API responses remain uncached.
+        runtimeCaching: [{
+          urlPattern: /\/assets\/[^/]*Icon-[^/]*\.js$/,
+          handler: 'CacheFirst',
+          options: { cacheName: 'portfolio-icons', expiration: { maxEntries: 64, maxAgeSeconds: 31536000 } },
+        }],
       },
       devOptions: {
         enabled: false,

@@ -40,6 +40,7 @@
       </p>
     </div>
     <detail-card
+      v-if="formMounted"
       ref="formCard"
       :is-open="formVisible"
       @card-closed="formVisible = false"
@@ -160,6 +161,7 @@ import { useVisibilityObserver } from "@/composables/visibilityObserver";
 
 // Keeps GSAP out of the initial bundle.
 const DetailCard = defineAsyncComponent(() => import("./UI/Card/DetailCard.vue"));
+const formMounted = ref(false);
 
 const root: Ref<HTMLDivElement | null> = ref(null);
 
@@ -187,6 +189,7 @@ type ApiErrorLike = {
 function openForm(event: MouseEvent) {
   // Safari does not focus buttons on pointer activation by default.
   (event.currentTarget as HTMLButtonElement).focus({ preventScroll: true });
+  formMounted.value = true;
   formVisible.value = true;
 }
 

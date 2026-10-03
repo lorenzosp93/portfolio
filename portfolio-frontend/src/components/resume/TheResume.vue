@@ -336,7 +336,7 @@ useEventListener(window, "resize", () => {
 }
 
 .mobile-tab-bar {
-  @apply pointer-events-none absolute bottom-0 left-0 z-0 h-0.5 rounded-full bg-coral transition-[transform,width] duration-300 ease-out dark:bg-coralSoft;
+  @apply pointer-events-none absolute bottom-0 left-0 z-0 h-0.5 rounded-full bg-coral transition-transform duration-300 ease-out dark:bg-coralSoft;
 }
 
 .cv-fab {

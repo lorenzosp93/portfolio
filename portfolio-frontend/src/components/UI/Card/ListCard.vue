@@ -33,7 +33,7 @@
       </div>
     </div>
     <blog-entry-detail
-      v-if="type == 'blog' && (isActive || detailsVisible)"
+      v-if="type == 'blog' && detailsMounted"
       :isOpen="detailsVisible"
       @card-closed="closeDetails"
       :name="name"
@@ -47,7 +47,7 @@
       :attachments="attachments"
     />
     <project-entry-detail
-      v-if="type == 'project' && (isActive || detailsVisible)"
+      v-if="type == 'project' && detailsMounted"
       :isOpen="detailsVisible"
       @card-closed="closeDetails"
       :name="name"
@@ -92,6 +92,7 @@ const emit = defineEmits<{ (event: "open-change", open: boolean): void }>();
 
 const opener = ref<HTMLButtonElement | null>(null);
 const detailsVisible = ref(props.openOnMount ?? false);
+const detailsMounted = ref(props.openOnMount ?? false);
 
 const truncatedContent = computed(() => {
   return renderMarkdown(props.content, { breaks: true });
@@ -100,6 +101,7 @@ const truncatedContent = computed(() => {
 function openDetails(event?: MouseEvent) {
   if (event?.target instanceof Element && event.target.closest('a')) return;
   opener.value?.focus({ preventScroll: true });
+  detailsMounted.value = true;
   detailsVisible.value = true;
   emit("open-change", true);
 }

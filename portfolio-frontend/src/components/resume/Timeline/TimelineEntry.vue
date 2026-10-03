@@ -43,7 +43,7 @@
       </div>
     </div>
     <timeline-entry-detail
-      v-if="isActive || detailsVisible"
+      v-if="detailsMounted"
       v-bind="$props"
       :end_date__date="end_date__date"
       :start_date__date="start_date__date"
@@ -65,6 +65,7 @@ export default defineComponent({
   data() {
     return {
       detailsVisible: false,
+      detailsMounted: false,
       justClosed: false,
       isDescriptionClipped: false,
     };
@@ -104,6 +105,7 @@ export default defineComponent({
       if (event?.target instanceof Element && event.target.closest("a")) return;
       if (!this.justClosed) {
         (this.$refs.opener as HTMLButtonElement)?.focus({ preventScroll: true });
+        this.detailsMounted = true;
         this.detailsVisible = true;
       }
     },
