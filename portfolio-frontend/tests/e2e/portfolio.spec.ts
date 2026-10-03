@@ -75,45 +75,17 @@ test("stacks the contact call to action on laptop screens", async ({ page }) => 
   expect(buttonBox!.y).toBeGreaterThan(paragraphBox!.y + paragraphBox!.height);
 });
 
-test("scrolls resume slides across the full viewport on mobile", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/");
-  await page.locator("#the-resume").scrollIntoViewIfNeeded();
-
-  const box = (await page.locator("#resume-container").boundingBox())!;
-  expect(box.x).toBe(0);
-  expect(box.width).toBe(390);
-  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390);
-});
-
-test("keeps mobile and desktop resume controls mutually exclusive", async ({ page }) => {
-  await page.setViewportSize({ width: 639, height: 800 });
-  await page.goto("/");
-  await page.locator("#the-resume").scrollIntoViewIfNeeded();
-
-  await expect(page.getByTestId("resume-mobile-tabs")).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "Scroll resume carousel right" })
-  ).toHaveCount(0);
-
-  await page.setViewportSize({ width: 640, height: 800 });
-
-  await expect(page.getByTestId("resume-mobile-tabs")).toHaveCount(0);
-  await expect(
-    page.getByRole("button", { name: "Scroll resume carousel right" })
-  ).toBeVisible();
-});
-
-test("returns to the hero from the mobile About menu", async ({ page }) => {
+test("returns to the hero from the mobile portrait", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 800 });
   await page.goto("/");
   await page.locator("#the-resume").scrollIntoViewIfNeeded();
   await page.waitForFunction(() => window.scrollY > 100);
 
   await page.getByRole("button", { name: "Open main menu" }).click();
-  await page.getByRole("button", { name: "About", exact: true }).click();
+  await page.getByRole("button", { name: "Back to introduction", exact: true }).click();
 
   await page.waitForFunction(() => window.scrollY < 2);
+  await expect(page.locator("#mobile-menu")).toHaveAttribute("aria-hidden", "true");
 });
 
 test("expands and restores the detail card while keeping its bottom anchored", async ({

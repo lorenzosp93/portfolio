@@ -12,7 +12,7 @@
           v-if="entity.picture"
           :src="entity.picture"
           :alt="`${entity.name} logo`"
-          class="h-12 w-12 flex-none rounded-xl bg-white object-contain"
+          class="h-12 w-12 flex-none rounded-full bg-white object-contain shadow-lg ring-1 ring-ink/10 dark:ring-white/10"
           decoding="async"
         />
         <div class="min-w-0">
@@ -28,9 +28,9 @@
     <template v-slot:inner-content>
       <div class="px-3 pb-5 prose prose-base prose-slate dark:prose-invert prose-a:text-coralInk dark:prose-a:text-coralSoft">
         <h3 v-if="description" class="mb-3">Description:</h3>
-        <p v-html="parse(description ?? '')" />
+        <div v-html="parse(description ?? '')" />
         <h3 v-if="key_achievements" class="my-3">Key Achievements:</h3>
-        <p v-html="parse(key_achievements)" />
+        <div v-html="parse(key_achievements)" />
         <h3 v-if="keywords && keywords.length > 0" class="my-3">Keywords:</h3>
         <div class="flex overflow-x-scroll overflow-y-hidden pb-1 no-scrollbar">
           <div

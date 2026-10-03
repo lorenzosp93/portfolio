@@ -124,3 +124,28 @@ export interface LimitOffsetResult<T> {
   previous?: string | null;
   results: T[];
 }
+
+
+export type TransitionMotif = "none" | "detour" | "breakthrough";
+
+export interface TimelineEntry extends Omit<Education, "end_date" | "description"> {
+  kind: "education" | "experience";
+  end_date: string | null;
+  description: string | null;
+  department?: string;
+  key_achievements?: string;
+  timeline_summary: string;
+  narrative_heading: string;
+  narrative_body: string;
+  transition_motif: TransitionMotif;
+}
+
+export interface ResumeTimeline {
+  copy: {
+    heading: string;
+    intro: string;
+    closing_heading: string;
+    closing_body: string;
+  };
+  entries: TimelineEntry[];
+}

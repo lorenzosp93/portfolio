@@ -118,3 +118,26 @@ class EntityEntriesSerializer(ModelSerializer):
     class Meta:
         model = Entity
         fields = ['uuid', 'name', 'picture', 'experiences', 'educations']
+
+TIMELINE_FIELDS = ['timeline_summary', 'narrative_heading', 'narrative_body', 'transition_motif']
+
+
+class TimelineEducationSerializer(EducationSerializer):
+    kind = CharField(default='education', read_only=True)
+
+    class Meta(EducationSerializer.Meta):
+        fields = EducationSerializer.Meta.fields + ['kind'] + TIMELINE_FIELDS
+
+
+class TimelineExperienceSerializer(ExperienceSerializer):
+    kind = CharField(default='experience', read_only=True)
+
+    class Meta(ExperienceSerializer.Meta):
+        fields = ExperienceSerializer.Meta.fields + ['kind'] + TIMELINE_FIELDS
+
+
+class TimelineCopySerializer(Serializer):
+    heading = CharField(source='timeline_heading')
+    intro = CharField(source='timeline_intro')
+    closing_heading = CharField(source='timeline_closing_heading')
+    closing_body = CharField(source='timeline_closing_body')

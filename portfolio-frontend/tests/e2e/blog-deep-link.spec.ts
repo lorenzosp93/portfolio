@@ -14,6 +14,7 @@ const post = (id: number) => ({
 
 // The first page holds posts 1-5; the slug lookup returns any single post.
 test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => Object.defineProperty(crypto, "randomUUID", { value: undefined }));
   await page.route("**/api/**", (route) => {
     const url = new URL(route.request().url());
     if (url.pathname.includes("/blog/post/")) {

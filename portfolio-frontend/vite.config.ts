@@ -7,10 +7,15 @@ import { VitePWA } from "vite-plugin-pwa";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "VITE_");
-  const backend = process.env.VITE_APP_BACKEND_URL || env.VITE_APP_BACKEND_URL || "http://localhost:8000";
+  const backend = process.env.BACKEND_PROXY_TARGET || process.env.VITE_APP_BACKEND_URL || env.VITE_APP_BACKEND_URL || "http://127.0.0.1:8000";
+  const proxy = Object.fromEntries(
+    ["/api/", "/media/", "/mediafiles/", "/writing/", "/sitemap.xml"].map(path => [
+      path, { target: backend, changeOrigin: false },
+    ]),
+  );
   return {
   build: { manifest: "asset-manifest.json" },
-  server: { proxy: { "/writing/": backend, "/sitemap.xml": backend } },
+  server: { proxy },
   plugins: [
     vue({
       isProduction: process.env.DEV === "false",

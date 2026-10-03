@@ -66,7 +66,7 @@
 <script setup lang="ts">
 import ListCard from "../UI/Card/ListCard.vue";
 import RetryButton from "../UI/Buttons/RetryButton.vue";
-import { Ref, inject, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { Ref, inject, onMounted, ref, watch } from "vue";
 import { useBlogStore } from "@/stores/blog.store";
 import { useVisibilityObserver } from "@/composables/visibilityObserver";
 import ArrowScroller from "../composables/ArrowScroller.vue";
@@ -83,69 +83,6 @@ const { isActive } = useVisibilityObserver("theBlog", root);
 const entriesLimit: () => number = inject("entriesLimit", () => 5);
 
 const blogStore = useBlogStore();
-
-const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-const entranceAnimations = new Map<HTMLElement, Animation>();
-let entranceObserver: IntersectionObserver | undefined;
-let rowInView = false;
-let entrancePlayed = false;
-
-function finishEntrances() {
-  entranceAnimations.forEach(animation => animation.cancel());
-  entranceAnimations.clear();
-}
-
-function playEntrance() {
-  const row = blogContainer.value;
-  if (!row || !rowInView || entrancePlayed || isLoading.value || !blogStore.posts.length) return;
-  entrancePlayed = true;
-  entranceObserver?.disconnect();
-  if (reducedMotion.matches) return;
-  const viewport = row.getBoundingClientRect();
-  // Animate only the initial visible batch. Horizontal browsing and pagination
-  // must never hide neighboring cards or replay the section entrance.
-  const cards = [...row.querySelectorAll<HTMLElement>('.blog-card')].filter(card => {
-    const rect = card.getBoundingClientRect();
-    return rect.right > viewport.left && rect.left < viewport.right;
-  });
-  cards.forEach((card, index) => {
-    const animation = card.animate([
-      { opacity: 0, transform: 'translateY(48px) scale(.97)' },
-      { opacity: 1, transform: 'translateY(0) scale(1)' },
-    ], { duration: 600, delay: index * 180, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'both' });
-    entranceAnimations.set(card, animation);
-    animation.onfinish = () => {
-      animation.cancel();
-      entranceAnimations.delete(card);
-    };
-  });
-}
-
-function motionPreferenceChanged() {
-  if (reducedMotion.matches) finishEntrances();
-}
-
-onMounted(() => {
-  if (!('IntersectionObserver' in window) || !blogContainer.value) return;
-  entranceObserver = new IntersectionObserver(entries => {
-    rowInView = entries.some(entry => entry.isIntersecting);
-    playEntrance();
-  }, { threshold: 0, rootMargin: '0px 0px -48px 0px' });
-  entranceObserver.observe(blogContainer.value);
-  reducedMotion.addEventListener('change', motionPreferenceChanged);
-  blogContainer.value.addEventListener('focusin', finishEntrances);
-  blogContainer.value.addEventListener('pointerdown', finishEntrances, { passive: true });
-  blogContainer.value.addEventListener('wheel', finishEntrances, { passive: true });
-});
-watch([() => blogStore.posts.length, isLoading], playEntrance, { flush: 'post' });
-onBeforeUnmount(() => {
-  entranceObserver?.disconnect();
-  finishEntrances();
-  reducedMotion.removeEventListener('change', motionPreferenceChanged);
-  blogContainer.value?.removeEventListener('focusin', finishEntrances);
-  blogContainer.value?.removeEventListener('pointerdown', finishEntrances);
-  blogContainer.value?.removeEventListener('wheel', finishEntrances);
-});
 
 watch(isActive, (val) => {
   if (val && blogStore.posts.length == 0 && !isLoading.value) {

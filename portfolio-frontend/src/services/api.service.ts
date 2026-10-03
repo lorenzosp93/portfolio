@@ -7,6 +7,7 @@ import type {
   BlogPost,
   ContactForm,
   SiteSettings,
+  ResumeTimeline,
 } from "@/models/models.interface";
 
 const API_URL: string = import.meta.env.VITE_APP_BACKEND_URL;
@@ -36,6 +37,10 @@ class BackendService extends ApiClient {
     options: LimitOffsetOptions
   ): Promise<AxiosResponse<LimitOffsetResult<T>>> {
     return this.getLimitOffset<T>(`/api/resume/${kind}/`, options);
+  }
+
+  async loadResumeTimeline(): Promise<AxiosResponse<ResumeTimeline>> {
+    return this.instance.get("/api/resume/timeline/");
   }
 
   async loadSkillCategory(): Promise<AxiosResponse<SkillCategory[]>> {

@@ -13,7 +13,7 @@
       <button
         v-if="!hasSentMessage"
         type="button"
-        class="mt-5 rounded-full bg-teal px-6 py-3 text-center font-semibold text-white shadow-md ring-1 ring-teal/20 transition duration-300 hover:-translate-y-0.5 hover:bg-teal/90 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-tealSoft dark:bg-tealSoft dark:text-night dark:ring-tealSoft/30 dark:hover:bg-tealSoft/90"
+        class="mt-5 rounded-full bg-teal px-6 py-3 text-center text-sm font-semibold text-white shadow-md ring-1 ring-teal/20 transition duration-300 hover:-translate-y-0.5 hover:bg-teal/90 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-tealSoft dark:bg-tealSoft dark:text-night dark:ring-tealSoft/30 dark:hover:bg-tealSoft/90"
         @click="openForm"
       >
         Click here to send me a message.

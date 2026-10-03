@@ -1,3 +1,4 @@
+import { timelineResponse } from './timeline.fixture';
 import { expect, test } from '@playwright/test';
 const cards = [
   { id: 1, title: 'Establishing a product practice', icon: 'layers', position: 0, body: 'I helped build Tesla’s software product practice in EMEA, launching the SAF-T framework and Vehicle Registration Platform from zero. I then hired and developed product managers to take ownership and grow those products further.' },
@@ -7,8 +8,10 @@ const cards = [
 const settings = { about_text: 'I lead software product teams at Tesla in EMEA.', hero_picture: null, leadership_heading: 'Building products—and the teams that lead them.', leadership_cards: cards };
 const post = { uuid: 'post-one', name: 'Product decisions', slug: 'product-decisions', canonical_url: 'http://127.0.0.1:8080/writing/product-decisions/', created_at: '2026-01-01', content: 'A complete article about product decisions.', picture: '', attachments: [], created_by: { username: 'lorenzo' } };
 test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => Object.defineProperty(crypto, "randomUUID", { value: undefined }));
   await page.route('**/api/**', route => {
     const url = route.request().url();
+    if (url.includes('/resume/timeline/')) return route.fulfill({ json: timelineResponse([]) });
     const json = url.includes('/settings/') ? settings : url.includes('/blog/post/') ? { count: 1, results: [post], next: null } : url.includes('skillcategory') ? [] : { count: 0, results: [], next: null };
     return route.fulfill({ json });
   });
@@ -96,42 +99,20 @@ test('contact uses native validation and submits 2000 characters through the for
   await expect(page.getByRole('status')).toContainText('Message received');
   expect(payload?.content.length).toBe(2000);
 });
-test('mobile résumé tabs support arrow-key navigation', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/');
-  const experience = page.getByRole('tab', { name: 'experience' });
-  await experience.focus();
-  await experience.press('ArrowRight');
-  const education = page.getByRole('tab', { name: 'education' });
-  await expect(education).toBeFocused();
-  await expect(education).toHaveAttribute('aria-selected', 'true');
-  await education.press('End');
-  await expect(page.getByRole('tab', { name: 'skills' })).toBeFocused();
-});
-
 for (const width of [390, 1280]) {
   test(`Skills setting removes the panel and keeps résumé navigation usable at ${width}px`, async ({ page }) => {
     await page.route('**/api/settings/1/', route => route.fulfill({ json: { ...settings, show_skills: false } }));
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/');
     await page.locator('#the-resume').scrollIntoViewIfNeeded();
-    await expect(page.locator('#the-navbar .resume-subnav')).toHaveCount(1);
     await expect(page.locator('#skills')).toHaveCount(0);
-    await expect(page.locator('#the-navbar').getByRole('button', { name: 'Skills', exact: true, includeHidden: true })).toHaveCount(0);
-    await expect(page.getByRole('tab', { name: 'skills' })).toHaveCount(0);
-    if (width < 640) {
-      const experience = page.getByRole('tab', { name: 'experience' });
-      await experience.focus();
-      await experience.press('End');
-      const education = page.getByRole('tab', { name: 'education' });
-      await expect(education).toBeFocused();
-      await expect(education).toHaveAttribute('aria-selected', 'true');
-      await education.press('ArrowRight');
-      await expect(experience).toBeFocused();
-    } else {
-      await page.locator('#the-resume').getByRole('button', { name: 'Scroll resume carousel right' }).click();
-      await expect(page.locator('#education')).not.toHaveAttribute('inert', '');
-    }
+    await expect(page.getByRole('tablist', { name: 'Résumé sections' })).toHaveCount(0);
+    if (width < 640) await page.getByRole('button', { name: 'Open main menu' }).click();
+    const resume = page.locator('#the-navbar').getByRole('button', { name: 'Resume', exact: true });
+    await expect(resume).toBeVisible();
+    await resume.click();
+    await expect(page.getByRole('heading', { name: 'Experience leading products and teams.' })).toBeInViewport();
+
   });
 }
 
@@ -193,29 +174,6 @@ for (const width of [390, 1280]) {
   });
 }
 
-for (const width of [768, 1280]) {
-  test(`two résumé panels support repeated round trips and resizing at ${width}px`, async ({ page }) => {
-    await page.route('**/api/settings/1/', route => route.fulfill({ json: { ...settings, show_skills: false } }));
-    await page.setViewportSize({ width, height: 900 });
-    await page.goto('/');
-    await page.locator('#the-resume').scrollIntoViewIfNeeded();
-    const right = page.getByRole('button', { name: 'Scroll resume carousel right' });
-    const left = page.getByRole('button', { name: 'Scroll resume carousel left' });
-    for (let round=0;round<3;round++) {
-      await expect(right).toBeVisible();
-      await expect(left).not.toBeVisible();
-      await right.click();
-      await expect(right).not.toBeVisible();
-      await expect(left).toBeVisible();
-      await expect(page.locator('#education')).not.toHaveAttribute('inert', '');
-      await left.click();
-      await expect(left).not.toBeVisible();
-      await expect(page.locator('#experience')).not.toHaveAttribute('inert', '');
-      if (round===1) await page.setViewportSize({ width: width+73, height: 900 });
-    }
-  });
-}
-
 for (const width of [390, 1280]) {
   test(`Explore and About leave the navbar attached and begin the timeline immediately at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
@@ -243,7 +201,7 @@ for (const width of [390, 1280]) {
     await page.locator('#the-resume').scrollIntoViewIfNeeded();
     if (width < 640) {
       await page.getByRole('button', { name: 'Open main menu' }).click();
-      await page.locator('#mobile-menu button').nth(1).click();
+      await page.locator('#mobile-menu').getByRole('button', { name: 'Highlights', exact: true }).click();
     } else {
       await page.locator('.navbar-surface').getByRole('button', { name: 'Highlights', exact: true }).click();
     }
@@ -285,7 +243,7 @@ for (const width of [390, 1280]) {
     await page.locator('#the-resume').scrollIntoViewIfNeeded();
     if (width < 640) {
       await page.getByRole('button', { name: 'Open main menu' }).click();
-      await page.locator('#mobile-menu button').nth(1).click();
+      await page.locator('#mobile-menu').getByRole('button', { name: 'Highlights', exact: true }).click();
     } else {
       await page.locator('.navbar-surface').getByRole('button', { name: 'Highlights', exact: true }).click();
     }

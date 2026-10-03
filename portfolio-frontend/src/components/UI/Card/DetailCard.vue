@@ -45,15 +45,15 @@
           <header class="relative mt-auto border-b border-ink/10 p-4 dark:border-white/10">
             <div
               v-if="$slots['extra-title-content']"
-              class="text-xs pr-12 text-muted dark:text-gray-300 sm:order-last sm:ml-auto"
+              class="type-meta pr-12 text-muted dark:text-gray-300 sm:order-last sm:ml-auto"
             >
               <slot name="extra-title-content" />
             </div>
             <div>
-              <div :id="titleId" class="pr-12 text-2xl font-semibold text-ink dark:text-white">
+              <div :id="titleId" class="type-detail-title pr-12 text-ink dark:text-white">
                 <slot name="title">Some title for the card</slot>
               </div>
-              <div class="text-sm leading-relaxed text-muted dark:text-gray-300 pb-auto">
+              <div class="type-support text-muted dark:text-gray-300 pb-auto">
                 <slot name="subtitle"
                   >A subtitle for the card. This should be somewhat longer</slot
                 >
@@ -96,7 +96,7 @@
 <script setup lang="ts">
 import { XMarkIcon } from "@heroicons/vue/24/outline";
 import { useEventListener } from "@vueuse/core";
-import { nextTick, onBeforeUnmount, onMounted, Ref, ref, watch } from "vue";
+import { getCurrentInstance, nextTick, onBeforeUnmount, onMounted, Ref, ref, watch } from "vue";
 import gsap from "gsap";
 import { Draggable } from "gsap/Draggable";
 import { InertiaPlugin } from "gsap/InertiaPlugin";
@@ -104,7 +104,8 @@ import { InertiaPlugin } from "gsap/InertiaPlugin";
 gsap.registerPlugin(Draggable, InertiaPlugin);
 
 const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)");
-const titleId = `dialog-title-${crypto.randomUUID()}`;
+// Vue's instance ID also works on HTTP LAN previews, where randomUUID is unavailable.
+const titleId = `dialog-title-${getCurrentInstance()!.uid}`;
 let opener: HTMLElement | null = null;
 let focusFrame = 0;
 let backgroundElements: { element: HTMLElement; inert: boolean }[] = [];

@@ -56,6 +56,18 @@ vi.mock("gsap/InertiaPlugin", () => ({
 import DetailCard from "./DetailCard.vue";
 
 describe("DetailCard", () => {
+  it("labels independent dialogs without secure-context crypto APIs", async () => {
+    vi.stubGlobal("crypto", {});
+    const first = mount(DetailCard, { props: { isOpen: false }, slots: { title: "First" } });
+    const second = mount(DetailCard, { props: { isOpen: false }, slots: { title: "Second" } });
+    const dialogs = [...document.querySelectorAll('[role="dialog"]')];
+    const ids = dialogs.map(dialog => dialog.getAttribute("aria-labelledby"));
+    expect(new Set(ids).size).toBe(2);
+    expect(ids.map(id => document.getElementById(id!)?.textContent)).toEqual(["First", "Second"]);
+    first.unmount();
+    second.unmount();
+    vi.unstubAllGlobals();
+  });
   it("contains background gestures without changing document geometry", async () => {
     document.body.style.position = "relative";
     const wrapper = mount(DetailCard, { props: { isOpen: false } });
