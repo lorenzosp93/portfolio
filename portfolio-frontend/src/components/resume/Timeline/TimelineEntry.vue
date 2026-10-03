@@ -35,7 +35,7 @@
           class="pointer-events-none absolute inset-x-0 bottom-0 flex justify-end bg-gradient-to-t from-paper via-paper/90 to-transparent pt-8 dark:from-night dark:via-night/90"
         >
           <span
-            class="rounded-full bg-surface/95 px-2 py-0.5 text-sm font-bold leading-none tracking-wide text-coral shadow-sm ring-1 ring-coral/20 dark:bg-nightSurface/95 dark:text-coralSoft dark:ring-coralSoft/20"
+            class="rounded-full bg-surface/95 px-2 py-0.5 text-sm font-bold leading-none tracking-wide text-coralInk shadow-sm ring-1 ring-coral/20 dark:bg-nightSurface/95 dark:text-coralSoft dark:ring-coralSoft/20"
           >
             •••
           </span>
@@ -43,7 +43,7 @@
       </div>
     </div>
     <timeline-entry-detail
-      v-if="isActive || detailsVisible"
+      v-if="detailsMounted"
       v-bind="$props"
       :end_date__date="end_date__date"
       :start_date__date="start_date__date"
@@ -65,6 +65,7 @@ export default defineComponent({
   data() {
     return {
       detailsVisible: false,
+      detailsMounted: false,
       justClosed: false,
       isDescriptionClipped: false,
     };
@@ -104,6 +105,7 @@ export default defineComponent({
       if (event?.target instanceof Element && event.target.closest("a")) return;
       if (!this.justClosed) {
         (this.$refs.opener as HTMLButtonElement)?.focus({ preventScroll: true });
+        this.detailsMounted = true;
         this.detailsVisible = true;
       }
     },
@@ -200,6 +202,6 @@ export default defineComponent({
 }
 
 .timeline-description :deep(a) {
-  @apply text-coral dark:text-coralSoft;
+  @apply text-coralInk dark:text-coralSoft;
 }
 </style>

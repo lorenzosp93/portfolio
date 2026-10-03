@@ -26,7 +26,7 @@
       </div>
     </template>
     <template v-slot:inner-content>
-      <div class="px-3 pb-5 prose prose-base prose-slate dark:prose-invert prose-a:text-coral dark:prose-a:text-coralSoft">
+      <div class="px-3 pb-5 prose prose-base prose-slate dark:prose-invert prose-a:text-coralInk dark:prose-a:text-coralSoft">
         <h3 v-if="description" class="mb-3">Description:</h3>
         <p v-html="parse(description ?? '')" />
         <h3 v-if="key_achievements" class="my-3">Key Achievements:</h3>

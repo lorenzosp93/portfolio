@@ -45,7 +45,7 @@ describe("TheResume", () => {
 
     const wrapper = shallowMount(TheResume);
 
-    expect(wrapper.find("ul").exists()).toBe(true);
+    expect(wrapper.find('[role="tablist"]').exists()).toBe(true);
   });
 
   it("hides tabs at desktop widths", () => {
@@ -53,7 +53,7 @@ describe("TheResume", () => {
 
     const wrapper = shallowMount(TheResume);
 
-    expect(wrapper.find("ul").exists()).toBe(false);
+    expect(wrapper.find('[role="tablist"]').exists()).toBe(false);
   });
 
   it("updates a shrinking panel without compensating the page scroll", async () => {

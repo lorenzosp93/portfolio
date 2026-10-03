@@ -36,6 +36,7 @@
     "@typescript-eslint/eslint-plugin": "^5.52.0",
     "@vue/test-utils": "^2.4.1",
     "autoprefixer": "^10.4.4",
+    "axe-core": "^4.13.0",
     "eslint": "^8.34.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-vue": "^8.7.1",

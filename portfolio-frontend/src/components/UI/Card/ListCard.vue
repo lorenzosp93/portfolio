@@ -12,7 +12,7 @@
       decoding="async"
     />
     <div class="w-full border-b border-ink/10 bg-sand/70 p-4 text-ink dark:border-white/10 dark:bg-nightElevated dark:text-white">
-      <p class="text-xs font-medium uppercase tracking-wide text-coral dark:text-coralSoft">{{ location }}{{ status }}</p>
+      <p class="text-xs font-medium uppercase tracking-wide text-coralInk dark:text-coralSoft">{{ location }}{{ status }}</p>
       <h2 class="type-card-title list-card-title mt-1 w-full tracking-tight text-ink dark:text-white">
         <button ref="opener" type="button" class="text-left" :aria-label="`Open ${name}`" aria-haspopup="dialog" :aria-expanded="detailsVisible" @click.stop="openDetails">{{ name }}</button>
       </h2>
@@ -26,14 +26,14 @@
         class="pointer-events-none absolute inset-x-0 bottom-0 flex justify-end bg-gradient-to-t from-surface via-surface/90 to-transparent p-4 pt-10 dark:from-nightSurface dark:via-nightSurface/90"
       >
         <span
-          class="rounded-full bg-sand/95 px-2 py-0.5 text-sm font-bold leading-none tracking-wide text-coral shadow-sm ring-1 ring-coral/20 dark:bg-nightElevated/95 dark:text-coralSoft dark:ring-coralSoft/20"
+          class="rounded-full bg-sand/95 px-2 py-0.5 text-sm font-bold leading-none tracking-wide text-coralInk shadow-sm ring-1 ring-coral/20 dark:bg-nightElevated/95 dark:text-coralSoft dark:ring-coralSoft/20"
         >
           •••
         </span>
       </div>
     </div>
     <blog-entry-detail
-      v-if="type == 'blog' && (isActive || detailsVisible)"
+      v-if="type == 'blog' && detailsMounted"
       :isOpen="detailsVisible"
       @card-closed="closeDetails"
       :name="name"
@@ -47,7 +47,7 @@
       :attachments="attachments"
     />
     <project-entry-detail
-      v-if="type == 'project' && (isActive || detailsVisible)"
+      v-if="type == 'project' && detailsMounted"
       :isOpen="detailsVisible"
       @card-closed="closeDetails"
       :name="name"
@@ -92,6 +92,7 @@ const emit = defineEmits<{ (event: "open-change", open: boolean): void }>();
 
 const opener = ref<HTMLButtonElement | null>(null);
 const detailsVisible = ref(props.openOnMount ?? false);
+const detailsMounted = ref(props.openOnMount ?? false);
 
 const truncatedContent = computed(() => {
   return renderMarkdown(props.content, { breaks: true });
@@ -100,6 +101,7 @@ const truncatedContent = computed(() => {
 function openDetails(event?: MouseEvent) {
   if (event?.target instanceof Element && event.target.closest('a')) return;
   opener.value?.focus({ preventScroll: true });
+  detailsMounted.value = true;
   detailsVisible.value = true;
   emit("open-change", true);
 }
@@ -137,6 +139,6 @@ function closeDetails() {
 }
 
 .list-card-content :deep(a) {
-  @apply text-coral dark:text-coralSoft;
+  @apply text-coralInk dark:text-coralSoft;
 }
 </style>

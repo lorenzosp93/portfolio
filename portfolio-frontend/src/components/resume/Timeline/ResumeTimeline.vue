@@ -7,7 +7,7 @@
       :isLoading="isLoading"
     >
       <template v-slot:content>
-        <ol
+        <div
           v-if="store.entities.length > 0"
           class="relative ml-5 border-l border-teal/20 py-[1px] dark:border-tealSoft/20 lg:ml-10"
         >
@@ -34,7 +34,7 @@
               class="h-5 absolute top-[55%] left-1/2 -translate-x-1/2 -translate-y-1/2"
             ></chevron-double-down-icon>
           </div>
-        </ol>
+        </div>
       </template>
     </resume-panel>
   </div>

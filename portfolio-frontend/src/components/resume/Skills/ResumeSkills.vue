@@ -7,7 +7,7 @@
       @load-entries="loadEntries"
     >
       <template v-slot:content>
-        <ol
+        <div
           v-if="skillStore.data.length > 0"
           class="relative mx-10 my-1 flex flex-wrap"
         >
@@ -34,7 +34,7 @@
             >
             </skills-category>
           </div>
-        </ol>
+        </div>
       </template>
     </resume-panel>
   </div>

@@ -13,6 +13,7 @@ module.exports = {
         teal: "#0F766E",
         tealSoft: "#CCFBF1",
         coral: "#F9735B",
+        coralInk: "#B3402E",
         coralSoft: "#FFE1DA",
         amber: "#F4B740",
         amberSoft: "#FEF3C7",

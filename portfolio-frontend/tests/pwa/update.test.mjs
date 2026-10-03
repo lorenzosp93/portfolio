@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdtemp, readFile, readdir, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, extname, resolve } from "node:path";
 import { createServer } from "node:http";
@@ -48,6 +48,21 @@ test("production worker upgrades without forced reload, removes old API cache an
     const page = await context.newPage();
     await page.goto(origin);
     await page.waitForFunction(() => Boolean(navigator.serviceWorker.controller));
+    // Installing the worker must not download the unused icon catalogue.
+    const precachedIcons = await page.evaluate(async () => {
+      const cachesByName = await caches.keys();
+      const requests = (await Promise.all(cachesByName.map(async name => (await caches.open(name)).keys()))).flat();
+      return requests.filter(request => /\/assets\/.*Icon-.*\.js$/.test(request.url)).length;
+    });
+    assert.equal(precachedIcons, 0);
+    const iconFile = (await readdir(join(directory, "A", "assets"))).find(name => name.startsWith("RocketLaunchIcon-") && name.endsWith(".js"));
+    assert.ok(iconFile);
+    const iconURL = `/assets/${iconFile}`;
+    await page.evaluate(url => fetch(url).then(response => response.text()), iconURL);
+    await page.waitForFunction(async url => Boolean(await caches.match(url)), iconURL);
+    await context.setOffline(true);
+    assert.match(await page.evaluate(url => fetch(url).then(response => response.text()), iconURL), /svg/);
+    await context.setOffline(false);
     assert.match(await page.locator(".hero-copy").innerText(), /Release A/);
     const otherTab = await context.newPage();
     await otherTab.goto(origin);

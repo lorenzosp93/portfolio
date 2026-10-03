@@ -1,5 +1,5 @@
 <template>
-  <div class="py-3 px-5 flex">
+  <li class="py-3 px-5 flex">
     <p class="type-body text-ink dark:text-white">
       {{ name }}
     </p>
@@ -12,7 +12,7 @@
         :style="{ width: (level + 1) * 20 + '%' }"
       />
     </div>
-  </div>
+  </li>
 </template>
 
 <script setup lang="ts">
