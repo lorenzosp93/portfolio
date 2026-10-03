@@ -107,7 +107,24 @@ async function animate() {
 watch(() => site.highlightCards, () => { void animate().catch(() => { media?.revert(); }); });
 // Re-evaluate available reading space after viewport height changes as well.
 let resizeTimer: ReturnType<typeof setTimeout>;
-function resize() { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { void animate().catch(() => { media?.revert(); }); }, 200); }
+let layoutWidth = window.innerWidth;
+let layoutHeight = window.innerHeight;
+function resize() {
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  // Mobile browser toolbars resize the viewport while scrolling. Reverting the
+  // pinned scene here removes space above the reader and clamps the page scroll.
+  // Match ScrollTrigger's mobile resize tolerance; still handle orientation and
+  // substantial changes in available reading space.
+  const touchViewport = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+  if (touchViewport && width === layoutWidth && Math.abs(height - layoutHeight) <= height * .25) return;
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    layoutWidth = window.innerWidth;
+    layoutHeight = window.innerHeight;
+    void animate().catch(() => { media?.revert(); });
+  }, 200);
+}
 onMounted(() => { void animate().catch(() => { media?.revert(); }); window.addEventListener('resize', resize); });
 onBeforeUnmount(() => { disposed = true; generation++; clearTimeout(resizeTimer); window.removeEventListener('resize', resize); media?.revert(); });
 </script>
